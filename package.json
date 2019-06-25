@@ -1,0 +1,52 @@
+{
+  "name": "scheduling",
+  "version": "",
+  "description": "",
+  "author": "",
+  "private": true,
+  "scripts": {
+    "start": "node auto/download.js && vue-cli-service serve",
+    "build": "node auto/download.js && vue-cli-service build",
+    "lint": "dj lint",
+    "lint:js": "eslint --ext .js,.vue src test/unit test/e2e/specs",
+    "fix:js": "eslint --fix --ext .js,.vue src test/unit test/e2e/specs",
+    "lint:html": "htmlhint --config .htmlhintrc src/**/*.vue",
+    "lint:style": "stylelint --config .stylelintrc.json src/**/*.{vue,css,scss,less}",
+    "fix:style": "stylelint --config .stylelintrc.json **/*.{vue,css,scss,less} --fix",
+    "updataSource": "node auto/updateSourceProject.js",
+    "test:e2e": "vue-cli-service test:e2e",
+    "test:unit": "vue-cli-service test:unit"
+  },
+  "dependencies": {
+    "axios": "^0.17.0",
+    "core-js": "^2.6.5",
+    "dayjs": "^1.8.0",
+    "djweb": "^0.1.9",
+    "element-ui": "2.4.5",
+    "js-cookie": "2.2.0",
+    "nprogress": "^0.2.0",
+    "vue": "2.6.10",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-plugin-e2e-cypress": "^3.8.0",
+    "@vue/cli-plugin-eslint": "^3.8.0",
+    "@vue/cli-plugin-unit-mocha": "^3.8.0",
+    "@vue/test-utils": "1.0.0-beta.29",
+    "djweb-cli": "^1.2.10",
+    "lint-staged": "^8.1.5",
+    "shelljs": "^0.8.3",
+    "vue-template-compiler": "2.6.10"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
+}

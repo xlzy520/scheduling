@@ -1,0 +1,8 @@
+node_modules
+*.md
+*.scss
+*.less
+/dist/
+/test/unit/coverage/
+/src/assets/
+/src/autoLogin/

@@ -1,0 +1,29 @@
+#image: node:6
+#image: my-node-image
+stages:
+  - install
+  - lint
+
+cache:
+  key: node_modules
+  paths:
+  - node_modules/
+
+install:
+  stage: install
+  script:
+    - npm install --registry=http://192.168.0.236:8081/repository/djcpsnpm-group/ --sass_binary_path=https://npm.taobao.org/mirrors/node-sass/  --chromedriver_cdnurl=http://cdn.npm.taobao.org/dist/chromedriver --phantomjs_cdnurl=http://cnpmjs.org/downloads
+  cache:
+    key: node_modules
+    paths:
+    - node_modules/
+  only:
+      - triggers
+
+lint:
+  stage: lint
+  script:
+    - npm run lint
+  when: always
+  only:
+    - triggers

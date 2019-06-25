@@ -1,0 +1,23 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": "commonjs",
+        "targets": {
+          "browsers": [
+            "> 5%",
+            "last 2 versions",
+            "not ie <= 10"
+          ]
+        }
+      }
+    ],
+  ],
+  "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-runtime",
+    "@vue/babel-plugin-transform-vue-jsx"
+  ]
+}
