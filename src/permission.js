@@ -13,10 +13,26 @@ import 'nprogress/nprogress.css';// Progress 进度条样式
  * @returns {Promise<any>}
  */
 function getPermission() {
-  return permissionService.menu().then(res => {
-    store.dispatch('addMenus', res.menus);
-    store.dispatch('addPermission', res.permissionMenu);
-    return res.permissionMenu;
+  // return permissionService.menu().then(res => {
+  //   store.dispatch('addMenus', res.menus);
+  //   store.dispatch('addPermission', res.permissionMenu);
+  //   return res.permissionMenu;
+  // });
+  return new Promise(resolve => {
+    function getPer(routes, menu) {
+      routes.forEach(route => {
+        menu.push(route.path);
+        if (route.children) {
+          getPer(route.children, menu);
+        }
+      });
+    }
+    let permissionMenu = ['/home', 'product', 'index'];
+    //如果是开发者状态，获取全部权限
+    if (process.env.NODE_ENV === 'development') {
+      getPer(asyncRouter, permissionMenu);
+    }
+    resolve(permissionMenu);
   });
 }
 
