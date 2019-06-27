@@ -2,7 +2,7 @@
  * 存放权限路由
  */
 import loopRoutes from './loopRoutes';
-import example from './modules/example';
+import modules_routes from './modules/index';
 
 const index = {
   path: 'index',
@@ -20,7 +20,7 @@ const routes = [
     component: 'components/layout/layout',
     children: [
       index,
-      example
+      ...modules_routes
     ]
   }
 ].map(route => {
