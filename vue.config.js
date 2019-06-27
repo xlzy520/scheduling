@@ -14,7 +14,12 @@ module.exports = {
         changeOrigin: true,
       };
       return sum;
-    }, {}),
+    }, {
+      '/djcps_web': {
+        target: 'http://192.168.23.10:3000',
+        changeOrigin: true,
+      }
+    }),
     port: 8801,
   },
   // npm link 时需关闭 eslint 保存检测

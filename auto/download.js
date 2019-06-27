@@ -4,7 +4,7 @@ const serviceIp = 'http://192.168.23.10:3000';
 
 axios({
   method: 'get',
-  url: serviceIp + '/assets/models/console/index.html',
+  url: serviceIp + '/djcps_web/models/console/index.html',
 }).then(res => {
   console.log('下载模板成功');
   fs.writeFileSync('public/index.html', res.data, 'utf8');
