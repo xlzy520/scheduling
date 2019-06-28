@@ -13,7 +13,7 @@
       </div>
     </dj-table>
     <dj-dialog ref="dialog" @close="close" @confirm="confirm"
-               :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
+               :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
       <div class="paper-kind-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
       </div>
@@ -22,26 +22,20 @@
 </template>
 
 <script>
-  import paperKindService from '../../api/service/paperKind';
+  import materialCodeService from '../../api/service/materialCode';
 
   export default {
-    name: 'paperKind',
+    name: 'materialCode',
     data() {
       return {
         searchConfig: [
-          {label: '原纸编号：', key: 'num', type: 'input'},
-          {label: '原纸代码：', key: 'code', type: 'input'},
-          {label: '门幅：', key: 'menfu', type: 'input', attrs: {type: 'number'}},
+          {label: '用料代码：', key: 'code', type: 'input'},
+          {label: '平台材料名称：', key: 'platformMaterialName', type: 'input'},
         ],
         tableData: [],
         tableColumns: Object.freeze([
-          {label: '原纸编号', prop: 'num'},
-          {label: '原纸代码', prop: 'code'},
-          {label: '原纸类型', prop: 'type'},
-          {label: '克重（g）', prop: 'kezhong'},
-          {label: '门幅（mm）', prop: 'menfu'},
-          {label: '仓库名称', prop: 'warehouseName'},
-          {label: '库区名称', prop: 'warehouseAreaName'},
+          {label: '用料代码', prop: 'code'},
+          {label: '平台材料名称', prop: 'platformMaterialName'},
           {label: '操作人', prop: 'man'},
           {label: '操作时间', prop: 'time'},
           {label: '启用状态', prop: 'status', formatter: row => row.status ? '启用' : '禁用'},
@@ -72,9 +66,9 @@
             type: 'input',
             formItem: {
               prop: 'num',
-              label: '原纸编号',
+              label: '用料编号',
               rules: [
-                {required: true, message: '原纸编号不能为空', trigger: 'change'},
+                {required: true, message: '用料编号不能为空', trigger: 'change'},
                 {pattern: /^\w+$/g, message: '只可输入字母、数字'},
               ],
             },
@@ -91,9 +85,9 @@
             type: 'input',
             formItem: {
               prop: 'code',
-              label: '原纸代码',
+              label: '用料代码',
               rules: [
-                {required: true, message: '原纸代码不能为空', trigger: 'change'},
+                {required: true, message: '用料代码不能为空', trigger: 'change'},
                 {pattern: /^\w+$/g, message: '只可输入字母、数字'},
               ],
             },
@@ -105,8 +99,8 @@
             type: 'select',
             formItem: {
               prop: 'type',
-              label: '原纸类型',
-              rules: [{required: true, message: '请选择相应的原纸类型', trigger: 'change'}],
+              label: '用料类型',
+              rules: [{required: true, message: '请选择相应的用料类型', trigger: 'change'}],
             },
             attrs: {
               options: [{
@@ -132,7 +126,7 @@
               rules: [
                 {required: true, message: '克重不能为空', trigger: 'change'},
                 {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
-                ],
+              ],
             },
           },
           {
@@ -143,7 +137,7 @@
               rules: [
                 {required: true, message: '门幅不能为空', trigger: 'change'},
                 {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
-                ],
+              ],
             },
           },
           {
@@ -155,13 +149,13 @@
             },
             attrs: {
               options: [{
-                label: '丽岙原纸仓库1',
+                label: '丽岙用料仓库1',
                 value: 'chu',
               }, {
-                label: '丽岙原纸仓库2',
+                label: '丽岙用料仓库2',
                 value: 'gao',
               }, {
-                label: '丽岙原纸仓库3',
+                label: '丽岙用料仓库3',
                 value: 'da',
               }],
             },
@@ -175,13 +169,13 @@
             },
             attrs: {
               options: [{
-                label: '原纸1号仓库',
+                label: '用料1号仓库',
                 value: 'chu',
               }, {
-                label: '原纸2号仓库',
+                label: '用料2号仓库',
                 value: 'gao',
               }, {
-                label: '原纸3号仓库',
+                label: '用料3号仓库',
                 value: 'da',
               }],
             },
@@ -201,7 +195,7 @@
         this.$refs.dialog.open();
       },
       getTableData(data) {
-        paperKindService.list(data).then((res) => {
+        materialCodeService.list(data).then((res) => {
           this.tableData = res.list;
         });
       },
@@ -212,13 +206,13 @@
             type: 'warning',
             showClose: false,
           }).then(() => {
-            paperKindService.list().then((res) => {
+            materialCodeService.list().then((res) => {
               this.$message('禁用成功', 'success');
               row.status = !row.status;
             });
           });
         } else {
-          paperKindService.list().then((res) => {
+          materialCodeService.list().then((res) => {
             this.$message('启用成功', 'success');
             row.status = !row.status;
           });
@@ -237,7 +231,7 @@
       },
       confirm(data) {
         if (this.$refs.form.validate()) {
-          paperKindService.list(data).then((res) => {
+          materialCodeService.list(data).then((res) => {
             this.close();
             const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');

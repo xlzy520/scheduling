@@ -16,4 +16,18 @@ export default [
       },
     ],
   },
+  {
+    path: 'materialCode',
+    redirect: 'materialCode/index',
+    meta: {
+      title: '用料代码',
+    },
+    children: [
+      {
+        path: 'index',
+        //组件路径
+        component: 'views/materialCode/index',
+      },
+    ],
+  },
 ];
