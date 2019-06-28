@@ -17,6 +17,14 @@ Vue.use(filters);
 Vue.prototype.$method = methods;
 Vue.prototype.$reg = regs;
 Vue.prototype.$enum = enumMap;
+Vue.prototype.$message = (text, type)=>{
+   ELEMENT.Message({
+    'showClose': true, //是否显示关闭按钮
+    'message': text, //消息内容
+    'type': type, //消息类型
+    'duration': 2000 //显示时间
+  });
+};
 Vue.mixin(httpPolicy);
 Vue.mixin(listenerPolicy);
 // Vue.config.productionTip = false;
