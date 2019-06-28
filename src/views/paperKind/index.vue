@@ -12,7 +12,8 @@
         <el-button type="primary" @click="add">新增</el-button>
       </div>
     </dj-table>
-    <dj-dialog ref="dialog" @close="close" @confirm="confirm" title="新增原纸品种">
+    <dj-dialog ref="dialog" @close="close" @confirm="confirm"
+               :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
       <div class="paper-kind-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
       </div>
@@ -51,7 +52,7 @@
                 <div class="operation">
                   <a onClick={() => this.changeStatus(row)}>
                     {row.status ? '禁用' : '启用'}</a>
-                  <a onClick={() => this.edit(row)}>修改</a>
+                  <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
             },
@@ -191,12 +192,12 @@
           pageSize: 20,
         },
         pageTotal: 100,
-        dialogType: 'edit', // or add
+        dialogTypeIsAdd: null,
       };
     },
     methods: {
       add() {
-        this.dialogType = 'add';
+        this.dialogTypeIsAdd = true;
         this.$refs.dialog.open();
       },
       getTableData(data) {
@@ -224,7 +225,7 @@
         }
       },
       edit(row) {
-        this.dialogType = 'edit';
+        this.dialogTypeIsAdd = false;
         this.formData = row;
         this.$refs.dialog.open();
       },
@@ -238,7 +239,7 @@
         if (this.$refs.form.validate()) {
           paperKindService.list(data).then((res) => {
             this.close();
-            const message = this.dialogType === 'edit' ? '编辑成功' : '新增成功';
+            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');
           });
         }
