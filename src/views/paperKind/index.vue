@@ -12,7 +12,7 @@
         <el-button type="primary" @click="add">新增</el-button>
       </div>
     </dj-table>
-    <dj-dialog  ref="dialog" @close="close" @confirm="confirm"
+    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
       <div class="paper-kind-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
@@ -75,7 +75,7 @@
               prop: 'num',
               label: '原纸编号',
               rules: [
-                {required: true, message: '原纸编号不能为空', trigger: 'change'},
+                djForm.rules.required('原纸编号不能为空'),
                 {pattern: /^\w+$/g, message: '只可输入字母、数字'},
               ],
             },
@@ -94,7 +94,7 @@
               prop: 'code',
               label: '原纸代码',
               rules: [
-                {required: true, message: '原纸代码不能为空', trigger: 'change'},
+                djForm.rules.required('原纸代码不能为空'),
                 {pattern: /^\w+$/g, message: '只可输入字母、数字'},
               ],
             },
@@ -203,12 +203,16 @@
         },
         pageTotal: 100,
         dialogTypeIsAdd: null,
+        dialogVisible: false
       };
     },
     methods: {
       add() {
         this.dialogTypeIsAdd = true;
-        this.$refs.dialog.open();
+        this.dialogVisible = true;
+        this.$nextTick(()=>{
+          this.$refs.dialog.open();
+        });
       },
       getTableData(data) {
         paperKindService.list(data).then((res) => {
@@ -235,9 +239,12 @@
         }
       },
       edit(row) {
+        this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
         this.formData = row;
-        this.$refs.dialog.open();
+        this.$nextTick(()=>{
+          this.$refs.dialog.open();
+        });
       },
       search(data) {
         this.getTableData({
@@ -246,7 +253,7 @@
         });
       },
       confirm(data) {
-        this.$refs.form1.validate(valid=>{
+        this.$refs.form.validate(valid=>{
           if (valid) {
             paperKindService.list(data).then((res) => {
               this.close();
@@ -258,6 +265,7 @@
       },
       close() {
         this.$refs.dialog.close();
+        this.dialogVisible = false;
         this.$refs.form.resetFields();
       },
       pageChange(option) {

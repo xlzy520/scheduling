@@ -12,10 +12,10 @@
         <el-button type="primary" @click="add">新增</el-button>
       </div>
     </dj-table>
-    <dj-dialog ref="dialog" @close="close" @confirm="confirm"
+    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
       <div class="paper-kind-dialog">
-        <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
+        <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
       </div>
     </dj-dialog>
   </div>
@@ -23,7 +23,7 @@
 
 <script>
   import materialCodeService from '../../api/service/materialCode';
-  import {djForm} from 'djweb'
+  import {djForm} from 'djweb';
 
   export default {
     name: 'materialCode',
@@ -124,12 +124,16 @@
         },
         pageTotal: 100,
         dialogTypeIsAdd: null,
+        dialogVisible: false
       };
     },
     methods: {
       add() {
         this.dialogTypeIsAdd = true;
-        this.$refs.dialog.open();
+        this.dialogVisible = true;
+        this.$nextTick(()=>{
+          this.$refs.dialog.open();
+        });
       },
       getTableData(data) {
         materialCodeService.list(data).then((res) => {
@@ -156,9 +160,12 @@
         }
       },
       edit(row) {
+        this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
         this.formData = row;
-        this.$refs.dialog.open();
+        this.$nextTick(()=>{
+          this.$refs.dialog.open();
+        });
       },
       search(data) {
         this.getTableData({
@@ -179,6 +186,7 @@
       },
       close() {
         this.$refs.dialog.close();
+        this.dialogVisible = false;
         this.$refs.form.resetFields();
       },
       pageChange(option) {
@@ -212,5 +220,8 @@
 
   .paper-kind-dialog {
     width: 50vw;
+      @{deep} .dj-form .el-form-item{
+        width: 70%;
+      }
   }
 </style>
