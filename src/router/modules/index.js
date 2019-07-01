@@ -30,4 +30,18 @@ export default [
       },
     ],
   },
+  {
+    path: 'paperSupplier',
+    redirect: 'paperSupplier/index',
+    meta: {
+      title: '原纸供应商',
+    },
+    children: [
+      {
+        path: 'index',
+        //组件路径
+        component: 'views/paperSupplier/index',
+      },
+    ],
+  },
 ];

@@ -3,4 +3,5 @@ module.exports = [
   {name: 'user', url: '/user'},
   {name: 'paperKind', url: '/paperKind'},
   {name: 'materialCode', url: '/materialCode'},
+  {name: 'paperSupplier', url: '/paperSupplier'},
 ];
