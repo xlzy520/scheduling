@@ -12,7 +12,7 @@
         <el-button type="primary" @click="add">新增</el-button>
       </div>
     </dj-table>
-    <dj-dialog ref="dialog" @close="close" @confirm="confirm"
+    <dj-dialog  ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
       <div class="paper-kind-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
@@ -23,6 +23,7 @@
 
 <script>
   import paperKindService from '../../api/service/paperKind';
+  import {djForm} from 'djweb';
 
   export default {
     name: 'paperKind',
@@ -67,7 +68,7 @@
           warehouseName: '',
           warehouseAreaName: '',
         },
-        formOptions: Object.freeze([
+        formOptions: [
           {
             type: 'input',
             formItem: {
@@ -100,13 +101,18 @@
             attrs: {
               maxLength: 10,
             },
+            listeners: {
+              'input': (val) => {
+                this.formData.code = val.toUpperCase();
+              },
+            },
           },
           {
             type: 'select',
             formItem: {
               prop: 'type',
               label: '原纸类型',
-              rules: [{required: true, message: '请选择相应的原纸类型', trigger: 'change'}],
+              rules: [djForm.rules.required('请选择相应的原纸类型')],
             },
             attrs: {
               options: [{
@@ -130,8 +136,8 @@
               prop: 'kezhong',
               label: '克重',
               rules: [
-                {required: true, message: '克重不能为空', trigger: 'change'},
-                {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
+                djForm.rules.required('克重不能为空'),
+                {type: 'number', message: '只可输入数字', trigger: 'change'}
                 ],
             },
           },
@@ -141,7 +147,7 @@
               prop: 'menfu',
               label: '门幅',
               rules: [
-                {required: true, message: '门幅不能为空', trigger: 'change'},
+                djForm.rules.required('门幅不能为空'),
                 {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
                 ],
             },
@@ -151,7 +157,9 @@
             formItem: {
               prop: 'warehouseName',
               label: '仓库名称',
-              rules: [{required: true, message: '请选择相应的仓库名称', trigger: 'change'}],
+              rules: [
+                djForm.rules.required('请选择相应的仓库名称'),
+                ],
             },
             attrs: {
               options: [{
@@ -171,7 +179,9 @@
             formItem: {
               prop: 'warehouseAreaName',
               label: '库区名称',
-              rules: [{required: true, message: '请选择相应的库区名称', trigger: 'change'}],
+              rules: [
+                djForm.rules.required('请选择相应的库区名称'),
+                ],
             },
             attrs: {
               options: [{
@@ -186,7 +196,7 @@
               }],
             },
           },
-        ]),
+        ],
         pageOptions: {
           pageNo: 1,
           pageSize: 20,
@@ -236,16 +246,19 @@
         });
       },
       confirm(data) {
-        if (this.$refs.form.validate()) {
-          paperKindService.list(data).then((res) => {
-            this.close();
-            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-            this.$message(message, 'success');
-          });
-        }
+        this.$refs.form1.validate(valid=>{
+          if (valid) {
+            paperKindService.list(data).then((res) => {
+              this.close();
+              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+              this.$message(message, 'success');
+            });
+          }
+        });
       },
       close() {
         this.$refs.dialog.close();
+        this.$refs.form.resetFields();
       },
       pageChange(option) {
         this.pageOptions = option;

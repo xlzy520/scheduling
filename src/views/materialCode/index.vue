@@ -23,10 +23,18 @@
 
 <script>
   import materialCodeService from '../../api/service/materialCode';
+  import {djForm} from 'djweb'
 
   export default {
     name: 'materialCode',
     data() {
+      const validateCode = (rule, selectArr, callback) => {
+        if (selectArr.length === 10) {
+          callback(new Error('最多支持10个原纸组合!'));
+        } else {
+          callback();
+        }
+      };
       return {
         searchConfig: [
           {label: '用料代码：', key: 'code', type: 'input'},
@@ -63,46 +71,18 @@
         },
         formOptions: Object.freeze([
           {
-            type: 'input',
-            formItem: {
-              prop: 'num',
-              label: '用料编号',
-              rules: [
-                {required: true, message: '用料编号不能为空', trigger: 'change'},
-                {pattern: /^\w+$/g, message: '只可输入字母、数字'},
-              ],
-            },
-            attrs: {
-              maxLength: 5,
-            },
-            listeners: {
-              'input': (val) => {
-                this.formData.num = val.toUpperCase();
-              },
-            },
-          },
-          {
-            type: 'input',
+            type: 'select',
             formItem: {
               prop: 'code',
               label: '用料代码',
               rules: [
-                {required: true, message: '用料代码不能为空', trigger: 'change'},
-                {pattern: /^\w+$/g, message: '只可输入字母、数字'},
-              ],
+                djForm.rules.required('请选择相应的用料代码'),
+                { validator: validateCode, trigger: 'blur' }
+                ],
             },
             attrs: {
-              maxLength: 10,
-            },
-          },
-          {
-            type: 'select',
-            formItem: {
-              prop: 'type',
-              label: '用料类型',
-              rules: [{required: true, message: '请选择相应的用料类型', trigger: 'change'}],
-            },
-            attrs: {
+              key: 'multiple',
+              type: 'multiple',
               options: [{
                 label: '普通瓦楞',
                 value: 'chu',
@@ -121,63 +101,20 @@
           {
             type: 'input',
             formItem: {
-              prop: 'kezhong',
-              label: '克重',
+              prop: 'platformMaterialName',
+              label: '平台材料名称：',
               rules: [
-                {required: true, message: '克重不能为空', trigger: 'change'},
-                {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
+                djForm.rules.required('平台材料名称不能为空'),
+                {required: true, pattern: /[a-zA-Z]/g, message: '只可输入字母、数字', trigger: 'change'},
               ],
             },
-          },
-          {
-            type: 'input',
-            formItem: {
-              prop: 'menfu',
-              label: '门幅',
-              rules: [
-                {required: true, message: '门幅不能为空', trigger: 'change'},
-                {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
-              ],
-            },
-          },
-          {
-            type: 'select',
-            formItem: {
-              prop: 'warehouseName',
-              label: '仓库名称',
-              rules: [{required: true, message: '请选择相应的仓库名称', trigger: 'change'}],
-            },
             attrs: {
-              options: [{
-                label: '丽岙用料仓库1',
-                value: 'chu',
-              }, {
-                label: '丽岙用料仓库2',
-                value: 'gao',
-              }, {
-                label: '丽岙用料仓库3',
-                value: 'da',
-              }],
+              maxLength: 20,
             },
-          },
-          {
-            type: 'select',
-            formItem: {
-              prop: 'warehouseAreaName',
-              label: '库区名称',
-              rules: [{required: true, message: '请选择相应的库区名称', trigger: 'change'}],
-            },
-            attrs: {
-              options: [{
-                label: '用料1号仓库',
-                value: 'chu',
-              }, {
-                label: '用料2号仓库',
-                value: 'gao',
-              }, {
-                label: '用料3号仓库',
-                value: 'da',
-              }],
+            listeners: {
+              'input': (val) => {
+                this.formData.platformMaterialName = val.toUpperCase();
+              },
             },
           },
         ]),
@@ -230,16 +167,19 @@
         });
       },
       confirm(data) {
-        if (this.$refs.form.validate()) {
-          materialCodeService.list(data).then((res) => {
-            this.close();
-            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-            this.$message(message, 'success');
-          });
-        }
+        this.$refs.form.validate(valid=>{
+          if (valid) {
+            materialCodeService.list(data).then((res) => {
+              this.close();
+              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+              this.$message(message, 'success');
+            });
+          }
+        });
       },
       close() {
         this.$refs.dialog.close();
+        this.$refs.form.resetFields();
       },
       pageChange(option) {
         this.pageOptions = option;
