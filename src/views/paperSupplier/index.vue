@@ -1,5 +1,5 @@
 <template>
-  <div class="paper-kind">
+  <div class="paper-supplier">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <dj-table
       :data="tableData"
@@ -14,7 +14,7 @@
     </dj-table>
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸供应商': '编辑原纸供应商'">
-      <div class="paper-kind-dialog">
+      <div class="paper-supplier-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
       </div>
     </dj-dialog>
@@ -200,7 +200,7 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .paper-kind {
+  .paper-supplier {
     .search {
       position: relative;
       height: 150px;
@@ -215,7 +215,7 @@
     }
   }
 
-  .paper-kind-dialog {
+  .paper-supplier-dialog {
     width: 50vw;
     @{deep} .dj-form .el-form-item{
       width: 70%;

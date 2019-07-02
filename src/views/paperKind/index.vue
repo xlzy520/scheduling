@@ -283,7 +283,7 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .paper-kind {
-    .search {
+    .dj-search {
       position: relative;
       height: 150px;
       overflow: hidden;

@@ -1,5 +1,5 @@
 <template>
-  <div class="paper-kind">
+  <div class="material-code">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <dj-table
       :data="tableData"
@@ -14,7 +14,7 @@
     </dj-table>
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
-      <div class="paper-kind-dialog">
+      <div class="material-code-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
       </div>
     </dj-dialog>
@@ -203,14 +203,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .paper-kind {
-    .search {
-      position: relative;
-      height: 150px;
-      overflow: hidden;
-    }
-  }
-
   @{deep} .operation {
     a {
       margin-right: 15px;
@@ -218,7 +210,7 @@
     }
   }
 
-  .paper-kind-dialog {
+  .material-code-dialog {
     width: 50vw;
       @{deep} .dj-form .el-form-item{
         width: 70%;
