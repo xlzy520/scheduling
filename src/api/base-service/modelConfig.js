@@ -4,4 +4,5 @@ module.exports = [
   {name: 'paperKind', url: '/paperKind'},
   {name: 'materialCode', url: '/materialCode'},
   {name: 'paperSupplier', url: '/paperSupplier'},
+  {name: 'productionLineTrimmingSettings', url: '/productionLineTrimmingSettings'},
 ];

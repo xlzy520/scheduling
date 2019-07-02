@@ -44,4 +44,18 @@ export default [
       },
     ],
   },
+  {
+    path: 'productionLineTrimmingSettings',
+    redirect: 'productionLineTrimmingSettings/index',
+    meta: {
+      title: '生产线修边设置',
+    },
+    children: [
+      {
+        path: 'index',
+        //组件路径
+        component: 'views/productionLineTrimmingSettings/index',
+      },
+    ],
+  },
 ];
