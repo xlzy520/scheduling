@@ -4,7 +4,7 @@
     <dj-table
       :data="tableData"
       :columns="tableColumns"
-      :column-type="['index']"
+      :column-type="['prodLineTrim']"
       :total="pageTotal"
       @update-data="pageChange"
     >
@@ -17,8 +17,8 @@
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}">
         <dj-form  v-for="(formOption, index) in formOptions"
                   :key="formOption[0].formItem.prop"
-                  :ref="'form'+index"
-                  :form-data="formData[index]"
+                  :ref="'form'+prodLineTrim"
+                  :form-data="formData[prodLineTrim]"
                   :form-options="formOption"
                   :inline="dialogTypeIsAdd"></dj-form>
         <div class="plts-dialog-aside" v-if="dialogTypeIsAdd">
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import productionLineTrimmingSettingsService from '../../../api/service/productionLineTrimmingSettings';
+  import productionLineTrimmingSettingsService from '../../api/service/productionLineTrimmingSettings';
   import {djForm} from 'djweb';
   const baseOption = [
     {

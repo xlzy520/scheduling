@@ -2,7 +2,8 @@
  * 存放权限路由
  */
 import loopRoutes from './loopRoutes';
-import modules_routes from './modules/index';
+import baseSetting from './modules/baseSetting';
+import prodManage from './modules/prodManage';
 
 const index = {
   path: 'index',
@@ -20,7 +21,8 @@ const routes = [
     component: 'components/layout/layout',
     children: [
       index,
-      ...modules_routes
+      baseSetting,
+      prodManage
     ]
   }
 ].map(route => {

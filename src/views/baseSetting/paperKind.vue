@@ -4,7 +4,7 @@
     <dj-table
       :data="tableData"
       :columns="tableColumns"
-      :column-type="['index']"
+      :column-type="['prodLineTrim']"
       :total="pageTotal"
       @update-data="pageChange"
     >
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import paperKindService from '../../../api/service/paperKind';
+  import paperKindService from '../../api/service/paperKind';
   import {djForm} from 'djweb';
 
   export default {
