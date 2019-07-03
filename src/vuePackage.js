@@ -2,10 +2,10 @@ import Vue from 'vue';
 import ELEMENT from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 // 引入公司组件、方法库
-import djweb, {httpPolicy, listenerPolicy} from 'djweb';
+import djweb, {httpPolicy, listenerPolicy, methods} from 'djweb';
 import 'djweb/package/baseCss/index.less';
 import filters from './filters';
-import {methods, regs, enumMap} from './utils';
+import { regs, enumMap} from './utils';
 import './assets/css/index.less';
 // Date.prototype.toJSON = function () { //用于解决JSON.stringify转换JSON时日期时间不准确的问题，在search组件中有影响
 //   return timeFormat(this, 'yyyy-MM-dd HH:mm:ss');
