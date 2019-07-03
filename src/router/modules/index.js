@@ -12,7 +12,7 @@ export default [
           title: '原纸品种',
         },
         //组件路径
-        component: 'views/paperKind/index',
+        component: 'views/baseSettings/paperKind/index',
       },
     ],
   },
@@ -26,7 +26,7 @@ export default [
       {
         path: 'index',
         //组件路径
-        component: 'views/materialCode/index',
+        component: 'views/baseSettings/materialCode/index',
       },
     ],
   },
@@ -40,7 +40,7 @@ export default [
       {
         path: 'index',
         //组件路径
-        component: 'views/paperSupplier/index',
+        component: 'views/baseSettings/paperSupplier/index',
       },
     ],
   },
@@ -54,7 +54,7 @@ export default [
       {
         path: 'index',
         //组件路径
-        component: 'views/productionLineTrimmingSettings/index',
+        component: 'views/baseSettings/productionLineTrimmingSettings/index',
       },
     ],
   },
@@ -68,7 +68,7 @@ export default [
       {
         path: 'index',
         //组件路径
-        component: 'views/customerPackageQuantitySetting/index',
+        component: 'views/baseSettings/customerPackageQuantitySetting/index',
       },
     ],
   },

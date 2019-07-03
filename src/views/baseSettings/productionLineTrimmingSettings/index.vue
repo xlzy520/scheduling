@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import productionLineTrimmingSettingsService from '../../api/service/productionLineTrimmingSettings';
+  import productionLineTrimmingSettingsService from '../../../api/service/productionLineTrimmingSettings';
   import {djForm} from 'djweb';
   const baseOption = [
     {

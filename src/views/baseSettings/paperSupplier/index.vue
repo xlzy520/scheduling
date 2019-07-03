@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import paperSupplierService from '../../api/service/paperSupplier';
+  import paperSupplierService from '../../../api/service/paperSupplier';
   import {djForm} from 'djweb';
 
   export default {
