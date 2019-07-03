@@ -1,5 +1,5 @@
 <template>
-  <div class="table-page paper-kind">
+  <div class="cpqs">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <dj-table
       :data="tableData"
@@ -14,7 +14,7 @@
     </dj-table>
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
-      <div class="paper-kind-dialog">
+      <div class="cpqs-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
       </div>
     </dj-dialog>
@@ -289,7 +289,7 @@
     }
   }
 
-  .paper-kind-dialog {
+  .cpqs-dialog {
     width: 50vw;
   }
 </style>

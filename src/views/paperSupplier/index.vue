@@ -200,14 +200,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .paper-supplier {
-    .search {
-      position: relative;
-      height: 150px;
-      overflow: hidden;
-    }
-  }
-
   @{deep} .operation {
     a {
       margin-right: 15px;

@@ -58,4 +58,18 @@ export default [
       },
     ],
   },
+  {
+    path: 'customerPackageQuantitySetting',
+    redirect: 'customerPackageQuantitySetting/index',
+    meta: {
+      title: '客户打包数量设置',
+    },
+    children: [
+      {
+        path: 'index',
+        //组件路径
+        component: 'views/customerPackageQuantitySetting/index',
+      },
+    ],
+  },
 ];

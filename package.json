@@ -5,7 +5,8 @@
   "author": "",
   "private": true,
   "scripts": {
-    "start": "node auto/download.js && vue-cli-service serve",
+   "start1": "node auto/download.js && vue-cli-service serve",
+    "start": "vue-cli-service serve",
     "build": "node auto/download.js && vue-cli-service build",
     "lint": "dj lint",
     "lint:js": "eslint --ext .js,.vue src test/unit test/e2e/specs",
