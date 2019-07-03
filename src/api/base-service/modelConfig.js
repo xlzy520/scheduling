@@ -7,4 +7,5 @@ module.exports = [
   {name: 'productionLineTrimmingSettings', url: '/productionLineTrimmingSettings'},
   {name: 'customerPackageQuantitySetting', url: '/customerPackageQuantitySetting'},
   {name: 'ruleCustomize', url: '/ruleCustomize'},
+  {name: 'productionLine', url: '/productionLine'},
 ];

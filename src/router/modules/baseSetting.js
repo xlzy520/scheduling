@@ -47,6 +47,13 @@ export default {
       },
       component: 'views/baseSetting/ruleCustomize'
     },
+    {
+      path: 'productionLine',
+      meta: {
+        title: '生产线设置',
+      },
+      component: 'views/baseSetting/productionLine'
+    },
   ],
 };
 
