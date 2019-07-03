@@ -40,6 +40,13 @@ export default {
       },
       component: 'views/baseSetting/customerPackageQuantity'
     },
+    {
+      path: 'ruleCustomize',
+      meta: {
+        title: '规则自定义',
+      },
+      component: 'views/baseSetting/ruleCustomize'
+    },
   ],
 };
 
