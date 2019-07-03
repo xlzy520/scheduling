@@ -160,7 +160,7 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.formData = row;
+        this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
@@ -172,14 +172,12 @@
         });
       },
       confirm(data) {
-        this.$refs.form.validate(valid=>{
-          if (valid) {
-            paperSupplierService.list(data).then((res) => {
-              this.close();
-              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-              this.$message(message, 'success');
-            });
-          }
+        this.$refs.form.validate(()=>{
+          paperSupplierService.list(data).then((res) => {
+            this.close();
+            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+            this.$message(message, 'success');
+          });
         });
       },
       close() {

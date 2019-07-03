@@ -262,7 +262,7 @@
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
         this.formOptions = [baseOption];
-        this.formData = [row];
+        this.formData = [this.$method.deepClone(row)];
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
