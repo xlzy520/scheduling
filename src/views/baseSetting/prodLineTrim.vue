@@ -4,7 +4,7 @@
     <dj-table
       :data="tableData"
       :columns="tableColumns"
-      :column-type="['prodLineTrim']"
+      :column-type="['index']"
       :total="pageTotal"
       @update-data="pageChange"
     >
