@@ -17,8 +17,8 @@
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}">
         <dj-form  v-for="(formOption, index) in formOptions"
                   :key="formOption[0].formItem.prop"
-                  :ref="'form'+prodLineTrim"
-                  :form-data="formData[prodLineTrim]"
+                  :ref="'form'+index"
+                  :form-data="formData[index]"
                   :form-options="formOption"
                   :inline="dialogTypeIsAdd"></dj-form>
         <div class="plts-dialog-aside" v-if="dialogTypeIsAdd">
