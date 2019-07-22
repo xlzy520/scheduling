@@ -15,7 +15,8 @@
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
       <div class="paper-kind-dialog">
-        <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
+        <dj-form ref="form" :form-data="formData" :form-options="formOptions"
+                 :column-num="2" :col-rule="()=>12"></dj-form>
       </div>
     </dj-dialog>
   </div>
@@ -35,7 +36,7 @@
           {label: '门幅：', key: 'menfu', type: 'input', attrs: {type: 'number'}},
         ],
         tableData: [],
-        tableColumns: Object.freeze([
+        tableColumns: [
           {label: '原纸编号', prop: 'num'},
           {label: '原纸代码', prop: 'code'},
           {label: '原纸类型', prop: 'type'},
@@ -58,7 +59,7 @@
               );
             },
           },
-        ]),
+        ],
         formData: {
           num: '',
           code: '',
@@ -117,16 +118,16 @@
             attrs: {
               options: [{
                 label: '普通瓦楞',
-                value: 'chu',
+                value: '1',
               }, {
                 label: '高强瓦楞',
-                value: 'gao',
+                value: '2',
               }, {
                 label: '牛卡',
-                value: 'da',
+                value: '3',
               }, {
                 label: '再生',
-                value: 'daa',
+                value: '4',
               }],
             },
           },
@@ -217,7 +218,7 @@
       getTableData(data) {
         paperKindService.list(data).then((res) => {
           this.tableData = res.list;
-          this.pageTotal = 100
+          this.pageTotal = 100;
         });
       },
       changeStatus(row) {

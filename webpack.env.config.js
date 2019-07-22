@@ -30,6 +30,7 @@ const production = {
 };
 const development = {
   configureWebpack: config => {
+
     config.externals = {
       'vue': 'Vue',
       "element-ui": "ELEMENT",
