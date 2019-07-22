@@ -15,6 +15,13 @@
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
       <div class="material-code-dialog">
+        <div class="optional">
+          <div class="optional-label">可选原纸</div>
+          <div class="optional-area" @click="selectPaper($event)">
+            <div class="optional-area-item" :class="formData.code.includes(code.label)?'selected': ''"
+                 v-for="code in optionalPaper" :key="code.label">{{code.label}}</div>
+          </div>
+        </div>
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
       </div>
     </dj-dialog>
@@ -61,15 +68,10 @@
           },
         ]),
         formData: {
-          num: '',
-          code: '',
-          type: '',
-          kezhong: '',
-          menfu: '',
-          warehouseName: '',
-          warehouseAreaName: '',
+          code: [],
+          platformMaterialName: '',
         },
-        formOptions: Object.freeze([
+        formOptions: [
           {
             type: 'select',
             formItem: {
@@ -81,6 +83,7 @@
                 ],
             },
             attrs: {
+              class: 'code',
               key: 'multiple',
               type: 'multiple',
               options: [{
@@ -105,7 +108,7 @@
               label: '平台材料名称：',
               rules: [
                 djForm.rules.required('平台材料名称不能为空'),
-                {required: true, pattern: /[a-zA-Z]/g, message: '只可输入字母、数字', trigger: 'change'},
+                {required: true, pattern: /[a-zA-Z0-9]/g, message: '只可输入字母、数字', trigger: 'blur'},
               ],
             },
             attrs: {
@@ -117,7 +120,8 @@
               },
             },
           },
-        ]),
+        ],
+        optionalPaper: [],
         pageOptions: {
           pageNo: 1,
           pageSize: 20,
@@ -128,6 +132,12 @@
       };
     },
     methods: {
+      selectPaper(evt) {
+        const { innerText: text, className } = evt.target;
+        if (text && className === 'optional-area-item') {
+          this.formData.code.push(text);
+        }
+      },
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
@@ -141,7 +151,6 @@
         });
       },
       changeStatus(row) {
-        // 接口
         if (row.status) {
           this.$confirm('您确定禁用该条内容吗？', '', {
             type: 'warning',
@@ -173,9 +182,9 @@
           ...this.pageOptions,
         });
       },
-      confirm(data) {
+      confirm() {
         this.$refs.form.validate(()=>{
-          materialCodeService.list(data).then((res) => {
+          materialCodeService.list(this.formData).then((res) => {
             this.close();
             const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');
@@ -191,7 +200,14 @@
         this.pageOptions = option;
         this.$refs.search.search();
       },
-
+    },
+    mounted() {
+      let mock = [];
+      for (let i = 0; i < 20; i++) {
+        mock.push({label: 'DJ88' + String(i), value: 'DJ88' + String(i)});
+      }
+      this.optionalPaper = mock;
+      this.$set(this.formOptions[0].attrs, 'options', mock);
     },
     created() {
       this.getTableData();
@@ -210,8 +226,64 @@
 
   .material-code-dialog {
     width: 50vw;
-      @{deep} .dj-form .el-form-item{
-        width: 70%;
+    @{deep} .dj-form .el-form-item{
+      .el-form-item__label{
+        float: unset;
       }
+      .el-select.code{
+        pointer-events: none;
+      }
+      .el-form-item__content{
+        width: 100%;
+        margin-left: 0!important;
+      }
+      .el-input__suffix{
+        display: none;
+      }
+      .el-select__tags .el-tag{
+        pointer-events: visible;
+      }
+    }
+    @{deep} .optional{
+      width: 100%;
+      min-height: 120px;
+      margin-bottom: 20px;
+      &-label{
+        font-size: 14px;
+        color: #606266;
+        line-height: 34px;
+        padding: 0 12px 0 0;
+        margin: 0;
+      }
+      &-area{
+        width: 100%;
+        min-height: 80px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        &-item{
+          text-align: center;
+          font-size: 16px;
+          min-width: 60px;
+          height: 24px;
+          line-height: 24px;
+          padding: 5px 10px;
+          margin: 5px;
+          color: #747579;
+          background: #f1f2f6;
+          border-radius: 5px;
+          cursor: pointer;
+          user-select: none;
+          &.selected{
+            pointer-events: none;
+            cursor: not-allowed;
+            color: #45464a;
+            background: #c2c3c7;
+          }
+        }
+      }
+    }
   }
 </style>
