@@ -15,7 +15,8 @@
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸供应商': '编辑原纸供应商'">
       <div class="paper-supplier-dialog">
-        <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
+        <dj-form ref="form" :form-data="formData" labelWidth="120px"
+                 :form-options="formOptions" :column-num="2"></dj-form>
       </div>
     </dj-dialog>
   </div>
@@ -34,7 +35,7 @@
           {label: '供应商名称：', key: 'name', type: 'input'},
         ],
         tableData: [],
-        tableColumns: Object.freeze([
+        tableColumns: [
           {label: '供应商编号', prop: 'num'},
           {label: '供应商名称', prop: 'name'},
           {label: '地址', prop: 'address', width: 200},
@@ -52,7 +53,7 @@
               );
             },
           },
-        ]),
+        ],
         formData: {
           num: '',
           name: '',
@@ -79,7 +80,7 @@
               label: '供应商编号:',
               rules: [
                 djForm.rules.required('供应商编号不能为空'),
-                {pattern: /^\w+$/g, message: '只可输入数字、字符'},
+                {pattern: /[a-zA-Z0-9]/g, message: '只可输入数字、字母'},
               ],
             },
             attrs: {
@@ -94,26 +95,13 @@
               label: '供应商名称:',
               rules: [
                 djForm.rules.required('供应商名称不能为空'),
-                {pattern: /^\w+$/g, message: '只可输入数字、字符、汉字'},
+                {pattern: /[a-zA-Z0-9\u4e00-\u9fa5]/g, message: '只可输入数字、字母、汉字'},
               ],
             },
             attrs: {
               maxLength: 60,
               disabled: !this.dialogTypeIsAdd
             }
-          },
-          {
-            type: 'input',
-            formItem: {
-              prop: 'address',
-              label: '地址:',
-              rules: [
-                {pattern: /^\w+$/g, message: '只可输入数字、字符、汉字'},
-              ],
-            },
-            attrs: {
-              maxLength: 200,
-            },
           },
           {
             type: 'input',
@@ -134,11 +122,24 @@
               prop: 'legalRepresentative',
               label: '法人代表:',
               rules: [
-                {pattern: /^\w+$/g, message: '只可输入汉字', trigger: 'change'}
+                {pattern: /[\u4e00-\u9fa5]/g, message: '只可输入汉字', trigger: 'change'}
               ],
             },
             attrs: {
               maxLength: 30,
+            },
+          },
+          {
+            type: 'input',
+            formItem: {
+              prop: 'address',
+              label: '地址:',
+              rules: [
+                {pattern: /[a-zA-Z0-9\u4e00-\u9fa5]/g, message: '只可输入数字、字母、汉字'},
+              ],
+            },
+            attrs: {
+              maxLength: 200,
             },
           },
         ];
@@ -171,9 +172,9 @@
           ...this.pageOptions,
         });
       },
-      confirm(data) {
+      confirm() {
         this.$refs.form.validate(()=>{
-          paperSupplierService.list(data).then((res) => {
+          paperSupplierService.list(this.formData).then((res) => {
             this.close();
             const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');
@@ -206,9 +207,11 @@
   }
 
   .paper-supplier-dialog {
-    width: 50vw;
+    width: 60vw;
     @{deep} .dj-form .el-form-item{
-      width: 70%;
+      .el-form-item__content{
+        width: auto;
+      }
     }
   }
 </style>
