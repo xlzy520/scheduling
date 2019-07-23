@@ -25,7 +25,13 @@
 <script>
   import paperSupplierService from '../../api/service/paperSupplier';
   import {djForm} from 'djweb';
-
+  const initFormData = {
+    num: '',
+    name: '',
+    address: '',
+    code: '',
+    legalRepresentative: ''
+  };
   export default {
     name: 'paperSupplier',
     data() {
@@ -54,13 +60,7 @@
             },
           },
         ],
-        formData: {
-          num: '',
-          name: '',
-          address: '',
-          code: '',
-          legalRepresentative: ''
-        },
+        formData: initFormData,
         pageOptions: {
           pageNo: 1,
           pageSize: 20,
@@ -185,6 +185,7 @@
         this.$refs.dialog.close();
         this.dialogVisible = false;
         this.$refs.form.resetFields();
+        this.formData = initFormData;
       },
       pageChange(option) {
         this.pageOptions = option;
@@ -208,6 +209,7 @@
 
   .paper-supplier-dialog {
     width: 60vw;
+    padding-top: 20px;
     @{deep} .dj-form .el-form-item{
       .el-form-item__content{
         width: auto;

@@ -25,7 +25,15 @@
 <script>
   import paperKindService from '../../api/service/paperKind';
   import {djForm} from 'djweb';
-
+  const initFormData = {
+    num: '',
+    code: '',
+    type: '',
+    kezhong: '',
+    menfu: '',
+    warehouseName: '',
+    warehouseAreaName: '',
+  };
   export default {
     name: 'paperKind',
     data() {
@@ -60,15 +68,7 @@
             },
           },
         ],
-        formData: {
-          num: '',
-          code: '',
-          type: '',
-          kezhong: '',
-          menfu: '',
-          warehouseName: '',
-          warehouseAreaName: '',
-        },
+        formData: initFormData,
         formOptions: [
           {
             type: 'input',
@@ -264,9 +264,10 @@
         });
       },
       close() {
+        this.$refs.form.resetFields();
         this.$refs.dialog.close();
         this.dialogVisible = false;
-        this.$refs.form.resetFields();
+        this.formData = initFormData;
       },
       pageChange(option) {
         this.pageOptions = option;
@@ -291,5 +292,6 @@
 
   .paper-kind-dialog {
     width: 50vw;
+    padding-top: 20px;
   }
 </style>

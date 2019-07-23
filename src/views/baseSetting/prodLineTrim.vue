@@ -165,6 +165,7 @@
         }
       },
       add() {
+        console.log(this.formOptions);
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
         this.$nextTick(()=>{
@@ -215,7 +216,7 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.formOptions = [baseOption.splice(0, 3)];
+        this.formOptions = [this.$method.deepClone(baseOption).splice(0, 3)];
         this.formData = [this.$method.deepClone(row)];
         this.$nextTick(()=>{
           this.$refs.dialog.open();
@@ -243,6 +244,7 @@
         }
       },
       close() {
+        // this.$refs.form.resetFields();
         this.$refs.dialog.close();
         this.dialogVisible = false;
         this.formReset();
@@ -269,6 +271,7 @@
 
   .plts-dialog {
     width: 70vw;
+    padding-top: 20px;
     &.edit{
       width: 40vw;
       @{deep} .el-col-delete{

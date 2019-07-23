@@ -195,6 +195,10 @@
         this.$refs.dialog.close();
         this.dialogVisible = false;
         this.$refs.form.resetFields();
+        this.formData = {
+          code: [],
+          platformMaterialName: '',
+        };
       },
       pageChange(option) {
         this.pageOptions = option;
@@ -226,6 +230,7 @@
 
   .material-code-dialog {
     width: 50vw;
+    padding-top: 20px;
     @{deep} .dj-form .el-form-item{
       .el-form-item__label{
         float: unset;
