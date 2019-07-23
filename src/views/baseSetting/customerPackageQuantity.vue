@@ -44,15 +44,13 @@
           {label: '瓦楞楞型', prop: 'lengxing', formatter: row=> row.layer + row.lengxing},
           {label: '打包数量', prop: 'amount'},
           {label: '操作人', prop: 'man'},
-          {label: '操作时间', prop: 'time'},
-          {label: '启用状态', prop: 'status', formatter: row => row.status ? '启用' : '禁用'},
+          {label: '操作时间', prop: 'time', width: 150},
           {
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
               return (
                 <div class="operation">
-                  <a onClick={() => this.changeStatus(row)}>
-                    {row.status ? '禁用' : '启用'}</a>
+                  <a onClick={() => this.deleteRow(row)}>删除</a>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
@@ -346,24 +344,18 @@
           this.tableData = res.list;
         });
       },
-      changeStatus(row) {
-        // 接口
-        if (row.status) {
-          this.$confirm('您确定禁用该条内容吗？', '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
-            cpqsService.list().then((res) => {
-              this.$message('禁用成功', 'success');
-              row.status = !row.status;
-            });
+      deleteRow(row) {
+        this.$confirm('您确定删除该条内容？', '', {
+          type: 'warning',
+          showClose: false,
+        }).then(() => {
+          cpqsService.list({
+            id: row.id
+          }).then((res) => {
+            this.$message('禁用成功', 'success');
+            this.getTableData();
           });
-        } else {
-          cpqsService.list().then((res) => {
-            this.$message('启用成功', 'success');
-            row.status = !row.status;
-          });
-        }
+        });
       },
       edit(row) {
         this.dialogVisible = true;
@@ -380,9 +372,9 @@
           ...this.pageOptions,
         });
       },
-      confirm(data) {
+      confirm() {
         this.$refs.form.validate(()=>{
-          cpqsService.list(data).then((res) => {
+          cpqsService.list(this.formData).then((res) => {
             this.close();
             const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');
@@ -392,7 +384,12 @@
       close() {
         this.$refs.dialog.close();
         this.dialogVisible = false;
-        this.$refs.form.resetFields();
+        this.formData = {
+          name: '',
+          code: '',
+          lengxing: '',
+          amount: '',
+        };
       },
       pageChange(option) {
         this.pageOptions = option;
@@ -417,5 +414,6 @@
 
   .cpqs-dialog {
     width: 50vw;
+    padding-top: 20px;
   }
 </style>
