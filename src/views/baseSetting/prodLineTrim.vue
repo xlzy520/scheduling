@@ -18,11 +18,14 @@
         <dj-form  v-for="(formOption, index) in formOptions"
                   :key="formOption[0].formItem.prop"
                   :ref="'form'+index"
+                  labelWidth="70px"
+                  :column-num="dialogTypeIsAdd?4: 1"
+                  @click.native="()=>deleteCurRow($event, index)"
+                  :col-rule="(item,ruleIndex)=>colRule(item,ruleIndex)"
                   :form-data="formData[index]"
-                  :form-options="formOption"
-                  :inline="dialogTypeIsAdd"></dj-form>
+                  :form-options="formOption"></dj-form>
         <div class="plts-dialog-aside" v-if="dialogTypeIsAdd">
-          <a @click.prevent="addLayer">+添加层数修边</a>
+          <el-button type="primary" @click.prevent="addLayer">+添加层数修边</el-button>
         </div>
       </div>
     </dj-dialog>
@@ -32,6 +35,14 @@
 <script>
   import productionLineTrimmingSettingsService from '../../api/service/productionLineTrimmingSettings';
   import {djForm} from 'djweb';
+  const cengshuOption = [
+      {label: '二层', value: '2'},
+      {label: '三层', value: '3'},
+      {label: '四层', value: '4'},
+      {label: '五层', value: '5'},
+      {label: '六层', value: '6'},
+      {label: '七层', value: '7'},
+      ];
   const baseOption = [
     {
       type: 'select',
@@ -41,19 +52,7 @@
         rules: [djForm.rules.required('请选择相应的生产线')],
       },
       attrs: {
-        options: [{
-          label: '一层',
-          value: 'chu',
-        }, {
-          label: '二层',
-          value: 'gao',
-        }, {
-          label: '三层',
-          value: 'da',
-        }, {
-          label: '四层',
-          value: 'daa',
-        }],
+        options: cengshuOption,
       },
     },
     {
@@ -66,19 +65,7 @@
         ],
       },
       attrs: {
-        options: [{
-          label: '一层',
-          value: 'chu',
-        }, {
-          label: '二层',
-          value: 'gao',
-        }, {
-          label: '三层',
-          value: 'da',
-        }, {
-          label: '四层',
-          value: 'daa',
-        }],
+        options: cengshuOption,
       },
     },
     {
@@ -87,23 +74,34 @@
         prop: 'trimming',
         label: '修边:',
         rules: [
-          {type: 'number', message: '只可输入数字', trigger: 'change'},
-          {type: 'number', max: 9999, message: '不能超过9999', trigger: 'change'},
+          // {type: 'number', message: '只可输入数字', trigger: 'change'},
+          // {type: 'number', max: 9999, message: '不能超过9999', trigger: 'change'},
           djForm.rules.required('修边不能为空'),
         ],
       },
       attrs: {
-        type: 'number'
+        // type: 'number'
       },
     },
+    {
+      type: 'i',
+      formItem: {
+        prop: '',
+        label: '',
+      },
+      attrs: {
+        class: 'el-icon-delete'
+      }
+    }
   ];
   export default {
     name: 'productionLineTrimmingSettings',
     data() {
       return {
+
         searchConfig: [
           {label: '生产线：', key: 'line', type: 'input'},
-          {label: '层数：', key: 'layer', type: 'input'},
+          {label: '层数：', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
           {label: '修边：', key: 'trimming', type: 'input', attrs: {type: 'number'}},
         ],
         tableData: [],
@@ -133,71 +131,7 @@
           trimming: ''
         }],
         formOptions: [
-          [
-            {
-              type: 'select',
-              formItem: {
-                prop: 'line',
-                label: '生产线:',
-                rules: [djForm.rules.required('请选择相应的生产线')],
-              },
-              attrs: {
-                options: [{
-                  label: '一层',
-                  value: 'chu',
-                }, {
-                  label: '二层',
-                  value: 'gao',
-                }, {
-                  label: '三层',
-                  value: 'da',
-                }, {
-                  label: '四层',
-                  value: 'daa',
-                }],
-              },
-            },
-            {
-              type: 'select',
-              formItem: {
-                prop: 'layer',
-                label: '层数:',
-                rules: [
-                  djForm.rules.required('请选择相应的层数'),
-                ],
-              },
-              attrs: {
-                options: [{
-                  label: '一层',
-                  value: 'chu',
-                }, {
-                  label: '二层',
-                  value: 'gao',
-                }, {
-                  label: '三层',
-                  value: 'da',
-                }, {
-                  label: '四层',
-                  value: 'daa',
-                }],
-              },
-            },
-            {
-              type: 'input',
-              formItem: {
-                prop: 'trimming',
-                label: '修边:',
-                rules: [
-                  {type: 'number', message: '只可输入数字', trigger: 'change'},
-                  {type: 'number', max: 9999, message: '不能超过9999', trigger: 'change'},
-                  djForm.rules.required('修边不能为空'),
-                ],
-              },
-              attrs: {
-                type: 'number'
-              },
-            },
-          ],
+          baseOption
         ],
         pageOptions: {
           pageNo: 1,
@@ -206,10 +140,30 @@
         pageTotal: 100,
         dialogTypeIsAdd: null,
         dialogVisible: false,
-        addLayerNum: 1
+        addLayerNum: 1,
+        layerIndex: 0
       };
     },
     methods: {
+      deleteCurRow(evt, index) {
+        if (evt.target.className === 'el-icon-delete') {
+          this.formOptions.splice(index, 1);
+          this.formData.splice(index, 1);
+        }
+      },
+      colRule(item, index) {
+        if (this.dialogTypeIsAdd) {
+          if (index < 2) {
+            return 8;
+          }
+          if (index === 3) {
+            return 'delete';
+          }
+          return 7;
+        } else {
+          return '';
+        }
+      },
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
@@ -261,7 +215,7 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.formOptions = [baseOption];
+        this.formOptions = [baseOption.splice(0, 3)];
         this.formData = [this.$method.deepClone(row)];
         this.$nextTick(()=>{
           this.$refs.dialog.open();
@@ -273,17 +227,15 @@
           ...this.pageOptions,
         });
       },
-      confirm(data) {
-        let allValid = true;
+      confirm() {
+        let allValid = 0;
         for (let i = 0; i < this.addLayerNum; i++) {
-          this.$refs['form' + i][0].validate(valid=>{
-            if (!valid) {
-              allValid = false;
-            }
+          this.$refs['form' + i][0].validate(()=>{
+            allValid += 1;
           });
         }
-        if (!allValid) {
-          productionLineTrimmingSettingsService.list(data).then((res) => {
+        if (allValid === this.addLayerNum) {
+          productionLineTrimmingSettingsService.list(this.formData).then((res) => {
             this.close();
             const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');
@@ -309,9 +261,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} a{
-    cursor: pointer;
-  }
   @{deep} .operation {
     a {
       margin-right: 15px;
@@ -321,10 +270,19 @@
   .plts-dialog {
     width: 70vw;
     &.edit{
-      width: 30vw;
+      width: 40vw;
+      @{deep} .el-col-delete{
+        .el-form-item__content{
+          display: none;
+        }
+      }
     }
-    @{deep} .dj-form .el-form-item{
-      width: auto;
+    @{deep} .dj-form .el-col-delete{
+      .el-form-item__content{
+        width: 30px;
+        cursor: pointer;
+        margin-left: unset!important;
+      }
     }
   }
 </style>
