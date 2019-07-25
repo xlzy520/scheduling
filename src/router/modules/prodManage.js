@@ -11,7 +11,7 @@ export default {
         title: '订单管理',
       },
       //组件路径
-      // component: 'views/prodManage/orderManage',
+      component: 'views/prodManage/orderManage',
     },
     {
       path: 'plannedMerger',
