@@ -1,6 +1,6 @@
 const baseConfig = {
-  service_ip: 'http://192.168.23.10:9001',
-  proxyRouter: ['/djproject'],
+  service_ip: 'http://192.168.23.10:9011',
+  proxyRouter: ['/djsupplier'],
 };
 
 const webpackConfig = require('./webpack.env.config');
