@@ -4,6 +4,7 @@
 import loopRoutes from './loopRoutes';
 import baseSetting from './modules/baseSetting';
 import prodManage from './modules/prodManage';
+import paperStockManage from './modules/paperStockManage';
 
 const index = {
   path: 'index',
@@ -22,7 +23,8 @@ const routes = [
     children: [
       index,
       baseSetting,
-      prodManage
+      prodManage,
+      paperStockManage
     ]
   }
 ].map(route => {
