@@ -1,6 +1,5 @@
 export default {
   path: 'prodManage',
-  redirect: 'prodManage/orderManage',
   meta: {
     title: '生产管理',
   },

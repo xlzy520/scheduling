@@ -1,6 +1,5 @@
 export default {
   path: 'baseSetting',
-  redirect: 'baseSetting/paperKind',
   meta: {
     title: '基础设置',
   },
