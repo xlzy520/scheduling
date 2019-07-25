@@ -24,14 +24,10 @@
 </template>
 
 <script>
-import tagsView from './tagsView';
 import { mapGetters } from 'vuex';
 
 export default {
   name: 'layout',
-  components: {
-    tagsView,
-  },
   data() {
     return {
       isShow: true
@@ -55,10 +51,10 @@ export default {
     }
   },
   destroyed() {
-    window.observer.remove('refresh');
+    window.subject.remove('refresh');
   },
   mounted() {
-    window.observer.on('refresh', this.refresh);
+    window.subject.listen('refresh', this.refresh);
   }
 };
 </script>

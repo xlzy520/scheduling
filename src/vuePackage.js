@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import ELEMENT from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
 // 引入公司组件、方法库
 import djweb, {httpPolicy, listenerPolicy, methods} from 'djweb';
 import 'djweb/package/baseCss/index.less';

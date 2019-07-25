@@ -1,5 +1,4 @@
-const { getSessionItem, setSessionItem } = require('@/utils/methods.js').default;
-
+const { getSessionItem, setSessionItem } = require('djweb').methods;
 const tagsView = {
   state: {
     visitedViews: getSessionItem("visitedViews") || [],

@@ -16,8 +16,8 @@ module.exports = {
       return sum;
     }, {
       '/djcps_web': {
-        target: 'http://192.168.2.127:3000',
-        // target: 'http://192.168.23.10:3000',
+        // target: 'http://192.168.2.127:3000',
+        target: 'http://192.168.23.10:3000',
         changeOrigin: true,
       }
     }),
