@@ -15,8 +15,7 @@
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
       <div class="paper-kind-dialog">
-        <dj-form ref="form" :form-data="formData" :form-options="formOptions"
-                 :column-num="2" :col-rule="()=>12"></dj-form>
+        <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="2"></dj-form>
       </div>
     </dj-dialog>
   </div>
@@ -291,7 +290,6 @@
   }
 
   .paper-kind-dialog {
-    width: 50vw;
     padding-top: 20px;
   }
 </style>
