@@ -13,6 +13,13 @@ export default {
       component: 'views/baseSetting/paperKind'
     },
     {
+      path: 'paperCode',
+      meta: {
+        title: '原纸代码',
+      },
+      component: 'views/baseSetting/paperCode'
+    },
+    {
       path: 'materialCode',
       meta: {
         title: '用料代码',

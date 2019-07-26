@@ -2,6 +2,7 @@ module.exports = [
   {name: 'permission', url: '/permission'},
   {name: 'user', url: '/user'},
   {name: 'paperKind', url: '/paperKind'},
+  {name: 'paperCode', url: '/paperCode'},
   {name: 'materialCode', url: '/materialCode'},
   {name: 'paperSupplier', url: '/paperSupplier'},
   {name: 'productionLineTrimmingSettings', url: '/productionLineTrimmingSettings'},
