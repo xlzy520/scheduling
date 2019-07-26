@@ -276,6 +276,7 @@
             {required: true, message: '请填写片数', trigger: 'change'}
           ]
         },
+
         packFormData: {
           name: '',
           zhongliang: '',
@@ -422,6 +423,7 @@
             {required: true, message: '请填写打包数量', trigger: 'change'}
           ]
         },
+
         lengxingOptions: [
           {
             label: 'A',
@@ -461,9 +463,7 @@
           pianshu: [
             {required: true, message: '请填写片数', trigger: 'change'}
           ]
-        },
-
-
+        }
       };
     },
     methods: {
@@ -621,7 +621,14 @@
         });
       },
       closeSuoBian() {
-
+        this.$confirm('您确定关闭缩边吗？', '', {
+          type: 'warning',
+          showClose: false,
+        }).then(() => {
+          ruleCustomizeService.list().then((res) => {
+            this.$message('关闭成功', 'success');
+          });
+        });
       },
       search(data) {
         this.getTableData({
