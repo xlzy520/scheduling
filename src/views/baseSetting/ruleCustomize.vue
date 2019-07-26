@@ -7,7 +7,6 @@
       <div slot="btn">
         <el-button type="primary" @click="headerBtnAdd('stack')">新增叠单规则</el-button>
         <el-button type="primary" @click="headerBtnAdd('pack')">新增打包规则</el-button>
-        <el-button type="primary" @click="preset">预设生产线</el-button>
         <el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>
       </div>
     </dj-table>
@@ -19,7 +18,7 @@
         <div v-for="(condition, index) in stackConditionFormData" :key="condition.key" class="condition-item">
           <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
           <div class="child-condition-list">
-            <el-form :model="child" :rules="rules" ref="childConditionForm" v-for="(child, childIndex) in condition.child"
+            <el-form :model="child" :rules="stackRules" ref="childConditionForm" v-for="(child, childIndex) in condition.child"
                      :key="child.time" >
               <el-col :span="7" v-if="childIndex===0">
                 <el-form-item label="楞型" prop="lengxing">
@@ -58,30 +57,29 @@
                :title="dialogTypeIsAdd?'新增打包规则': '编辑打包规则'">
       <div class="rule-customize-dialog">
         <dj-form ref="form" :form-data="packFormData" :form-options="packFormOptions" :column-num="4"></dj-form>
-        <div v-for="(condition, index) in stackConditionFormData" :key="condition.key" class="condition-item">
+        <div v-for="(condition, index) in packConditionFormData" :key="condition.key" class="condition-item">
           <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
           <div class="child-condition-list">
-            <el-form :model="child" :rules="rules" ref="childConditionForm" v-for="(child, childIndex) in condition.child"
+            <el-form :model="child" :rules="packRules" ref="childConditionForm" v-for="(child, childIndex) in condition.child"
                      :key="child.time" >
               <el-col :span="7" v-if="childIndex===0">
-                <el-form-item label="楞型" prop="lengxing">
-                  <el-select v-model="child.lengxing">
-                    <el-option v-for="option in lengxingOptions"
+                <el-form-item label="层数" prop="cengshu">
+                  <el-select v-model="child.cengshu">
+                    <el-option v-for="option in cengshuOptions"
                                :label="option.label" :value="option.value"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="7">
-                <el-form-item label="切数" prop="qieshu">
-                  <el-select v-model="child.qieshu" multiple>
-                    <el-option v-for="option in qieshuOptions"
-                               :label="option.label" :value="option.value"></el-option>
-                  </el-select>
+                <el-form-item label="单位面积(m²)" prop="area" class="unit-area">
+                  <dj-input  type="float" key="area" v-model.number="child.area"></dj-input>
+                  <div>至</div>
+                  <dj-input v-model.number="child.area"></dj-input>
                 </el-form-item>
               </el-col>
               <el-col :span="7">
-                <el-form-item label="片数：" prop="pianshu">
-                  <el-input v-model="child.pianshu"></el-input>
+                <el-form-item label="打包数量" prop="quantity">
+                  <el-input v-model="child.quantity"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="3" class="button-col">
@@ -96,13 +94,38 @@
         <el-button type="primary" @click.prevent="addCondition">添加条件</el-button>
       </div>
     </dj-dialog>
+    <dj-dialog v-if="dialogType.includes('view')" ref="dialog" @close="close" @confirm="confirm"
+               :title="dialogType==='stack_view'?'查看打包规则': '查看叠单规则'">
+      <div class="rule-customize-dialog">
+        <div class="rule-view-header" v-if="dialogType==='stack_view'">
+          <div class="rule-view-header-label">最小订单数： {{viewData.left}}</div>
+          <div class="rule-view-header-label">最大堆叠单数： {{viewData.right}}</div>
+        </div>
+        <div class="rule-view-header" v-else>
+          <div class="rule-view-header-label">单批打包重量(Kg)： {{viewData.left}}</div>
+          <div class="rule-view-header-label">A楞型楞率： {{viewData.right}}</div>
+          <div class="rule-view-header-label">B楞型楞率： {{viewData.right}}</div>
+          <div class="rule-view-header-label">C楞型楞率： {{viewData.right}}</div>
+          <div class="rule-view-header-label">E楞型楞率： {{viewData.right}}</div>
+          <div class="rule-view-header-label">F楞型楞率： {{viewData.right}}</div>
+        </div>
+        <div class="rule-view-content">
+          <dj-table
+            border
+            :data="viewData.tableData"
+            :columns="viewTableColumns"
+            :span-method="objectSpanMethod"
+          ></dj-table>
+        </div>
+      </div>
+    </dj-dialog>
   </div>
 </template>
 
 <script>
   import ruleCustomizeService from '../../api/service/ruleCustomize';
   import {djForm} from 'djweb';
-  const cengshuOption = new Array(6).fill('').map((v, index)=>{
+  const cengshuOptions = new Array(6).fill('').map((v, index)=>{
       return {
         value: index + 2,
         label: index + 2,
@@ -114,7 +137,13 @@
     data() {
       return {
         dialogType: '',
-        dialogTypeIsAdd: null,
+        dialogTypeIsAdd: false,
+        viewTableColumns: [],
+        viewData: {
+          left: '',
+          right: '',
+          tableData: []
+        },
 
         tableData: [],
         tableColumns: [
@@ -129,8 +158,8 @@
             render: (h, {props: {row}}) => {
               return (
                 <div class="operation">
-                  <a onClick={() => this.changeStatus(row)}>
-                    {row.status ? '禁用' : '启用'}</a>
+                  <a onClick={() => this.view(row)}>查看</a>
+                  <a onClick={() => this.changeStatus(row)}>{row.status ? '禁用' : '启用'}</a>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
@@ -224,11 +253,37 @@
             }
           },
         ],
+        stackConditionFormData: [
+          {
+            child: [
+              {
+                lengxing: '',
+                qieshu: '',
+                pianshu: '',
+                time: Date.now()
+              }
+            ]
+          },
+        ],
+        stackRules: {
+          lengxing: [
+            {required: true, message: '请选择楞型', trigger: 'change'}
+          ],
+          qieshu: [
+            {required: true, message: '请选择切数', trigger: 'change'}
+          ],
+          pianshu: [
+            {required: true, message: '请填写片数', trigger: 'change'}
+          ]
+        },
         packFormData: {
           name: '',
           zhongliang: '',
-          type: '',
-          lenglv: '',
+          aLengLv: '',
+          bLengLv: '',
+          cLengLv: '',
+          eLengLv: '',
+          fLengLv: '',
           cengshu: '',
           area: '',
           quantity: '',
@@ -269,37 +324,14 @@
             },
           },
           {
-            type: 'select',
-            formItem: {
-              prop: 'type',
-              label: '原纸楞型',
-              rules: [djForm.rules.required('请选择相应的原纸楞型')],
-            },
-            attrs: {
-              options: [{
-                label: '普通瓦楞',
-                value: 'chu',
-              }, {
-                label: '高强瓦楞',
-                value: 'gao',
-              }, {
-                label: '牛卡',
-                value: 'da',
-              }, {
-                label: '再生',
-                value: 'daa',
-              }],
-            },
-          },
-          {
             type: 'input',
             formItem: {
-              prop: 'lenglv',
-              label: '楞型楞率',
+              prop: 'aLengLv',
+              label: 'A楞型楞率',
               rules: [
-                djForm.rules.required('楞型楞率不能为空'),
+                djForm.rules.required('A楞型楞率不能为空'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
-                ],
+              ],
             },
             attrs: {
               type: 'number',
@@ -307,59 +339,89 @@
             },
           },
           {
-            type: 'select',
-            formItem: {
-              prop: 'cengshu',
-              label: '层数',
-              rules: [
-                djForm.rules.required('请选择相应的层数'),
-                ],
-            },
-            attrs: {
-              options: cengshuOption
-            },
-          },
-          {
             type: 'input',
             formItem: {
-              prop: 'area',
-              label: '单位面积',
+              prop: 'bLengLv',
+              label: 'B楞型楞率',
               rules: [
-                djForm.rules.required('单位面积不能为空'),
+                djForm.rules.required('B楞型楞率不能为空'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
               ],
             },
             attrs: {
               type: 'number',
-              maxLength: 10,
-            },
-            listeners: {
-              'input': (val) => {
-                this.packFormData.area = val.toFixed(2);
-              },
+              maxLength: 20,
             },
           },
           {
             type: 'input',
             formItem: {
-              prop: 'quantity',
-              label: '打包数量',
+              prop: 'cLengLv',
+              label: 'C楞型楞率',
               rules: [
-                djForm.rules.required('打包数量不能为空'),
+                djForm.rules.required('C楞型楞率不能为空'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
               ],
             },
             attrs: {
               type: 'number',
-              maxLength: 10,
+              maxLength: 20,
             },
-            listeners: {
-              'input': (val) => {
-                this.packFormData.quantity = val.toFixed(0);
-              },
+          },
+          {
+            type: 'input',
+            formItem: {
+              prop: 'eLengLv',
+              label: 'E楞型楞率',
+              rules: [
+                djForm.rules.required('E楞型楞率不能为空'),
+                {type: 'number', message: '只可输入数字', trigger: 'change'}
+              ],
             },
+            attrs: {
+              type: 'number',
+              maxLength: 20,
+            },
+          },
+          {
+            type: 'input',
+            formItem: {
+              prop: 'fLengLv',
+              label: 'F楞型楞率',
+              rules: [
+                djForm.rules.required('F楞型楞率不能为空'),
+                {type: 'number', message: '只可输入数字', trigger: 'change'}
+              ],
+            },
+            attrs: {
+              type: 'number',
+              maxLength: 20,
+            },
+          }
+        ],
+        packConditionFormData: [
+          {
+            child: [
+              {
+                cengshu: '',
+                area: '',
+                quantity: '',
+                time: Date.now()
+              }
+            ]
           },
         ],
+        packRules: {
+          cengshu: [
+            {required: true, message: '请选择层数', trigger: 'change'}
+          ],
+          area: [
+            {required: true, message: '请选择单位面积', trigger: 'change'}
+          ],
+          quantity: [
+            {required: true, message: '请填写打包数量', trigger: 'change'}
+          ]
+        },
         lengxingOptions: [
           {
             label: 'A',
@@ -388,6 +450,7 @@
             label: 'D',
             value: 'daa',
           }],
+        cengshuOptions: cengshuOptions,
         rules: {
           lengxing: [
             {required: true, message: '请选择楞型', trigger: 'change'}
@@ -399,29 +462,42 @@
             {required: true, message: '请填写片数', trigger: 'change'}
           ]
         },
-        stackConditionFormData: [
-          {
-            child: [
-              {
-                lengxing: '',
-                qieshu: '',
-                pianshu: '',
-                time: Date.now()
-              }
-            ]
-          },
-        ]
+
 
       };
     },
     methods: {
+      objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (columnIndex === 0) {
+          if (rowIndex % 2 === 0) {
+            return {
+              rowspan: 2,
+              colspan: 1
+            };
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            };
+          }
+        }
+      },
       addChildCondition(index) {
-        this.stackConditionFormData[index].child.push({
-          lengxing: '',
-          qieshu: '',
-          pianshu: '',
-          time: Date.now()
-        });
+        if (this.dialogType === 'stack') {
+          this.stackConditionFormData[index].child.push({
+            lengxing: '',
+            qieshu: '',
+            pianshu: '',
+            time: Date.now()
+          });
+        } else {
+          this.packConditionFormData[index].child.push({
+            cengshu: '',
+            area: '',
+            quantity: '',
+            time: Date.now()
+          });
+        }
       },
       headerBtnAdd(dialogType) {
         this.dialogTypeIsAdd = true;
@@ -430,28 +506,39 @@
           this.$refs.dialog.open();
         });
       },
-      preset() {
-
-      },
       addCondition() {
-        this.stackConditionFormData.push({
-          child: [
-            {
-              lengxing: '',
-              qieshu: '',
-              pianshu: '',
-              time: Date.now()
-            }
-          ]
-        });
+        if (this.dialogType === 'stack') {
+          this.stackConditionFormData.push({
+            child: [
+              {
+                lengxing: '',
+                qieshu: '',
+                pianshu: '',
+                time: Date.now()
+              }
+            ]
+          });
+        } else {
+          this.packConditionFormData.push({
+            child: [
+              {
+                cengshu: '',
+                area: '',
+                quantity: '',
+                time: Date.now()
+              }
+            ]
+          });
+        }
       },
       removeCondition(index, childIndex) {
-        this.stackConditionFormData[index].child.splice(childIndex, 1);
-      },
-      getTableData(data) {
-        ruleCustomizeService.list(data).then((res) => {
-          this.tableData = res.list;
-        });
+        // todo 增加删除动画
+        const targetArr = this[this.dialogType + 'ConditionFormData'];
+        if (targetArr[index].child.length === 1) {
+          targetArr.splice(index, 1);
+        } else {
+          targetArr[index].child.splice(childIndex, 1);
+        }
       },
       changeStatus(row) {
         // 接口
@@ -472,6 +559,59 @@
           });
         }
       },
+      view(row) {
+        let stack = [
+          {label: '楞型', prop: 'id'},
+          {label: '切数', prop: 'name'},
+          {label: '片数', prop: 'amount1'},
+        ];
+        let pack = [
+            {label: '层数', prop: 'id'},
+            {label: '单位面积（m²）', prop: 'name'},
+            {label: '打包数量', prop: 'amount1'},
+          ];
+        this.viewData = {
+          left: 500,
+          right: 600,
+          tableData: [
+            {
+            id: '12987122',
+            name: '王小虎',
+            amount1: '234',
+            amount2: '3.2',
+            amount3: 10
+          }, {
+            id: '12987123',
+            name: '王小虎',
+            amount1: '165',
+            amount2: '4.43',
+            amount3: 12
+          }, {
+            id: '12987124',
+            name: '王小虎',
+            amount1: '324',
+            amount2: '1.9',
+            amount3: 9
+          }, {
+            id: '12987125',
+            name: '王小虎',
+            amount1: '621',
+            amount2: '2.2',
+            amount3: 17
+          }, {
+            id: '12987126',
+            name: '王小虎',
+            amount1: '539',
+            amount2: '4.1',
+            amount3: 15
+          }]
+        };
+        this.dialogType = (row.type === '叠单规则' ? 'stack' : 'pack') + '_view';
+        this.viewTableColumns = row.type === '叠单规则' ? stack : pack;
+        this.$nextTick(()=>{
+          this.$refs.dialog.open();
+        });
+      },
       edit(row) {
         this.dialogType = row.type === '叠单规则' ? 'stack' : 'pack';
         this.dialogTypeIsAdd = false;
@@ -490,7 +630,7 @@
       },
       async confirm(data) {
         let allTrue = true;
-        // todo  异步验证最终结果错误
+        // todo  不同表单、异步验证最终结果错误
         this.$refs.childConditionForm.map(child=>{
           child.validate(valid=>{
             if (!valid) {
@@ -537,6 +677,11 @@
         }
         this.dialogType = '';
       },
+      getTableData(data) {
+        ruleCustomizeService.list(data).then((res) => {
+          this.tableData = res.list;
+        });
+      },
     },
     created() {
       this.getTableData();
@@ -581,14 +726,25 @@
           color: #3554ea;
         }
       }
-    }
-    .child-condition{
-      display: flex;
-      justify-content: flex-end;
-      padding-top: 10px;
+      /deep/ .unit-area{
+        .el-form-item__label{
+          line-height: 100px;
+        }
+        .el-form-item__content{
+          display: flex;
+          line-height: 100px;
+        }
+      }
     }
     /deep/ .dj-form .el-form-item .el-form-item__content{
       width: 60%;
+    }
+    .rule-view-header{
+      padding: 0 10px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      color: #000;
     }
   }
 </style>
