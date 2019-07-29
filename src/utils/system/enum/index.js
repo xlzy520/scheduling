@@ -139,6 +139,28 @@ export default {
       value: '3'
     }
   }),
+  storageType: new MapObject({
+    'purchase': {
+      label: '采购入库',
+      value: '1'
+    },
+    'prodWithdrawal': {
+      label: '生产退料',
+      value: '2'
+    },
+    'noBarWithdrawal': {
+      label: '无条码退料',
+      value: '3'
+    },
+    'inventorySurplus': {
+      label: '盘盈入库',
+      value: '4'
+    },
+    'allocation': {
+      label: '调拨入库',
+      value: '5'
+    }
+  }),
   fluteTypeLayer,
   fluteType
 };
