@@ -59,7 +59,7 @@ export default {
       meta: {
         title: '生产线设置',
       },
-      component: 'views/baseSetting/productionLine'
+      component: 'views/baseSetting/productionLine/index'
     },
   ],
 };
