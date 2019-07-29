@@ -20,6 +20,12 @@ const regexp = {
   //数字+字母
   NUMBER_LETTER_REGEXP: /^[0-9a-zA-Z]*$/,
   //整数+小数
-  FIGURE_REGEXP: /^(\d+(\.\d*)?)?$/
+  FIGURE_REGEXP: /^(\d+(\.\d*)?)?$/,
+  //中文+字母+数字
+  NORMAL_TEXT_REGEXP: /^[\u4e00-\u9fa5a-zA-Z0-9]*$/,
+  //获得特定最大浮点位数正则
+  getFloatReg(num) {
+    return new RegExp(`^(\\d+(\\.\\d{0,${num}})?)?$`);
+  }
 };
 export default regexp;
