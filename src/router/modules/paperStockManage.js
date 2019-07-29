@@ -10,7 +10,7 @@ export default {
         title: '原纸入库',
       },
       //组件路径
-      // component: 'views/paperStockManage/paperInStock',
+      component: 'views/paperStockManage/paperInStock',
     },
     {
       path: 'paperOutStock',
