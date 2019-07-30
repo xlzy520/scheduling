@@ -1,6 +1,6 @@
 <template>
   <div class="production-line">
-    <el-button type="primary" @click="addLine">新增</el-button>
+    <el-button type="primary" @click="addProdLine">新增</el-button>
     <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
       <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
     </el-tabs>
@@ -27,12 +27,8 @@
     components: {EditAdd, ProdLineContent},
     data() {
       return {
-        activeTab: '1',
-        tabsColumn: [
-          {label: '一号线', value: '1'},
-          {label: '二号线', value: '2'},
-          {label: '三号线', value: '3'},
-        ],
+        activeTab: '',
+        tabsColumn: [],
         lineStatus: 'on',
 
         prodLineData: [
@@ -96,7 +92,7 @@
       };
     },
     methods: {
-      addLine() {
+      addProdLine() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
       },
@@ -116,6 +112,7 @@
       },
 
       getData(data) {
+        const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         productionLineService.list(data).then((res) => {
           const data = [
             {
@@ -234,45 +231,52 @@
             },
             ];
           this.prodLineData = [];
-          data.map((v, index)=>{
-            this.prodLineData.push({
-              jccs: {
-                commonTilemodel: '',
-                lineSpeed: '',
-                changeorderMinLength: '',
-                firstorderWasteWith: '',
-                lastorderMinLength: '',
-                linePaperSizeModels: '',
-              },
-              zqj: {
-                slimachNumbers: '',
-                slimachWheelRows: '',
-                slimachWheelCount: '',
-                slimachWheelSamesideSpace: '',
-                slimachWdoubleMinLength: '',
-                slimachKnifeCount: '',
-                slimachKnifeSpace: '',
-                slimachKnifeChangetime: '',
-              },
-              fxj: {
-                partlineMachineWidth: '',
-                minCutLength: '',
-                basketType: '',
-                basketLength: '',
-                statckCount: '',
-              }});
-            for (const item of Object.keys(this.prodLineLabel)) {
-              const module = this.prodLineLabel[item];
-              for (let i = 0; i < module.length; i++) {
-                const prop = module[i].prop;
-                if (item === 'jccs' && prop === 'linePaperSizeModels') {
-                  this.prodLineData[index][item][prop] = v[prop].map(v=>v.paperSize).join(',');
-                } else {
-                  this.prodLineData[index][item][prop] = v[prop];
+          if (data.length > 0) {
+            data.map((v, index)=>{
+              this.activeTab = data[0].lineId;
+              this.tabsColumn.push({
+                label: chnNumChar[parseInt(v.lineId)] + '号线',
+                value: v.lineId
+              });
+              this.prodLineData.push({
+                jccs: {
+                  commonTilemodel: '',
+                  lineSpeed: '',
+                  changeorderMinLength: '',
+                  firstorderWasteWith: '',
+                  lastorderMinLength: '',
+                  linePaperSizeModels: '',
+                },
+                zqj: {
+                  slimachNumbers: '',
+                  slimachWheelRows: '',
+                  slimachWheelCount: '',
+                  slimachWheelSamesideSpace: '',
+                  slimachWdoubleMinLength: '',
+                  slimachKnifeCount: '',
+                  slimachKnifeSpace: '',
+                  slimachKnifeChangetime: '',
+                },
+                fxj: {
+                  partlineMachineWidth: '',
+                  minCutLength: '',
+                  basketType: '',
+                  basketLength: '',
+                  statckCount: '',
+                }});
+              for (const item of Object.keys(this.prodLineLabel)) {
+                const module = this.prodLineLabel[item];
+                for (let i = 0; i < module.length; i++) {
+                  const prop = module[i].prop;
+                  if (item === 'jccs' && prop === 'linePaperSizeModels') {
+                    this.prodLineData[index][item][prop] = v[prop].map(v=>v.paperSize).join(',');
+                  } else {
+                    this.prodLineData[index][item][prop] = v[prop];
+                  }
                 }
               }
-            }
-          });
+            });
+          }
         });
       },
       edit() {
