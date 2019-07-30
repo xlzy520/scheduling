@@ -161,6 +161,32 @@ export default {
       value: '5'
     }
   }),
+  outStockType: new MapObject({
+    'Sale': {
+      label: '销售出库',
+      value: '1'
+    },
+    'returnGoods': {
+      label: '采购退货',
+      value: '2'
+    },
+    'prodProvide': {
+      label: '生产领料',
+      value: '3'
+    },
+    'scrap': {
+      label: '报废出库',
+      value: '4'
+    },
+    'losses': {
+      label: '盘亏出库',
+      value: '5'
+    },
+    'allocation': {
+      label: '调拨出库',
+      value: '6'
+    }
+  }),
   fluteTypeLayer,
   fluteType
 };
