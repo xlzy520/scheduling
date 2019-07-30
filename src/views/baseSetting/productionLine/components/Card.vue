@@ -30,8 +30,7 @@ export default {
       padding: 20px;
     }
     &-content{
-      padding-left: 10px;
-      padding-top: 20px;
+      padding: 20px 0 20px 10px;
     }
   }
 </style>

@@ -6,17 +6,17 @@
           <template slot-scope="{item}">
             <div class="bs-card-row">
               <div class="bs-card-label">{{item.label}}：</div>
-              <div class="bs-card-value"> {{Data.jccs[item.prop]}}</div>
+              <div class="bs-card-value">{{ProdLineData.jccs[item.prop]}}</div>
             </div>
           </template>
         </dj-grid-box>
       </card>
-      <card title="纵切机" class="zqj">
+      <card title="纵切机">
         <dj-grid-box :data="ProdLineLabel.zqj" :column-num="zqjColumnNum" :col-rule="()=>zqjColRule">
           <template slot-scope="{item}">
             <div class="bs-card-row">
               <div class="bs-card-label">{{item.label}}：</div>
-              <div class="bs-card-value"> {{Data.zqj[item.prop]}}</div>
+              <div class="bs-card-value"> {{ProdLineData.zqj[item.prop]}}</div>
             </div>
           </template>
         </dj-grid-box>
@@ -28,17 +28,17 @@
           <template slot-scope="{item}">
             <div class="bs-card-row">
               <div class="bs-card-label">{{item.label}}：</div>
-              <div class="bs-card-value"> {{Data.fxj[item.prop]}}</div>
+              <div class="bs-card-value"> {{ProdLineData.fxj[item.prop]}}</div>
             </div>
           </template>
         </dj-grid-box>
       </card>
-      <card title="操作记录">
-        <div v-for="record in Data.czjl" class="record-item">
-          {{record.a}}&nbsp&nbsp{{record.b}}&nbsp&nbsp{{record.c}}
-          <el-button type="primary" size="mini" @click="viewRecordDetail(record.id)">查看详情</el-button>
-        </div>
-      </card>
+      <!--<card title="操作记录">-->
+        <!--<div v-for="record in ProdLineData.czjl" class="record-item">-->
+          <!--{{record.a}}&nbsp&nbsp{{record.b}}&nbsp&nbsp{{record.c}}-->
+          <!--<el-button type="primary" size="mini" @click="viewRecordDetail(record.id)">查看详情</el-button>-->
+        <!--</div>-->
+      <!--</card>-->
     </div>
   </div>
 </template>
@@ -50,7 +50,7 @@
     name: 'ProdLineContent',
     components: {Card},
     props: {
-      Data: {
+      ProdLineData: {
         type: Object,
         default: () => {
         }
@@ -69,11 +69,12 @@
     },
     methods: {
       rowRule(item) {
-        let map = {lengxing: 0, chesu: 0, huanzhi: 0, shoudan: 1, weidan: 1, menfu: 2};
+        let map = {commonTilemodel: 0, lineSpeed: 0, changeorderMinLength: 0, firstorderWasteWith: 1,
+          lastorderMinLength: 1, linePaperSizeModels: 2};
         return map[item.prop];
       },
       colRule(item) {
-        if (item.prop === 'menfu') {
+        if (item.prop === 'linePaperSizeModels') {
           return 24;
         }
         return 8;
