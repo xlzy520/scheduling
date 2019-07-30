@@ -4,6 +4,7 @@ export default {
   cylinderNo: 'cylinderNo', //纸筒编号
   paperSupplier: 'paperSupplier', //原纸供应商
   storageType: 'storageType', //入库类型
+  outStockType: 'outStockType', //出库类型
   documentNo: 'documentNo', //单据编号
   deliveryBillId: 'deliveryBillId', //送货单号
   deliveryNumber: 'deliveryNumber', //送货车号
@@ -17,4 +18,7 @@ export default {
   area: 'area', //面积
   unitPrice: 'unitPrice', //单价
   money: 'money', //金额
-}
+  usePerson: 'usePerson', //领用人
+  useDepartment: 'useDepartment', //领用部门
+  useGroup: 'useGroup', //领用班组
+};

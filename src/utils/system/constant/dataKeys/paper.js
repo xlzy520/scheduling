@@ -1,4 +1,4 @@
-//纸筒相关键值对
+//原纸相关键值对
 export default {
   paperNumber: 'paperNumber', // 原纸编号
   paperCode: 'paperCode', // 原纸代码
@@ -11,4 +11,4 @@ export default {
   warehouseAreaName: 'warehouseAreaName', // 	仓库库区名
   isEffected: 'isEffected', // 	是否禁用
   paperStatus: 'paperStatus', // 	原纸状态
-}
+};
