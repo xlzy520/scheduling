@@ -18,7 +18,7 @@ export default {
         title: '原纸出库',
       },
       //组件路径
-      // component: 'views/paperStockManage/paperOutStock',
+      component: 'views/paperStockManage/paperOutStock',
     }
   ],
 };
