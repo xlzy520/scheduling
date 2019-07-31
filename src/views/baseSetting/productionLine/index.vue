@@ -105,11 +105,24 @@
         });
       },
       changeLineStatus(val) {
-        productionLineService.list({
-          status: val
-        }).then((res) => {
+        if (val === 'off') {
+          this.$confirm('您确定禁用该条内容吗？', '', {
+            type: 'warning',
+            showClose: false,
+          }).then(() => {
+            productionLineService.list({
+              status: val
+            }).then((res) => {
 
-        });
+            });
+          });
+        } else {
+          productionLineService.list({
+            status: val
+          }).then((res) => {
+
+          });
+        }
       },
 
       getData(data) {
