@@ -2,16 +2,16 @@
   <dj-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增生产线': '编辑生产线'">
     <div class="production-line-dialog">
       <h4>基础参数</h4>
-      <dj-form ref="form" :form-data="prodLineData.jccs" :form-options="formOptions.jccs" :column-num="4"></dj-form>
+      <dj-form ref="form1" :form-data="prodLineData.jccs" :form-options="formOptions.jccs" :column-num="columnNum"></dj-form>
       <h4>纵切机</h4>
-      <dj-form ref="form" :form-data="prodLineData.zqj" :form-options="formOptions.zqj" :column-num="4"></dj-form>
+      <dj-form ref="form2" :form-data="prodLineData.zqj" :form-options="formOptions.zqj" :column-num="columnNum"></dj-form>
       <h4>分线机、横切机、吊篮</h4>
-      <dj-form ref="form" :form-data="prodLineData.fxj" :form-options="formOptions.fxj"
-               :column-num="4" :col-rule="()=> 6"></dj-form>
+      <dj-form ref="form3" :form-data="prodLineData.fxj" :form-options="formOptions.fxj"
+               :column-num="columnNum" :col-rule="()=>columnNum===4?6:8"></dj-form>
       <h4>门幅范围</h4>
       <div class="optional">
         <div class="optional-area" @click="selectPaper($event)">
-          <div class="optional-area-item" :class="prodLineData.jccs.menfu.includes(code)?'selected': ''"
+          <div class="optional-area-item" :class="isIncludesPaper(code)?'selected': ''"
                v-for="code in optionalPaper" :key="code">{{code}}
           </div>
         </div>
@@ -23,8 +23,8 @@
 <script>
   import {djForm} from 'djweb';
   import productionLineService from '../../../../api/service/productionLine';
-  const ruleMoreThan9999 = {type: 'number',max: 9999, message: '不能大于9999', trigger: 'change'}
-  const ruleMustNumber =  {type: 'number1', message: '只可输入数字', trigger: 'change'}
+  const ruleMoreThan9999 = {type: 'number', max: 9999, message: '不能大于9999', trigger: 'change'};
+  const ruleMustNumber = {type: 'number', message: '只可输入数字', trigger: 'change'};
   export default {
     name: 'EditAdd',
     props: {
@@ -35,7 +35,34 @@
     },
     data() {
       return {
-        prodLineData: {},
+        columnNum: 4,
+        prodLineData: {
+          jccs: {
+            commonTilemodel: '',
+            lineSpeed: '',
+            changeorderMinLength: '',
+            firstorderWasteWith: '',
+            lastorderMinLength: '',
+            linePaperSizeModels: [],
+          },
+          zqj: {
+            slimachNumbers: '1',
+            slimachWheelRows: '1',
+            slimachWheelCount: '',
+            slimachWheelSamesideSpace: '',
+            slimachWdoubleMinLength: '',
+            slimachKnifeCount: '',
+            slimachKnifeSpace: '',
+            slimachKnifeChangetime: '',
+          },
+          fxj: {
+            partlineMachineWidth: '',
+            minCutLength: '',
+            basketType: 'big',
+            basketLength: '',
+            statckCount: '',
+          }
+        },
         formOptions: {
           jccs: [
             {
@@ -83,8 +110,9 @@
                   ruleMustNumber],
               },
               attrs: {
+                key: 'float',
+                type: 'float',
                 maxLength: 10,
-                type: 'number'
               },
             },
             {
@@ -152,6 +180,21 @@
                   value: '2'
                 }]
               },
+              listeners: {
+                change: (val)=>{
+                  if (val === '1') {
+                    console.log(5);
+                    this.$set(this.formOptions.zqj[4].formItem, 'rules', [
+                      ruleMoreThan9999
+                    ]);
+                  } else {
+                    this.$set(this.formOptions.zqj[4].formItem, 'rules', [
+                      djForm.rules.required('双机压订单不能为空'),
+                      ruleMoreThan9999
+                    ]);
+                  }
+                }
+              }
             },
             {
               type: 'radio',
@@ -190,7 +233,7 @@
               type: 'input',
               formItem: {
                 prop: 'slimachWheelSamesideSpace',
-                label: '压轮最小间距(mm)',
+                label: '压轮最小间距',
                 rules: [
                   djForm.rules.required('压轮最小间距不能为空'),
                   ruleMoreThan9999
@@ -206,7 +249,6 @@
                 prop: 'slimachWdoubleMinLength',
                 label: '双机压订单',
                 rules: [
-                  djForm.rules.required('双机压订单不能为空'),
                   ruleMoreThan9999
                 ],
               },
@@ -291,7 +333,7 @@
               formItem: {
                 prop: 'basketType',
                 label: '吊篮类型',
-                rules: [djForm.rules.required('请选择相应的吊篮类型')],
+                rules: [],
               },
               attrs: {
                 options: [{
@@ -302,6 +344,30 @@
                   value: 'small',
                 }],
               },
+              listeners: {
+                change: (val)=>{
+                  this.prodLineData.fxj.basketLength = '';
+                  const cache = {
+                    type: 'input',
+                    formItem: {
+                      prop: 'statckCount',
+                      label: '最小叠单米数',
+                      rules: [
+                        djForm.rules.required('最小叠单米数不能为空'),
+                        {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
+                      ],
+                    },
+                    attrs: {
+                      type: 'number'
+                    }
+                  };
+                  if (val === 'small') {
+                    this.formOptions.fxj.splice(4, 0, cache);
+                  } else {
+                    this.formOptions.fxj.splice(4, 1);
+                  }
+                }
+              }
             },
             {
               type: 'input',
@@ -316,20 +382,6 @@
               attrs: {
                 type: 'number'
               }
-            },
-            {
-              type: 'input',
-              formItem: {
-                prop: 'statckCount',
-                label: '最小叠单米数',
-                rules: [
-                  djForm.rules.required('最小叠单米数不能为空'),
-                  {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
-                ],
-              },
-              attrs: {
-                type: 'number'
-              }
             }
           ],
         },
@@ -338,30 +390,90 @@
     },
     methods: {
       confirm(data) {
-        this.$refs.form.validate(() => {
-          productionLineService.list(data).then((res) => {
-            this.close();
-            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-            this.$message(message, 'success');
+        const formMap = ['1', '2', '3'];
+        const formValidate = new Promise((resolve) => {
+          let allIsTrue = [];
+          formMap.map((v, index)=>{
+            this.$refs['form' + v].validate(() => {
+              allIsTrue.push(true);
+              if (index === 2) {
+                resolve(allIsTrue);
+              }
+            });
           });
         });
+        formValidate.then(res=>{
+          if (res.length === 3 && res.every(v=>v)) {
+            const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
+              sum = Object.assign(sum, this.prodLineData[val]);
+              return sum;
+            }, {});
+            productionLineService.list(params).then((res) => {
+              this.close();
+              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+              this.$message(message, 'success');
+            });
+          }
+        });
+
       },
       close() {
-        this.$emit('close')
-      },
-      selectPaper() {
+        const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
+          sum = Object.assign(sum, this.prodLineData[val]);
+          return sum;
+        }, {});
+        delete params.slimachNumbers;
+        delete params.slimachWheelRows;
+        delete params.basketType;
+        if (Object.values(params).some(v => v !== "" && v.length !== 0)) {
+          this.$confirm('生产线信息未保存，确认是否关闭？', '', {
+            type: 'warning',
+            showClose: false,
+          }).then(() => {
+            this.$emit('close');
+          });
+        } else {
+          this.$emit('close');
+        }
 
-      }
+      },
+      isIncludesPaper(code) {
+        const { linePaperSizeModels } = this.prodLineData.jccs;
+        return linePaperSizeModels.includes(code);
+      },
+      selectPaper(evt) {
+        let { innerText: code, className } = evt.target;
+        code = Number(code);
+        let linePaperSizeModels = this.prodLineData.jccs.linePaperSizeModels;
+        if (code && className.includes('optional-area-item')) {
+          if (this.isIncludesPaper(code)) {
+            const index = linePaperSizeModels.findIndex(v=>v === code);
+            linePaperSizeModels.splice(index, 1);
+          } else {
+            linePaperSizeModels.push(code);
+          }
+        }
+      },
+      getColumnNum() {
+        const width = window.innerWidth;
+        this.columnNum = width < 1367 ? 3 : 4;
+      },
     },
     created() {
       let mock = [];
-      for (let i = 0; i < 20; i++) {
-        mock.push(800 + i * 100);
+      for (let i = 0; i < 33; i++) {
+        mock.push(900 + i * 50);
       }
       this.optionalPaper = mock;
     },
-    mounted(){
-      this.$refs.dialog.open()
+    mounted() {
+      this.$nextTick(()=>{
+        this.$refs.dialog.open();
+        this.getColumnNum();
+        window.addEventListener('resize', ()=>{
+          this.getColumnNum();
+        });
+      });
     }
   };
 </script>
@@ -370,11 +482,16 @@
   @deep: ~'>>>';
   .production-line-dialog {
     width: 80vw;
+    h4{
+      padding: 10px 0;
+    }
   }
   @{deep} .optional{
     width: 100%;
     min-height: 120px;
     margin-bottom: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
     &-area{
       width: 100%;
       min-height: 80px;
@@ -383,6 +500,8 @@
       justify-content: flex-start;
       border: 1px solid #eee;
       border-radius: 4px;
+      box-sizing: border-box;
+      padding: 15px;
       &-item{
         text-align: center;
         font-size: 16px;
@@ -397,8 +516,6 @@
         cursor: pointer;
         user-select: none;
         &.selected{
-          pointer-events: none;
-          cursor: not-allowed;
           color: #fff;
           background: #3654ea;
         }

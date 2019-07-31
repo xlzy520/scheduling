@@ -4,9 +4,10 @@
       <card title="基础参数">
         <dj-grid-box :data="ProdLineLabel.jccs" :row-rule="rowRule" :col-rule="colRule">
           <template slot-scope="{item}">
-            <div class="bs-card-row">
+            <div class="bs-card-row jccs">
               <div class="bs-card-label">{{item.label}}：</div>
-              <div class="bs-card-value">{{ProdLineData.jccs[item.prop]}}</div>
+              <div class="bs-card-value" v-if="item.prop !== 'linePaperSizeModels'">{{ProdLineData.jccs[item.prop]}}</div>
+              <div class="bs-card-value" v-else>{{handlePaperSize(ProdLineData.jccs[item.prop])}}</div>
             </div>
           </template>
         </dj-grid-box>
@@ -53,11 +54,21 @@
       ProdLineData: {
         type: Object,
         default: () => {
+          return {
+            jccs: [],
+            zqj: [],
+            fxj: []
+          };
         }
       },
       ProdLineLabel: {
         type: Object,
         default: () => {
+          return {
+            jccs: [],
+            zqj: [],
+            fxj: []
+          };
         }
       }
     },
@@ -68,6 +79,9 @@
       };
     },
     methods: {
+      handlePaperSize(arr = []) {
+        return arr.join('，') + '。';
+      },
       rowRule(item) {
         let map = {commonTilemodel: 0, lineSpeed: 0, changeorderMinLength: 0, firstorderWasteWith: 1,
           lastorderMinLength: 1, linePaperSizeModels: 2};
@@ -125,8 +139,13 @@
     .left-content {
       width: 60%;
       .el-col-24 {
-        .bs-card-value {
-          width: 84%;
+        .jccs{
+          .bs-card-value {
+            width: 84%;
+          }
+          .bs-card-label {
+            width: 125px;
+          }
         }
       }
     }

@@ -57,7 +57,8 @@
               basketType: '',
               basketLength: '',
               statckCount: '',
-            }}
+            }
+          },
         ],
         prodLineLabel: {
           jccs: [
@@ -147,7 +148,14 @@
                 {
                   "id": "",
                   "lineId": "",
-                  "paperSize": 150,
+                  "paperSize": 800,
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                {
+                  "id": "",
+                  "lineId": "",
+                  "paperSize": 1800,
                   "createTime": "",
                   "updateTime": ""
                 }
@@ -235,7 +243,7 @@
             data.map((v, index)=>{
               this.activeTab = data[0].lineId;
               this.tabsColumn.push({
-                label: chnNumChar[parseInt(v.lineId)] + '号线',
+                label: chnNumChar[v.lineId] + '号线',
                 value: v.lineId
               });
               this.prodLineData.push({
@@ -269,7 +277,7 @@
                 for (let i = 0; i < module.length; i++) {
                   const prop = module[i].prop;
                   if (item === 'jccs' && prop === 'linePaperSizeModels') {
-                    this.prodLineData[index][item][prop] = v[prop].map(v=>v.paperSize).join(',');
+                    this.prodLineData[index][item][prop] = v[prop].map(v=>v.paperSize);
                   } else {
                     this.prodLineData[index][item][prop] = v[prop];
                   }
@@ -283,7 +291,7 @@
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
         this.$nextTick(()=>{
-          this.$refs.editAdd.prodLineData = this.$method.deepClone(this.prodLineData[parseInt(this.activeTab)]);
+          this.$refs.editAdd.prodLineData = this.$method.deepClone(this.prodLineData[this.activeTab - 1]);
         });
       },
       search(data) {
