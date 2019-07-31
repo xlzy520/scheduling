@@ -68,9 +68,9 @@
             type: 'input',
             formItem: {
               prop: 'name',
-              label: '客户名称：',
+              label: '客户名称',
               rules: [
-                // djForm.rules.required('客户名称不能为空')
+                djForm.rules.required('客户名称不能为空')
               ],
             },
           },
@@ -80,7 +80,7 @@
               prop: 'code',
               label: '用料代码',
               rules: [
-                // djForm.rules.required('请选择相应的用料代码'),
+                djForm.rules.required('请选择相应的用料代码'),
                 ],
             },
             attrs: {
@@ -102,7 +102,7 @@
               prop: 'lengxing',
               label: '层数/楞型',
               rules: [
-                // djForm.rules.required('请选择相应的层数/楞型'),
+                djForm.rules.required('请选择相应的层数/楞型'),
                 ],
             },
             attrs: {
@@ -313,7 +313,7 @@
               prop: 'amount',
               label: '打包数量：',
               rules: [
-                // djForm.rules.required('打包数量不能为空')
+                djForm.rules.required('打包数量不能为空')
               ],
             },
             attrs: {
@@ -406,9 +406,13 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   @{deep} .operation {
+    line-height: 1;
     a {
-      margin-right: 15px;
+      padding: 2px 10px;
       cursor: pointer;
+      &:not(:last-child){
+        border-right: 1px solid #f0f2f5;
+      }
     }
   }
 

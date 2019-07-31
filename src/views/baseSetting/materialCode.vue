@@ -222,9 +222,13 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   @{deep} .operation {
+    line-height: 1;
     a {
-      margin-right: 15px;
+      padding: 2px 10px;
       cursor: pointer;
+      &:not(:last-child){
+        border-right: 1px solid #f0f2f5;
+      }
     }
   }
 
@@ -249,6 +253,7 @@
         pointer-events: visible;
       }
     }
+    // todo 修改背景色，不限制重复选择，最多选十个
     @{deep} .optional{
       width: 100%;
       min-height: 120px;
@@ -277,7 +282,7 @@
           padding: 5px 10px;
           margin: 5px;
           color: #747579;
-          background: #f1f2f6;
+          background: #F0F2F5;
           border-radius: 5px;
           cursor: pointer;
           user-select: none;

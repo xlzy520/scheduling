@@ -202,7 +202,6 @@
   @deep: ~'>>>';
   @{deep} .operation {
     a {
-      margin-right: 15px;
       cursor: pointer;
     }
   }

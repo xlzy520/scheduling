@@ -10,7 +10,7 @@
         <el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>
       </div>
     </dj-table>
-    <dj-dialog v-if="dialogType==='stack'" ref="dialog" @close="close('stack')" @confirm="confirm"
+    <dj-dialog v-if="dialogType==='stack'" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
       <div class="rule-customize-dialog">
         <dj-form ref="stackForm" :form-data="stackFormData" :form-options="stackFormOptions"
@@ -94,29 +94,30 @@
         <el-button type="primary" @click.prevent="addCondition">添加条件</el-button>
       </div>
     </dj-dialog>
-    <dj-dialog v-if="dialogType.includes('view')" ref="dialog" @close="close" @confirm="confirm"
-               :title="dialogType==='stack_view'?'查看打包规则': '查看叠单规则'">
-      <div class="rule-customize-dialog">
-        <div class="rule-view-header" v-if="dialogType==='stack_view'">
-          <div class="rule-view-header-label">最小订单数： {{viewData.left}}</div>
+    <dj-dialog v-if="dialogType.includes('view')" ref="dialog"
+               :title="dialogType==='stack_view'?'查看叠单规则': '查看打包规则'">
+      <div class="rule-customize-dialog-view">
+        <div class="rule-view-header stack" v-if="dialogType==='stack_view'">
+          <div class="rule-view-header-label">最小订单刀数： {{viewData.left}}</div>
           <div class="rule-view-header-label">最大堆叠单数： {{viewData.right}}</div>
         </div>
-        <div class="rule-view-header" v-else>
-          <div class="rule-view-header-label">单批打包重量(Kg)： {{viewData.left}}</div>
-          <div class="rule-view-header-label">A楞型楞率： {{viewData.right}}</div>
-          <div class="rule-view-header-label">B楞型楞率： {{viewData.right}}</div>
-          <div class="rule-view-header-label">C楞型楞率： {{viewData.right}}</div>
-          <div class="rule-view-header-label">E楞型楞率： {{viewData.right}}</div>
-          <div class="rule-view-header-label">F楞型楞率： {{viewData.right}}</div>
-        </div>
+        <dj-grid-box :data="stackDetail" :column-num="2" :col-rule="()=>12" v-else class="rule-view-header">
+          <template slot-scope="{item}">
+            <div class="rule-view-header-label">{{item.label}}： {{viewData.left}}</div>
+          </template>
+        </dj-grid-box>
         <div class="rule-view-content">
           <dj-table
             border
             :data="viewData.tableData"
             :columns="viewTableColumns"
             :span-method="objectSpanMethod"
+            :is-need-page="false"
           ></dj-table>
         </div>
+      </div>
+      <div slot="footer">
+        <el-button @click="close">关闭查看</el-button>
       </div>
     </dj-dialog>
   </div>
@@ -152,7 +153,15 @@
           {label: '生效时间', prop: 'effectiveTime'},
           {label: '操作人', prop: 'man'},
           {label: '操作时间', prop: 'time'},
-          {label: '启用状态', prop: 'status', formatter: row => row.status ? '已启用' : '已失效'},
+          {label: '启用状态', prop: 'status',
+            render: (h, {props: {row}}) => {
+              return (
+                <div class={row.status ? '' : 'rule-status-off'}>
+                  {row.status ? '已启用' : '已失效'}
+                </div>
+              );
+            }
+          },
           {
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
@@ -463,7 +472,16 @@
           pianshu: [
             {required: true, message: '请填写片数', trigger: 'change'}
           ]
-        }
+        },
+
+        stackDetail: [
+          {prop: 'eachPackWeight', label: '单批打包重量(Kg)'},
+          {prop: 'aTilemodelRate', label: 'A楞型楞率'},
+          {prop: 'bTilemodelRate', label: 'B楞型楞率'},
+          {prop: 'cTilemodelRate', label: 'C楞型楞率'},
+          {prop: 'eTilemodelRate', label: 'E楞型楞率'},
+          {prop: 'fTilemodelRate', label: 'F楞型楞率'},
+        ]
       };
     },
     methods: {
@@ -699,15 +717,41 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   @{deep} .operation {
+    line-height: 1;
     a {
-      margin-right: 15px;
+      padding: 2px 10px;
       cursor: pointer;
+      &:not(:last-child){
+        border-right: 1px solid #f0f2f5;
+      }
+    }
+  }
+  @{deep} .rule-status-off{
+    color: #afb1b5;
+  }
+  .rule-customize-dialog-view{
+    width: 40vw;
+    .rule-view-header{
+      padding: 0 10px;
+      color: #000;
+      font-weight: bold;
+      &-label{
+        padding: 5px 20px;
+        padding-left: 0;
+      }
+      &.stack{
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    .rule-view-content{
+      box-sizing: border-box;
+      padding-right: 20px;
     }
   }
 
   .rule-customize-dialog {
     width: 80vw;
-    padding-top: 20px;
     .condition-item{
       display: flex;
       .el-form{
@@ -733,7 +777,7 @@
           color: #3554ea;
         }
       }
-      /deep/ .unit-area{
+      @{deep} .unit-area{
         .el-form-item__label{
           line-height: 100px;
         }
@@ -743,31 +787,9 @@
         }
       }
     }
-    /deep/ .dj-form .el-form-item .el-form-item__content{
+    @{deep} .dj-form .el-form-item .el-form-item__content{
       width: 60%;
     }
-    .rule-view-header{
-      padding: 0 10px;
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      color: #000;
-    }
-  }
-</style>
-<style lang="less">
-  .el-dialog__wrapper .el-dialog .el-dialog__body .dj-dialog-content [class*=el-col-].el-col-7 {
-    width: 29.16667%;
-     margin-right: unset;
-  }
-  .el-dialog__wrapper .el-dialog .el-dialog__body .dj-dialog-content [class*=el-col-].el-col-3 {
-    width: 12.5%;
-  }
-  .el-dialog__wrapper .el-dialog .el-dialog__body .dj-dialog-content [class*=el-col-].el-col-6 {
-    width: 25%;
-  }
-  .el-dialog__wrapper .el-dialog .el-dialog__body .dj-dialog-content [class*=el-col-] {
-    width: unset;
-    margin-right: unset;
+
   }
 </style>

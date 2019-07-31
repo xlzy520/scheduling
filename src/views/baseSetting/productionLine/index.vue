@@ -12,7 +12,7 @@
       </el-radio-group>
     </div>
     <prod-line-content :prod-line-data="prodLineData[Number(activeTab)-1]" :prod-line-label="prodLineLabel"></prod-line-content>
-    <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close"></edit-add>
+    <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close" @getData="getData"></edit-add>
   </div>
 </template>
 

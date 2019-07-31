@@ -111,7 +111,15 @@
           {label: '修边', prop: 'trimming'},
           {label: '操作人', prop: 'man'},
           {label: '操作时间', prop: 'time'},
-          {label: '启用状态', prop: 'status', formatter: row => row.status ? '启用' : '禁用'},
+          {label: '启用状态', prop: 'status',
+            render: (h, {props: {row}}) => {
+              return (
+                <div class={row.status ? '' : 'status-off'}>
+                  {row.status ? '已启用' : '已禁用'}
+                </div>
+              );
+            }
+          },
           {
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
@@ -264,9 +272,17 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   @{deep} .operation {
+    line-height: 1;
     a {
-      margin-right: 15px;
+      padding: 2px 10px;
+      cursor: pointer;
+      &:not(:last-child){
+        border-right: 1px solid #f0f2f5;
+      }
     }
+  }
+  @{deep} .status-off{
+    color: #afb1b5;
   }
 
   .plts-dialog {

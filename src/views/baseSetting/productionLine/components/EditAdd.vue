@@ -389,7 +389,7 @@
       };
     },
     methods: {
-      confirm(data) {
+      confirm() {
         const formMap = ['1', '2', '3'];
         const formValidate = new Promise((resolve) => {
           let allIsTrue = [];
@@ -404,14 +404,20 @@
         });
         formValidate.then(res=>{
           if (res.length === 3 && res.every(v=>v)) {
-            const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
-              sum = Object.assign(sum, this.prodLineData[val]);
-              return sum;
-            }, {});
-            productionLineService.list(params).then((res) => {
-              this.close();
-              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-              this.$message(message, 'success');
+            this.$confirm('是否保存填写内容？', '', {
+              type: 'warning',
+              showClose: false,
+            }).then(() => {
+              const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
+                sum = Object.assign(sum, this.prodLineData[val]);
+                return sum;
+              }, {});
+              productionLineService.list(params).then((res) => {
+                this.close();
+                const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+                this.$message(message, 'success');
+                this.$emit('getData');
+              });
             });
           }
         });
