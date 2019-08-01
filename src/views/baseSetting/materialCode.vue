@@ -18,8 +18,7 @@
         <div class="optional">
           <div class="optional-label">可选原纸</div>
           <div class="optional-area" @click="selectPaper($event)">
-            <div class="optional-area-item" :class="formData.code.includes(code.label)?'selected': ''"
-                 v-for="code in optionalPaper" :key="code.label">{{code.label}}</div>
+            <div class="optional-area-item" v-for="code in optionalPaper" :key="code.label">{{code.label}}</div>
           </div>
         </div>
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
@@ -240,6 +239,7 @@
         float: unset;
       }
       .el-select.code{
+        width: 100%;
         pointer-events: none;
       }
       .el-form-item__content{
@@ -249,8 +249,11 @@
       .el-input__suffix{
         display: none;
       }
-      .el-select__tags .el-tag{
+      .el-select__tags .el-tag .el-tag__close{
         pointer-events: visible;
+      }
+      .el-select__tags-text{
+        pointer-events: none;
       }
     }
     // todo 修改背景色，不限制重复选择，最多选十个
