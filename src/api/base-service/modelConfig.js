@@ -9,4 +9,5 @@ module.exports = [
   {name: 'customerPackageQuantitySetting', url: '/customerPackageQuantitySetting'},
   {name: 'ruleCustomize', url: '/ruleCustomize'},
   {name: 'productionLine', url: '/productionLine'},
+  {name: 'paperInStock', url: '/paperInStock'},
 ];
