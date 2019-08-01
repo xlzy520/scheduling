@@ -164,15 +164,15 @@ export default {
   outStockType: new MapObject({
     'Sale': {
       label: '销售出库',
-      value: '1'
+      value: '2'
     },
     'returnGoods': {
       label: '采购退货',
-      value: '2'
+      value: '3'
     },
     'prodProvide': {
       label: '生产领料',
-      value: '3'
+      value: '1'
     },
     'scrap': {
       label: '报废出库',
