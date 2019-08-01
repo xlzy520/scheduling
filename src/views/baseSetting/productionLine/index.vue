@@ -6,9 +6,9 @@
     </el-tabs>
     <div class="tab-right-btns">
       <el-button type="primary" @click="edit">修改</el-button>
-      <el-radio-group v-model="lineStatus" @change="changeLineStatus">
-        <el-radio-button label="on">启用</el-radio-button>
-        <el-radio-button label="off">禁用</el-radio-button>
+      <el-radio-group :value="lineStatus" @change="changeLineStatus">
+        <el-radio-button label="1">启用</el-radio-button>
+        <el-radio-button label="0">禁用</el-radio-button>
       </el-radio-group>
     </div>
     <prod-line-content :prod-line-data="prodLineData[Number(activeTab)-1]" :prod-line-label="prodLineLabel"></prod-line-content>
@@ -29,12 +29,12 @@
       return {
         activeTab: '',
         tabsColumn: [],
-        lineStatus: 'on',
+        lineStatus: '1',
 
         prodLineData: [
           {
             jccs: {
-              commonTilemodel: '',
+              commonTilemodel: [],
               lineSpeed: '',
               changeorderMinLength: '',
               firstorderWasteWith: '',
@@ -60,7 +60,7 @@
             }
           },
         ],
-        prodLineLabel: {
+        prodLineLabel: Object.freeze({
           jccs: [
             {prop: 'commonTilemodel', label: '常用楞型'},
             {prop: 'lineSpeed', label: '生产车速(m/s)'},
@@ -86,7 +86,7 @@
             {prop: 'basketLength', label: '吊篮长度(m)'},
             {prop: 'statckCount', label: '最小叠单米数(m)'}
           ],
-        },
+        }),
 
         dialogTypeIsAdd: false,
         dialogVisible: false,
@@ -97,171 +97,51 @@
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
       },
-      tabClick(val) {
-        productionLineService.list({
-          line: val
-        }).then((res) => {
-
+      tabClick() {
+        this.lineStatus = this.tabsColumn[this.activeTab].isEffected;
+      },
+      changeLineEffectedApi(val, text) {
+        productionLineService.changeLineEffected({
+          effected: val,
+          id: this.tabsColumn[this.activeTab].id
+        }).then(() => {
+          this.$message(text, 'success');
+          this.getData();
         });
       },
       changeLineStatus(val) {
-        if (val === 'off') {
+        if (val) {
           this.$confirm('您确定禁用该条内容吗？', '', {
             type: 'warning',
             showClose: false,
           }).then(() => {
-            productionLineService.list({
-              status: val
-            }).then((res) => {
-
-            });
+            this.lineStatus = val;
+            this.changeLineEffectedApi(val, '禁用成功');
           });
         } else {
-          productionLineService.list({
-            status: val
-          }).then((res) => {
-
-          });
+          this.lineStatus = val;
+          this.changeLineEffectedApi(val, '启用成功');
         }
       },
 
       getData(data) {
         const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         productionLineService.list(data).then((res) => {
-          const data = [
-            {
-              "id": "604de70e-b638-4f26-8b60-df184a0de3f9",
-              "lineId": "1",
-              "defaultLine": "",
-              "partlineMachineWidth": 11.00,
-              "minCutLength": 1000,
-              "basketType": 10,
-              "basketLength": 90,
-              "statckCount": 90,
-              "slimachNumbers": 43,
-              "slimachWheelRows": 90,
-              "slimachWheelCount": 42,
-              "slimachWheelSamesideSpace": 80,
-              "slimachWdoubleMinLength": 3244,
-              "slimachKnifeCount": 90,
-              "slimachKnifeSpace": 90,
-              "slimachKnifeChangetime": 90,
-              "commonTilemodel": "BC,BE",
-              "lineSpeed": 30.00,
-              "firstorderWasteWith": 43,
-              "changeorderMinLength": 60,
-              "lastorderMinLength": 60,
-              "isEffected": "",
-              "isDeleted": "",
-              "createtime": "",
-              "updatetime": "",
-              "supplierId": "",
-              "operator": "",
-              "linePaperSizeModels": [
-                {
-                  "id": "",
-                  "lineId": "",
-                  "paperSize": 800,
-                  "createTime": "",
-                  "updateTime": ""
-                },
-                {
-                  "id": "",
-                  "lineId": "",
-                  "paperSize": 1800,
-                  "createTime": "",
-                  "updateTime": ""
-                }
-              ]
-            },
-            {
-              "id": "604de70e-b638-4f26-8b60-df184a0de3f1",
-              "lineId": "2",
-              "defaultLine": "",
-              "partlineMachineWidth": 22.00,
-              "minCutLength": 1000,
-              "basketType": 10,
-              "basketLength": 90,
-              "statckCount": 90,
-              "slimachNumbers": 43,
-              "slimachWheelRows": 90,
-              "slimachWheelCount": 42,
-              "slimachWheelSamesideSpace": 80,
-              "slimachWdoubleMinLength": 3244,
-              "slimachKnifeCount": 90,
-              "slimachKnifeSpace": 90,
-              "slimachKnifeChangetime": 90,
-              "commonTilemodel": "BC,BE",
-              "lineSpeed": 30.00,
-              "firstorderWasteWith": 43,
-              "changeorderMinLength": 60,
-              "lastorderMinLength": 60,
-              "isEffected": "",
-              "isDeleted": "",
-              "createtime": "",
-              "updatetime": "",
-              "supplierId": "",
-              "operator": "",
-              "linePaperSizeModels": [
-                {
-                  "id": "",
-                  "lineId": "",
-                  "paperSize": 150,
-                  "createTime": "",
-                  "updateTime": ""
-                }
-              ]
-            },
-            {
-              "id": "604de70e-b638-4f26-8b60-df184a0de3f2",
-              "lineId": "3",
-              "defaultLine": "",
-              "partlineMachineWidth": 33.00,
-              "minCutLength": 1000,
-              "basketType": 10,
-              "basketLength": 90,
-              "statckCount": 90,
-              "slimachNumbers": 43,
-              "slimachWheelRows": 90,
-              "slimachWheelCount": 42,
-              "slimachWheelSamesideSpace": 80,
-              "slimachWdoubleMinLength": 3244,
-              "slimachKnifeCount": 90,
-              "slimachKnifeSpace": 90,
-              "slimachKnifeChangetime": 90,
-              "commonTilemodel": "BC,BE",
-              "lineSpeed": 30.00,
-              "firstorderWasteWith": 43,
-              "changeorderMinLength": 60,
-              "lastorderMinLength": 60,
-              "isEffected": "",
-              "isDeleted": "",
-              "createtime": "",
-              "updatetime": "",
-              "supplierId": "",
-              "operator": "",
-              "linePaperSizeModels": [
-                {
-                  "id": "",
-                  "lineId": "",
-                  "paperSize": 150,
-                  "createTime": "",
-                  "updateTime": ""
-                }
-              ]
-            },
-            ];
+          let data = res.list;
           this.prodLineData = [];
+          this.tabsColumn = [];
           if (data.length > 0) {
             data.map((v, index)=>{
               this.activeTab = data[0].lineId;
               this.tabsColumn.push({
                 label: chnNumChar[v.lineId] + '号线',
-                value: v.lineId
+                value: v.lineId,
+                id: v.id,
+                isEffected: v.isEffected
               });
               this.prodLineData.push({
                 jccs: {
-                  commonTilemodel: '',
+                  commonTilemodel: [],
                   lineSpeed: '',
                   changeorderMinLength: '',
                   firstorderWasteWith: '',
@@ -304,18 +184,10 @@
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
         this.$nextTick(()=>{
-          this.$refs.editAdd.prodLineData = this.$method.deepClone(this.prodLineData[this.activeTab - 1]);
+          let copyData = this.$method.deepClone(this.prodLineData[this.activeTab - 1]);
+          copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split(',');
+          this.$refs.editAdd.prodLineData = copyData;
         });
-      },
-      search(data) {
-        this.getData({
-          ...data,
-          ...this.pageOptions,
-        });
-      },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
       },
       close() {
         this.dialogVisible = false;

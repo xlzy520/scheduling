@@ -16,37 +16,39 @@
         <dj-form ref="stackForm" :form-data="stackFormData" :form-options="stackFormOptions"
                  :column-num="2" />
         <div v-for="(condition, index) in stackConditionFormData" :key="condition.key" class="condition-item">
-          <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
+          <span class="condition-index-label">条件{{index+1}}</span>
           <div class="child-condition-list">
             <el-form :model="child" :rules="stackRules" ref="childConditionForm" v-for="(child, childIndex) in condition.child"
-                     :key="child.time" >
-              <el-col :span="7" v-if="childIndex===0">
-                <el-form-item label="楞型" prop="lengxing">
-                  <el-select v-model="child.lengxing">
-                    <el-option v-for="option in lengxingOptions"
-                               :label="option.label" :value="option.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="7">
-                <el-form-item label="切数" prop="qieshu">
-                  <el-select v-model="child.qieshu" multiple>
-                    <el-option v-for="option in qieshuOptions"
-                               :label="option.label" :value="option.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="7">
-                <el-form-item label="片数：" prop="pianshu">
-                  <el-input v-model="child.pianshu"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="3" class="button-col">
-                <i class="el-icon-delete" v-if="childIndex===condition.child.length - 1"
-                   @click.prevent="removeCondition(index,childIndex)"></i>
-                <i class="el-icon-circle-plus" @click="addChildCondition(index)"
-                   v-if="childIndex===condition.child.length - 1"></i>
-              </el-col>
+                     :key="child.time" class="dj-form">
+              <el-row>
+                <el-col :span="7" v-if="childIndex===0">
+                  <el-form-item label="楞型" prop="lengxing">
+                    <el-select v-model="child.lengxing">
+                      <el-option v-for="option in lengxingOptions"
+                                 :label="option.label" :value="option.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="切数" prop="qieshu">
+                    <el-select v-model="child.qieshu" multiple>
+                      <el-option v-for="option in qieshuOptions"
+                                 :label="option.label" :value="option.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="片数：" prop="pianshu">
+                    <el-input v-model="child.pianshu" class="pianshu"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3" class="button-col">
+                  <i class="el-icon-delete" v-if="childIndex===condition.child.length - 1"
+                     @click.prevent="removeCondition(index,childIndex)"></i>
+                  <i class="el-icon-circle-plus" @click="addChildCondition(index)"
+                     v-if="childIndex===condition.child.length - 1"></i>
+                </el-col>
+              </el-row>
             </el-form>
           </div>
         </div>
@@ -559,7 +561,6 @@
         }
       },
       changeStatus(row) {
-        // 接口
         if (row.status) {
           this.$confirm('您确定禁用该条内容吗？', '', {
             type: 'warning',
@@ -755,15 +756,30 @@
     .condition-item{
       display: flex;
       .el-form{
-        display: flex;
-        justify-content: flex-end;
+        .el-row{
+          display: flex;
+          justify-content: flex-end;
+        }
       }
       .condition-index-label{
-        margin-bottom: 22px;
         text-align: right;
+        width: 60px;
+        line-height: 43px;
+        margin-right: 16px;
       }
       .child-condition-list{
-
+        width: 100%;
+      }
+      .pianshu{
+        width: 232px;
+      }
+      @media screen and (max-width: 1367px) {
+        .pianshu{
+          width: 200px;
+        }
+        .dj-form .dj-input-content, .dj-form .el-cascader, .dj-form .el-date-editor.el-input, .dj-form .el-select{
+          width: 200px;
+        }
       }
       .button-col.el-col{
         margin-top: 8px;
@@ -786,9 +802,6 @@
           line-height: 100px;
         }
       }
-    }
-    @{deep} .dj-form .el-form-item .el-form-item__content{
-      width: 60%;
     }
 
   }

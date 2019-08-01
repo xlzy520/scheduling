@@ -25,11 +25,12 @@
     </div>
     <div class="right-content">
       <card title="分线机/横切机/吊篮">
-        <dj-grid-box :data="ProdLineLabel.fxj" :column-num="3" :col-rule="()=>8">
+        <dj-grid-box :data="ProdLineLabel.fxj" :column-num="3" :col-rule="colRule">
           <template slot-scope="{item}">
             <div class="bs-card-row">
               <div class="bs-card-label">{{item.label}}：</div>
-              <div class="bs-card-value"> {{ProdLineData.fxj[item.prop]}}</div>
+              <div class="bs-card-value" v-if="item.prop !== 'basketType'"> {{ProdLineData.fxj[item.prop]}}</div>
+              <div class="bs-card-value" v-else> {{ProdLineData.fxj[item.prop]===1?'大吊篮':'小吊篮'}}</div>
             </div>
           </template>
         </dj-grid-box>
@@ -90,6 +91,9 @@
       colRule(item) {
         if (item.prop === 'linePaperSizeModels') {
           return 24;
+        }
+        if (item.prop === 'statckCount') {
+          return 16;
         }
         return 8;
       },

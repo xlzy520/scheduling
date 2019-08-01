@@ -43,8 +43,9 @@ const fluteTypeLayer = [
   }
 ];
 const fluteType = fluteTypeLayer.reduce((arr, obj)=>{
-  return arr.concat(obj.fluteType.map(obj=>({ lable: obj.label, value: obj.label })));
-}, [{label: '全部', value: ''}]);
+  return arr.concat(obj.fluteType.map(obj=>({ label: obj.label, value: obj.label.replace(/[\u4e00-\u9fa5]/g, '') })));
+}, [{label: '全部', value: 'all'}]);
+console.log(fluteType);
 
 export default {
   orderTip: new MapObject({

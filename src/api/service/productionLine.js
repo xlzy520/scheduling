@@ -1,7 +1,16 @@
 import {productionLine} from '../base-service/service';
 
 export default {
-  list(data) {
-    return productionLine('/list', data);
-  }
+  list() {
+    return productionLine('/list.do');
+  },
+  changeLineEffected(data) {
+    return productionLine('/changeLineEffected.do', data);
+  },
+  addLine(data) {
+    return productionLine('/addLine.do', data);
+  },
+  showAllLine() {
+    return productionLine('/showAllLine.do');
+  },
 };

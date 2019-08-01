@@ -23,6 +23,7 @@
 <script>
   import {djForm} from 'djweb';
   import productionLineService from '../../../../api/service/productionLine';
+
   const ruleMoreThan9999 = {type: 'number', max: 9999, message: '不能大于9999', trigger: 'change'};
   const ruleMustNumber = {type: 'number', message: '只可输入数字', trigger: 'change'};
   export default {
@@ -38,67 +39,68 @@
         columnNum: 4,
         prodLineData: {
           jccs: {
-            commonTilemodel: '',
-            lineSpeed: '',
-            changeorderMinLength: '',
-            firstorderWasteWith: '',
-            lastorderMinLength: '',
+            commonTilemodel: [],
+            lineSpeed: 222,
+            changeorderMinLength: 222,
+            firstorderWasteWith: 222,
+            lastorderMinLength: 222,
             linePaperSizeModels: [],
           },
           zqj: {
-            slimachNumbers: '1',
-            slimachWheelRows: '1',
-            slimachWheelCount: '',
-            slimachWheelSamesideSpace: '',
-            slimachWdoubleMinLength: '',
-            slimachKnifeCount: '',
-            slimachKnifeSpace: '',
-            slimachKnifeChangetime: '',
+            slimachNumbers: 1,
+            slimachWheelRows: 1,
+            slimachWheelCount: 222,
+            slimachWheelSamesideSpace: 222,
+            slimachWdoubleMinLength: 222,
+            slimachKnifeCount: 222,
+            slimachKnifeSpace: 222,
+            slimachKnifeChangetime: 222,
           },
           fxj: {
-            partlineMachineWidth: '',
-            minCutLength: '',
-            basketType: 'big',
-            basketLength: '',
-            statckCount: '',
+            partlineMachineWidth: 222,
+            minCutLength: 222,
+            basketType: '',
+            basketLength: 222,
+            statckCount: 222,
           }
         },
         formOptions: {
           jccs: [
             {
-              type: 'input',
-              formItem: {
-                prop: 'name',
-                label: '生产线名称',
-                rules: [
-                  djForm.rules.required('生产线名称不能为空'),
-                  {pattern: /^\w+$/g, message: '只可输入字母、数字'},
-                ],
-              }
-            },
-            {
-              type: 'select',
+              type: 'custom',
+              key: 'commonTilemodel',
               formItem: {
                 prop: 'commonTilemodel',
                 label: '常用楞型',
               },
               attrs: {
-                key: 'multiple',
-                type: 'multiple',
-                options: [{
-                  label: '普通瓦楞',
-                  value: 'chu',
-                }, {
-                  label: '高强瓦楞',
-                  value: 'gao',
-                }, {
-                  label: '牛卡',
-                  value: 'da',
-                }, {
-                  label: '再生',
-                  value: 'daa',
-                }],
+                default: []
               },
+              component: {
+                props: ['value', 'default'],
+                render(h) {
+                  // 全选逻辑
+                  const input = (arr) => {
+                    let realArr;
+                    let lastValue = arr[arr.length - 1];
+                    if (lastValue === 'all') {
+                      realArr = [lastValue];
+                    } else {
+                      realArr = arr.filter(val => val !== 'all');
+                    }
+                    this.$emit('input', realArr);
+                  };
+                  return (
+                    <dj-select value={this.value}
+                               collapse-tags
+                               type="multiple"
+                               default={this.default}
+                               options={this.$enum.fluteType}
+                               onInput={input}
+                    ></dj-select>
+                  );
+                }
+              }
             },
             {
               type: 'input',
@@ -174,10 +176,10 @@
               attrs: {
                 options: [{
                   label: '一台',
-                  value: '1'
+                  value: 1
                 }, {
                   label: '二台及以上',
-                  value: '2'
+                  value: 2
                 }]
               },
               listeners: {
@@ -208,10 +210,10 @@
               attrs: {
                 options: [{
                   label: '一排',
-                  value: '1'
+                  value: 1
                 }, {
                   label: '两排',
-                  value: '2'
+                  value: 2
                 }]
               },
             },
@@ -338,15 +340,15 @@
               attrs: {
                 options: [{
                   label: '大吊篮',
-                  value: 'big',
+                  value: 1,
                 }, {
                   label: '小吊篮',
-                  value: 'small',
+                  value: 2,
                 }],
               },
               listeners: {
                 change: (val)=>{
-                  this.prodLineData.fxj.basketLength = '';
+                  this.prodLineData.fxj.statckCount = '';
                   const cache = {
                     type: 'input',
                     formItem: {
@@ -361,7 +363,10 @@
                       type: 'number'
                     }
                   };
-                  if (val === 'small') {
+                  if (val === 2) {
+                    if (this.prodLineData.fxj.basketLength !== '') {
+                      this.prodLineData.fxj.basketLength = '';
+                    }
                     this.formOptions.fxj.splice(4, 0, cache);
                   } else {
                     this.formOptions.fxj.splice(4, 1);
@@ -385,7 +390,8 @@
             }
           ],
         },
-        optionalPaper: []
+        optionalPaper: [],
+        cache: {}
       };
     },
     methods: {
@@ -404,34 +410,52 @@
         });
         formValidate.then(res=>{
           if (res.length === 3 && res.every(v=>v)) {
-            this.$confirm('是否保存填写内容？', '', {
-              type: 'warning',
-              showClose: false,
-            }).then(() => {
-              const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
-                sum = Object.assign(sum, this.prodLineData[val]);
-                return sum;
-              }, {});
-              productionLineService.list(params).then((res) => {
-                this.close();
-                const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-                this.$message(message, 'success');
-                this.$emit('getData');
+            if (this.isModify()) {
+              this.$confirm('是否保存填写内容？', '', {
+                type: 'warning',
+                showClose: false,
+              }).then(() => {
+                const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
+                  sum = Object.assign(sum, this.prodLineData[val]);
+                  return sum;
+                }, {});
+                params.linePaperSizeModels = params.linePaperSizeModels.map(v=>{return {paperSize: v};});
+                params.commonTilemodel = params.commonTilemodel.join(',');
+                productionLineService.addLine(params).then((res) => {
+                  this.$emit('close');
+                  const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+                  this.$message(message, 'success');
+                  this.$emit('getData');
+                });
               });
-            });
+            } else {
+              this.$message('未修改', 'info');
+              return false;
+            }
           }
         });
 
       },
-      close() {
+      isModify() {
         const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
           sum = Object.assign(sum, this.prodLineData[val]);
           return sum;
         }, {});
-        delete params.slimachNumbers;
-        delete params.slimachWheelRows;
-        delete params.basketType;
-        if (Object.values(params).some(v => v !== "" && v.length !== 0)) {
+        const keysArr = Object.keys(params);
+        let modify = keysArr.findIndex(v=> {
+          if (typeof params[v] !== 'object') {
+            return params[v] !== this.cache[v];
+          } else {
+            let arrDiff = params[v].findIndex((v1, index)=> v1 !== this.cache[v][index]);
+            if (arrDiff > -1) {
+              return true;
+            }
+          }
+        });
+        return modify > -1;
+      },
+      close() {
+        if (this.isModify()) {
           this.$confirm('生产线信息未保存，确认是否关闭？', '', {
             type: 'warning',
             showClose: false,
@@ -441,7 +465,6 @@
         } else {
           this.$emit('close');
         }
-
       },
       isIncludesPaper(code) {
         const { linePaperSizeModels } = this.prodLineData.jccs;
@@ -475,6 +498,11 @@
     mounted() {
       this.$nextTick(()=>{
         this.$refs.dialog.open();
+        let deepCloneData = this.$method.deepClone(this.prodLineData);
+        this.cache = Object.keys(deepCloneData).reduce((sum, val)=>{
+          sum = Object.assign(sum, deepCloneData[val]);
+          return sum;
+        }, {});
         this.getColumnNum();
         window.addEventListener('resize', ()=>{
           this.getColumnNum();
