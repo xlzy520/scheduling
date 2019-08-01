@@ -1,5 +1,5 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="1506px" title="查看" @confirm="confirm">
+    <dj-dialog ref="dialog" @close="close" width="1506px" title="查看">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="基础信息" name="1">
           <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="4"
@@ -16,6 +16,9 @@
           <base-table :data="recordData" :columns="recordColumns"></base-table>
         </el-tab-pane>
       </el-tabs>
+      <div slot="footer">
+        <el-button @click="close">关闭</el-button>
+      </div>
     </dj-dialog>
 </template>
 <script>
@@ -163,10 +166,6 @@
     methods: {
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 18 : 6;
-      },
-      confirm() {
-        console.log(this.formData);
-        this.$refs.form.validate();
       },
       open(param) {
         this.$refs.dialog.open();

@@ -8,10 +8,15 @@
                  :col-rule="colRule"></dj-form>
       <p>纸筒信息</p>
       <base-table ref="table"
-                :data="tableData"
+                  v-if="readyTable"
+                  :column-type-props="{index: {fixed: false}}"
+                  :data="tableData"
+                  :lazy-total="tableMaxLength"
+                  :lazy-remote="()=>getEmptyData(10)"
                   max-height="500"
-                :columns="tableColumns"
-                :column-type="['index']">
+                  :columns="tableColumns"
+                  @row-click="rowClick"
+                  :column-type="['index']">
       </base-table>
     </dj-dialog>
 </template>
@@ -43,65 +48,6 @@
     this.$set(row, cylinderKeys.length, value);
     updateArea.bind(this)(row);
   };
-  const TABLE_INPUT = tableInput;
-  //   {
-  //   render(h) {
-  //     let { row, index, col, reg } = this;
-  //     const input = (val)=>{
-  //       if (reg && reg.test(val) || !reg) {
-  //         this.$set(row, col.prop, val);
-  //         this.$emit('input', val, {row, index, col, reg});
-  //       }
-  //     };
-  //     const keyup = (e) => {
-  //       if (e.keyCode === 13 || e.keyCode === 108) {
-  //         if (this.beforeEnter) {
-  //           this.beforeEnter(e.target.value, ()=>this.focus(index, col.prop), {row, index, col, ...this.$attrs});
-  //         } else {
-  //           this.focus(index, col.prop);
-  //         }
-  //       }
-  //     };
-  //     return (
-  //       <el-autocomplete ref="input"
-  //                        value={row[col.prop]}
-  //                        fetch-suggestions={(val, cb)=>this.service(val, cb, {row, index, col, ...this.$attrs})}
-  //                        value-key={col.prop}
-  //                        placeholder="请输入"
-  //                        nativeOn-keyup={keyup}
-  //                        on-input={input}></el-autocomplete>
-  //     );
-  //   },
-  //   mounted() {
-  //     if (!this.$parent.fixed) {
-  //       if (!this.$parent.inputMap) {
-  //         this.$parent.inputMap = {}
-  //       }
-  //       this.$parent.inputMap[`${this.index}-${this.col.prop}`] = this;
-  //     }
-  //   },
-  //   props: ['row', 'index', 'col', 'service', 'beforeEnter', 'reg'],
-  //   methods: {
-  //     focus(index, prop) {
-  //       let _index = index;
-  //       let arr = [paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight];
-  //       let map = arr.reduce((map, str, index) => {
-  //         if (index === arr.length -1) {
-  //           map[str] = arr[0];
-  //         } else {
-  //           map[str] = arr[index + 1];
-  //         }
-  //         return map;
-  //       }, {});
-  //       if (prop === arr[arr.length -1]) {
-  //         index++;
-  //       }
-  //       this.$parent.inputMap[`${_index}-${prop}`] && this.$parent.inputMap[`${_index}-${prop}`].$refs.input.close();
-  //       // this.$parent.inputMap[`${index}-${map[prop]}`] && this.$parent.inputMap[`${index}-${map[prop]}`].$el.querySelector('input').focus();
-  //       this.$parent.inputMap[`${index}-${map[prop]}`] && this.$parent.inputMap[`${index}-${map[prop]}`].$refs.input.focus();
-  //     }
-  //   }
-  // };
   const TABLE_SELECT = {
     render(h) {
       let { row, index, col, keyMap } = this;
@@ -110,9 +56,26 @@
       };
       return (
         <dj-select ref="select"
-                   service={(val, cb)=>this.service(val, cb, {row, index, col, ...this.$attrs})}
+                   options={this.options}
                    key-map={keyMap}
-                   key-map={{value: col.prop, label: col.prop}}
+                   value={row[col.prop]}
+                   placeholder="请选择"
+                   on-input={input}
+        ></dj-select>
+      );
+    },
+    props: ['row', 'index', 'col', 'service', 'keyMap', 'options'],
+  };
+  const TABLE_SELECT2 = {
+    render(h) {
+      let { row, index, col, keyMap } = this;
+      const input = (val)=>{
+        this.$set(row, col.prop, val);
+      };
+      return (
+        <dj-select ref="select"
+                   options={this.realOptions}
+                   key-map={keyMap}
                    value={row[col.prop]}
                    placeholder="请选择"
                    on-input={input}
@@ -121,34 +84,33 @@
     },
     mounted() {
       if (!this.$parent.fixed) {
-        this.$refs.select.getOptions();
+        this.$watch(`row.${paperKeys.warehouseId}`, (val) => {
+          console.log(val);
+          if (![null, undefined, ''].includes(val)) {
+            this.service(val).then(res=>{
+              this.realOptions = res;
+            });
+          } else {
+            this.row[paperKeys.warehouseAreaId] = undefined;
+            this.realOptions = [];
+          }
+        });
       }
     },
-    props: ['row', 'index', 'col', 'service', 'keyMap'],
-    methods: {
-      focus(index, prop) {
-        let arr = [paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight];
-        let map = arr.reduce((map, str, index) => {
-          if (index === arr.length -1) {
-            map[str] = arr[0];
-          } else {
-            map[str] = arr[index + 1];
-          }
-          return map;
-        }, {});
-        if (prop === arr[arr.length -1]) {
-          index++;
-        }
-        this.$parent.inputMap[`${index}-${map[prop]}`] && this.$parent.inputMap[`${index}-${map[prop]}`].$el.querySelector('input').focus();
+    data() {
+      return {
+        realOptions: []
       }
-    }
+    },
+    props: ['row', 'index', 'col', 'service', 'keyMap', 'options'],
   };
+  const tableMaxLength = 150;
   export default {
     name: 'addOrEditInStock',
     data: function () {
       return {
         formData: {},
-        tableData: [{}],
+        tableData: [],
         tableColumns: [
           {
             prop: 'operate',
@@ -159,7 +121,9 @@
               };
               const remove = () => {
                 if (!disabled()) {
-                  this.tableData.splice(index, 1);
+                  let _front = this.tableData.slice(0, index);
+                  let _behend = this.tableData.slice(index + 1);
+                  this.tableData = [..._front, ..._behend, {}];
                 }
               };
               return (
@@ -186,22 +150,30 @@
                 console.log('beforeEnter对接接口');
                 console.log('beforeEnter接口参数', val);
                 if (val) {
-                  props.row[paperKeys.paperCode] = 'sdafdgdfgfdgfdg';
-                  props.row[paperKeys.paperType] = '1';
-                  props.row[paperKeys.warehouseId] = '1';
-                  props.row[paperKeys.warehouseAreaId] = '1';
-                  this.$set(props.row, paperKeys.paperSize, '1800');
-                  updateLength.bind(this)(props.row);
+                  Promise.all([this.getPaperDetailById(val), this.getCylinderId()]).then(result=>{
+                    Object.assign(props.row, result[0], result[1]);
+                    updateLength.bind(this)(props.row);
+                  });
                 }
                 cb();
               };
               return {...props, service, beforeEnter}
             },
-            component: TABLE_INPUT
+            component: tableInput,
+            listeners: {
+              select: (val, props) => {
+                if (val) {
+                  Promise.all([this.getPaperDetailById(val), this.getCylinderId()]).then(result=>{
+                    Object.assign(props.row, result[0], result[1]);
+                    updateLength.bind(this)(props.row);
+                  });
+                }
+              }
+            }
           },
           {
             prop: paperKeys.paperGram,
-            label: '克重',
+            label: '克重(g)',
             propsHandler: (props) => {
               const service = (val, cb) => {
                 console.log('对接接口');
@@ -211,13 +183,13 @@
                 cb([data]);
               };
               const beforeEnter = (val, cb) => {
-                console.log('beforeEnter对接接口');
-                console.log('beforeEnter接口参数', val);
+                // console.log('beforeEnter对接接口');
+                // console.log('beforeEnter接口参数', val);
                 cb();
               };
               return {...props, service, beforeEnter, reg: this.$reg.FIGURE_REGEXP}
             },
-            component: TABLE_INPUT,
+            component: tableInput,
             listeners: {
               input: (val, props) => {
                 updateLength.bind(this)(props.row);
@@ -226,7 +198,7 @@
           },
           {
             prop: cylinderKeys.weight,
-            label: '重量',
+            label: '重量(kg)',
             propsHandler: (props) => {
               const service = (val, cb) => {
                 console.log('对接接口');
@@ -236,18 +208,20 @@
                 cb([data]);
               };
               const beforeEnter = (val, cb, props) => {
-                console.log('beforeEnter对接接口');
-                console.log('beforeEnter接口参数', props);
+                // console.log('beforeEnter对接接口');
+                // console.log('beforeEnter接口参数', props);
                 if (props.index === this.tableData.length - 1) {
                   this.tableData.push({});
                   this.$nextTick(()=>{
                     cb();
                   });
+                } else {
+                  cb();
                 }
               };
               return {...props, service, beforeEnter, reg: this.$reg.FIGURE_REGEXP}
             },
-            component: TABLE_INPUT,
+            component: tableInput,
             listeners: {
               input: (val, props) => {
                 updateLength.bind(this)(props.row);
@@ -257,30 +231,41 @@
           {
             prop: cylinderKeys.length,
             label: '长度(m)',
-            formatter(row) {
-              let value;
-              let weight = row[cylinderKeys.weight];
-              let paperSize = row[paperKeys.paperSize];
-              let paperGram = row[paperKeys.paperGram];
-              value = weight/(paperSize/1000*paperGram/1000);
-              if (isNaN(value)) {
-                value = '';
+            formatter(row, index, cur) {
+              // let value;
+              // let weight = row[cylinderKeys.weight];
+              // let paperSize = row[paperKeys.paperSize];
+              // let paperGram = row[paperKeys.paperGram];
+              // value = weight/(paperSize/1000*paperGram/1000);
+              // if (isNaN(value)) {
+              //   value = '';
+              // } else {
+              //   value = value.toFixed(2);
+              // }
+              if (cur) {
+                cur = cur.toFixed(2);
               }
-              return value;
+              return cur;
             }
           },
           {
             prop: cylinderKeys.area,
             label: '面积(㎡)',
-            formatter(row) {
-              let value;
-              let length = row[cylinderKeys.length];
-              let paperSize = row[paperKeys.paperSize];
-              value = paperSize/1000*length;
-              if (isNaN(value)) {
-                value = '';
+            formatter(row, index, cur) {
+              // let value;
+              // let length = row[cylinderKeys.length];
+              // let paperSize = row[paperKeys.paperSize];
+              // value = paperSize/1000*length;
+              // if (isNaN(value)) {
+              //   value = '';
+              // } else {
+              //   value = value.toFixed(2);
+              // }
+              // return value;
+              if (cur) {
+                cur = cur.toFixed(2);
               }
-              return value;
+              return cur;
             }
           },
           {
@@ -298,41 +283,37 @@
           {
             prop: paperKeys.warehouseId,
             label: '仓库',
-            propsHandler(props) {
-              const service = (val, cb) => {
-                console.log('对接接口');
-                console.log('接口参数', val);
-                let data = {};
-                data[paperKeys.warehouseName] = 'sada';
-                data[paperKeys.warehouseId] = '1';
-                return Promise.resolve([data]);
-              };
-              return {...props, service, keyMap: {label: paperKeys.warehouseName, value: paperKeys.warehouseId}}
+            propsHandler: (props) => {
+              return {...props, options: this.warehouseList, keyMap: {label: paperKeys.warehouseName, value: paperKeys.warehouseId}}
             },
             component: TABLE_SELECT
           },
           {
             prop: paperKeys.warehouseAreaId,
             label: '库区',
-            propsHandler(props) {
-              const service = (val, cb) => {
-                console.log('对接接口');
-                console.log('接口参数', val);
-                let data = {};
-                data[paperKeys.warehouseAreaName] = 'yutyuhg';
-                data[paperKeys.warehouseAreaId] = '1';
-                return Promise.resolve([data]);
-              };
-              return {...props, service, keyMap: {label: paperKeys.warehouseName, value: paperKeys.warehouseId}}
+            propsHandler: (props) => {
+              // const service = (val, cb) => {
+              //   // console.log('对接接口');
+              //   // console.log('接口参数', val);
+              //   let data = {};
+              //   data[paperKeys.warehouseAreaName] = 'yutyuhg';
+              //   data[paperKeys.warehouseAreaId] = '1';
+              //   return Promise.resolve([data]);
+              // };
+              return {...props, service: this.getWarehouseArea, keyMap: {label: paperKeys.warehouseAreaName, value: paperKeys.warehouseAreaId}}
             },
-            component: TABLE_SELECT
+            component: TABLE_SELECT2
           },
           {
             prop: paperKeys.paperStatus,
             label: '原纸状态'
           },
         ],
-        isEdit: false
+        isEdit: false,
+        readyTable: false,
+        activeIndex: undefined,
+        warehouseList: [],
+        tableMaxLength: tableMaxLength
       };
     },
     computed: {
@@ -395,13 +376,17 @@
             }
           },
           {
-            type: 'input',
+            type: 'dj-cascader',
             formItem: {
               prop: cylinderKeys.forkliftDriver,
               label: '叉车员'
             },
             attrs: {
-              disabled: this.isEdit
+              props: {
+                checkStrictly: false
+              },
+              disabled: this.isEdit,
+              apiArray: []
             }
           },
           {
@@ -414,7 +399,7 @@
               disabled: true
             },
             computed: () => {
-              return this.tableData.reduce((sum, obj) => {
+              return this.effectiveTableData.reduce((sum, obj) => {
                 let weight = Number(obj[cylinderKeys.weight]) || 0;
                 sum += weight;
                 return sum;
@@ -431,7 +416,7 @@
               disabled: true
             },
             computed: () => {
-              return this.tableData.length;
+              return this.effectiveTableData.length;
             }
           },
           {
@@ -445,10 +430,107 @@
             }
           },
         ];
+      },
+      effectiveTableData() {
+        return this.tableData.filter(obj=>{
+          let arr = [cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
+          return arr.every(key=>{
+            return !['', undefined, null].includes(obj[key]);});
+        });
       }
     },
-    created() {},
+    created() {
+      this.getEmptyData(10).then(res=>{
+        this.tableData.push(...res);
+      });
+      this.getAllWarehouse();
+      this.addListener(window, 'keyup', this.shortcutCopy);
+    },
+    mounted() {
+      // 表格渲染时间较长，如果与弹框一起渲染，弹框打开会有延迟
+      setTimeout(()=>{
+        this.readyTable = true;
+      });
+    },
     methods: {
+      //获取纸筒编号
+      getCylinderId() {
+        let data = {};
+        data[cylinderKeys.cylinderNo] = 213435345435;
+        return Promise.resolve(data);
+      },
+      //根据原纸编号获取相关原纸信息
+      getPaperDetailById(id) {
+        let data = {};
+        data[paperKeys.paperCode] = 'sdafdgdfgfdgfdg';
+        data[paperKeys.paperType] = '1';
+        data[paperKeys.warehouseId] = '1';
+        data[paperKeys.warehouseAreaId] = '1';
+        data[paperKeys.paperSize] = 1800;
+        return Promise.resolve(data);
+      },
+      shortcutCopy(e) {
+        let keyCode = e.keyCode;
+        if (this.activeIndex !== undefined) {
+          if (keyCode === 17) {
+            this.getCylinderId().then(res=>{
+              let _obj = this.$method.deepClone(this.tableData[this.activeIndex]);
+              this.tableData.splice(this.activeIndex + 1, 0, {..._obj, ...res});
+            });
+          } else if (keyCode === 13 && e.target.tagName !== 'INPUT' && this.tableData.length < tableMaxLength) {
+            this.tableData.splice(this.activeIndex + 1, 0, {});
+          }
+        }
+      },
+      rowClick(row) {
+        let index = this.tableData.findIndex(obj=>obj === row);
+        if (index !== 1) {
+          this.activeIndex = index;
+        }
+      },
+      getEmptyData(num) {
+        let reset = tableMaxLength - this.tableData.length;
+        return new Promise(resolve => {
+          let data = [];
+          for (let i = 0; i < (reset > num ? num : reset); i++) {
+            data.push({});
+          }
+          // setTimeout(()=>{
+            resolve(data);
+          // }, 8000);
+        });
+        // let data = [];
+        // for (let i = 0; i < num; i++) {
+        //   data.push({});
+        // }
+        // return Promise.resolve(data);
+      },
+      getAllWarehouse() {
+        setTimeout(()=>{
+          this.warehouseList = [
+            {
+              warehouseId: '1',
+              warehouseName: '1号仓库',
+            },
+            {
+              warehouseId: '2',
+              warehouseName: '2号仓库',
+            },
+          ]
+        }, 1000);
+      },
+      getWarehouseArea(val) {
+        return Promise.resolve([
+          {
+            warehouseAreaId: '1',
+            warehouseAreaName: '1号库区',
+          },
+          {
+            warehouseAreaId: '2',
+            warehouseAreaName: '2号库区',
+          },
+        ]);
+      },
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 6;
       },
@@ -470,5 +552,7 @@
   };
 </script>
 <style lang="less" scoped>
-
+/deep/ .el-icon-remove-outline {
+  color: red;
+}
 </style>

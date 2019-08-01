@@ -24,6 +24,8 @@
   import tableInput from '../paperInStockModule/tableInput'
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import selectUsePerson from './selectUsePerson';
+  import {Scanner} from "../../../utils";
+
   export default {
     name: 'addOrEditInStock',
     data: function () {
@@ -41,7 +43,9 @@
               };
               const remove = () => {
                 if (!disabled()) {
-                  this.tableData.splice(index, 1);
+                  let _front = this.tableData.slice(0, index);
+                  let _behend = this.tableData.slice(index + 1);
+                  this.tableData = [..._front, ..._behend, {}];
                 }
               };
               return (
@@ -61,6 +65,8 @@
                   this.$nextTick(()=>{
                     cb();
                   });
+                } else {
+                  cb();
                 }
               };
               return {...props, beforeEnter}
@@ -89,7 +95,7 @@
           },
           {
             prop: cylinderKeys.length,
-            label: '长度(m)'
+            label: '长度(m)',
           },
           {
             prop: cylinderKeys.area,
@@ -108,7 +114,8 @@
             label: '原纸供应商'
           },
         ],
-        isEdit: false
+        isEdit: false,
+        scanner: undefined
       };
     },
     computed: {
@@ -247,8 +254,20 @@
         ];
       }
     },
-    created() {},
+    created() {
+      this.scanner = new Scanner();
+      this.scanner.listener(this.scannerAdd);
+    },
+    destroyed() {
+      this.scanner.end();
+    },
     methods: {
+      scannerAdd(text) {
+        if (text) {
+          this.tableData.push({});
+          console.log('扫码枪新增')
+        }
+      },
       openSelectUsePerson() {
         this.selectUsePersonFlag = true;
         this.$nextTick(() => {
@@ -277,5 +296,7 @@
   };
 </script>
 <style lang="less" scoped>
-
+  /deep/ .el-icon-remove-outline {
+    color: red;
+  }
 </style>

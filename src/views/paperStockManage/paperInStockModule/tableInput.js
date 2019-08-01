@@ -7,7 +7,16 @@ export default {
         this.$emit('input', val, {row, index, col, reg});
       }
     };
+    const select = (val) => {
+      this.$emit('select', val, {row, index, col, reg});
+    };
     const keyup = (e) => {
+      let map = {
+        37: 'left',
+        38: 'up',
+        39: 'right',
+        40: 'down',
+      };
       if (e.keyCode === 13 || e.keyCode === 108) {
         if (this.beforeEnter) {
           this.beforeEnter(e.target.value, () => this.focus(index, col.prop), {row, index, col, ...this.$attrs});
@@ -15,19 +24,23 @@ export default {
           this.focus(index, col.prop);
         }
       }
+      if (map[e.keyCode]) {
+        this.focus(index, col.prop, map[e.keyCode]);
+      }
     };
     return h(this.service ? 'el-autocomplete' : 'dj-input', {
       ref: 'input',
       props: {
         value: row[col.prop],
         fetchSuggestions: (val, cb) => this.service(val, cb, {row, index, col, ...this.$attrs}),
+        triggerOnFocus: true,
         valueKey: col.prop,
         placeholder: "请输入",
         reg: this.reg,
         ...this.$attrs
       },
       nativeOn: {keyup},
-      on: {input}
+      on: {input, select}
     });
     // return (
     //   <el-autocomplete ref="input"
@@ -64,15 +77,31 @@ export default {
   },
   props: ['row', 'index', 'col', 'service', 'beforeEnter', 'reg'],
   methods: {
-    focus(index, prop) {
+    focus(index, prop, arrow = 'right') {
       let _index = index;
       let arr = Array.from(this.$parent.inputKeys);
       let map = this.keyMap;
-      if (prop === arr[arr.length - 1]) {
+      let willGoProp = prop;
+      if (arrow === 'left') {
+        let _map = {};
+        Object.keys(map).forEach(key=>{
+          _map[map[key]] = key;
+        });
+        map = _map;
+      }
+      if (['left', 'right'].includes(arrow)) {
+        willGoProp = map[prop];
+      }
+      if (arrow === 'down' || (arrow === 'right' && prop === arr[arr.length - 1])) {
         index++;
       }
-      this.service && this.$parent.inputMap[`${_index}-${prop}`] && this.$parent.inputMap[`${_index}-${prop}`].$refs.input.close();
-      this.$parent.inputMap[`${index}-${map[prop]}`] && this.$parent.inputMap[`${index}-${map[prop]}`].$el.querySelector('input').focus();
+      if (arrow === 'up' || (arrow === 'left' && prop === arr[0])) {
+        index--;
+      }
+      if (this.$parent.inputMap[`${index}-${prop}`]) {
+        this.service && this.$parent.inputMap[`${_index}-${prop}`] && this.$parent.inputMap[`${_index}-${prop}`].$refs.input.close();
+        this.$parent.inputMap[`${index}-${willGoProp}`].$el.querySelector('input').focus();
+      }
     }
   }
 };

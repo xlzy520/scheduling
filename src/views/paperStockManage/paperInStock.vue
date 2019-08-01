@@ -3,6 +3,7 @@
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <dj-table ref="table"
               :data="tableData"
+              :total="total"
               height="500px"
               :columns="tableColumns"
               :column-type="['index']"
@@ -24,6 +25,7 @@
   import setUnitPriceDialog from './paperInStockModule/setUnitPriceDialog';
   import dayjs from 'dayjs';
   import { cylinderKeys } from "../../utils/system/constant/dataKeys";
+  import paperInStock from '../../api/service/paperInStock';
   export default {
     name: 'paperInStock',
     data: function () {
@@ -143,6 +145,7 @@
           },
         ],
         searchData: {},
+        total: 0,
         isShowMoney: true,
         addOrEditDialogFlag: false,
         lookDialogFlag: false,
@@ -160,8 +163,11 @@
         let post = {
           ...this.searchData,
           ...page
-        }
-        console.log(post);
+        };
+        this.dj_api_extend(paperInStock.list, post).then(res=>{
+          this.tableData = res.list || [];
+          this.total = res.total || 0;
+        });
       },
       search(query) {
         this.searchData = query;
