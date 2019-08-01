@@ -14,3 +14,4 @@
 export { default as regs } from './system/constant/regexp';
 export { default as enumMap } from './system/enum';
 export { default as methods } from './methods';
+export { default as Scanner } from './common/customObject/Scanner';
