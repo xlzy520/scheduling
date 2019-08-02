@@ -2,11 +2,12 @@
   <div class="paper-supplier">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <dj-table
+      ref="table"
       :data="tableData"
       :columns="tableColumns"
       :column-type="['index']"
       :total="pageTotal"
-      @update-data="pageChange"
+      @update-data="getList"
     >
       <div slot="btn">
         <el-button type="primary" @click="add">新增</el-button>
@@ -25,11 +26,12 @@
 <script>
   import paperSupplierService from '../../api/service/paperSupplier';
   import {djForm} from 'djweb';
+  const { rules } = djForm;
   const initFormData = {
-    num: '',
-    name: '',
+    supplierNumber: '',
+    supplierName: '',
     address: '',
-    code: '',
+    socialCreditCode: '',
     legalRepresentative: ''
   };
   export default {
@@ -37,18 +39,18 @@
     data() {
       return {
         searchConfig: [
-          {label: '供应商编号：', key: 'num', type: 'input'},
-          {label: '供应商名称：', key: 'name', type: 'input'},
+          {label: '供应商编号：', key: 'supplierNumber', type: 'input'},
+          {label: '供应商名称：', key: 'supplierName', type: 'input'},
         ],
         tableData: [],
         tableColumns: [
-          {label: '供应商编号', prop: 'num'},
-          {label: '供应商名称', prop: 'name'},
+          {label: '供应商编号', prop: 'supplierNumber'},
+          {label: '供应商名称', prop: 'supplierName'},
           {label: '地址', prop: 'address', width: 200},
-          {label: '社会信用代码', prop: 'code'},
+          {label: '社会信用代码', prop: 'socialCreditCode'},
           {label: '法人代表', prop: 'legalRepresentative'},
-          {label: '操作人', prop: 'man'},
-          {label: '操作时间', prop: 'time'},
+          {label: '操作人', prop: 'operator'},
+          {label: '操作时间', prop: 'updateTime'},
           {
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
@@ -61,13 +63,10 @@
           },
         ],
         formData: initFormData,
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 20,
-        },
-        pageTotal: 100,
+        pageTotal: 0,
         dialogTypeIsAdd: null,
-        dialogVisible: false
+        dialogVisible: false,
+        searchData: {}
       };
     },
     computed: {
@@ -76,7 +75,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'num',
+              prop: 'supplierNumber',
               label: '供应商编号:',
               rules: [
                 djForm.rules.required('供应商编号不能为空'),
@@ -91,7 +90,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'name',
+              prop: 'supplierName',
               label: '供应商名称:',
               rules: [
                 djForm.rules.required('供应商名称不能为空'),
@@ -106,14 +105,12 @@
           {
             type: 'input',
             formItem: {
-              prop: 'code',
+              prop: 'socialCreditCode',
               label: '社会信用代码:',
-              rules: [
-                {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
-              ],
+              rules: [rules.required('社会信用代码不能为空')],
             },
             attrs: {
-              maxLength: 15,
+              maxLength: 18,
             },
           },
           {
@@ -153,30 +150,48 @@
           this.$refs.dialog.open();
         });
       },
-      getTableData(data) {
-        paperSupplierService.list(data).then((res) => {
-          this.tableData = res.list;
+      getList(page) {
+        let post = {
+          ...this.searchData,
+          ...page
+        };
+        this.dj_api_extend(paperSupplierService.list, post).then((res) => {
+          this.tableData = res.list || [];
+          this.pageTotal = res.total;
         });
       },
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.formData = this.$method.deepClone(row);
+        this.dj_api_extend(paperSupplierService.getSupplierById, {id: row.id}).then(res=>{
+          this.formData = res;
+        });
+        // this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
       },
-      search(data) {
-        this.getTableData({
-          ...data,
-          ...this.pageOptions,
-        });
+      search(query) {
+        this.searchData = query;
+        this.$refs.table.changePage(1);
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          paperSupplierService.list(this.formData).then((res) => {
+          let message;
+          let api;
+          let { supplierNumber, supplierName, address, socialCreditCode, legalRepresentative } = this.formData;
+          let post = { supplierNumber, supplierName, address, socialCreditCode, legalRepresentative };
+          if (this.dialogTypeIsAdd) {
+            message = '新增成功';
+            api = paperSupplierService.add;
+          } else {
+            message = '编辑成功';
+            api = paperSupplierService.edit;
+            post.id = this.formData.id;
+          }
+          this.dj_api_extend(api, post).then((res) => {
             this.close();
-            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+            this.$refs.table.updateData();
             this.$message(message, 'success');
           });
         });
@@ -187,13 +202,9 @@
         this.$refs.form.resetFields();
         this.formData = initFormData;
       },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
-      },
     },
-    created() {
-      this.getTableData();
+    mounted() {
+      this.$refs.search.search();
     },
   };
 </script>

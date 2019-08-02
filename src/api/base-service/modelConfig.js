@@ -4,7 +4,7 @@ module.exports = [
   {name: 'paperKind', url: '/papervariety'},
   {name: 'paperCode', url: '/paperCode'},
   {name: 'materialCode', url: '/paperMaterial'},
-  {name: 'paperSupplier', url: '/paperSupplier'},
+  {name: 'paperSupplier', url: '/supplier'},
   {name: 'productionLineTrim', url: '/LineWaster'},
   {name: 'customerPackageQuantitySetting', url: '/customerPackageQuantitySetting'},
   {name: 'ruleCustomize', url: '/rule'},
