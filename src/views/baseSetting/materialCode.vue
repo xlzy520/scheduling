@@ -2,11 +2,12 @@
   <div class="material-code">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <dj-table
+      ref="table"
       :data="tableData"
       :columns="tableColumns"
       :column-type="['index']"
       :total="pageTotal"
-      @update-data="pageChange"
+      @update-data="getList"
     >
       <div slot="btn">
         <el-button type="primary" @click="add">新增</el-button>
@@ -17,8 +18,8 @@
       <div class="material-code-dialog">
         <div class="optional">
           <div class="optional-label">可选原纸</div>
-          <div class="optional-area" @click="selectPaper($event)">
-            <div class="optional-area-item" v-for="code in optionalPaper" :key="code.label">{{code.label}}</div>
+          <div class="optional-area">
+            <div class="optional-area-item" v-for="code in optionalPaper" @click="selectPaper(code)" :key="code.id">{{code.paperCode}}</div>
           </div>
         </div>
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
@@ -29,37 +30,37 @@
 
 <script>
   import materialCodeService from '../../api/service/materialCode';
+  import paperCodeService from '../../api/service/paperCode';
   import {djForm} from 'djweb';
-
+  const validateCode = (rule, selectArr, callback) => {
+    if (selectArr.length === 10) {
+      callback(new Error('最多支持10个原纸组合!'));
+    } else {
+      callback();
+    }
+  };
   export default {
     name: 'materialCode',
     data() {
-      const validateCode = (rule, selectArr, callback) => {
-        if (selectArr.length === 10) {
-          callback(new Error('最多支持10个原纸组合!'));
-        } else {
-          callback();
-        }
-      };
       return {
         searchConfig: [
-          {label: '用料代码：', key: 'code', type: 'input'},
-          {label: '平台材料名称：', key: 'platformMaterialName', type: 'input'},
+          {label: '用料代码：', key: 'materialCode', type: 'input'},
+          {label: '平台材料名称：', key: 'platformMaterialCode', type: 'input'},
         ],
         tableData: [],
         tableColumns: Object.freeze([
-          {label: '用料代码', prop: 'code'},
-          {label: '平台材料名称', prop: 'platformMaterialName'},
-          {label: '操作人', prop: 'man'},
-          {label: '操作时间', prop: 'time'},
-          {label: '启用状态', prop: 'status', formatter: row => row.status ? '启用' : '禁用'},
+          {label: '用料代码', prop: 'materialCode'},
+          {label: '平台材料名称', prop: 'platformMaterialCode'},
+          {label: '操作人', prop: 'supplierId'},
+          {label: '操作时间', prop: 'updateTime'},
+          {label: '启用状态', prop: 'isEffected', formatter: row => row.isEffected ? '启用' : '禁用'},
           {
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
               return (
                 <div class="operation">
                   <a onClick={() => this.changeStatus(row)}>
-                    {row.status ? '禁用' : '启用'}</a>
+                    {row.isEffected ? '禁用' : '启用'}</a>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
@@ -67,14 +68,14 @@
           },
         ]),
         formData: {
-          code: [],
-          platformMaterialName: '',
+          materialCode: [],
+          platformMaterialCode: '',
         },
         formOptions: [
           {
             type: 'select',
             formItem: {
-              prop: 'code',
+              prop: 'materialCode',
               label: '用料代码',
               rules: [
                 djForm.rules.required('请选择相应的用料代码'),
@@ -85,25 +86,17 @@
               class: 'code',
               key: 'multiple',
               type: 'multiple',
-              options: [{
-                label: '普通瓦楞',
-                value: 'chu',
-              }, {
-                label: '高强瓦楞',
-                value: 'gao',
-              }, {
-                label: '牛卡',
-                value: 'da',
-              }, {
-                label: '再生',
-                value: 'daa',
-              }],
+              keyMap: {
+                label: 'paperCode',
+                value: 'id'
+              },
+              options: [],
             },
           },
           {
             type: 'input',
             formItem: {
-              prop: 'platformMaterialName',
+              prop: 'platformMaterialCode',
               label: '平台材料名称：',
               rules: [
                 djForm.rules.required('平台材料名称不能为空'),
@@ -115,27 +108,69 @@
             },
             listeners: {
               'input': (val) => {
-                this.formData.platformMaterialName = val.toUpperCase();
+                this.formData.platformMaterialCode = val.toUpperCase();
               },
             },
           },
         ],
         optionalPaper: [],
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 20,
-        },
         pageTotal: 100,
         dialogTypeIsAdd: null,
-        dialogVisible: false
+        dialogVisible: false,
+        searchData: {}
       };
     },
+    // computed: {
+    //   formOptions() {
+    //     return [
+    //       {
+    //         type: 'select',
+    //         formItem: {
+    //           prop: 'materialCode',
+    //           label: '用料代码',
+    //           rules: [
+    //             djForm.rules.required('请选择相应的用料代码'),
+    //             { validator: validateCode, trigger: 'blur' }
+    //           ],
+    //         },
+    //         attrs: {
+    //           class: 'code',
+    //           key: 'multiple',
+    //           type: 'multiple',
+    //           keyMap: {
+    //             label: 'paperCode',
+    //             value: 'id'
+    //           },
+    //           // options: this.optionalPaper,
+    //         },
+    //       },
+    //       {
+    //         type: 'input',
+    //         formItem: {
+    //           prop: 'platformMaterialCode',
+    //           label: '平台材料名称：',
+    //           rules: [
+    //             djForm.rules.required('平台材料名称不能为空'),
+    //             {required: true, pattern: /[a-zA-Z0-9]/g, message: '只可输入字母、数字', trigger: 'blur'},
+    //           ],
+    //         },
+    //         attrs: {
+    //           maxLength: 20,
+    //         },
+    //         listeners: {
+    //           'input': (val) => {
+    //             this.formData.platformMaterialCode = val.toUpperCase();
+    //           },
+    //         },
+    //       },
+    //     ];
+    //   }
+    // },
     methods: {
-      selectPaper(evt) {
-        const { innerText: text, className } = evt.target;
-        if (text && className === 'optional-area-item') {
-          this.formData.code.push(text);
-        }
+      selectPaper(obj) {
+        // console.log({...obj, id: `${obj.id}+${new Date().getTime()}`});
+        // this.formData.materialCode.push({...obj, id: `${obj.id}+${new Date().getTime()}`});
+        this.formData.materialCode.push(obj.id);
       },
       add() {
         this.dialogTypeIsAdd = true;
@@ -144,48 +179,80 @@
           this.$refs.dialog.open();
         });
       },
-      getTableData(data) {
-        materialCodeService.list(data).then((res) => {
-          this.tableData = res.list;
+      getList(page) {
+        let post = {
+          ...this.searchData,
+          ...page
+        };
+        this.dj_api_extend(materialCodeService.list, post).then((res) => {
+          this.tableData = res.list || [];
+          this.pageTotal = res.total;
         });
       },
       changeStatus(row) {
-        if (row.status) {
+        // 接口
+        let  post = {
+          id: row.id,
+          effected: row.isEffected ? 0 : 1 ,
+        };
+        if (row.isEffected) {
           this.$confirm('确定禁用该条内容吗？', '', {
             type: 'warning',
             showClose: false,
           }).then(() => {
-            materialCodeService.list().then((res) => {
+            this.dj_api_extend(materialCodeService.changeEffected, post).then((res) => {
               this.$message('禁用成功', 'success');
-              row.status = !row.status;
+              row.isEffected = !row.isEffected;
             });
           });
         } else {
-          materialCodeService.list().then((res) => {
-            this.$message('启用成功', 'success');
-            row.status = !row.status;
+          this.dj_api_extend(materialCodeService.changeEffected, post).then((res) => {
+            this.$message('禁用成功', 'success');
+            row.isEffected = !row.isEffected;
           });
         }
       },
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.formData = this.$method.deepClone(row);
+        this.dj_api_extend(materialCodeService.getMaterialByid, {id: row.id}).then(res=>{
+          let data = {
+            materialCode: (res.codeDetail || []).map(obj=>obj.id),
+            id: row.id
+          };
+          this.formData = {...(res || {}),...data};
+        });
+        // this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
       },
-      search(data) {
-        this.getTableData({
-          ...data,
-          ...this.pageOptions,
-        });
+      search(query) {
+        this.searchData = query;
+        this.$refs.table.changePage(1);
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          materialCodeService.list(this.formData).then((res) => {
+          let message;
+          let api;
+          let post = {
+            paperMaterialDetails: this.formData.materialCode.map((id, index)=>({
+              seq: index + 1,
+              paperCodeId: id
+            })),
+            platformMaterialCode: this.formData.platformMaterialCode,
+          };
+          if (this.dialogTypeIsAdd) {
+            message = '新增成功';
+            api = materialCodeService.add;
+          } else {
+            message = '编辑成功';
+            api = materialCodeService.edit;
+            post.id = this.formData.id
+          }
+          this.dj_api_extend(api, post).then((res) => {
             this.close();
-            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+            this.$refs.table.updateData();
             this.$message(message, 'success');
           });
         });
@@ -195,25 +262,20 @@
         this.dialogVisible = false;
         this.$refs.form.resetFields();
         this.formData = {
-          code: [],
-          platformMaterialName: '',
+          materialCode: [],
+          platformMaterialCode: '',
         };
       },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
-      },
+      getAllPaperCode() {
+        return this.dj_api_extend(paperCodeService.getAllList).then(res=>{
+          this.optionalPaper = res.list || [];
+          this.$set(this.formOptions[0].attrs, 'options', this.optionalPaper);
+        });
+      }
     },
     mounted() {
-      let mock = [];
-      for (let i = 0; i < 20; i++) {
-        mock.push({label: 'DJ88' + String(i), value: 'DJ88' + String(i)});
-      }
-      this.optionalPaper = mock;
-      this.$set(this.formOptions[0].attrs, 'options', mock);
-    },
-    created() {
-      this.getTableData();
+      this.getAllPaperCode();
+      this.$refs.search.search();
     },
   };
 </script>
