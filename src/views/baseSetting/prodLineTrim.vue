@@ -16,7 +16,6 @@
                :title="dialogTypeIsAdd?'新增流水线修边': '编辑流水线修边'">
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}">
         <dj-form  v-for="(formOption, index) in formOptions"
-                  :key="formOption[0].formItem.prop"
                   :ref="'form'+index"
                   :column-num="dialogTypeIsAdd?4: 1"
                   labelWidth="80px"
@@ -37,18 +36,18 @@
   import productionLineService from '../.././api/service/productionLine';
   import {djForm} from 'djweb';
   const cengshuOption = [
-      {label: '二层', value: '2'},
-      {label: '三层', value: '3'},
-      {label: '四层', value: '4'},
-      {label: '五层', value: '5'},
-      {label: '六层', value: '6'},
-      {label: '七层', value: '7'},
+      {label: '二层', value: 2},
+      {label: '三层', value: 3},
+      {label: '四层', value: 4},
+      {label: '五层', value: 5},
+      {label: '六层', value: 6},
+      {label: '七层', value: 7},
       ];
   let baseOption = [
     {
       type: 'select',
       formItem: {
-        prop: 'line',
+        prop: 'lineId',
         label: '生产线',
         rules: [djForm.rules.required('请选择相应的生产线')],
       },
@@ -72,7 +71,7 @@
     {
       type: 'input',
       formItem: {
-        prop: 'trimming',
+        prop: 'wasteSize',
         label: '修边',
         rules: [
           {type: 'number', message: '只可输入数字', trigger: 'change'},
@@ -100,22 +99,25 @@
     data() {
       return {
         searchConfig: [
-          {label: '生产线：', key: 'lineId', type: 'select', attrs: {options: []}},
+          {label: '生产线：', key: 'lineNum', type: 'select', attrs: {options: []}},
           {label: '层数：', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
           {label: '修边：', key: 'wasteSize', type: 'input', attrs: {type: 'number'}},
         ],
         tableData: [],
         tableColumns: Object.freeze([
-          {label: '生产线', prop: 'line'},
-          {label: '层数', prop: 'layer'},
-          {label: '修边', prop: 'trimming'},
-          {label: '操作人', prop: 'man'},
-          {label: '操作时间', prop: 'time'},
-          {label: '启用状态', prop: 'status',
+          {label: '生产线', prop: 'lineNum', formatter: row=> row.lineNum + '号线'},
+          {label: '层数', prop: 'layer', formatter: row=> {
+              const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+              return chnNumChar[row.layer] + '层';
+            }},
+          {label: '修边', prop: 'wasteSize'},
+          {label: '操作人', prop: 'operator'},
+          {label: '操作时间', prop: 'updateTime'},
+          {label: '启用状态', prop: 'isEffected',
             render: (h, {props: {row}}) => {
               return (
-                <div class={row.status ? '' : 'status-off'}>
-                  {row.status ? '已启用' : '已禁用'}
+                <div class={row.isEffected ? '' : 'status-off'}>
+                  {row.isEffected ? '已启用' : '已禁用'}
                 </div>
               );
             }
@@ -126,7 +128,7 @@
               return (
                 <div class="operation">
                   <a onClick={() => this.changeStatus(row)}>
-                    {row.status ? '禁用' : '启用'}</a>
+                    {row.isEffected ? '禁用' : '启用'}</a>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
@@ -134,9 +136,9 @@
           },
         ]),
         formData: [{
-          line: '',
+          lineId: '',
           layer: '',
-          trimming: ''
+          wasteSize: ''
         }],
 
         formOptions: [
@@ -158,20 +160,18 @@
         if (evt.target.className === 'el-icon-delete') {
           this.formOptions.splice(index, 1);
           this.formData.splice(index, 1);
+          this.addLayerNum -= 1;
         }
       },
       colRule(item, index) {
         if (this.dialogTypeIsAdd) {
           if (index === 3) {
-            return 'delete';
+            return 0;
           }
           return 8;
-        } else {
-          return '';
         }
       },
       add() {
-        console.log(this.formOptions);
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
         this.$nextTick(()=>{
@@ -181,9 +181,9 @@
       addLayer() {
         this.addLayerNum += 1;
         this.formData.push({
-          line: '',
+          lineId: '',
           layer: '',
-          trimming: ''
+          wasteSize: ''
         });
         // baseOption[0].attrs.options = this.lineOptions
         this.formOptions.push(baseOption);
@@ -194,41 +194,55 @@
           this.pageTotal = res.total;
         });
       },
+      changeLineEffectedApi(val, id) {
+        productionLineTrimService.changeEffected({
+          effected: Math.pow(0, val), // 0、1数字取反
+          id: id
+        }).then(() => {
+          this.$message(val ? '禁用成功' : '启用成功', 'success');
+          this.search();
+        });
+      },
       changeStatus(row) {
         // 接口
-        if (row.status) {
+        if (row.isEffected) {
           this.$confirm('您确定禁用该条内容吗？', '', {
             type: 'warning',
             showClose: false,
           }).then(() => {
-            productionLineTrimService.list().then((res) => {
-              this.$message('禁用成功', 'success');
-              row.status = !row.status;
-            });
+            this.changeLineEffectedApi(row.isEffected, row.id);
           });
         } else {
-          productionLineTrimService.list().then((res) => {
-            this.$message('启用成功', 'success');
-            row.status = !row.status;
-          });
+          this.changeLineEffectedApi(row.isEffected, row.id);
         }
       },
       formReset() {
-        // baseOption[0].attrs.options = this.lineOptions
         this.formOptions = [baseOption];
         this.formData = [{
-          line: '',
+          lineId: '',
           layer: '',
-          trimming: ''
+          wasteSize: ''
         }];
       },
       edit(row) {
-        this.dialogVisible = true;
-        this.dialogTypeIsAdd = false;
-        this.formOptions = [this.$method.deepClone(baseOption).splice(0, 3)];
-        this.formData = [this.$method.deepClone(row)];
-        this.$nextTick(()=>{
-          this.$refs.dialog.open();
+        this.addLayerNum = 1;
+        productionLineTrimService.getWasterLineByid({
+          id: row.id
+        }).then(res=>{
+          this.formData = [{
+            id: row.id,
+            lineId: res.id,
+            layer: res.layer,
+            wasteSize: res.wasteSize
+          }];
+          this.dialogVisible = true;
+          this.dialogTypeIsAdd = false;
+          this.formOptions = [this.$method.deepClone(baseOption).splice(0, 3)];
+          this.$nextTick(()=>{
+            this.$refs.dialog.open();
+          });
+        }).catch(err=>{
+          this.$message('获取信息失败', 'error');
         });
       },
       search(data) {
@@ -251,7 +265,12 @@
         });
         formValidate.then(res=>{
           if (res.length === this.addLayerNum && res.every(v=>v)) {
-            productionLineTrimService.add(this.formData).then((res) => {
+            const request = this.dialogTypeIsAdd
+            ? productionLineTrimService.add(this.formData)
+            : productionLineTrimService.modifyWasterLineByid({
+                ...this.formData[0],
+              });
+            request.then((res) => {
               this.close();
               const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
               this.$message(message, 'success');
@@ -275,7 +294,7 @@
         const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         const lineOptions = res.list.map(v=>{
           return {
-            label: chnNumChar[v.lineId] + '号线',
+            label: chnNumChar[v.lineNum] + '号线',
             value: v.id
           };
         });
@@ -307,9 +326,9 @@
     width: 30%;
   }
   @{deep} .dj-form{
-    .el-col-delete{
+    .el-col-0{
+      display: block;
       .el-form-item__content{
-        width: 30px;
         cursor: pointer;
         margin-left: unset!important;
       }
