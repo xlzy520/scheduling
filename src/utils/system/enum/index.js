@@ -187,6 +187,24 @@ export default {
       value: '6'
     }
   }),
+  paperType: new MapObject({
+    'normal': {
+      label: '普通瓦楞',
+      value: 1,
+    },
+    'height': {
+      label: '高强瓦楞',
+      value: 2,
+    },
+    'cow': {
+      label: '牛卡',
+      value: 3,
+    },
+    'regenerate': {
+      label: '再生',
+      value: 4,
+    }
+  }),
   fluteTypeLayer,
   fluteType
 };
