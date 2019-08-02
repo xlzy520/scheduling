@@ -1,9 +1,9 @@
 module.exports = [
   {name: 'permission', url: '/permission'},
   {name: 'user', url: '/user'},
-  {name: 'paperKind', url: '/paperKind'},
+  {name: 'paperKind', url: '/papervariety'},
   {name: 'paperCode', url: '/paperCode'},
-  {name: 'materialCode', url: '/materialCode'},
+  {name: 'materialCode', url: '/paperMaterial'},
   {name: 'paperSupplier', url: '/paperSupplier'},
   {name: 'productionLineTrim', url: '/LineWaster'},
   {name: 'customerPackageQuantitySetting', url: '/customerPackageQuantitySetting'},
@@ -11,4 +11,6 @@ module.exports = [
   {name: 'productionLine', url: '/line'},
   {name: 'paperInStock', url: '/paperInStock'},
   {name: 'paperTable', url: '/paperTable'},
+  {name: 'paperWarehouse', url: '/warehouse'},
+  {name: 'innerUser', url: '/innerUser'},
 ];

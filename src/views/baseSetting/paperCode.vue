@@ -1,11 +1,12 @@
 <template>
   <div class="table-page paper-kind">
     <dj-table
+      ref="table"
       :data="tableData"
       :columns="tableColumns"
       :column-type="['index']"
       :total="pageTotal"
-      @update-data="pageChange"
+      @update-data="getList"
     >
       <div slot="btn">
         <el-button type="primary" @click="add">新增</el-button>
@@ -24,9 +25,9 @@
   import paperCodeService from '../../api/service/paperCode';
   import {djForm} from 'djweb';
   const initFormData = {
-    code: '',
-    type: '',
-    kezhong: '',
+    paperCode: '',
+    paperType: '',
+    paperGram: '',
   };
   export default {
     name: 'paperCode',
@@ -34,16 +35,16 @@
       return {
         tableData: [],
         tableColumns: [
-          {label: '原纸代码', prop: 'code'},
-          {label: '原纸类型', prop: 'type'},
-          {label: '克重（g）', prop: 'kezhong'},
-          {label: '操作人', prop: 'man'},
-          {label: '操作时间', prop: 'time'},
-          {label: '启用状态', prop: 'status',
+          {label: '原纸代码', prop: 'paperCode'},
+          {label: '原纸类型', prop: 'paperTypeName'},
+          {label: '克重（g）', prop: 'paperGram'},
+          {label: '操作人', prop: 'operator'},
+          {label: '操作时间', prop: 'updateTime'},
+          {label: '启用状态', prop: 'isEffected',
             render: (h, {props: {row}}) => {
               return (
-                <div class={row.status ? '' : 'status-off'}>
-                  {row.status ? '已启用' : '已禁用'}
+                <div class={row.isEffected ? '' : 'status-off'}>
+                  {row.isEffected ? '已启用' : '已禁用'}
                 </div>
               );
             }
@@ -54,7 +55,7 @@
               return (
                 <div class="operation">
                   <a onClick={() => this.changeStatus(row)}>
-                    {row.status ? '禁用' : '启用'}</a>
+                    {row.isEffected ? '禁用' : '启用'}</a>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
@@ -66,7 +67,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'code',
+              prop: 'paperCode',
               label: '原纸代码',
               rules: [
                 djForm.rules.required('原纸代码不能为空'),
@@ -78,37 +79,25 @@
             },
             listeners: {
               'input': (val) => {
-                this.formData.code = val.toUpperCase();
+                this.formData.paperCode = val.toUpperCase();
               },
             },
           },
           {
             type: 'select',
             formItem: {
-              prop: 'type',
+              prop: 'paperType',
               label: '原纸类型',
               rules: [djForm.rules.required('请选择相应的原纸类型')],
             },
             attrs: {
-              options: [{
-                label: '普通瓦楞',
-                value: '1',
-              }, {
-                label: '高强瓦楞',
-                value: '2',
-              }, {
-                label: '牛卡',
-                value: '3',
-              }, {
-                label: '再生',
-                value: '4',
-              }],
+              options: this.$enum.paperType._arr
             },
           },
           {
             type: 'input',
             formItem: {
-              prop: 'kezhong',
+              prop: 'paperGram',
               label: '克重',
               rules: [
                 djForm.rules.required('克重不能为空'),
@@ -120,10 +109,6 @@
             },
           },
         ],
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 20,
-        },
         pageTotal: 0,
         dialogTypeIsAdd: null,
         dialogVisible: false
@@ -137,50 +122,69 @@
           this.$refs.dialog.open();
         });
       },
-      getTableData(data) {
-        paperCodeService.list(data).then((res) => {
-          this.tableData = res.list;
-          this.pageTotal = 100;
+      getList(page) {
+        this.dj_api_extend(paperCodeService.list, page).then((res) => {
+          let list = res.list || [];
+          list.forEach(obj=>{
+            obj.paperTypeName = this.$enum.paperType._swap[obj.paperType] && this.$enum.paperType._swap[obj.paperType].label;
+          });
+          this.tableData = list;
+          this.pageTotal = res.total;
         });
       },
       changeStatus(row) {
         // 接口
-        if (row.status) {
+        let post = {
+          id: row.id,
+          effected: row.isEffected ? 0 : 1,
+        };
+        if (row.isEffected) {
           this.$confirm('确定禁用该条内容吗？', '', {
             type: 'warning',
             showClose: false,
           }).then(() => {
-            paperCodeService.list().then((res) => {
+            this.dj_api_extend(paperCodeService.changeEffected, post).then((res) => {
               this.$message('禁用成功', 'success');
-              row.status = !row.status;
+              row.isEffected = !row.isEffected;
             });
           });
         } else {
-          paperCodeService.list().then((res) => {
-            this.$message('启用成功', 'success');
-            row.status = !row.status;
+          this.dj_api_extend(paperCodeService.changeEffected, post).then((res) => {
+            this.$message('禁用成功', 'success');
+            row.isEffected = !row.isEffected;
           });
         }
       },
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.formData = this.$method.deepClone(row);
+        this.dj_api_extend(paperCodeService.getPaperCodeByid, {id: row.id}).then(res=>{
+          this.formData = res;
+        });
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
       },
-      search(data) {
-        this.getTableData({
-          ...data,
-          ...this.pageOptions,
-        });
-      },
-      confirm(data) {
+      confirm() {
         this.$refs.form.validate(()=>{
-          paperCodeService.list(data).then((res) => {
+          let message;
+          let api;
+          let post = {
+            paperCode: this.formData.paperCode,
+            paperType: this.formData.paperType,
+            paperGram: this.formData.paperGram,
+          };
+          if (this.dialogTypeIsAdd) {
+            message = '新增成功';
+            api = paperCodeService.add;
+          } else {
+            message = '编辑成功';
+            api = paperCodeService.edit;
+            post.id = this.formData.id;
+          }
+          this.dj_api_extend(api, post).then((res) => {
             this.close();
-            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+            this.$refs.table.updateData();
             this.$message(message, 'success');
           });
         });
@@ -191,14 +195,9 @@
         this.dialogVisible = false;
         this.formData = initFormData;
       },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
-      },
-
     },
-    created() {
-      this.getTableData();
+    mounted() {
+      this.$refs.table.changePage(1);
     },
   };
 </script>
