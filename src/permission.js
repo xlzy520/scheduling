@@ -2,12 +2,18 @@ import router from './router';
 import { asyncRouter } from './router';
 // import { Loading } from 'element-ui';
 import { permission } from 'djweb';
-// import { methods } from './utils';
+import { methods } from 'djweb';
+import dayjs  from 'dayjs';
 import permissionService from './api/service/permission';
 import store from './store';
 import NProgress from 'nprogress'; // Progress 进度条
-import 'nprogress/nprogress.css';// Progress 进度条样式
-// const { getCookiesItem } = methods;
+import 'nprogress/nprogress.css';
+
+import innerUser from './api/service/innerUser';
+import autoLogin from './autoLogin_development';
+// Progress 进度条样式
+const { getCookiesItem, setCookiesItem } = methods;
+
 /**
  * 获取权限路由，需要返回所有有权限的路由路径，路由路径即
  * @returns {Promise<any>}
@@ -29,9 +35,10 @@ function getPermission() {
     }
     let permissionMenu = ['/home', 'product', 'index'];
     //如果是开发者状态，获取全部权限
-    if (process.env.NODE_ENV === 'development') {
+    // if (process.env.NODE_ENV === 'development') {
       getPer(asyncRouter, permissionMenu);
-    }
+    // }
+    // console.log(permissionMenu);
     resolve(permissionMenu);
   });
 }
@@ -43,7 +50,13 @@ function getPermission() {
  */
 function login() {
   //该项目由自己的登录页，所以登录请求在登录页发送，此处直接处理没有登录情况下需要采取的措施就行了
-  return Promise.reject('/login');
+  // todo 获取token，开发使用，以后删除
+  return autoLogin().then(res=>{
+    return innerUser.getToken({token: res});
+  }).then(()=>{
+    setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
+    return '/login'
+  });
   // return new Promise((resolve) => {
   //   setCookiesItem('userName', 'gw');
   //   // reject();
@@ -55,9 +68,9 @@ function login() {
  * 判断是否登录的方法
  * @returns {boolean}
  */
-function isLogin() {
-  // return getCookiesItem('token') !== undefined;
-  return true;
+function isLogin(to) {
+  return getCookiesItem('username') !== undefined;
+  // return true;
 }
 
 permission({
