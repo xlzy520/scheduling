@@ -2,11 +2,12 @@
   <div class="table-page paper-kind">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <dj-table
+      ref="table"
       :data="tableData"
       :columns="tableColumns"
       :column-type="['index']"
       :total="pageTotal"
-      @update-data="pageChange"
+      @update-data="getList"
     >
       <div slot="btn">
         <el-button type="primary" @click="add">新增</el-button>
@@ -23,41 +24,43 @@
 
 <script>
   import paperKindService from '../../api/service/paperKind';
+  import paperCodeService from '../../api/service/paperCode';
+  import paperWarehouseService from '../../api/service/paperWarehouse';
   import {djForm} from 'djweb';
   const initFormData = {
-    num: '',
-    code: '',
-    type: '',
-    kezhong: '',
-    menfu: '',
-    warehouseName: '',
-    warehouseAreaName: '',
+    paperNumber: undefined,
+    paperCodeId: undefined,
+    paperCodeType: undefined,
+    paperGram: undefined,
+    paperSize: undefined,
+    warehouseId: undefined,
+    warehouseAreaId: undefined,
   };
   export default {
     name: 'paperKind',
     data() {
       return {
         searchConfig: [
-          {label: '原纸编号：', key: 'num', type: 'input'},
-          {label: '原纸代码：', key: 'code', type: 'input'},
-          {label: '门幅：', key: 'menfu', type: 'input', attrs: {type: 'number'}},
+          {label: '原纸编号：', key: 'paperNumber', type: 'input'},
+          {label: '原纸代码：', key: 'paperCode', type: 'input'},
+          {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
         ],
         tableData: [],
         tableColumns: [
-          {label: '原纸编号', prop: 'num'},
-          {label: '原纸代码', prop: 'code'},
-          {label: '原纸类型', prop: 'type'},
-          {label: '克重（g）', prop: 'kezhong'},
-          {label: '门幅（mm）', prop: 'menfu'},
+          {label: '原纸编号', prop: 'paperNumber'},
+          {label: '原纸代码', prop: 'paperCode'},
+          {label: '原纸类型', prop: 'paperTypeName'},
+          {label: '克重（g）', prop: 'paperGram'},
+          {label: '门幅（mm）', prop: 'paperSize'},
           {label: '仓库名称', prop: 'warehouseName'},
           {label: '库区名称', prop: 'warehouseAreaName'},
-          {label: '操作人', prop: 'man'},
-          {label: '操作时间', prop: 'time'},
-          {label: '启用状态', prop: 'status',
+          {label: '操作人', prop: 'operator'},
+          {label: '操作时间', prop: 'updateTime'},
+          {label: '启用状态', prop: 'isEffected',
             render: (h, {props: {row}}) => {
               return (
-                <div class={row.status ? '' : 'status-off'}>
-                  {row.status ? '已启用' : '已禁用'}
+                <div class={row.isEffected ? '' : 'status-off'}>
+                  {row.isEffected ? '已启用' : '已禁用'}
                 </div>
               );
             }
@@ -68,19 +71,31 @@
               return (
                 <div class="operation">
                   <a onClick={() => this.changeStatus(row)}>
-                    {row.status ? '禁用' : '启用'}</a>
+                    {row.isEffected ? '禁用' : '启用'}</a>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
             },
           },
         ],
-        formData: initFormData,
-        formOptions: [
+        formData: this.$method.deepClone(initFormData),
+        pageTotal: 0,
+        dialogTypeIsAdd: null,
+        dialogVisible: false,
+        searchData: {},
+        warehouseList: [],
+        warehouseAreaList: [],
+        warehouseList_map: [],
+        paperCodeList: []
+      };
+    },
+    computed: {
+      formOptions() {
+        return [
           {
             type: 'input',
             formItem: {
-              prop: 'num',
+              prop: 'paperNumber',
               label: '原纸编号',
               rules: [
                 djForm.rules.required('原纸编号不能为空'),
@@ -92,75 +107,69 @@
             },
             listeners: {
               'input': (val) => {
-                this.formData.num = val.toUpperCase();
-              },
-            },
-          },
-          {
-            type: 'input',
-            formItem: {
-              prop: 'code',
-              label: '原纸代码',
-              rules: [
-                djForm.rules.required('原纸代码不能为空'),
-                {pattern: /^\w+$/g, message: '只可输入字母、数字'},
-              ],
-            },
-            attrs: {
-              maxLength: 10,
-            },
-            listeners: {
-              'input': (val) => {
-                this.formData.code = val.toUpperCase();
+                this.formData.paperNumber = val.toUpperCase();
               },
             },
           },
           {
             type: 'select',
             formItem: {
-              prop: 'type',
+              prop: 'paperCodeId',
+              label: '原纸代码',
+              rules: [
+                djForm.rules.required('原纸代码不能为空'),
+              ],
+            },
+            attrs: {
+              keyMap: {
+                label: 'paperCode',
+                value: 'id'
+              },
+              options: this.paperCodeList
+            },
+            listeners: {
+              'input': (val) => {
+                this.getPaperCodeById(val)
+              },
+            },
+          },
+          {
+            type: 'select',
+            formItem: {
+              prop: 'paperType',
               label: '原纸类型',
               rules: [djForm.rules.required('请选择相应的原纸类型')],
             },
             attrs: {
-              options: [{
-                label: '普通瓦楞',
-                value: '1',
-              }, {
-                label: '高强瓦楞',
-                value: '2',
-              }, {
-                label: '牛卡',
-                value: '3',
-              }, {
-                label: '再生',
-                value: '4',
-              }],
+              disabled: true,
+              options: this.$enum.paperType._arr,
             },
           },
           {
             type: 'input',
             formItem: {
-              prop: 'kezhong',
+              prop: 'paperGram',
               label: '克重',
               rules: [
                 djForm.rules.required('克重不能为空'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
-                ],
+              ],
             },
             attrs: {
+              disabled: true,
               type: 'number',
             },
           },
           {
             type: 'input',
             formItem: {
-              prop: 'menfu',
+              prop: 'paperSize',
               label: '门幅',
               rules: [
                 djForm.rules.required('门幅不能为空'),
-                {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
-                ],
+                {type: 'number', message: '只可输入数字', trigger: 'change'},
+                {type: 'number', max: 9999, message: '不能超过9999', trigger: 'change'}
+              ],
             },
             attrs: {
               type: 'number',
@@ -169,58 +178,87 @@
           {
             type: 'select',
             formItem: {
-              prop: 'warehouseName',
+              prop: 'warehouseId',
               label: '仓库名称',
               rules: [
                 djForm.rules.required('请选择相应的仓库名称'),
-                ],
+              ],
             },
             attrs: {
-              options: [{
-                label: '丽岙原纸仓库1',
-                value: 'chu',
-              }, {
-                label: '丽岙原纸仓库2',
-                value: 'gao',
-              }, {
-                label: '丽岙原纸仓库3',
-                value: 'da',
-              }],
+              keyMap: {
+                label: 'name',
+                value: 'warehouseId'
+              },
+              options: this.warehouseList
             },
+            listeners: {
+              input: (val) => {
+                this.formData.warehouseAreaId = undefined;
+                if (!['', undefined, null].includes(val)) {
+                  this.dj_api_extend(this.getWarehouseArea, val);
+                }
+              }
+            }
           },
           {
             type: 'select',
             formItem: {
-              prop: 'warehouseAreaName',
+              prop: 'warehouseAreaId',
               label: '库区名称',
               rules: [
                 djForm.rules.required('请选择相应的库区名称'),
-                ],
+              ],
             },
             attrs: {
-              options: [{
-                label: '原纸1号仓库',
-                value: 'chu',
-              }, {
-                label: '原纸2号仓库',
-                value: 'gao',
-              }, {
-                label: '原纸3号仓库',
-                value: 'da',
-              }],
+              keyMap: {
+                label: 'name',
+                value: 'warehouseAreaId'
+              },
+              options: this.warehouseAreaList,
             },
           },
-        ],
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 20,
-        },
-        pageTotal: 0,
-        dialogTypeIsAdd: null,
-        dialogVisible: false
-      };
+        ]
+      }
     },
     methods: {
+      getAllPaperCode() {
+        return this.dj_api_extend(paperCodeService.getAllList).then(res=>{
+          this.paperCodeList = res.list || [];
+        });
+      },
+      getPaperCodeById(id) {
+        if (id) {
+          return this.dj_api_extend(paperCodeService.getPaperCodeByid, {id}).then(res=>{
+            let { paperType, paperGram } = res || {};
+            let _res = {
+              paperType,
+              paperGram
+            };
+            this.formData = {...this.formData, ..._res};
+          });
+        }
+      },
+      getPaperKindById(id) {
+        return this.dj_api_extend(paperKindService.getPaperByid, {id}).then(res=>{
+          let _res = res || {};
+          this.formData = {..._res, paperCodeId: _res.paperCode};
+          return res;
+        });
+      },
+      getWarehouse() {
+        return this.dj_api_extend(paperWarehouseService.getPaperWarehouse).then((res) => {
+          this.warehouseList = res.list || [];
+          this.warehouseList_map = this.warehouseList.reduce((map, obj) => {
+            map[obj.warehouseId] = obj;
+            return map;
+          }, {});
+        });
+      },
+      getWarehouseArea(id) {
+        return this.dj_api_extend(paperWarehouseService.getAreaAllList, {warehouseId: id}).then((res) => {
+          this.warehouseAreaList = res.list || [];
+        });
+      },
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
@@ -228,50 +266,76 @@
           this.$refs.dialog.open();
         });
       },
-      getTableData(data) {
-        paperKindService.list(data).then((res) => {
-          this.tableData = res.list;
-          this.pageTotal = 100;
+      getList(page) {
+        let post = {
+          ...this.searchData,
+          ...page
+        };
+        this.dj_api_extend(paperKindService.list, post).then((res) => {
+          let list = res.list || [];
+          list.forEach(obj=>{
+            obj.warehouseName = this.warehouseList_map[obj.warehouseId] && this.warehouseList_map[obj.warehouseId].name;
+            obj.paperTypeName = this.$enum.paperType._swap[obj.paperType].label;
+          });
+          this.tableData = list;
+          this.pageTotal = res.total;
         });
       },
       changeStatus(row) {
         // 接口
-        if (row.status) {
+        let  post = {
+          id: row.id,
+          effected: row.isEffected ? 0 : 1 ,
+        };
+        if (row.isEffected) {
           this.$confirm('确定禁用该条内容吗？', '', {
             type: 'warning',
             showClose: false,
           }).then(() => {
-            paperKindService.list().then((res) => {
+            this.dj_api_extend(paperKindService.changeEffected, post).then((res) => {
               this.$message('禁用成功', 'success');
-              row.status = !row.status;
+              row.isEffected = !row.isEffected;
             });
           });
         } else {
-          paperKindService.list().then((res) => {
+          this.dj_api_extend(paperKindService.changeEffected, post).then((res) => {
             this.$message('启用成功', 'success');
-            row.status = !row.status;
+            row.isEffected = !row.isEffected;
           });
         }
       },
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.formData = this.$method.deepClone(row);
+        this.getPaperKindById(row.id).then((res)=>{
+          this.getWarehouseArea(res.warehouseId);
+        });
+        // this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
       },
-      search(data) {
-        this.getTableData({
-          ...data,
-          ...this.pageOptions,
-        });
+      search(query) {
+        this.searchData = query;
+        this.$refs.table.changePage(1);
       },
-      confirm(data) {
+      confirm() {
         this.$refs.form.validate(()=>{
-          paperKindService.list(data).then((res) => {
+          let message;
+          let api;
+          let { paperCodeId, paperGram, paperNumber, paperSize, paperType, warehouseAreaId, warehouseId } = this.formData;
+          let post = {paperCodeId, paperGram, paperNumber, paperSize, paperType, warehouseAreaId, warehouseId};
+          if (this.dialogTypeIsAdd) {
+            message = '新增成功';
+            api = paperKindService.add;
+          } else {
+            message = '编辑成功';
+            api = paperKindService.edit;
+            post.id = this.formData.id;
+          }
+          this.dj_api_extend(api, post).then((res) => {
             this.close();
-            const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+            this.$refs.table.updateData();
             this.$message(message, 'success');
           });
         });
@@ -280,16 +344,15 @@
         this.$refs.form.resetFields();
         this.$refs.dialog.close();
         this.dialogVisible = false;
-        this.formData = initFormData;
-      },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
-      },
-
+        this.formData = this.$method.deepClone(initFormData);
+        this.warehouseAreaList = [];
+      }
     },
-    created() {
-      this.getTableData();
+    mounted() {
+      this.getAllPaperCode();
+      this.getWarehouse().finally(()=>{
+        this.$refs.search.search();
+      });
     },
   };
 </script>
