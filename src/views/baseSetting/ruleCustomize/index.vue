@@ -4,22 +4,22 @@
       :data="tableData"
       :columns="tableColumns"
       :total="pageTotal"
+      v-loading="tableLoading"
     >
       <div slot="btn">
         <el-button type="primary" @click="headerBtnAdd('stack')">新增叠单规则</el-button>
         <el-button type="primary" @click="headerBtnAdd('pack')">新增打包规则</el-button>
-        <el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>
+        <!--<el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>-->
       </div>
     </dj-table>
     <dj-dialog v-if="dialogType==='stack'" ref="dialog" @close="close" @confirm="stackConfirm"
                :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
       <div class="rule-customize-dialog">
         <dj-form ref="stackForm" :form-data="stackFormData" :form-options="stackFormOptions" :column-num="2" />
-        <div v-for="(condition, index) in stackConditionFormData" :key="condition.key" class="condition-item stack">
+        <div v-for="(condition, index) in stackConditionFormData" class="condition-item stack">
           <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
           <div class="child-condition-list">
-            <el-form :model="child" :rules="stackRules" ref="childConditionForm" v-for="(child, childIndex) in condition.child"
-                     :key="child.time" class="dj-form">
+            <el-form :model="child" :rules="stackRules" ref="childConditionForm" v-for="(child, childIndex) in condition" class="dj-form">
               <el-row>
                 <el-col :span="7" v-if="childIndex===0">
                   <el-form-item label="楞型" prop="tilemodel">
@@ -28,7 +28,8 @@
                 </el-col>
                 <el-col :span="7">
                   <el-form-item label="切数" prop="cut">
-                    <dj-select type="multiple" collapse-tags v-model="child.cut" @change="arr=>qieshuChange(arr,child)"
+                    <dj-select type="multiple" collapse-tags v-model="child.cut"
+                               @change="qieshuChange"
                                :options="qieshuOptions"></dj-select>
                   </el-form-item>
                 </el-col>
@@ -39,8 +40,8 @@
                 </el-col>
                 <el-col :span="3" class="button-col">
                   <i class="el-icon-delete" @click.prevent="removeCondition(index,childIndex)"></i>
-                  <i class="el-icon-circle-plus" @click="addChildCondition(index)"
-                     v-if="childIndex===condition.child.length - 1"></i>
+                  <i class="el-icon-circle-plus" @click="addChildCondition(index, childIndex)"
+                     v-if="childIndex===condition.length - 1"></i>
                 </el-col>
               </el-row>
             </el-form>
@@ -52,18 +53,17 @@
     <dj-dialog v-if="dialogType==='pack'" ref="dialog" @close="close" @confirm="packConfirm"
                :title="dialogTypeIsAdd?'新增打包规则': '编辑打包规则'">
       <div class="rule-customize-dialog">
-        <dj-form ref="form" :form-data="packFormData" :form-options="packFormOptions"
+        <dj-form ref="packForm" :form-data="packFormData" :form-options="packFormOptions"
                  :column-num="zqjColumnNum" :col-rule="()=>zqjColRule"></dj-form>
         <div v-for="(condition, index) in packConditionFormData" :key="condition.key" class="condition-item">
           <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
           <div class="child-condition-list">
-            <el-form :model="child" :rules="packRules" ref="childConditionForm" v-for="(child, childIndex) in condition.child"
-                     :key="child.time" class="pack-form">
+            <el-form :model="child" :rules="packRules" ref="childConditionForm" v-for="(child, childIndex) in condition" class="pack-form">
               <div class="rule-row">
                 <el-form-item label="层数" prop="layer" v-if="childIndex===0" class="layer">
                   <dj-select v-model="child.layer" :options="layerOptions"></dj-select>
                 </el-form-item>
-                <el-form-item label="单位面积" prop="area" class="unit-area">
+                <el-form-item label="单位面积" class="unit-area">
                   <dj-input  type="float" v-model.number="child.startUnitarea" placeholder="请输入"
                              suffix-icon="m²"></dj-input>
                   <div style="margin: 0 5px">至</div>
@@ -73,10 +73,10 @@
                   <el-input v-model="child.packpiece"></el-input>
                 </el-form-item>
                 <div class="button-col">
-                  <i class="el-icon-delete" v-if="childIndex===condition.child.length - 1"
+                  <i class="el-icon-delete" v-if="childIndex===condition.length - 1"
                      @click.prevent="removeCondition(index,childIndex)"></i>
-                  <i class="el-icon-circle-plus" @click="addChildCondition(index)"
-                     v-if="childIndex===condition.child.length - 1"></i>
+                  <i class="el-icon-circle-plus" @click="addChildCondition(index, childIndex)"
+                     v-if="childIndex===condition.length - 1"></i>
                 </div>
               </div>
             </el-form>
@@ -123,7 +123,7 @@
     {label: '七层', value: '7'},
   ];
   const qieshuOptions = [
-    {label: '1', value: '1'},
+    {label: '1', value: '1', disabled: true},
     {label: '2', value: '2'},
     {label: '3', value: '3'},
     {label: '4', value: '4'},
@@ -141,6 +141,7 @@
         viewTableColumns: [],
         viewData: {},
         viewLoading: false,
+        tableLoading: false,
 
         tableData: [],
         tableColumns: [
@@ -173,11 +174,11 @@
         ],
 
         stackFormData: {
-          name: '',
-          produceLineId: '',
-          maxOrderCut: '',
-          maxStackHeight: '',
-          maxStackCount: '',
+          name: '222',
+          produceLineId: '1',
+          maxOrderCut: '222',
+          maxStackHeight: '222',
+          maxStackCount: '222',
         },
         stackFormOptions: [
           {
@@ -253,16 +254,13 @@
           },
         ],
         stackConditionFormData: [
-          {
-            child: [
-              {
-                tilemodel: '',
-                cut: '',
-                piece: '',
-                time: Date.now()
-              }
-            ]
-          },
+          [
+            {
+              tilemodel: '',
+              cut: '',
+              piece: ''
+            }
+          ]
         ],
         stackRules: {
           tilemodel: [
@@ -277,22 +275,22 @@
         },
 
         packFormData: {
-          name: '',
-          eachPackWeight: '',
-          aTilemodelRate: '',
-          bTilemodelRate: '',
-          cTilemodelRate: '',
-          eTilemodelRate: '',
-          fTilemodelRate: '',
+          name: '11',
+          eachPackWeight: 222,
+          aTilemodelRate: 44,
+          bTilemodelRate: '44',
+          cTilemodelRate: '44',
+          eTilemodelRate: '44',
+          fTilemodelRate: '44',
         },
         packFormOptions: [
           {
             type: 'input',
             formItem: {
               prop: 'name',
-              label: '新增规则名称',
+              label: '规则名称',
               rules: [
-                djForm.rules.required('新增规则名称不能为空'),
+                djForm.rules.required('规则名称不能为空'),
                 {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9]+$/g, message: '只可输入汉字、字母、数字'},
               ],
             },
@@ -303,7 +301,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'zhongliang',
+              prop: 'eachPackWeight',
               label: '单批打包重量',
               rules: [
                 djForm.rules.required('单批打包重量不能为空'),
@@ -315,16 +313,11 @@
               maxLength: 20,
               suffixIcon: "Kg"
             },
-            listeners: {
-              'input': (val) => {
-                this.packFormData.zhongliang = val.toFixed(2);
-              },
-            },
           },
           {
             type: 'input',
             formItem: {
-              prop: 'aLengLv',
+              prop: 'aTilemodelRate',
               label: 'A楞型楞率',
               rules: [
                 djForm.rules.required('A楞型楞率不能为空'),
@@ -339,7 +332,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'bLengLv',
+              prop: 'bTilemodelRate',
               label: 'B楞型楞率',
               rules: [
                 djForm.rules.required('B楞型楞率不能为空'),
@@ -354,7 +347,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'cLengLv',
+              prop: 'cTilemodelRate',
               label: 'C楞型楞率',
               rules: [
                 djForm.rules.required('C楞型楞率不能为空'),
@@ -369,7 +362,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'eLengLv',
+              prop: 'eTilemodelRate',
               label: 'E楞型楞率',
               rules: [
                 djForm.rules.required('E楞型楞率不能为空'),
@@ -384,7 +377,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'fLengLv',
+              prop: 'fTilemodelRate',
               label: 'F楞型楞率',
               rules: [
                 djForm.rules.required('F楞型楞率不能为空'),
@@ -398,17 +391,14 @@
           }
         ],
         packConditionFormData: [
-          {
-            child: [
-              {
-                layer: '',
-                startUnitarea: '',
-                endUnitarea: '',
-                packpiece: '',
-                time: Date.now()
-              }
-            ]
-          },
+          [
+            {
+              layer: '3',
+              startUnitarea: '0',
+              endUnitarea: '4',
+              packpiece: '6',
+            }
+          ]
         ],
         packRules: {
           layer: [
@@ -461,15 +451,8 @@
       };
     },
     methods: {
-      qieshuChange(arr, child) {
-        let realArr;
-        let lastValue = arr[arr.length - 1];
-        if (lastValue === 'all') {
-          realArr = [lastValue];
-        } else {
-          realArr = arr.filter(val => val !== 'all');
-        }
-        child = realArr;
+      qieshuChange(arr) {
+
       },
       zqjGetColumnNum() {
         const width = window.innerWidth;
@@ -494,22 +477,39 @@
           }
         }
       },
-      addChildCondition(index) {
+      addChildCondition(index, childIndex) {
         if (this.dialogType === 'stack') {
-          this.stackConditionFormData[index].child.push({
-            tilemodel: this.stackConditionFormData[index].child[0].tilemodel,
-            cut: '',
-            piece: '',
-            time: Date.now()
-          });
+          if (this.dialogTypeIsAdd) {
+            this.stackConditionFormData[index].push({
+              tilemodel: this.stackConditionFormData[index][0].tilemodel,
+              cut: '',
+              piece: '',
+            });
+          } else {
+            this.stackConditionFormData[index].push({
+              tilemodel: this.stackConditionFormData[index][0].tilemodel,
+              cut: '',
+              piece: '',
+            });
+          }
+
         } else {
-          this.packConditionFormData[index].child.push({
-            layer: '',
-            startUnitarea: '',
-            endUnitarea: '',
-            packpiece: '',
-            time: Date.now()
-          });
+          if (this.dialogTypeIsAdd) {
+            this.packConditionFormData[index].push({
+              layer: this.packConditionFormData[index][0].layer,
+              startUnitarea: '',
+              endUnitarea: '',
+              packpiece: ''
+            });
+          } else {
+            this.packConditionFormData[index].push({
+              layer: this.packConditionFormData[index][0].layer,
+              startUnitarea: this.packConditionFormData[index][childIndex].endUnitarea,
+              endUnitarea: '',
+              packpiece: ''
+            });
+          }
+
         }
       },
       headerBtnAdd(dialogType) {
@@ -521,36 +521,32 @@
       },
       addCondition() {
         if (this.dialogType === 'stack') {
-          this.stackConditionFormData.push({
-            child: [
-              {
-                tilemodel: '',
-                cut: '',
-                piece: '',
-              }
-            ]
-          });
+          this.stackConditionFormData.push(
+            [{
+              tilemodel: '',
+              cut: '',
+              piece: '',
+            }]);
         } else {
-          this.packConditionFormData.push({
-            child: [
-              {
-                layer: '',
-                startUnitarea: '',
-                endUnitarea: '',
-                packpiece: '',
-                time: Date.now()
-              }
-            ]
-          });
+          this.packConditionFormData.push(
+            [{
+              layer: '',
+              startUnitarea: 0,
+              endUnitarea: '',
+              packpiece: '',
+            }]);
         }
       },
       removeCondition(index, childIndex) {
         // todo 增加删除动画
         const targetArr = this[this.dialogType + 'ConditionFormData'];
-        if (targetArr[index].child.length === 1) {
+        if (targetArr.length === 1) {
+          return false;
+        }
+        if (targetArr[index].length === 1) {
           targetArr.splice(index, 1);
         } else {
-          targetArr[index].child.splice(childIndex, 1);
+          targetArr[index].splice(childIndex, 1);
         }
       },
       changeRuleEffectedApi({isEffected, id}) {
@@ -575,7 +571,7 @@
         }
       },
       view(row) {
-        this.viewLoading = true
+        this.viewLoading = true;
         let stack = [
           {label: '楞型', prop: 'tilemodel'},
           {label: '切数', prop: 'cut'},
@@ -583,7 +579,7 @@
         ];
         let pack = [
             {label: '层数', prop: 'layer'},
-            {label: '单位面积（m²）', prop: 'endUnitarea', formatter: row=> row.startUnitarea+'-'+row.endUnitarea},
+            {label: '单位面积（m²）', prop: 'endUnitarea', formatter: row=> row.startUnitarea + '-' + row.endUnitarea},
             {label: '打包数量', prop: 'packpiece'},
           ];
         this.dialogType = (row.typeName === '叠单规则' ? 'stack' : 'pack') + '_view';
@@ -596,15 +592,36 @@
         }).then(res=>{
           this.viewData = res;
         }).finally(()=>{
-          this.viewLoading = false
+          this.viewLoading = false;
         });
       },
       edit(row) {
         this.dialogType = row.typeName === '叠单规则' ? 'stack' : 'pack';
         this.dialogTypeIsAdd = false;
-        this.packFormData = this.$method.deepClone(row);
-        this.$nextTick(()=>{
-          this.$refs.dialog.open();
+        ruleCustomizeService.getRuleDetail({
+          ruleId: row.id
+        }).then(res=>{
+          if (this.dialogType === 'stack') {
+            let { detailModels, ...rest } = res;
+            this.stackFormData = rest;
+            let cache = [[], [], [], [], [], [], []];
+            for (let i = 0; i < detailModels.length; i++) {
+              detailModels[i].cut = [detailModels[i].cut ]
+              cache[detailModels[i].cut - 1].push(detailModels[i]);
+            }
+            this.stackConditionFormData = cache;
+          } else {
+            let { packRuleDetails, ...rest } = res;
+            this.packFormData = rest;
+            let cache = [[], [], [], [], [], []];
+            for (let i = 0; i < packRuleDetails.length; i++) {
+              cache[packRuleDetails[i].layer - 2].push(packRuleDetails[i]);
+            }
+            this.packConditionFormData = cache;
+          }
+          this.$nextTick(()=>{
+            this.$refs.dialog.open();
+          });
         });
       },
       closeSuoBian() {
@@ -620,7 +637,7 @@
       search(data) {
         this.getTableData(data);
       },
-      stackConfirm(){
+      stackConfirm() {
         const formValidate = new Promise((resolve) => {
           let allIsTrue = [];
           this.$refs.stackForm.validate((valid) => {
@@ -641,7 +658,23 @@
         });
         formValidate.then(res=>{
           if (res.length === this.$refs['childConditionForm'].length + 1) {
-            ruleCustomizeService.addStackRule(this.stackFormData).then((res) => {
+            const detailModels = this.stackConditionFormData.reduce((pre, cur)=>{
+              let cache = cur.map(v=>{
+                return v.cut.map(vcut=>{
+                  return {
+                    tilemodel: v.tilemodel,
+                    cut: vcut,
+                    piece: v.piece,
+                  };
+                });
+              });
+              return pre.concat(...cache);
+            }, []);
+            const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
+            packRequest({
+              ...this.stackFormData,
+              detailModels: detailModels
+            }).then((res) => {
               this.close();
               const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
               this.$message(message, 'success');
@@ -649,7 +682,7 @@
           }
         });
       },
-      packConfirm(){
+      packConfirm() {
         const formValidate = new Promise((resolve) => {
           let allIsTrue = [];
           this.$refs.packForm.validate((valid) => {
@@ -670,12 +703,18 @@
         });
         formValidate.then(res=>{
           if (res.length === this.$refs['childConditionForm'].length + 1) {
-            ruleCustomizeService.list().then((res) => {
+            const packRuleDetails = this.packConditionFormData.reduce((pre, cur)=>{
+              return pre.concat(...cur);
+            }, []);
+            const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
+            packRequest({
+              ...this.packFormData,
+              packRuleDetails: packRuleDetails
+            }).then((res) => {
               this.close();
               const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
               this.$message(message, 'success');
             });
-            console.log('全部通过');
           }
         });
       },
@@ -689,16 +728,13 @@
             maxStackCount: '',
           };
           this.stackConditionFormData = [
-            {
-              child: [
-                {
-                  tilemodel: '',
-                  cut: '',
-                  piece: '',
-                  time: Date.now()
-                }
-              ]
-            },
+            [
+              {
+                tilemodel: '',
+                cut: '',
+                piece: ''
+              }
+            ]
           ];
         } else {
           this.packFormData = {
@@ -711,38 +747,38 @@
             fTilemodelRate: '',
           };
           this.packConditionFormData = [
-            {
-              child: [
-                {
-                  layer: '',
-                  startUnitarea: '',
-                  endUnitarea: '',
-                  packpiece: '',
-                  time: Date.now()
-                }
-              ]
-            },
+            [
+              {
+                layer: '',
+                startUnitarea: '',
+                endUnitarea: '',
+                packpiece: '',
+              }
+            ]
           ];
         }
         this.dialogType = '';
       },
       getTableData(data) {
+        this.tableLoading = true;
         ruleCustomizeService.list({
           ...data,
           ...this.pageOptions
         }).then((res) => {
           this.tableData = res.list;
           this.pageTotal = res.total;
+        }).finally(()=>{
+          this.tableLoading = false;
         });
       },
     },
     created() {
       this.getTableData();
-      productionLineService.showAllLine().then(res=>{
+      ruleCustomizeService.getAllLine().then(res=>{
         const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         const lineOptions = res.list.map(v=>{
           return {
-            label: chnNumChar[v.lineId] + '号线',
+            label: chnNumChar[v.lineNum] + '号线',
             value: v.id
           };
         });
@@ -800,6 +836,7 @@
       display: flex;
       .rule-row{
         display: flex;
+        justify-content: flex-end;
         width: 80%;
         @{deep} .el-form-item{
           width: 352px;
@@ -810,6 +847,10 @@
         .packpiece{
           margin-left: 36px;
         }
+      }
+      .el-row{
+        display: flex;
+        justify-content: flex-end;
       }
       .condition-index-label{
         text-align: right;
@@ -822,6 +863,7 @@
         }
       }
       .button-col{
+        width: 50px;
         display: flex;
         margin-top: 8px;
         i.el-icon-delete,i.el-icon-circle-plus{

@@ -23,6 +23,6 @@ export default {
     return ruleCustomize('/modifyPackRule.do', data);
   },
   getAllLine(data) {
-    return ruleCustomize('/getAllLine.do', data);
+    return ruleCustomize('/getAllLine.do', data, 'get');
   },
 };
