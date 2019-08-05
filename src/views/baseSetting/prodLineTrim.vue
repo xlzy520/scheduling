@@ -206,7 +206,7 @@
       changeStatus(row) {
         // 接口
         if (row.isEffected) {
-          this.$confirm('您确定禁用该条内容吗？', '', {
+          this.$confirm('确定禁用该条内容吗？', '', {
             type: 'warning',
             showClose: false,
           }).then(() => {

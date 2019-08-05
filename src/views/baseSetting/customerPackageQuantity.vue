@@ -345,7 +345,7 @@
         });
       },
       deleteRow(row) {
-        this.$confirm('您确定删除该条内容？', '', {
+        this.$confirm('确定删除该条内容？', '', {
           type: 'warning',
           showClose: false,
         }).then(() => {
