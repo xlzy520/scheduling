@@ -185,7 +185,6 @@
               listeners: {
                 change: (val)=>{
                   if (val === '1') {
-                    console.log(5);
                     this.$set(this.formOptions.zqj[4].formItem, 'rules', [
                       ruleMoreThan9999
                     ]);
@@ -400,8 +399,10 @@
         const formValidate = new Promise((resolve) => {
           let allIsTrue = [];
           formMap.map((v, index)=>{
-            this.$refs['form' + v].validate(() => {
-              allIsTrue.push(true);
+            this.$refs['form' + v].validate((valid) => {
+              if (valid) {
+                allIsTrue.push(true);
+              }
               if (index === 2) {
                 resolve(allIsTrue);
               }
@@ -409,7 +410,7 @@
           });
         });
         formValidate.then(res=>{
-          if (res.length === 3 && res.every(v=>v)) {
+          if (res.length === 3) {
             if (this.isModify()) {
               this.$confirm('是否保存填写内容？', '', {
                 type: 'warning',

@@ -102,11 +102,12 @@
       },
       changeLineEffectedApi(val, text) {
         productionLineService.changeLineEffected({
-          effected: val,
+          effected: Math.pow(0, val),
           id: this.tabsColumn[this.activeTab].id
         }).then(() => {
           this.$message(text, 'success');
           this.getData();
+          this.tabClick();
         });
       },
       changeLineStatus(val) {
@@ -132,10 +133,10 @@
           this.tabsColumn = [];
           if (data.length > 0) {
             data.map((v, index)=>{
-              this.activeTab = data[0].lineId;
+              this.activeTab = data[0].lineNum;
               this.tabsColumn.push({
-                label: chnNumChar[v.lineId] + '号线',
-                value: v.lineId,
+                label: chnNumChar[v.lineNum] + '号线',
+                value: v.lineNum,
                 id: v.id,
                 isEffected: v.isEffected
               });
