@@ -51,7 +51,7 @@ export default {
       meta: {
         title: '规则自定义',
       },
-      component: 'views/baseSetting/ruleCustomize'
+      component: 'views/baseSetting/ruleCustomize/index'
     },
     {
       path: 'productionLine',

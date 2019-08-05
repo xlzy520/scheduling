@@ -7,7 +7,7 @@ module.exports = [
   {name: 'paperSupplier', url: '/paperSupplier'},
   {name: 'productionLineTrim', url: '/LineWaster'},
   {name: 'customerPackageQuantitySetting', url: '/customerPackageQuantitySetting'},
-  {name: 'ruleCustomize', url: '/ruleCustomize'},
+  {name: 'ruleCustomize', url: '/rule'},
   {name: 'productionLine', url: '/line'},
   {name: 'paperInStock', url: '/paperInStock'},
 ];
