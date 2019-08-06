@@ -86,6 +86,7 @@
               class: 'code',
               key: 'multiple',
               type: 'multiple',
+              bindObject: true,
               keyMap: {
                 label: 'paperCode',
                 value: 'id'
@@ -170,7 +171,7 @@
       selectPaper(obj) {
         // console.log({...obj, id: `${obj.id}+${new Date().getTime()}`});
         // this.formData.materialCode.push({...obj, id: `${obj.id}+${new Date().getTime()}`});
-        this.formData.materialCode.push(obj.id);
+        this.formData.materialCode.push(obj);
       },
       add() {
         this.dialogTypeIsAdd = true;
@@ -191,9 +192,9 @@
       },
       changeStatus(row) {
         // 接口
-        let  post = {
+        let post = {
           id: row.id,
-          effected: row.isEffected ? 0 : 1 ,
+          effected: row.isEffected ? 0 : 1,
         };
         if (row.isEffected) {
           this.$confirm('确定禁用该条内容吗？', '', {
@@ -217,10 +218,10 @@
         this.dialogTypeIsAdd = false;
         this.dj_api_extend(materialCodeService.getMaterialByid, {id: row.id}).then(res=>{
           let data = {
-            materialCode: (res.codeDetail || []).map(obj=>obj.id),
+            materialCode: (res.codeDetail || []).map(obj=>({id: obj.paperCodeId, _id: obj.id})),
             id: row.id
           };
-          this.formData = {...(res || {}),...data};
+          this.formData = {...(res || {}), ...data};
         });
         // this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
@@ -236,9 +237,10 @@
           let message;
           let api;
           let post = {
-            paperMaterialDetails: this.formData.materialCode.map((id, index)=>({
+            paperMaterialDetails: this.formData.materialCode.map((obj, index)=>({
               seq: index + 1,
-              paperCodeId: id
+              paperCodeId: obj.id,
+              id: obj._id
             })),
             platformMaterialCode: this.formData.platformMaterialCode,
           };
@@ -248,7 +250,7 @@
           } else {
             message = '编辑成功';
             api = materialCodeService.edit;
-            post.id = this.formData.id
+            post.id = this.formData.id;
           }
           this.dj_api_extend(api, post).then((res) => {
             this.close();
