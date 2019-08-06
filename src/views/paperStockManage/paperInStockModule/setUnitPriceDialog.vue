@@ -1,12 +1,12 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" width="1506px" title="设置单价" @confirm="confirm">
-    <p>基础信息</p>
-    <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="4"
+  <dj-dialog ref="dialog" @close="close" width="1160px" title="设置单价" @confirm="confirm">
+    <p class="font-subhead">基础信息</p>
+    <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"
              :col-rule="colRule"></dj-form>
-    <p>纸筒信息</p>
+    <p class="font-subhead">纸筒信息</p>
     <base-table ref="table"
                 :data="tableData"
-                max-height="500"
+                max-height="370"
                 :columns="tableColumns"
                 :column-type="['index']">
     </base-table>
@@ -42,13 +42,6 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.storageType,
-              label: '入库类型',
-              rules: [rules.required('入库类型不能为空')]
-            }
-          },
-          {
-            formItem: {
               prop: cylinderKeys.deliveryBillId,
               label: '送货单号'
             }
@@ -56,7 +49,15 @@
           {
             formItem: {
               prop: cylinderKeys.forkliftDriver,
-              label: '叉车员'
+              label: '叉车员',
+              rules: [rules.required('')]
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.storageType,
+              label: '入库类型',
+              rules: [rules.required('')]
             }
           },
           {
@@ -95,51 +96,63 @@
         tableColumns: [
           {
             prop: cylinderKeys.cylinderNo,
-            label: '纸筒编号'
+            label: '纸筒编号',
+            width: 100
           },
           {
             prop: paperKeys.paperNumber,
-            label: '原纸编号'
+            label: '原纸编号',
+            width: 139,
           },
           {
             prop: paperKeys.paperGram,
             label: '克重(g)',
+            width: 139,
           },
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
+            width: 139,
           },
           {
             prop: cylinderKeys.length,
             label: '长度(m)',
+            width: 101,
           },
           {
             prop: cylinderKeys.area,
             label: '面积(㎡)',
+            width: 103,
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码'
+            label: '原值代码',
+            width: 129,
           },
           {
             prop: paperKeys.paperType,
-            label: '原纸类型'
+            label: '原纸类型',
+            width: 90,
           },
           {
             prop: paperKeys.paperSize,
-            label: '门幅(mm)'
+            label: '门幅(mm)',
+            width: 97,
           },
           {
             prop: paperKeys.warehouseId,
             label: '仓库',
+            width: 139,
           },
           {
             prop: paperKeys.warehouseAreaId,
             label: '库区',
+            width: 121,
           },
           {
             prop: cylinderKeys.unitPrice,
             label: '单价',
+            width: 96,
             propsHandler: (props) => {
               return {...props, reg: this.$reg.getFloatReg(3)}
             },
@@ -153,6 +166,7 @@
           {
             prop: cylinderKeys.money,
             label: '金额',
+            width: 105,
           },
           {
             prop: paperKeys.paperStatus,
@@ -166,7 +180,7 @@
     },
     methods: {
       colRule(item) {
-        return item.formItem.prop === cylinderKeys.remark ? 18 : 6;
+        return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       confirm() {
         console.log(this.formData);
@@ -182,3 +196,6 @@
     }
   };
 </script>
+<style lang="less" scoped>
+
+</style>

@@ -1,19 +1,18 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="1506px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
-      <p>基础信息</p>
+    <dj-dialog ref="dialog" @close="close" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+      <p class="font-subhead">基础信息</p>
         <dj-form ref="form"
                  :formData="formData"
                  :formOptions="formOptions"
-                 :column-num="4"
-                 :col-rule="colRule"></dj-form>
-      <p>纸筒信息</p>
+                 :column-num="3"></dj-form>
+      <p class="font-subhead">纸筒信息</p>
       <base-table ref="table"
                   v-if="readyTable"
                   :column-type-props="{index: {fixed: false}}"
                   :data="tableData"
                   :lazy-total="tableMaxLength"
                   :lazy-remote="()=>getEmptyData(10)"
-                  max-height="500"
+                  max-height="370"
                   :columns="tableColumns"
                   @row-click="rowClick"
                   :column-type="['index']">
@@ -122,6 +121,7 @@
           {
             prop: 'operate',
             label: '操作',
+            width: 57,
             render: (h, {props: {index}}) => {
               const disabled = () => {
                 return this.tableData.length === 1;
@@ -134,34 +134,42 @@
                 }
               };
               return (
-                <i class="el-icon-remove-outline" on-click={remove}></i>
+                <i class="dj-common-red-delete" on-click={remove}></i>
               );
             }
           },
           {
             prop: cylinderKeys.cylinderNo,
-            label: '纸筒编号'
+            label: '纸筒编号',
+            width: 100
           },
           {
             prop: paperKeys.paperNumber,
             label: '原纸编号',
+            width: 139,
+            renderHeader() {
+              return (
+                <span><i class="icon-require">*</i>原纸编号</span>
+              );
+            },
             propsHandler: (props) => {
               const service = (val, cb) => {
                 this.getPaperNoList(val).then(cb);
               };
               const beforeEnter = (val, cb) => {
-                // if (val) {
-                //   Promise.all([this.getPaperDetail(val), this.getCylinderId()]).then(result=>{
-                //     let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
-                //     delete result[0][paperKeys.warehouseAreaId];
-                //     Object.assign(props.row, result[0], result[1]);
-                //     updateLength.bind(this)(props.row);
-                //     this.$nextTick(()=>{
-                //       Object.assign(props.row, _obj);
-                //     });
-                //   });
-                // }
-                cb();
+                if (val) {
+                  Promise.all([this.getPaperDetail(val), this.getCylinderId()]).then(result=>{
+                    let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
+                    delete result[0][paperKeys.warehouseAreaId];
+                    Object.assign(props.row, result[0], result[1]);
+                    updateLength.bind(this)(props.row);
+                    this.$nextTick(()=>{
+                      Object.assign(props.row, _obj);
+                    });
+                  }).finally(cb);
+                } else {
+                  cb();
+                }
               };
               return {...props, service, beforeEnter, label: 'paperNumber', valueKey: 'paperNumber'}
             },
@@ -185,6 +193,12 @@
           {
             prop: paperKeys.paperGram,
             label: '克重(g)',
+            width: 139,
+            renderHeader() {
+              return (
+                <span><i class="icon-require">*</i>克重(g)</span>
+              );
+            },
             propsHandler: (props) => {
               // const service = (val, cb) => {
               //   console.log('对接接口');
@@ -210,6 +224,12 @@
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
+            width: 139,
+            renderHeader() {
+              return (
+                <span><i class="icon-require">*</i>重量(kg)</span>
+              );
+            },
             propsHandler: (props) => {
               // const service = (val, cb) => {
               //   console.log('对接接口');
@@ -242,6 +262,7 @@
           {
             prop: cylinderKeys.length,
             label: '长度(m)',
+            width: 105,
             formatter(row, index, cur) {
               // let value;
               // let weight = row[cylinderKeys.weight];
@@ -262,6 +283,7 @@
           {
             prop: cylinderKeys.area,
             label: '面积(㎡)',
+            width: 105,
             formatter(row, index, cur) {
               // let value;
               // let length = row[cylinderKeys.length];
@@ -281,11 +303,13 @@
           },
           {
             prop: paperKeys.paperCode,
-            label: '原纸代码'
+            label: '原纸代码',
+            width: 129,
           },
           {
             prop: paperKeys.paperType,
             label: '原纸类型',
+            width: 105,
             formatter: (row, index, cur) => {
               let obj = this.$enum.paperType._swap[cur] || {};
               return obj.label || '';
@@ -293,11 +317,13 @@
           },
           {
             prop: paperKeys.paperSize,
-            label: '门幅(mm)'
+            label: '门幅(mm)',
+            width: 97,
           },
           {
             prop: paperKeys.warehouseId,
             label: '仓库',
+            width: 139,
             propsHandler: (props) => {
               return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}}
             },
@@ -306,6 +332,7 @@
           {
             prop: paperKeys.warehouseAreaId,
             label: '库区',
+            width: 121,
             propsHandler: (props) => {
               // const service = (val, cb) => {
               //   // console.log('对接接口');
@@ -321,7 +348,7 @@
           },
           {
             prop: paperKeys.paperStatus,
-            label: '原纸状态'
+            label: '原纸状态',
           },
         ],
         isEdit: false,
@@ -441,6 +468,8 @@
               label: '备注信息'
             },
             attrs: {
+              type: 'textarea',
+              height: 100,
               maxlength: 50,
             }
           },
@@ -488,19 +517,45 @@
         return paperKindService.list({pageNo: 1, pageSize: 10000000, paperNumber: num}).then(res=>{
           let list = res.list || [];
           let data = list.filter(obj=>obj[paperKeys.paperNumber] === num)[0];
-          return cloneData(keyList, {}, data);
+          if (!data) {
+            return Promise.reject();
+          } else {
+            return cloneData(keyList, {}, data);
+          }
         }).catch(()=>{
-          return cloneData(keyList);
+          this.$confirm('无对应原纸编号，请先设置原纸品种.', '提示', {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'error',
+            showClose: false
+          });
+          return Promise.reject();
         });
       },
       shortcutCopy(e) {
         let keyCode = e.keyCode;
         if (this.activeIndex !== undefined) {
           if (keyCode === 17) {
-            this.getCylinderId().then(res=>{
-              let _obj = this.$method.deepClone(this.tableData[this.activeIndex]);
-              this.tableData.splice(this.activeIndex + 1, 0, {..._obj, ...res});
+            let cloneObj = this.$method.deepClone(this.tableData[this.activeIndex]);
+            let _obj = cloneData([paperKeys.warehouseAreaId], {}, cloneObj);
+            delete cloneObj[paperKeys.warehouseAreaId];
+            this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
+            if (cloneObj[cylinderKeys.cylinderNo]) {
+              this.getCylinderId().then(res=>{
+                Object.assign(cloneObj, res);
+              })
+            }
+            this.$nextTick(()=>{
+              Object.assign(cloneObj, _obj);
             });
+            // this.getCylinderId().then(res=>{
+            //   let _obj = cloneData([paperKeys.warehouseAreaId], {}, res);
+            //   delete result[0][paperKeys.warehouseAreaId];
+            //   Object.assign(props.row, result[0], result[1]);
+            //
+            //   let _obj = this.$method.deepClone(this.tableData[this.activeIndex]);
+            //   this.tableData.splice(this.activeIndex + 1, 0, {..._obj, ...res});
+            // });
           } else if (keyCode === 13 && e.target.tagName !== 'INPUT' && this.tableData.length < tableMaxLength) {
             this.tableData.splice(this.activeIndex + 1, 0, {});
           }
@@ -540,7 +595,7 @@
         });
       },
       colRule(item) {
-        return item.formItem.prop === cylinderKeys.remark ? 24 : 6;
+        return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       confirm() {
         console.log(this.formData);
@@ -560,7 +615,15 @@
   };
 </script>
 <style lang="less" scoped>
-/deep/ .el-icon-remove-outline {
-  color: red;
-}
+  /deep/ .dj-common-red-delete {
+    color: red;
+    cursor: pointer;
+  }
+  /deep/ .el-scrollbar__bar.is-horizontal {
+    display: none;
+  }
+  /deep/ .icon-require {
+    color: red;
+    vertical-align: middle;
+  }
 </style>

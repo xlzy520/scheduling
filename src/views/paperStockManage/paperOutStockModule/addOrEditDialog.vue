@@ -1,16 +1,16 @@
 <template>
   <div>
-    <dj-dialog ref="dialog" @close="close" width="1506px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
-      <p>基础信息</p>
+    <dj-dialog ref="dialog" @close="close" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+      <p class="font-subhead">基础信息</p>
       <dj-form ref="form"
                :formData="formData"
                :formOptions="formOptions"
                :column-num="3"
                :col-rule="colRule"></dj-form>
-      <p>纸筒信息</p>
+      <p class="font-subhead">纸筒信息</p>
       <base-table ref="table"
                   :data="tableData"
-                  max-height="500"
+                  max-height="370"
                   :columns="tableColumns"
                   :column-type="['index']">
       </base-table>
@@ -37,6 +37,7 @@
           {
             prop: 'operate',
             label: '操作',
+            width: 57,
             render: (h, {props: {index}}) => {
               const disabled = () => {
                 return this.tableData.length === 1;
@@ -49,13 +50,14 @@
                 }
               };
               return (
-                <i class="el-icon-remove-outline" on-click={remove}></i>
+                <i class="dj-common-red-delete" on-click={remove}></i>
               );
             }
           },
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
+            width: 123,
             propsHandler: (props) => {
               const beforeEnter = (val, cb, props) => {
                 console.log('beforeEnter对接接口');
@@ -75,43 +77,53 @@
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码'
+            label: '原值代码',
+            width: 129,
           },
           {
             prop: paperKeys.paperType,
-            label: '原纸类型'
+            label: '原纸类型',
+            width: 90,
           },
           {
             prop: paperKeys.paperSize,
-            label: '门幅(mm)'
+            label: '门幅(mm)',
+            width: 97,
           },
           {
             prop: paperKeys.paperGram,
             label: '克重(g)',
+            width: 139,
           },
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
+            width: 139,
           },
           {
             prop: cylinderKeys.length,
             label: '长度(m)',
+            width: 98,
           },
           {
             prop: cylinderKeys.area,
             label: '面积(㎡)',
+            width: 91,
           },
           {
             prop: paperKeys.warehouseName,
             label: '仓库',
+            width: 139,
           },
           {
             prop: paperKeys.warehouseAreaName,
             label: '库区',
+            width: 121,
           },
           {
             prop: cylinderKeys.paperSupplier,
-            label: '原纸供应商'
+            label: '原纸供应商',
+            width: 156,
           },
         ],
         isEdit: false,
@@ -134,8 +146,8 @@
           {
             type: 'custom',
             formItem: {
-              prop: 'ly',
-              label: '领用说明'
+              prop: 'department/person',
+              label: '领用部门/领用人'
             },
             render: (h, {props: {value}}) => {
               return (
@@ -241,16 +253,18 @@
               label: '备注信息'
             },
             attrs: {
+              type: 'textarea',
+              height: 100,
               maxlength: 50,
             }
           },
-          {
-            type: 'input',
-            formItem: {
-              prop: 'tag',
-              label: '标签条码'
-            }
-          },
+          // {
+          //   type: 'input',
+          //   formItem: {
+          //     prop: 'tag',
+          //     label: '标签条码'
+          //   }
+          // },
         ];
       }
     },
@@ -296,7 +310,8 @@
   };
 </script>
 <style lang="less" scoped>
-  /deep/ .el-icon-remove-outline {
+  /deep/ .dj-common-red-delete {
     color: red;
+    cursor: pointer;
   }
 </style>

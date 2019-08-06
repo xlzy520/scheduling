@@ -1,10 +1,10 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="1506px" title="查看">
+    <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="基础信息" name="1">
-          <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="4"
+          <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"
                    :col-rule="colRule"></dj-form>
-          <p>纸筒信息</p>
+          <p class="font-subhead">纸筒信息</p>
           <base-table ref="table"
                       :data="tableData"
                       max-height="500"
@@ -100,46 +100,57 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
+            width: 123,
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码'
+            label: '原值代码',
+            width: 129,
           },
           {
             prop: paperKeys.paperType,
-            label: '原纸类型'
+            label: '原纸类型',
+            width: 90,
           },
           {
             prop: paperKeys.paperSize,
-            label: '门幅(mm)'
+            label: '门幅(mm)',
+            width: 97,
           },
           {
             prop: paperKeys.paperGram,
             label: '克重(g)',
+            width: 139,
           },
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
+            width: 139,
           },
           {
             prop: cylinderKeys.length,
-            label: '长度(m)'
+            label: '长度(m)',
+            width: 98,
           },
           {
             prop: cylinderKeys.area,
             label: '面积(㎡)',
+            width: 91,
           },
           {
             prop: paperKeys.warehouseName,
             label: '仓库',
+            width: 139,
           },
           {
             prop: paperKeys.warehouseAreaName,
             label: '库区',
+            width: 121,
           },
           {
             prop: cylinderKeys.paperSupplier,
-            label: '原纸供应商'
+            label: '原纸供应商',
+            width: 156,
           },
           {
             prop: cylinderKeys.money,
@@ -148,9 +159,9 @@
         ],
         recordData: [],
         recordColumns: [
-          {label: '操作时间', prop: 'time'},
-          {label: '操作人', prop: 'operator'},
-          {label: '操作内容', prop: 'event'}
+          {label: '操作时间', prop: 'time', width: 226},
+          {label: '操作人', prop: 'operator', width: 136},
+          {label: '操作内容', prop: 'event', width: 742}
         ],
         activeTab: '1',
       };
@@ -159,7 +170,7 @@
     },
     methods: {
       colRule(item) {
-        return item.formItem.prop === cylinderKeys.remark ? 18 : 6;
+        return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       open(param) {
         this.$refs.dialog.open();

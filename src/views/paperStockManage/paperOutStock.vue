@@ -1,20 +1,23 @@
 <template>
-  <div class="paperOutStock">
+  <single-page class="paperOutStock">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table ref="table"
-              :data="tableData"
-              :columns="tableColumns"
-              :column-type="['index']"
-              @update-data="getList">
-      <div slot="btn">
-        <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
-        <el-button type="primary" @click="fileDownload">导出记录</el-button>
-        <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
-      </div>
-    </dj-table>
+    <page-pane>
+      <dj-table ref="table"
+                :data="tableData"
+                height="100%"
+                :columns="tableColumns"
+                :column-type="['index']"
+                @update-data="getList">
+        <div slot="btn">
+          <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
+          <el-button type="primary" @click="fileDownload">导出记录</el-button>
+          <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
+        </div>
+      </dj-table>
+    </page-pane>
     <add-or-edit-dialog ref="addOrEditDialog" v-if="addOrEditDialogFlag" @close="addOrEditDialogFlag = false"></add-or-edit-dialog>
     <look-dialog ref="lookDialog" v-if="lookDialogFlag" @close="lookDialogFlag = false"></look-dialog>
-  </div>
+  </single-page>
 </template>
 <script>
   import dayjs from 'dayjs';
@@ -32,10 +35,9 @@
             key: cylinderKeys.storageTime,
             label: '入库时间',
             attrs: {
+              type: 'daterange',
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
-                console.log(dayjs(val[0]).valueOf());
-                console.log(dayjs(val[1]).valueOf());
                 let _val = val;
                 if (val[0] && val[1]) {
                   let towMonth = dayjs(val[0]).add(92, 'day');
@@ -72,54 +74,66 @@
           {
             prop: 'operate',
             label: '操作',
+            width: 101,
             render: (h, {props: {row}}) => {
               return (
-                <span>
-                  <a href="javascript:;" on-click={()=>this.openDialog('lookDialog', row)}>查看</a>&nbsp;&nbsp;
-                  <a href="javascript:;" on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
+                <span class="td-btn-group">
+                  <a on-click={()=>this.openDialog('lookDialog', row)}>查看</a>
+                  <span></span>
+                  <a on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
                 </span>
               );
             }
           },
           {
             prop: cylinderKeys.documentNo,
-            label: '单据编号'
+            label: '单据编号',
+            width: 177,
           },
           {
             prop: cylinderKeys.storageTime,
-            label: '出库时间'
+            label: '出库时间',
+            width: 224,
           },
           {
             prop: cylinderKeys.usePerson,
-            label: '领用人'
+            label: '领用人',
+            width: 118,
           },
           {
             prop: cylinderKeys.useDepartment,
-            label: '领用部门'
+            label: '领用部门',
+            width: 145,
           },
           {
             prop: cylinderKeys.useGroup,
-            label: '领用班组'
+            label: '领用班组',
+            width: 132,
           },
           {
             prop: cylinderKeys.forkliftDriver,
-            label: '叉车员'
+            label: '叉车员',
+            width: 131
           },
           {
             prop: cylinderKeys.storageType,
-            label: '出库类型'
+            label: '出库类型',
+            width: 131
           },
           {
             prop: cylinderKeys.totalWeight,
-            label: '总重量'
+            label: '总重量',
+            width: 118
           },
           {
             prop: cylinderKeys.totalAmount,
-            label: '总件数'
+            label: '总件数',
+            width: 117
           },
           {
             prop: cylinderKeys.totalMoney,
             label: '总金额',
+            width: 108,
             formatter: (row, index, cur) => {
               if (this.isShowMoney) {
                 return cur;
@@ -130,7 +144,8 @@
           },
           {
             prop: cylinderKeys.remark,
-            label: '备注信息'
+            label: '备注信息',
+            width: 225,
           },
         ],
         searchData: {},
@@ -171,5 +186,16 @@
   };
 </script>
 <style lang="less" scoped>
-
+/*/deep/ .operate {*/
+  /*a {*/
+    /*cursor: pointer;*/
+  /*}*/
+  /*a + span:empty {*/
+    /*&:before {*/
+      /*content: '|';*/
+      /*margin: 0 9px;*/
+      /*color: #EBEEF5;*/
+    /*}*/
+  /*}*/
+/*}*/
 </style>

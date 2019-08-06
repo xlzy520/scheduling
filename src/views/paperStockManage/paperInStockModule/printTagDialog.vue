@@ -1,7 +1,7 @@
 <template>
   <div>
     <dj-dialog ref="dialog" @close="close" width="1160px" title="打印标签" @confirm="confirm">
-      <p>请确认打印信息</p>
+      <p class="font-subhead">请确认打印信息</p>
       <base-table ref="table"
                   :data="tableData"
                   height="500px"

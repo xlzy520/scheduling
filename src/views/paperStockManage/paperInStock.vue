@@ -1,24 +1,26 @@
 <template>
-  <div class="paperInStock">
+  <single-page class="paperInStock">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table ref="table"
-              :data="tableData"
-              :total="total"
-              height="500px"
-              :columns="tableColumns"
-              :column-type="['index']"
-              @update-data="getList">
-      <div slot="btn">
-        <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
-        <el-button type="primary">导出记录</el-button>
-        <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
-      </div>
-    </dj-table>
+    <page-pane>
+      <dj-table ref="table"
+                :data="tableData"
+                :total="total"
+                height="100%"
+                :columns="tableColumns"
+                :column-type="['index']"
+                @update-data="getList">
+        <div slot="btn">
+          <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
+          <el-button type="primary">导出记录</el-button>
+          <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
+        </div>
+      </dj-table>
+    </page-pane>
     <add-or-edit-dialog ref="addOrEditDialog" v-if="addOrEditDialogFlag" @close="addOrEditDialogFlag = false"></add-or-edit-dialog>
     <look-dialog ref="lookDialog" v-if="lookDialogFlag" @close="lookDialogFlag = false"></look-dialog>
     <set-unit-price-dialog ref="setUnitPriceDialog" v-if="setUnitPriceDialogFlag" @close="setUnitPriceDialogFlag = false"></set-unit-price-dialog>
     <print-tag-dialog ref="printTagDialog" v-if="printTagDialogFlag" @close="printTagDialogFlag = false"></print-tag-dialog>
-  </div>
+  </single-page>
 </template>
 <script>
   import addOrEditDialog from './paperInStockModule/addOrEditDialog';
@@ -28,6 +30,7 @@
   import dayjs from 'dayjs';
   import { cylinderKeys } from "../../utils/system/constant/dataKeys";
   import paperInStock from '../../api/service/paperInStock';
+  import SinglePage from "../../components/page/singlePage";
   export default {
     name: 'paperInStock',
     data: function () {
@@ -38,6 +41,7 @@
             key: cylinderKeys.storageTime,
             label: '入库时间',
             attrs: {
+              type: 'daterange',
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
                 console.log(dayjs(val[0]).valueOf());
@@ -86,49 +90,65 @@
           {
             prop: 'operate',
             label: '操作',
-            width: 200,
+            width: 270,
             render: (h, {props: {row}}) => {
               return (
-                <span>
-                  <a href="javascript:;" on-click={()=>this.openDialog('lookDialog', row)}>查看</a>&nbsp;&nbsp;
-                  <a href="javascript:;" on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>&nbsp;&nbsp;
-                  <a href="javascript:;" on-click={()=>this.openDialog('printTagDialog', row)}>打印标签</a>&nbsp;&nbsp;
-                  <a href="javascript:;" on-click={()=>this.openDialog('setUnitPriceDialog', row)}>设置单价</a>
+                <span class="td-btn-group">
+                  <a on-click={()=>this.openDialog('lookDialog', row)}>查看</a>
+                  <span></span>
+                  <a on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
+                  <span></span>
+                  <a on-click={()=>this.openDialog('printTagDialog', row)}>打印标签</a>
+                  <span></span>
+                  <a on-click={()=>this.openDialog('setUnitPriceDialog', row)}>设置单价</a>
                 </span>
               );
             }
           },
           {
             prop: cylinderKeys.documentNo,
-            label: '单据编号'
+            label: '单据编号',
+            width: 155
           },
           {
             prop: cylinderKeys.storageTime,
-            label: '入库时间'
+            label: '入库时间',
+            width: 202
           },
           {
             prop: cylinderKeys.paperSupplier,
-            label: '原纸供应商'
+            label: '原纸供应商',
+            width: 193
           },
           {
             prop: cylinderKeys.deliveryBillId,
-            label: '送货单号'
+            label: '送货单号',
+            width: 172
           },
           {
             prop: cylinderKeys.deliveryNumber,
-            label: '送货车号'
+            label: '送货车号',
+            width: 119
+          },
+          {
+            prop: cylinderKeys.forkliftDriver,
+            label: '叉车员',
+            width: 119
           },
           {
             prop: cylinderKeys.storageType,
-            label: '入库类型'
+            label: '入库类型',
+            width: 109
           },
           {
             prop: cylinderKeys.totalWeight,
-            label: '总重量(Kg)'
+            label: '总重量(Kg)',
+            width: 122
           },
           {
             prop: cylinderKeys.totalAmount,
-            label: '总件数'
+            label: '总件数',
+            width: 95
           },
           {
             prop: cylinderKeys.totalMoney,
@@ -143,7 +163,8 @@
           },
           {
             prop: cylinderKeys.remark,
-            label: '备注信息'
+            label: '备注信息',
+            width: 203
           },
         ],
         searchData: {},
@@ -156,7 +177,7 @@
       };
     },
     created() {
-      this.tableData = [{deliveryBillId: 11111, id: 'dsfsdf'}]
+      this.tableData = [{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},]
     },
     mounted() {
       this.$refs.search.search();
@@ -195,7 +216,9 @@
       //   });
       // }
     },
-    components: {addOrEditDialog, lookDialog, setUnitPriceDialog, printTagDialog}
+    components: {
+      SinglePage,
+      addOrEditDialog, lookDialog, setUnitPriceDialog, printTagDialog}
   };
 </script>
 <style lang="less" scoped>
