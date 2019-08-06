@@ -48,17 +48,16 @@
           {prop: 'eTilemodelRate', label: 'E楞型楞率'},
           {prop: 'fTilemodelRate', label: 'F楞型楞率'},
         ],
-        kind: {
-
-        }
+        kind: {},
       };
     },
     methods: {
       objectSpanMethod({row, column, rowIndex, columnIndex}) {
         if (columnIndex === 0) {
-          if (row.tilemodel === item && rowIndex === this.kind[row.tilemodel]) {
+          const num = this.kind[row.tilemodel || row.layer];
+          if (rowIndex % num === 0) {
             return {
-              rowspan: this.kind[row.tilemodel],
+              rowspan: num,
               colspan: 1
             };
           } else {
@@ -86,24 +85,21 @@
         ruleCustomizeService.getRuleDetail({
           ruleId: row.id
         }).then(res => {
-          if (row.typeName === '叠单规则') {
-            res.detailModels.map(v=>{
-              if (this.kind[v.tilemodel] === undefined) {
-                this.kind[v.tilemodel] = 1;
-              } else {
-                this.kind[v.tilemodel] += 1;
-              }
-            });
-            this.viewData = res;
-          } else {
-            this.viewData = res;
-          }
-
+          (res.detailModels || res.packRuleDetails).map(v=>{
+            const key = v.tilemodel || v.v.layer;
+            if (this.kind[key] === undefined) {
+              this.kind[key] = 1;
+            } else {
+              this.kind[key] += 1;
+            }
+          });
+          this.viewData = res;
         }).finally(() => {
           this.viewLoading = false;
         });
       },
       close() {
+        this.kind = {};
         this.$emit('close');
       }
     },
