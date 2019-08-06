@@ -22,6 +22,8 @@
 </template>
 <script>
   import {djForm} from 'djweb';
+  import paperKindService from '../../../api/service/paperKind';
+  import paperWarehouseService from '../../../api/service/paperWarehouse';
   const {rules} = djForm;
   import tableInput from './tableInput'
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
@@ -85,13 +87,12 @@
     mounted() {
       if (!this.$parent.fixed) {
         this.$watch(`row.${paperKeys.warehouseId}`, (val) => {
-          console.log(val);
+          this.row[paperKeys.warehouseAreaId] = undefined;
           if (![null, undefined, ''].includes(val)) {
             this.service(val).then(res=>{
               this.realOptions = res;
             });
           } else {
-            this.row[paperKeys.warehouseAreaId] = undefined;
             this.realOptions = [];
           }
         });
@@ -103,6 +104,12 @@
       }
     },
     props: ['row', 'index', 'col', 'service', 'keyMap', 'options'],
+  };
+  const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
+    arr.forEach(key=>{
+      obj1[key] = obj2[key];
+    });
+    return obj1;
   };
   const tableMaxLength = 150;
   export default {
@@ -140,32 +147,36 @@
             label: '原纸编号',
             propsHandler: (props) => {
               const service = (val, cb) => {
-                console.log('对接接口');
-                console.log('接口参数', val);
-                let data = {};
-                data[props.col.prop] = 'sada';
-                cb([data]);
+                this.getPaperNoList(val).then(cb);
               };
               const beforeEnter = (val, cb) => {
-                console.log('beforeEnter对接接口');
-                console.log('beforeEnter接口参数', val);
-                if (val) {
-                  Promise.all([this.getPaperDetailById(val), this.getCylinderId()]).then(result=>{
-                    Object.assign(props.row, result[0], result[1]);
-                    updateLength.bind(this)(props.row);
-                  });
-                }
+                // if (val) {
+                //   Promise.all([this.getPaperDetail(val), this.getCylinderId()]).then(result=>{
+                //     let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
+                //     delete result[0][paperKeys.warehouseAreaId];
+                //     Object.assign(props.row, result[0], result[1]);
+                //     updateLength.bind(this)(props.row);
+                //     this.$nextTick(()=>{
+                //       Object.assign(props.row, _obj);
+                //     });
+                //   });
+                // }
                 cb();
               };
-              return {...props, service, beforeEnter}
+              return {...props, service, beforeEnter, label: 'paperNumber', valueKey: 'paperNumber'}
             },
             component: tableInput,
             listeners: {
-              select: (val, props) => {
-                if (val) {
-                  Promise.all([this.getPaperDetailById(val), this.getCylinderId()]).then(result=>{
+              select: (obj, props) => {
+                if (obj) {
+                  Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId()]).then(result=>{
+                    let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
+                    delete result[0][paperKeys.warehouseAreaId];
                     Object.assign(props.row, result[0], result[1]);
                     updateLength.bind(this)(props.row);
+                    this.$nextTick(()=>{
+                      Object.assign(props.row, _obj);
+                    });
                   });
                 }
               }
@@ -175,19 +186,19 @@
             prop: paperKeys.paperGram,
             label: '克重(g)',
             propsHandler: (props) => {
-              const service = (val, cb) => {
-                console.log('对接接口');
-                console.log('接口参数', val);
-                let data = {};
-                data[props.col.prop] = '234345345';
-                cb([data]);
-              };
-              const beforeEnter = (val, cb) => {
-                // console.log('beforeEnter对接接口');
-                // console.log('beforeEnter接口参数', val);
-                cb();
-              };
-              return {...props, service, beforeEnter, reg: this.$reg.FIGURE_REGEXP}
+              // const service = (val, cb) => {
+              //   console.log('对接接口');
+              //   console.log('接口参数', val);
+              //   let data = {};
+              //   data[props.col.prop] = '234345345';
+              //   cb([data]);
+              // };
+              // const beforeEnter = (val, cb) => {
+              //   // console.log('beforeEnter对接接口');
+              //   // console.log('beforeEnter接口参数', val);
+              //   cb();
+              // };
+              return {...props, reg: this.$reg.FIGURE_REGEXP}
             },
             component: tableInput,
             listeners: {
@@ -200,26 +211,26 @@
             prop: cylinderKeys.weight,
             label: '重量(kg)',
             propsHandler: (props) => {
-              const service = (val, cb) => {
-                console.log('对接接口');
-                console.log('接口参数', val);
-                let data = {};
-                data[props.col.prop] = 'saffdgjghjygj';
-                cb([data]);
-              };
-              const beforeEnter = (val, cb, props) => {
-                // console.log('beforeEnter对接接口');
-                // console.log('beforeEnter接口参数', props);
-                if (props.index === this.tableData.length - 1) {
-                  this.tableData.push({});
-                  this.$nextTick(()=>{
-                    cb();
-                  });
-                } else {
-                  cb();
-                }
-              };
-              return {...props, service, beforeEnter, reg: this.$reg.FIGURE_REGEXP}
+              // const service = (val, cb) => {
+              //   console.log('对接接口');
+              //   console.log('接口参数', val);
+              //   let data = {};
+              //   data[props.col.prop] = 'saffdgjghjygj';
+              //   cb([data]);
+              // };
+              // const beforeEnter = (val, cb, props) => {
+              //   // console.log('beforeEnter对接接口');
+              //   // console.log('beforeEnter接口参数', props);
+              //   if (props.index === this.tableData.length - 1) {
+              //     this.tableData.push({});
+              //     this.$nextTick(()=>{
+              //       cb();
+              //     });
+              //   } else {
+              //     cb();
+              //   }
+              // };
+              return {...props, reg: this.$reg.FIGURE_REGEXP}
             },
             component: tableInput,
             listeners: {
@@ -270,11 +281,15 @@
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码'
+            label: '原纸代码'
           },
           {
             prop: paperKeys.paperType,
-            label: '原纸类型'
+            label: '原纸类型',
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.paperType._swap[cur] || {};
+              return obj.label || '';
+            }
           },
           {
             prop: paperKeys.paperSize,
@@ -284,7 +299,7 @@
             prop: paperKeys.warehouseId,
             label: '仓库',
             propsHandler: (props) => {
-              return {...props, options: this.warehouseList, keyMap: {label: paperKeys.warehouseName, value: paperKeys.warehouseId}}
+              return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}}
             },
             component: TABLE_SELECT
           },
@@ -300,7 +315,7 @@
               //   data[paperKeys.warehouseAreaId] = '1';
               //   return Promise.resolve([data]);
               // };
-              return {...props, service: this.getWarehouseArea, keyMap: {label: paperKeys.warehouseAreaName, value: paperKeys.warehouseAreaId}}
+              return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}}
             },
             component: TABLE_SELECT2
           },
@@ -459,15 +474,24 @@
         data[cylinderKeys.cylinderNo] = 213435345435;
         return Promise.resolve(data);
       },
+      //获取所有原纸编号
+      getPaperNoList(val) {
+        return this.dj_api_extend(paperKindService.list, {pageNo: 1, pageSize: 10000000, paperNumber: val}).then(res=>{
+          let list = res.list || [];
+          return list;
+        });
+      },
       //根据原纸编号获取相关原纸信息
-      getPaperDetailById(id) {
-        let data = {};
-        data[paperKeys.paperCode] = 'sdafdgdfgfdgfdg';
-        data[paperKeys.paperType] = '1';
-        data[paperKeys.warehouseId] = '1';
-        data[paperKeys.warehouseAreaId] = '1';
-        data[paperKeys.paperSize] = 1800;
-        return Promise.resolve(data);
+      getPaperDetail(num) {
+        let { paperCode, paperType, paperSize, warehouseAreaId, warehouseId } = paperKeys;
+        let keyList = [paperCode, paperType, paperSize, warehouseAreaId, warehouseId];
+        return paperKindService.list({pageNo: 1, pageSize: 10000000, paperNumber: num}).then(res=>{
+          let list = res.list || [];
+          let data = list.filter(obj=>obj[paperKeys.paperNumber] === num)[0];
+          return cloneData(keyList, {}, data);
+        }).catch(()=>{
+          return cloneData(keyList);
+        });
       },
       shortcutCopy(e) {
         let keyCode = e.keyCode;
@@ -506,30 +530,14 @@
         // return Promise.resolve(data);
       },
       getAllWarehouse() {
-        setTimeout(()=>{
-          this.warehouseList = [
-            {
-              warehouseId: '1',
-              warehouseName: '1号仓库',
-            },
-            {
-              warehouseId: '2',
-              warehouseName: '2号仓库',
-            },
-          ]
-        }, 1000);
+        return this.dj_api_extend(paperWarehouseService.getPaperWarehouse).then((res) => {
+          this.warehouseList = res.list || [];
+        });
       },
-      getWarehouseArea(val) {
-        return Promise.resolve([
-          {
-            warehouseAreaId: '1',
-            warehouseAreaName: '1号库区',
-          },
-          {
-            warehouseAreaId: '2',
-            warehouseAreaName: '2号库区',
-          },
-        ]);
+      getWarehouseArea(id) {
+        return this.dj_api_extend(paperWarehouseService.getAreaAllList, {warehouseId: id}).then((res) => {
+          return res.list || [];
+        });
       },
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 6;
