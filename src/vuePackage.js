@@ -2,6 +2,7 @@ import Vue from 'vue';
 import ELEMENT from 'element-ui';
 // 引入公司组件、方法库
 import djweb, {httpPolicy, listenerPolicy, methods} from 'djweb';
+import page from './components/page';
 // import 'djweb/package/baseCss/index.less';
 import filters from './filters';
 import { regs, enumMap} from './utils';
@@ -12,6 +13,7 @@ import './assets/css/index.less';
 Vue.use(djweb);
 Vue.use(ELEMENT);
 Vue.use(filters);
+Vue.use(page);
 
 Vue.prototype.$method = methods;
 Vue.prototype.$reg = regs;
