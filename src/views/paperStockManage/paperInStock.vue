@@ -17,10 +17,12 @@
     <add-or-edit-dialog ref="addOrEditDialog" v-if="addOrEditDialogFlag" @close="addOrEditDialogFlag = false"></add-or-edit-dialog>
     <look-dialog ref="lookDialog" v-if="lookDialogFlag" @close="lookDialogFlag = false"></look-dialog>
     <set-unit-price-dialog ref="setUnitPriceDialog" v-if="setUnitPriceDialogFlag" @close="setUnitPriceDialogFlag = false"></set-unit-price-dialog>
+    <print-tag-dialog ref="printTagDialog" v-if="printTagDialogFlag" @close="printTagDialogFlag = false"></print-tag-dialog>
   </div>
 </template>
 <script>
   import addOrEditDialog from './paperInStockModule/addOrEditDialog';
+  import printTagDialog from './paperInStockModule/printTagDialog';
   import lookDialog from './paperInStockModule/lookDialog';
   import setUnitPriceDialog from './paperInStockModule/setUnitPriceDialog';
   import dayjs from 'dayjs';
@@ -90,7 +92,7 @@
                 <span>
                   <a href="javascript:;" on-click={()=>this.openDialog('lookDialog', row)}>查看</a>&nbsp;&nbsp;
                   <a href="javascript:;" on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>&nbsp;&nbsp;
-                  <a href="javascript:;">打印标签</a>&nbsp;&nbsp;
+                  <a href="javascript:;" on-click={()=>this.openDialog('printTagDialog', row)}>打印标签</a>&nbsp;&nbsp;
                   <a href="javascript:;" on-click={()=>this.openDialog('setUnitPriceDialog', row)}>设置单价</a>
                 </span>
               );
@@ -150,6 +152,7 @@
         addOrEditDialogFlag: false,
         lookDialogFlag: false,
         setUnitPriceDialogFlag: false,
+        printTagDialogFlag: false,
       };
     },
     created() {
@@ -192,7 +195,7 @@
       //   });
       // }
     },
-    components: {addOrEditDialog, lookDialog, setUnitPriceDialog}
+    components: {addOrEditDialog, lookDialog, setUnitPriceDialog, printTagDialog}
   };
 </script>
 <style lang="less" scoped>
