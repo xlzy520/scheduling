@@ -240,8 +240,7 @@
       },
       getPaperKindById(id) {
         return this.dj_api_extend(paperKindService.getPaperByid, {id}).then(res=>{
-          let _res = res || {};
-          this.formData = {..._res, paperCodeId: _res.paperCode};
+          this.formData = res || {};
           return res;
         });
       },
@@ -275,7 +274,7 @@
           let list = res.list || [];
           list.forEach(obj=>{
             obj.warehouseName = this.warehouseList_map[obj.warehouseId] && this.warehouseList_map[obj.warehouseId].name;
-            obj.paperTypeName = this.$enum.paperType._swap[obj.paperType].label;
+            obj.paperTypeName = this.$enum.paperType._swap[obj.paperType] && this.$enum.paperType._swap[obj.paperType].label;
           });
           this.tableData = list;
           this.pageTotal = res.total;
