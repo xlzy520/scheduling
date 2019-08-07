@@ -56,7 +56,6 @@
               minCutLength: '',
               basketType: '',
               basketLength: '',
-              statckCount: '',
             }
           },
         ],
@@ -84,7 +83,6 @@
             {prop: 'minCutLength', label: '最小切长(mm)'},
             {prop: 'basketType', label: '吊篮类型'},
             {prop: 'basketLength', label: '吊篮长度(m)'},
-            {prop: 'statckCount', label: '最小叠单米数(m)'}
           ],
         }),
 
@@ -164,7 +162,6 @@
                   minCutLength: '',
                   basketType: '',
                   basketLength: '',
-                  statckCount: '',
                 }});
               for (const item of Object.keys(this.prodLineLabel)) {
                 const module = this.prodLineLabel[item];
