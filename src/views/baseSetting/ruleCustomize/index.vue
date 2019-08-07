@@ -67,7 +67,8 @@
                   <dj-input  type="float" v-model.number="child.startUnitarea" placeholder="请输入"
                              disabled suffix-icon="m²"></dj-input>
                   <div style="margin: 0 5px">至</div>
-                  <dj-input v-model.number="child.endUnitarea" placeholder="请输入" suffix-icon="m²"></dj-input>
+                  <dj-input v-model.number="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
+                            @change="changeNextInput(index, childIndex)"></dj-input>
                 </el-form-item>
                 <el-form-item label="打包数量" prop="packpiece" class="packpiece">
                   <el-input v-model="child.packpiece"></el-input>
@@ -103,7 +104,7 @@
     {label: '七层', value: '7'},
   ];
   const qieshuOptions = [
-    {label: '1', value: '1', disabled: true},
+    {label: '1', value: '1'},
     {label: '2', value: '2'},
     {label: '3', value: '3'},
     {label: '4', value: '4'},
@@ -394,17 +395,6 @@
         lengxingOptions: this.$enum.fluteType,
         qieshuOptions: qieshuOptions,
         layerOptions: layerOptions,
-        rules: {
-          tilemodel: [
-            {required: true, message: '请选择楞型', trigger: 'change'}
-          ],
-          cut: [
-            {required: true, message: '请选择切数', trigger: 'change'}
-          ],
-          piece: [
-            {required: true, message: '请填写片数', trigger: 'change'}
-          ]
-        },
 
         zqjColumnNum: '',
         zqjColRule: '',
@@ -416,6 +406,9 @@
       };
     },
     methods: {
+      changeNextInput(index, childIndex) {
+
+      },
       qieshuChange(arr) {
 
       },
@@ -429,37 +422,18 @@
       },
       addChildCondition(index, childIndex) {
         if (this.dialogType === 'stack') {
-          if (this.dialogTypeIsAdd) {
-            this.stackConditionFormData[index].push({
-              tilemodel: this.stackConditionFormData[index][0].tilemodel,
-              cut: '',
-              piece: '',
-            });
-          } else {
-            this.stackConditionFormData[index].push({
-              tilemodel: this.stackConditionFormData[index][0].tilemodel,
-              cut: '',
-              piece: '',
-            });
-          }
-
+          this.stackConditionFormData[index].push({
+            tilemodel: this.stackConditionFormData[index][0].tilemodel,
+            cut: '',
+            piece: '',
+          });
         } else {
-          if (this.dialogTypeIsAdd) {
-            this.packConditionFormData[index].push({
-              layer: this.packConditionFormData[index][0].layer,
-              startUnitarea: '',
-              endUnitarea: '',
-              packpiece: ''
-            });
-          } else {
-            this.packConditionFormData[index].push({
-              layer: this.packConditionFormData[index][0].layer,
-              startUnitarea: this.packConditionFormData[index][childIndex].endUnitarea,
-              endUnitarea: '',
-              packpiece: ''
-            });
-          }
-
+          this.packConditionFormData[index].push({
+            layer: this.packConditionFormData[index][0].layer,
+            startUnitarea: this.packConditionFormData[index][childIndex].endUnitarea,
+            endUnitarea: '',
+            packpiece: ''
+          });
         }
       },
       headerBtnAdd(dialogType) {
@@ -505,7 +479,7 @@
           ruleId: id
         }).then(() => {
           this.$message(isEffected ? '禁用成功' : '启用成功', 'success');
-          this.search();
+          this.getTableData();
         });
       },
       changeStatus(row) {
@@ -565,88 +539,70 @@
           });
         });
       },
-      search(data) {
-        this.getTableData(data);
-      },
-      stackConfirm() {
-        const formValidate = new Promise((resolve) => {
+      formValidate(formType) {
+        return new Promise((resolve) => {
           let allIsTrue = [];
-          this.$refs.stackForm.validate((valid) => {
+          this.$refs[formType + 'Form'].validate((valid) => {
             if (valid) {
               allIsTrue.push(true);
             }
           });
-          this.$refs['childConditionForm'].map((child, index)=>{
+          const childConditionForms = this.$refs['childConditionForm'];
+          childConditionForms.map((child, index)=>{
             child.validate((valid) => {
               if (valid) {
                 allIsTrue.push(true);
               }
-              if (index === this.$refs['childConditionForm'].length - 1) {
-                resolve(allIsTrue);
+              if (index === childConditionForms.length - 1) {
+                if (allIsTrue.length === childConditionForms.length + 1) {
+                  resolve(true);
+                }
               }
             });
           });
         });
-        formValidate.then(res=>{
-          if (res.length === this.$refs['childConditionForm'].length + 1) {
-            const detailModels = this.stackConditionFormData.reduce((pre, cur)=>{
-              let cache = cur.map(v=>{
-                return v.cut.map(vcut=>{
-                  return {
-                    tilemodel: v.tilemodel,
-                    cut: vcut,
-                    piece: v.piece,
-                  };
-                });
+      },
+      submitSuccess() {
+        this.close();
+        const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+        this.$message(message, 'success');
+        this.$refs.search.search();
+      },
+      stackConfirm() {
+        this.formValidate('stack').then(()=>{
+          const detailModels = this.stackConditionFormData.reduce((pre, cur)=>{
+            let cache = cur.map(v=>{
+              return v.cut.map(vcut=>{
+                return {
+                  tilemodel: v.tilemodel,
+                  cut: vcut,
+                  piece: v.piece,
+                };
               });
-              return pre.concat(...cache);
-            }, []);
-            const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
-            packRequest({
-              ...this.stackFormData,
-              detailModels: detailModels
-            }).then((res) => {
-              this.close();
-              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-              this.$message(message, 'success');
             });
-          }
+            return pre.concat(...cache);
+          }, []);
+          const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
+          packRequest({
+            ...this.stackFormData,
+            detailModels: detailModels
+          }).then(() => {
+            this.submitSuccess();
+          });
         });
       },
       packConfirm() {
-        const formValidate = new Promise((resolve) => {
-          let allIsTrue = [];
-          this.$refs.packForm.validate((valid) => {
-            if (valid) {
-              allIsTrue.push(true);
-            }
+        this.formValidate('pack').then(res=>{
+          const packRuleDetails = this.packConditionFormData.reduce((pre, cur)=>{
+            return pre.concat(...cur);
+          }, []);
+          const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
+          packRequest({
+            ...this.packFormData,
+            packRuleDetails: packRuleDetails
+          }).then((res) => {
+            this.submitSuccess();
           });
-          this.$refs['childConditionForm'].map((child, index)=>{
-            child.validate((valid) => {
-              if (valid) {
-                allIsTrue.push(true);
-              }
-              if (index === this.$refs['childConditionForm'].length - 1) {
-                resolve(allIsTrue);
-              }
-            });
-          });
-        });
-        formValidate.then(res=>{
-          if (res.length === this.$refs['childConditionForm'].length + 1) {
-            const packRuleDetails = this.packConditionFormData.reduce((pre, cur)=>{
-              return pre.concat(...cur);
-            }, []);
-            const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
-            packRequest({
-              ...this.packFormData,
-              packRuleDetails: packRuleDetails
-            }).then((res) => {
-              this.close();
-              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-              this.$message(message, 'success');
-            });
-          }
         });
       },
       close() {
@@ -723,7 +679,10 @@
       });
     },
     beforeDestroy() {
-      window.removeEventListener('resize');
+      window.removeEventListener('resize', ()=>{
+        this.zqjGetColRule();
+        this.zqjGetColumnNum();
+      });
     }
   };
 </script>
