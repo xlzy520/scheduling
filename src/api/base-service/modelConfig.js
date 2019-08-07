@@ -10,4 +10,5 @@ module.exports = [
   {name: 'ruleCustomize', url: '/rule'},
   {name: 'productionLine', url: '/line'},
   {name: 'paperInStock', url: '/paperInStock'},
+  {name: 'paperTable', url: '/paperTable'},
 ];

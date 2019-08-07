@@ -10,8 +10,6 @@
     >
       <div slot="btn">
         <el-button type="primary" @click="exportRecord">导出记录</el-button>
-        <div>总件数： {{totalQuantity}}</div>
-        <div>总重量： {{totalQuality}}</div>
       </div>
     </dj-table>
   </div>
@@ -75,13 +73,11 @@
           pageNo: 1,
           pageSize: 20
         },
-        pageTotal: 0,
-        totalQuantity: 0,
-        totalQuality: 0,
+        pageTotal: 0
       };
     },
     methods: {
-      exportRecord(){
+      exportRecord() {
 
       },
       getTableData(data) {
