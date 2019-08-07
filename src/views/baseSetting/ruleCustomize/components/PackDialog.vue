@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" @confirm="packConfirm"
+  <dj-dialog ref="dialog" @close="close" @confirm="confirm"
              :title="dialogTypeIsAdd?'新增打包规则': '编辑打包规则'">
     <div class="pack-dialog">
       <dj-form ref="packForm" :form-data="packFormData" :form-options="packFormOptions"
@@ -226,10 +226,10 @@ export default {
       }
     },
     changeNextInput(val, index, childIndex) {
-      this.packConditionFormData[index][childIndex+1].startUnitarea = val
+      this.packConditionFormData[index][childIndex + 1].startUnitarea = val;
     },
-    packConfirm() {
-      this.$emit('packConfirm');
+    confirm() {
+      this.$emit('confirm');
     },
     close() {
       this.$emit('close');
