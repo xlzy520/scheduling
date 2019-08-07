@@ -274,6 +274,7 @@
               this.close();
               const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
               this.$message(message, 'success');
+              this.$refs.search.search();
             });
           }
         });
