@@ -36,6 +36,6 @@
 <style lang="less" scoped>
   .print-page {
     height: 100%;
-    page-break-after: always;
+    /*page-break-after: always;*/
   }
 </style>
