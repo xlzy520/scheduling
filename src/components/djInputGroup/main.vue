@@ -37,5 +37,8 @@
   .dj-input-group_connector {
     margin: 0 5px;
   }
+  /deep/ .dj-input-content {
+    width: 100%;
+  }
 }
 </style>
