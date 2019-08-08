@@ -99,7 +99,7 @@
     data() {
       return {
         searchConfig: [
-          {label: '生产线：', key: 'lineNum', type: 'select', attrs: {options: []}},
+          {label: '生产线：', key: 'lineId', type: 'select', attrs: {options: []}},
           {label: '层数：', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
           {label: '修边：', key: 'wasteSize', type: 'input', attrs: {type: 'number'}},
         ],
@@ -292,10 +292,9 @@
     },
     created() {
       productionLineService.showAllLine().then(res=>{
-        const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         const lineOptions = res.list.map(v=>{
           return {
-            label: chnNumChar[v.lineNum] + '号线',
+            label: v.lineNum + '号线',
             value: v.id
           };
         });

@@ -124,7 +124,6 @@
       },
 
       getData(data) {
-        const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         productionLineService.list(data).then((res) => {
           let data = res.list;
           this.prodLineData = [];
@@ -133,7 +132,7 @@
             data.map((v, index)=>{
               this.activeTab = data[0].lineNum;
               this.tabsColumn.push({
-                label: chnNumChar[v.lineNum] + '号线',
+                label: v.lineNum + '号线',
                 value: v.lineNum,
                 id: v.id,
                 isEffected: v.isEffected
