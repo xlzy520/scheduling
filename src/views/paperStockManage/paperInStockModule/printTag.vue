@@ -55,8 +55,8 @@
           return false;
         }
         QRCode.toCanvas(canvas, data, {
-          width: 136,
-          height: 136,
+          width: 170,
+          height: 170,
           margin: 0
         }, (error) => {
           if (error) {
@@ -73,11 +73,12 @@
 </script>
 <style lang="less" scoped>
   .wrap {
-    width: 10.5cm;
+    width: 80%;
+    height: 80%;
     /*height: 7.9cm;*/
-    font-size: 14px;
+    font-size: 20px;
     .notice-text {
-      font-size: 16px;
+      /*font-size: 18px;*/
       font-weight: bold;
     }
     .notice-text {
@@ -86,10 +87,10 @@
       }
     }
     p {
-      margin-bottom: 18px;
+      margin-bottom: 21px;
     }
     canvas {
-      margin-right: 16px;
+      margin-right: 18px;
     }
   }
 </style>
