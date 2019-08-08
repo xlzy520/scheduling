@@ -1,23 +1,26 @@
 <template>
-  <div class="orderManage">
+  <single-page class="orderManage">
     <dj-search ref="search" :config="searchConfig" @search="getSearchData"></dj-search>
-    <dj-table :data="tableData"
-              ref="table"
-              :columns="tableColumns"
-              :column-type="['selection']"
-              :total="total"
-              @selection-change="selectionChange"
-              @update-data="getList">
-      <div slot="btn">
-        <el-button type="primary" @click="openImportDialog" :disabled="checkedList.length === 0">导入计划</el-button>
-        <el-button type="primary" @click="openImportDialog(true)">导入全部</el-button>
-        <el-button type="primary" @click="openAddOrderDialog">备料订单</el-button>
-      </div>
-    </dj-table>
+    <page-pane>
+      <dj-table :data="tableData"
+                ref="table"
+                :columns="tableColumns"
+                :column-type="['selection']"
+                :total="total"
+                height="100%"
+                @selection-change="selectionChange"
+                @update-data="getList">
+        <div slot="btn">
+          <el-button type="primary" @click="openImportDialog" :disabled="checkedList.length === 0">导入计划</el-button>
+          <el-button type="primary" @click="openImportDialog(true)">导入全部</el-button>
+          <el-button type="primary" @click="openAddOrderDialog">备料订单</el-button>
+        </div>
+      </dj-table>
+    </page-pane>
     <look-dialog v-if="lookDialogFlag" ref="lookDialog" @close="lookDialogFlag = false"></look-dialog>
     <import-dialog v-if="importDialogFlag" ref="importDialog" @close="importDialogFlag = false"></import-dialog>
     <add-or-edit-order-dialog v-if="addOrEditOrderDialogFlag" ref="addOrEditOrderDialog" @close="addOrEditOrderDialogFlag = false"></add-or-edit-order-dialog>
-  </div>
+  </single-page>
 </template>
 <script>
   import dayjs from 'dayjs';
@@ -119,7 +122,7 @@
             label: '瓦楞楞型',
             type: 'custom',
             attrs: {
-              default: ['']
+              default: ['all']
             },
             component: {
               props: ['value', 'default'],
@@ -128,10 +131,13 @@
                 const input = (arr) => {
                   let realArr;
                   let lastValue = arr[arr.length - 1];
-                  if (lastValue === '') {
+                  if (lastValue === 'all') {
                     realArr = [lastValue];
                   } else {
-                    realArr = arr.filter(val => val !== '');
+                    realArr = arr.filter(val => val !== 'all');
+                  }
+                  if (!arr.length) {
+                    realArr = ['all'];
                   }
                   console.log(realArr);
                   this.$emit('input', realArr);
@@ -187,12 +193,14 @@
         tableColumns: [
           {
             prop: 'operate',
-            lable: '操作',
+            label: '操作',
+            fixed: 'right',
             render: (h, {props: {row}}) => {
               return (
-                <div>
-                  <a href="javascript:;" onClick={()=>this.openLookDialog(row)}>查看</a>&nbsp;&nbsp;
-                  <a href="javascript:;" onClick={()=>this.openAddOrderDialog(row)}>编辑</a>
+                <div class="td-btn-group">
+                  <a onClick={()=>this.openLookDialog(row)}>查看</a>
+                  <span></span>
+                  <a onClick={()=>this.openAddOrderDialog(row)}>编辑</a>
                 </div>
               );
             }
@@ -231,7 +239,7 @@
           },
           {
             prop: 'materialSize',
-            label: '下料规格cm²'
+            label: '下料规格(cm)'
           },
           {
             prop: 'orderStatus',
@@ -265,11 +273,11 @@
     },
     mounted() {
       this.$refs.search.search();
-      this.$refs.table.changePage(1);
     },
     methods: {
       getSearchData(query) {
         this.searchData = query;
+        this.$refs.table.changePage(1);
       },
       getList(page) {
         let post = {

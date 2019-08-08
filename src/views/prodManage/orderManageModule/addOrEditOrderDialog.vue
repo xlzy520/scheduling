@@ -1,9 +1,10 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="700px" :title="`${isEdit ? '修改' : '新增'}订单`" @confirm="confirm">
+    <dj-dialog ref="dialog" @close="close" width="780px" :title="`${isEdit ? '修改' : '新增'}备料订单`" @confirm="confirm">
       <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
     </dj-dialog>
 </template>
 <script>
+  import materialCodeService from '../../../api/service/materialCode';
   import materialSizeInput from '../../../components/materialSizeInput';
   import longitudinalPressureInput from '../../../components/longitudinalPressureInput';
   import dayjs from 'dayjs';
@@ -36,7 +37,15 @@
     name: 'addOrderDialog',
     data: function () {
       return {
-        formOptions: [
+        formData: {},
+        order: {},
+        isEdit: false,
+        materialCodeList: []
+      };
+    },
+    computed: {
+      formOptions() {
+        return [
           {
             type: 'input',
             formItem: {
@@ -52,7 +61,7 @@
             formItem: {
               prop: 'deliveryTime',
               label: '订单交期',
-              rules: [rules.required('订单交期不可为空')]
+              rules: [rules.required('请选择订单交期')]
             },
             attrs: {
               type: 'date',
@@ -60,14 +69,18 @@
             }
           },
           {
-            type: 'input',
+            type: 'select',
             formItem: {
-              prop: 'materialName',
-              label: '材料名称',
-              rules: [rules.required('材料名称不可为空')]
+              prop: 'materialCode',
+              label: '用料代码',
+              rules: [rules.required('请选择用料代码')]
             },
             attrs: {
-              maxlength: 10
+              keyMap: {
+                label: 'materialCode',
+                value: 'id'
+              },
+              options: this.materialCodeList
             }
           },
           {
@@ -75,7 +88,7 @@
             formItem: {
               prop: 'fluteType',
               label: '瓦楞楞型',
-              rules: [rules.required('瓦楞楞型不可为空')]
+              rules: [rules.required('请选择瓦楞楞型')]
             },
             attrs: {
               props: {
@@ -92,7 +105,7 @@
             formItem: {
               prop: 'materialSize',
               label: '下料规格',
-              rules: [...materialSizeRules]
+              rules: [rules.required('请输入下料规格'), ...materialSizeRules]
             },
             component: materialSizeInput
           },
@@ -135,15 +148,18 @@
             },
             component: longitudinalPressureInput
           }
-        ],
-        formData: {},
-        order: {},
-        isEdit: false
-      };
+        ];
+      }
     },
     created() {
+      this.getMaterialCodeList();
     },
     methods: {
+      getMaterialCodeList() {
+        this.dj_api_extend(materialCodeService.list, {pageNo: 1, pageSize: 999999999}).then(res=>{
+          this.materialCodeList = res.list || [];
+        });
+      },
       colRule(item) {
         if (item.formItem.prop === 'longitudinalPressure') {
           return 24;
