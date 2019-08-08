@@ -4,38 +4,41 @@
     <div class="pack-dialog">
       <dj-form ref="packForm" :form-data="packFormData" :form-options="packFormOptions"
                :column-num="zqjColumnNum" :col-rule="()=>zqjColRule"></dj-form>
-      <div v-for="(condition, index) in packConditionFormData" :key="condition.key" class="condition-item">
+      <div v-for="(condition, index) in packConditionFormData" class="condition-item">
         <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
         <div class="child-condition-list">
-          <el-form :model="child" :rules="packRules" ref="childConditionForm" v-for="(child, childIndex) in condition"
-                   class="pack-form">
-            <div class="rule-row">
-              <el-form-item label="层数" prop="layer" v-if="childIndex===0" class="layer">
-                <dj-select v-model="child.layer" :options="layerOptions"></dj-select>
-              </el-form-item>
-              <el-form-item label="单位面积" class="unit-area">
-                <el-form-item prop="startUnitarea">
-                  <dj-input type="float" v-model.number="child.startUnitarea" placeholder="请输入"
-                            disabled suffix-icon="m²"></dj-input>
+          <transition-group name="childCondition">
+            <el-form :model="child" :rules="packRules" ref="childConditionForm"
+                     v-for="(child, childIndex) in condition"
+                     :key="childIndex"
+                     class="pack-form">
+              <div class="rule-row">
+                <el-form-item label="层数" prop="layer" v-if="childIndex===0" class="layer">
+                  <dj-select v-model="child.layer" :options="layerOptions"></dj-select>
                 </el-form-item>
-
-                <div style="margin: 0 5px">至</div>
-                <el-form-item prop="endUnitarea">
-                  <dj-input v-model.number="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
-                            @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
+                <el-form-item label="单位面积" class="unit-area">
+                  <el-form-item prop="startUnitarea">
+                    <dj-input v-model.number="child.startUnitarea" placeholder="请输入"
+                              disabled suffix-icon="m²"></dj-input>
+                  </el-form-item>
+                  <div style="margin: 0 5px">至</div>
+                  <el-form-item prop="endUnitarea">
+                    <dj-input type="float" v-model.number="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
+                              @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
+                  </el-form-item>
                 </el-form-item>
-              </el-form-item>
-              <el-form-item label="打包数量" prop="packpiece" class="packpiece">
-                <el-input v-model="child.packpiece"></el-input>
-              </el-form-item>
-              <div class="button-col">
-                <i class="el-icon-delete" v-if="childIndex===condition.length - 1"
-                   @click.prevent="removeCondition(index,childIndex)"></i>
-                <i class="el-icon-circle-plus" @click="addChildCondition(index, childIndex)"
-                   v-if="childIndex===condition.length - 1"></i>
+                <el-form-item label="打包数量" prop="packpiece" class="packpiece">
+                  <el-input v-model="child.packpiece"></el-input>
+                </el-form-item>
+                <div class="button-col">
+                  <i class="el-icon-delete" v-if="childIndex===condition.length - 1"
+                     @click.prevent="removeCondition(index,childIndex)"></i>
+                  <i class="el-icon-circle-plus" @click="addChildCondition(index, childIndex)"
+                     v-if="childIndex===condition.length - 1"></i>
+                </div>
               </div>
-            </div>
-          </el-form>
+            </el-form>
+          </transition-group>
         </div>
       </div>
       <el-button type="primary" @click.prevent="addCondition">添加条件</el-button>
@@ -186,16 +189,16 @@
         ],
         packRules: {
           layer: [
-            {required: true, message: '请选择层数', trigger: 'change'}
+            {required: true, message: '请选择层数'}
           ],
           packpiece: [
-            {required: true, message: '请填写打包数量', trigger: 'change'}
+            {required: true, message: '请填写打包数量'}
           ],
           startUnitarea: [
-            {required: true, message: '请完成单位面积', trigger: 'change'}
+            {required: true, message: '请完成单位面积'}
           ],
           endUnitarea: [
-            {required: true, message: '请完成单位面积', trigger: 'change'}
+            {required: true, message: '请完成单位面积'}
           ]
         },
 
@@ -219,7 +222,7 @@
             layer: '',
             startUnitarea: 0,
             endUnitarea: '',
-            packpiece: '',
+            packpiece: ''
           }]);
       },
       removeCondition(index, childIndex) {
@@ -372,6 +375,16 @@
 
   }
 
+  .childCondition-enter-active {
+    transition: all .3s ease;
+  }
+  .childCondition-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .childCondition-enter, .childCondition-leave-to {
+    transform: translateY(10px);
+    opacity: 0;
+  }
   @{deep} .Kg::before {
     content: "Kg";
     width: 5px;

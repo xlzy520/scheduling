@@ -246,11 +246,4 @@
   @{deep} .rule-status-off{
     color: #afb1b5;
   }
-  @{deep} .pack-dialog,
-  .stack-dialog{
-    width: 80vw;
-    .condition-item{
-      display: flex;
-    }
-  }
 </style>

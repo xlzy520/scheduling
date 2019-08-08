@@ -6,26 +6,28 @@
       <div v-for="(condition, index) in stackConditionFormData" class="condition-item stack">
         <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
         <div class="child-condition-list">
-          <el-form :model="child" :rules="stackRules" ref="childConditionForm" class="stack-form"
-                   v-for="(child, childIndex) in condition">
-            <div class="rule-row">
-              <el-form-item label="楞型" prop="tilemodel" class="tilemodel" v-if="childIndex===0">
-                <dj-select v-model="child.tilemodel" :options="lengxingOptions"></dj-select>
-              </el-form-item>
-              <el-form-item label="切数" prop="cut">
-                <dj-select type="multiple" collapse-tags v-model="child.cut" @change="qieshuChange"
-                           :options="qieshuOptions"></dj-select>
-              </el-form-item>
-              <el-form-item label="片数：" prop="piece" class="piece">
-                <dj-input v-model="child.piece"></dj-input>
-              </el-form-item>
-              <div class="button-col">
-                <i class="el-icon-delete" @click.prevent="removeCondition(index,childIndex)"></i>
-                <i class="el-icon-circle-plus" @click="addChildCondition(index, childIndex)"
-                   v-if="childIndex===condition.length - 1"></i>
+          <transition-group name="childCondition">
+            <el-form :model="child" :rules="stackRules" ref="childConditionForm" class="stack-form"
+                     :key="child.time" v-for="(child, childIndex) in condition">
+              <div class="rule-row">
+                <el-form-item label="楞型" prop="tilemodel" class="tilemodel" v-if="childIndex===0">
+                  <dj-select v-model="child.tilemodel" :options="lengxingOptions"></dj-select>
+                </el-form-item>
+                <el-form-item label="切数" prop="cut">
+                  <dj-select type="multiple" collapse-tags v-model="child.cut" @change="qieshuChange"
+                             :options="qieshuOptions"></dj-select>
+                </el-form-item>
+                <el-form-item label="片数：" prop="piece" class="piece">
+                  <dj-input v-model="child.piece"></dj-input>
+                </el-form-item>
+                <div class="button-col">
+                  <i class="el-icon-delete" @click.prevent="removeCondition(index,childIndex)"></i>
+                  <i class="el-icon-circle-plus" @click="addChildCondition(index, childIndex)"
+                     v-if="childIndex===condition.length - 1"></i>
+                </div>
               </div>
-            </div>
-          </el-form>
+            </el-form>
+          </transition-group>
         </div>
       </div>
       <el-button type="primary" @click.prevent="addCondition">添加条件</el-button>
@@ -53,7 +55,7 @@
       return {
         stackFormData: {
           name: '222',
-          produceLineId: '1',
+          produceLineId: '',
           maxOrderCut: '222',
           maxStackHeight: '222',
           maxStackCount: '222',
@@ -136,7 +138,8 @@
             {
               tilemodel: '',
               cut: '',
-              piece: ''
+              piece: '',
+              time: Date.now()
             }
           ]
         ],
@@ -160,11 +163,12 @@
       qieshuChange() {
 
       },
-      addChildCondition(index, childIndex) {
+      addChildCondition(index) {
         this.stackConditionFormData[index].push({
           tilemodel: this.stackConditionFormData[index][0].tilemodel,
           cut: '',
           piece: '',
+          time: Date.now()
         });
       },
       addCondition() {
@@ -172,6 +176,7 @@
           tilemodel: '',
           cut: '',
           piece: '',
+          time: Date.now()
         }]);
       },
       removeCondition(index, childIndex) {
@@ -324,5 +329,15 @@
     content: "m²";
     width: 5px;
     height: 5px;
+  }
+  .childCondition-enter-active {
+    transition: all .3s ease;
+  }
+  .childCondition-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .childCondition-enter, .childCondition-leave-to {
+    transform: translateY(10px);
+    opacity: 0;
   }
 </style>
