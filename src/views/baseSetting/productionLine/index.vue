@@ -6,9 +6,9 @@
     </el-tabs>
     <div class="tab-right-btns">
       <el-button type="primary" @click="edit">修改</el-button>
-      <el-radio-group :value="lineStatus" @change="changeLineStatus">
-        <el-radio-button label="1">启用</el-radio-button>
-        <el-radio-button label="0">禁用</el-radio-button>
+      <el-radio-group :value="lineStatus" @change="changeLineStatus" v-loading="statusLoading">
+        <el-radio-button :label="1">启用</el-radio-button>
+        <el-radio-button :label="0">禁用</el-radio-button>
       </el-radio-group>
     </div>
     <prod-line-content :prod-line-data="prodLineData[Number(activeTab)-1]" :prod-line-label="prodLineLabel"></prod-line-content>
@@ -27,6 +27,7 @@
     components: {EditAdd, ProdLineContent},
     data() {
       return {
+        statusLoading: false,
         activeTab: '',
         tabsColumn: [],
         lineStatus: '1',
@@ -96,16 +97,19 @@
         this.dialogVisible = true;
       },
       tabClick() {
-        this.lineStatus = this.tabsColumn[this.activeTab].isEffected;
+        this.lineStatus = this.tabsColumn[this.activeTab - 1].isEffected;
       },
       changeLineEffectedApi(val, text) {
+        this.statusLoading = true;
         productionLineService.changeLineEffected({
           effected: Math.pow(0, val),
-          id: this.tabsColumn[this.activeTab].id
+          id: this.tabsColumn[this.activeTab - 1].id
         }).then(() => {
           this.$message(text, 'success');
+          this.lineStatus = Math.pow(0, this.lineStatus);
           this.getData();
-          this.tabClick();
+        }).finally(()=>{
+          this.statusLoading = false;
         });
       },
       changeLineStatus(val) {
@@ -201,11 +205,12 @@
   .production-line{
     padding: 15px;
     @{deep} .el-tabs__nav-wrap{
-      &:after{
-        width: 30%;
-      }
+      width: 70%;
       .el-tabs__nav.is-stretch{
-        min-width: 30%;
+        min-width: 80%;
+      }
+      .el-tabs__item{
+        max-width: 180px;
       }
 
     }
