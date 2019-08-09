@@ -19,7 +19,31 @@ export default {
       },
       //组件路径
       component: 'views/paperStockManage/paperOutStock',
-    }
+    },
+    {
+      path: 'paperStockDetailTable',
+      meta: {
+        title: '明细表',
+      },
+      //组件路径
+      component: 'views/paperStockManage/paperStockDetailTable',
+    },
+    {
+      path: 'paperStockSummaryTable',
+      meta: {
+        title: '汇总表',
+      },
+      //组件路径
+      component: 'views/paperStockManage/paperStockSummaryTable',
+    },
+    {
+      path: 'paperStockTable',
+      meta: {
+        title: '报表',
+      },
+      //组件路径
+      component: 'views/paperStockManage/paperStockTable',
+    },
   ],
 };
 

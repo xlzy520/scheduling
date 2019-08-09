@@ -1,29 +1,23 @@
 <template>
-  <div class="table-page">
-    <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table
-      :data="tableData"
-      :columns="tableColumns"
-      :column-type="['index']"
-      :total="pageTotal"
-      @update-data="pageChange"
-    >
-      <div slot="btn">
-        <el-button type="primary" @click="exportRecord">导出记录</el-button>
-      </div>
-    </dj-table>
+  <div>
+    <simple-table-box
+      ref="table"
+      :search-config="searchConfig"
+      :table-columns="tableColumns"
+      :download="downloadConfig"
+      serviceUrl="listSummary"></simple-table-box>
   </div>
 </template>
 
 <script>
-  import paperKindService from '../../api/service/paperKind';
-  import {djForm} from 'djweb';
+  import SimpleTableBox from './components/SimpleTableBox';
   export default {
-    name: 'paperKind',
+    name: 'paperStockSummaryTable',
+    components: {SimpleTableBox},
     data() {
       return {
         searchConfig: [
-          {label: '选择日期：', key: 'timerange', type: 'date', attrs: {
+          {label: '选择日期：', key: 'timeRange', type: 'date', attrs: {
             type: 'daterange', pickerOptions: {
                 shortcuts: [
                   {text: '今天',
@@ -49,64 +43,37 @@
                     }
                   }
                 ]
-              },
+              }, valueFormat: "yyyy-MM-dd"
               }},
-          {label: '原纸代码：', key: 'code', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'menfu', type: 'input', attrs: {type: 'number'}},
-          {label: '原纸供应商：', key: 'supplier', type: 'input'},
+          {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
+          {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
+          {label: '原纸供应商：', key: 'supplierName', type: 'input'},
         ],
-        tableData: [],
         tableColumns: [
-          {label: '原纸供应商', prop: 'code'},
-          {label: '原纸代码', prop: 'code'},
-          {label: '门幅（mm）', prop: 'menfu'},
-          {label: '入库件数', prop: 'jianshu'},
-          {label: '入库重量（Kg）', prop: 'menfu'},
-          {label: '入库长度（m）', prop: 'jianshu'},
-          {label: '入库面积（㎡)', prop: 'jianshu'},
-          {label: '出库件数', prop: 'jianshu'},
-          {label: '出库重量（Kg）', prop: 'jianshu'},
-          {label: '出库长度（m）', prop: 'jianshu'},
-          {label: '出库面积（㎡)', prop: 'jianshu'},
+          {label: '原纸供应商', prop: 'supplierName'},
+          {label: '原纸代码', prop: 'paperCode'},
+          {label: '门幅(mm)', prop: 'paperSize'},
+          {label: '入库件数', prop: 'inNum'},
+          {label: '入库重量(Kg)', prop: 'inWeight'},
+          {label: '入库长度(m)', prop: 'inLength'},
+          {label: '入库面积(㎡)', prop: 'inArea'},
+          {label: '出库件数', prop: 'outNum'},
+          {label: '出库重量(Kg)', prop: 'outWeight'},
+          {label: '出库长度(m)', prop: 'outLength'},
+          {label: '出库面积(㎡)', prop: 'outArea'},
         ],
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 20
-        },
-        pageTotal: 0
+        downloadConfig: {
+          url: 'printSummary',
+          filename: '原纸出入库汇总表'
+        }
       };
     },
-    methods: {
-      exportRecord() {
-
-      },
-      getTableData(data) {
-        paperKindService.list(data).then((res) => {
-          this.tableData = res.list;
-          this.pageTotal = 100;
-        });
-      },
-      search(data) {
-        this.getTableData({
-          ...data,
-          ...this.pageOptions,
-        });
-      },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
-      },
-
-    },
-    created() {
-      this.getTableData();
-    },
+    mounted() {
+      this.$refs.table.getTableData();
+    }
   };
 </script>
 
 <style lang="less" scoped>
-  @deep: ~'>>>';
-  .table-page {
-    padding-top: 20px;
-  }
+
 </style>

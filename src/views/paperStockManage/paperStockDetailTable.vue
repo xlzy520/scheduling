@@ -1,33 +1,27 @@
 <template>
-  <div class="table-page">
-    <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table
-      :data="tableData"
-      :columns="tableColumns"
-      :column-type="['index']"
-      :total="pageTotal"
-      @update-data="pageChange"
-    >
-      <div slot="btn">
-        <el-button type="primary" @click="exportRecord">导出记录</el-button>
-        <div>总件数： {{totalQuantity}}</div>
-        <div>总重量： {{totalQuality}}</div>
-      </div>
-    </dj-table>
+  <div>
+    <simple-table-box
+      ref="table"
+      :search-config="searchConfig"
+      :table-columns="tableColumns"
+      :download="downloadConfig"
+      serviceUrl="listDetail">
+    </simple-table-box>
   </div>
 </template>
 
 <script>
-  import paperKindService from '../../api/service/paperKind';
-  import {djForm} from 'djweb';
+  import paperWarehouseService from '../../api/service/paperWarehouse';
+  import SimpleTableBox from './components/SimpleTableBox';
   export default {
-    name: 'paperKind',
+    name: 'paperStockDetailTable',
+    components: {SimpleTableBox},
     data() {
       return {
         searchConfig: [
-          {label: '原纸代码：', key: 'code', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'menfu', type: 'input', attrs: {type: 'number'}},
-          {label: '仓库：', key: 'warehouseName', type: 'select', attrs: {
+          {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
+          {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
+          {label: '仓库：', key: 'warehouseId', type: 'select', attrs: {
               options: [{
                 label: '丽岙原纸仓库1',
                 value: 'chu',
@@ -39,7 +33,7 @@
                 value: 'da',
               }],
             }},
-          {label: '库区：', key: 'warehouseAreaName', type: 'select', attrs: {
+          {label: '库区：', key: 'warehouseAreaId', type: 'select', attrs: {
               options: [{
                 label: '丽岙原纸仓库1',
                 value: 'chu',
@@ -51,57 +45,37 @@
                 value: 'da',
               }],
             }},
-          {label: '原纸供应商：', key: 'supplier', type: 'input'},
+          {label: '原纸供应商：', key: 'supplierName', type: 'input'},
         ],
-        tableData: [],
         tableColumns: [
-          {label: '入库时间', prop: 'code'},
-          {label: '原纸供应商', prop: 'code'},
-          {label: '纸筒编号', prop: 'code'},
-          {label: '原纸代码', prop: 'code'},
-          {label: '原纸类型', prop: 'code'},
-          {label: '克重（g）', prop: 'code'},
-          {label: '门幅（mm）', prop: 'menfu'},
-          {label: '重量（Kg）', prop: 'menfu'},
-          {label: '长度（m）', prop: 'jianshu'},
-          {label: '仓库', prop: 'jianshu'},
-          {label: '库区', prop: 'jianshu'},
-          {label: '入库类型', prop: 'jianshu'},
+          {label: '入库时间', prop: 'createTime'},
+          {label: '原纸供应商', prop: 'supplierName'},
+          {label: '纸筒编号', prop: 'paperTubeNumber'},
+          {label: '原纸代码', prop: 'paperCode'},
+          {label: '原纸类型', prop: 'paperType'},
+          {label: '克重（g）', prop: 'gram'},
+          {label: '门幅（mm）', prop: 'paperSize'},
+          {label: '重量（Kg）', prop: 'weight'},
+          {label: '长度（m）', prop: 'length'},
+          {label: '仓库', prop: 'warehouseName'},
+          {label: '库区', prop: 'warehouseAreaName'},
+          {label: '入库类型', prop: 'storageType'},
         ],
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 20
+        downloadConfig: {
+          url: 'printDetail',
+          filename: '原纸出入库明细表'
         },
-        pageTotal: 0,
         totalQuantity: 0,
         totalQuality: 0,
       };
     },
-    methods: {
-      exportRecord(){
-
-      },
-      getTableData(data) {
-        paperKindService.list(data).then((res) => {
-          this.tableData = res.list;
-          this.pageTotal = 100;
-        });
-      },
-      search(data) {
-        this.getTableData({
-          ...data,
-          ...this.pageOptions,
-        });
-      },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
-      },
-
-    },
-    created() {
-      this.getTableData();
-    },
+    mounted() {
+      this.$refs.table.getTableData();
+      paperWarehouseService.getPaperWarehouse({}).then(res=>{
+        console.log(res);
+        // todo 完成仓库、库区选择
+      });
+    }
   };
 </script>
 
@@ -109,5 +83,8 @@
   @deep: ~'>>>';
   .table-page {
     padding-top: 20px;
+  }
+  .ext-data{
+    display: flex;
   }
 </style>

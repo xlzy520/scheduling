@@ -1,13 +1,17 @@
 import { paperTable } from '../base-service/service';
 
 export default {
-  list(data) {
-    return paperTable('/getAllRule.do', data);
+  listDetail(data) {
+    return paperTable('/listDetail.do', data);
   },
-  changeEffected(data) {
-    return paperTable('/changeEffected.do', data);
+  listSummary(data) {
+    return paperTable('/listSummary.do', data);
   },
-  getRuleDetail(data) {
-    return paperTable('/getRuleDetail.do', data,'get');
+  printSummary(data) {
+    return paperTable('/printSummary.do', data);
   },
+  listInventory(data) {
+    return paperTable('/listInventory.do', data);
+  },
+  
 };
