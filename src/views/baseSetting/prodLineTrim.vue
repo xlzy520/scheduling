@@ -151,8 +151,7 @@
         pageTotal: 0,
         dialogTypeIsAdd: null,
         dialogVisible: false,
-        addLayerNum: 1,
-        layerIndex: 0
+        addLayerNum: 1
       };
     },
     methods: {
@@ -336,10 +335,10 @@
   }
   .plts-dialog {
     width: 1200px;
-   margin-bottom: 20px;
+    margin-bottom: 20px;
     padding-top: 20px;
     &.edit{
-      width: 40vw;
+      width: 400px;
       @{deep} .el-col-delete{
         .el-form-item__content{
           display: none;
