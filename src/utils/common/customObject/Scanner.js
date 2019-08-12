@@ -9,6 +9,7 @@ export default function Scanner() {
     keycode = e.keyCode || e.which || e.charCode;
     downTime = new Date().getTime();
     // e.preventDefault();
+    // e.stopPropagation();
   };
   let keyupFn = function (e) {
     let _keycode = e.keyCode || e.which || e.charCode;
@@ -21,6 +22,7 @@ export default function Scanner() {
         text += String.fromCharCode(_keycode);
       }
       e.preventDefault();
+      e.stopPropagation();
     }
     // e.preventDefault();
   };
