@@ -14,7 +14,8 @@
                   <dj-select v-model="child.tilemodel" :options="lengxingOptions"></dj-select>
                 </el-form-item>
                 <el-form-item label="切数" prop="cut">
-                  <dj-select type="multiple" collapse-tags v-model="child.cut" @change="qieshuChange"
+                  <dj-select type="multiple" collapse-tags v-model="child.cut"
+                             @visible-change="visible=>selectOptionChange(visible, childIndex)"
                              :options="qieshuOptions"></dj-select>
                 </el-form-item>
                 <el-form-item label="片数：" prop="piece" class="piece">
@@ -40,13 +41,13 @@
   import ruleCustomizeService from '@/api/service/ruleCustomize';
 
   const qieshuOptions = [
-    {label: '1', value: '1'},
-    {label: '2', value: '2'},
-    {label: '3', value: '3'},
-    {label: '4', value: '4'},
-    {label: '5', value: '5'},
-    {label: '6', value: '6'},
-    {label: '7', value: '7'},
+    {label: '1', value: '1', disabled: false},
+    {label: '2', value: '2', disabled: false},
+    {label: '3', value: '3', disabled: false},
+    {label: '4', value: '4', disabled: false},
+    {label: '5', value: '5', disabled: false},
+    {label: '6', value: '6', disabled: false},
+    {label: '7', value: '7', disabled: false},
   ];
   export default {
     name: 'StackDialog',
@@ -160,8 +161,20 @@
       };
     },
     methods: {
-      qieshuChange() {
-
+      selectOptionChange(visible, childIndex) {
+        if (visible) {
+          this.stackConditionFormData.map((v)=>{
+            const cuts = v.reduce((pre, cur, cutIndex)=>{
+              if (childIndex === cutIndex) {
+                return pre.concat([]);
+              }
+              return pre.concat(cur.cut);
+            }, []);
+            this.qieshuOptions.map(v=>{
+              v.disabled = cuts.includes(v.value);
+            });
+          });
+        }
       },
       addChildCondition(index) {
         this.stackConditionFormData[index].push({
@@ -180,7 +193,6 @@
         }]);
       },
       removeCondition(index, childIndex) {
-        // todo 增加删除动画
         const targetArr = this.stackConditionFormData;
         if (targetArr.length === 1) {
           return false;
@@ -192,6 +204,17 @@
         }
       },
       confirm() {
+        this.stackConditionFormData.map((v,index)=>{
+          const cuts = v.reduce((pre, cur)=>{
+            return pre.concat(cur.cut);
+          }, []);
+          for (let i = 1; i < 8; i++) {
+            if (!cuts.includes(i.toString())) {
+              this.$message(`条件${index+1}: 切数${i}未选择`, 'warning');
+              return false;
+            }
+          }
+        });
         this.$emit('confirm');
       },
       close() {

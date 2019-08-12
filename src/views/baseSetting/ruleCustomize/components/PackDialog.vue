@@ -14,7 +14,9 @@
                      class="pack-form">
               <div class="rule-row">
                 <el-form-item label="层数" prop="layer" v-if="childIndex===0" class="layer">
-                  <dj-select v-model="child.layer" :options="layerOptions"></dj-select>
+                  <dj-select v-model="child.layer" :options="layerOptions"
+                             type="multiple" collapse-tags
+                             @visible-change="visible=>selectOptionChange(visible, index)"></dj-select>
                 </el-form-item>
                 <el-form-item label="单位面积" class="unit-area">
                   <el-form-item prop="startUnitarea">
@@ -49,15 +51,15 @@
 <script>
   import {djForm} from 'djweb';
   const layerOptions = [
-    {label: '二层', value: '2'},
-    {label: '三层', value: '3'},
-    {label: '四层', value: '4'},
-    {label: '五层', value: '5'},
-    {label: '六层', value: '6'},
-    {label: '七层', value: '7'},
+    {label: '二层', value: '2', disabled: false},
+    {label: '三层', value: '3', disabled: false},
+    {label: '四层', value: '4', disabled: false},
+    {label: '五层', value: '5', disabled: false},
+    {label: '六层', value: '6', disabled: false},
+    {label: '七层', value: '7', disabled: false},
   ];
   export default {
-    name: 'StackDialog',
+    name: 'PackDialog',
     props: ['dialogTypeIsAdd'],
     data() {
       return {
@@ -77,7 +79,7 @@
               prop: 'name',
               label: '规则名称',
               rules: [
-                djForm.rules.required('规则名称不能为空'),
+                djForm.rules.required('请输入规则名称'),
                 {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9]+$/g, message: '只可输入汉字、字母、数字'},
               ],
             },
@@ -91,7 +93,7 @@
               prop: 'eachPackWeight',
               label: '单批打包重量',
               rules: [
-                djForm.rules.required('单批打包重量不能为空'),
+                djForm.rules.required('请输入单批打包重量'),
                 {type: 'number', message: '只可输入数字'},
               ],
             },
@@ -107,7 +109,7 @@
               prop: 'aTilemodelRate',
               label: 'A楞型楞率',
               rules: [
-                djForm.rules.required('A楞型楞率不能为空'),
+                djForm.rules.required('请输入A楞型楞率'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
               ],
             },
@@ -122,7 +124,7 @@
               prop: 'bTilemodelRate',
               label: 'B楞型楞率',
               rules: [
-                djForm.rules.required('B楞型楞率不能为空'),
+                djForm.rules.required('请输入B楞型楞率'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
               ],
             },
@@ -137,7 +139,7 @@
               prop: 'cTilemodelRate',
               label: 'C楞型楞率',
               rules: [
-                djForm.rules.required('C楞型楞率不能为空'),
+                djForm.rules.required('请输入C楞型楞率'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
               ],
             },
@@ -152,7 +154,7 @@
               prop: 'eTilemodelRate',
               label: 'E楞型楞率',
               rules: [
-                djForm.rules.required('E楞型楞率不能为空'),
+                djForm.rules.required('请输入E楞型楞率'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
               ],
             },
@@ -167,7 +169,7 @@
               prop: 'fTilemodelRate',
               label: 'F楞型楞率',
               rules: [
-                djForm.rules.required('F楞型楞率不能为空'),
+                djForm.rules.required('请输入F楞型楞率'),
                 {type: 'number', message: '只可输入数字', trigger: 'change'}
               ],
             },
@@ -208,6 +210,11 @@
       };
     },
     methods: {
+      getLayers(){
+        return this.packConditionFormData.reduce((pre, cur)=>{
+          return pre.concat(cur[0].layer);
+        }, []);
+      },
       addChildCondition(index, childIndex) {
         this.packConditionFormData[index].push({
           layer: this.packConditionFormData[index][0].layer,
@@ -217,6 +224,11 @@
         });
       },
       addCondition() {
+        const layers = this.getLayers();
+        if (layers.length === 6) {
+          this.$message('所有层数已选择，无法新增', 'warning');
+          return false;
+        }
         this.packConditionFormData.push(
           [{
             layer: '',
@@ -226,7 +238,6 @@
           }]);
       },
       removeCondition(index, childIndex) {
-        // todo 增加删除动画
         const targetArr = this['packConditionFormData'];
         if (targetArr.length === 1) {
           return false;
@@ -240,7 +251,27 @@
       changeNextInput(val, index, childIndex) {
         this.packConditionFormData[index][childIndex + 1].startUnitarea = val;
       },
+      selectOptionChange(visible, index) {
+        if (visible) {
+          const layers = this.packConditionFormData.reduce((pre, cur, cutIndex)=>{
+            if (index === cutIndex) {
+              return pre.concat([]);
+            }
+            return pre.concat(cur[0].layer);
+          }, []);
+          this.layerOptions.map(v=>{
+            v.disabled = layers.includes(v.value);
+          });
+        }
+      },
       confirm() {
+        const layers = this.getLayers();
+        for (let i = 2; i < 8; i++) {
+          if (!layers.includes(i.toString())) {
+            this.$message(`层数${i}未选择`, 'warning');
+            return false;
+          }
+        }
         this.$emit('confirm');
       },
       close() {
