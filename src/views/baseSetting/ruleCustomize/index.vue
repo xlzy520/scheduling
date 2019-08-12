@@ -1,5 +1,5 @@
 <template>
-  <div class="table-page rule-customize">
+  <div class="table-page rule-customize" v-loading="loading">
     <dj-table
       :data="tableData"
       :columns="tableColumns"
@@ -31,6 +31,7 @@
     components: {ViewDialog, PackDialog, StackDialog},
     data() {
       return {
+        loading: false,
         dialogType: '',
         dialogTypeIsAdd: false,
         tableLoading: false,
@@ -176,6 +177,7 @@
       },
       stackConfirm() {
         this.formValidate('stack').then(()=>{
+          this.loading = true;
           const detailModels = this.$refs.dialog.stackConditionFormData.reduce((pre, cur)=>{
             let cache = cur.map(v=> v.cut.map(vcut=>{
                 return {
@@ -191,14 +193,25 @@
             ...this.$refs.dialog.stackFormData,
             detailModels: detailModels
           }).then(() => {
+            this.loading = false;
             this.submitSuccess();
+          }).catch(() => {
+            this.loading = false;
           });
         });
       },
       packConfirm() {
         this.formValidate('pack').then(()=>{
           const packRuleDetails = this.$refs.dialog.packConditionFormData.reduce((pre, cur)=>{
-            return pre.concat(...cur);
+            let cache = cur.map(v=> v.layer.map(vlayer=>{
+              return {
+                endUnitarea: v.endUnitarea,
+                layer: vlayer,
+                packpiece: v.packpiece,
+                startUnitarea: v.startUnitarea
+              };
+            }));
+            return pre.concat(...cache);
           }, []);
           const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
           packRequest({
