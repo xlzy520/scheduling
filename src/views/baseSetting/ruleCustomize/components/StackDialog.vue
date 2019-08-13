@@ -39,6 +39,9 @@
 <script>
   import {djForm} from 'djweb';
   import ruleCustomizeService from '@/api/service/ruleCustomize';
+  import formRules from "../../formRules";
+
+
 
   const qieshuOptions = [
     {label: '1', value: '1', disabled: false},
@@ -68,8 +71,8 @@
               prop: 'name',
               label: '规则名称',
               rules: [
-                djForm.rules.required('规则名称不能为空'),
-                {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9]+$/g, message: '只可输入汉字、字母、数字'},
+                djForm.rules.required('请输入规则名称'),
+                formRules.word_number_chinese
               ],
             },
             attrs: {
@@ -81,7 +84,7 @@
             formItem: {
               prop: 'produceLineId',
               label: '生产线',
-              rules: [djForm.rules.required('请选择相应的生产线')],
+              rules: [djForm.rules.required('请选择生产线')],
             },
             attrs: {
               options: [],
@@ -93,13 +96,12 @@
               prop: 'maxOrderCut',
               label: '订单最大片数',
               rules: [
-                djForm.rules.required('订单最大片数不能为空'),
-                {type: 'number', message: '只可输入数字'},
+                djForm.rules.required('请输入订单最大片数'),
+                formRules.number
               ],
             },
             attrs: {
               maxLength: 10,
-              type: 'number'
             }
           },
           {
@@ -108,14 +110,13 @@
               prop: 'maxStackHeight',
               label: '订单最小米数',
               rules: [
-                djForm.rules.required('订单最小米数不能为空'),
-                {type: 'number', message: '只可输入数字'},
-                {type: 'number', max: 9999, message: '不能超过9999'},
+                djForm.rules.required('请输入订单最小米数'),
+                formRules.number,
+                formRules.number5
               ],
             },
             attrs: {
-              maxLength: 10,
-              type: 'number'
+              maxLength: 10
             }
           },
           {
@@ -124,13 +125,12 @@
               prop: 'maxStackCount',
               label: '最大堆叠单数',
               rules: [
-                djForm.rules.required('最大堆叠单数不能为空'),
-                {type: 'number', message: '只可输入数字'},
+                djForm.rules.required('请输入最大堆叠单数'),
+                formRules.number
               ],
             },
             attrs: {
               maxLength: 10,
-              type: 'number'
             }
           },
         ],
@@ -146,13 +146,13 @@
         ],
         stackRules: {
           tilemodel: [
-            {required: true, message: '请选择楞型', trigger: 'change'}
+            djForm.rules.required('请选择楞型'),
           ],
           cut: [
-            {required: true, message: '请选择切数', trigger: 'change'}
+            djForm.rules.required('请选择切数'),
           ],
           piece: [
-            {required: true, message: '请填写片数', trigger: 'change'}
+            djForm.rules.required('请输入片数'),
           ]
         },
 

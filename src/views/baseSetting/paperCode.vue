@@ -24,6 +24,8 @@
 <script>
   import paperCodeService from '../../api/service/paperCode';
   import {djForm} from 'djweb';
+  import formRules from "./formRules";
+
   const initFormData = {
     paperCode: '',
     paperType: '',
@@ -70,8 +72,8 @@
               prop: 'paperCode',
               label: '原纸代码',
               rules: [
-                djForm.rules.required('原纸代码不能为空'),
-                {pattern: /^\w+$/g, message: '只可输入字母、数字'},
+                djForm.rules.required('请输入原纸代码'),
+                formRules.word_number
               ],
             },
             attrs: {
@@ -88,7 +90,7 @@
             formItem: {
               prop: 'paperType',
               label: '原纸类型',
-              rules: [djForm.rules.required('请选择相应的原纸类型')],
+              rules: [djForm.rules.required('请选择原纸类型')],
             },
             attrs: {
               options: this.$enum.paperType._arr
@@ -100,13 +102,11 @@
               prop: 'paperGram',
               label: '克重',
               rules: [
-                djForm.rules.required('克重不能为空'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'}
+                djForm.rules.required('请输入克重'),
+                formRules.number,
+                formRules.number5
                 ],
-            },
-            attrs: {
-              type: 'number',
-            },
+            }
           },
         ],
         pageTotal: 0,

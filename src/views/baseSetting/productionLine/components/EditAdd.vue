@@ -23,9 +23,8 @@
 <script>
   import {djForm} from 'djweb';
   import productionLineService from '../../../../api/service/productionLine';
+  import formRules from "../../formRules";
 
-  const ruleMoreThan9999 = {type: 'number', max: 9999, message: '不能大于9999', trigger: 'change'};
-  const ruleMustNumber = {type: 'number', message: '只可输入数字', trigger: 'change'};
   export default {
     name: 'EditAdd',
     props: {
@@ -109,11 +108,10 @@
                 label: '生产车速',
                 rules: [
                   djForm.rules.required('生产车速不能为空'),
-                  ruleMustNumber],
+                  formRules.float
+                ],
               },
               attrs: {
-                key: 'float',
-                type: 'float',
                 maxLength: 10,
               },
             },
@@ -124,12 +122,11 @@
                 label: '换纸最小米数',
                 rules: [
                   djForm.rules.required('换纸最小米数不能为空'),
-                  ruleMustNumber
+                  formRules.number
                 ],
               },
               attrs: {
                 maxLength: 10,
-                type: 'number'
               },
             },
             {
@@ -139,12 +136,11 @@
                 label: '首单最小修边',
                 rules: [
                   djForm.rules.required('首单最小修边不能为空'),
-                  ruleMustNumber
+                  formRules.number
                 ],
               },
               attrs: {
                 maxLength: 10,
-                type: 'number'
               },
             },
             {
@@ -154,12 +150,11 @@
                 label: '尾单最小米数',
                 rules: [
                   djForm.rules.required('尾单最小米数不能为空'),
-                  ruleMustNumber
+                  formRules.number
                 ],
               },
               attrs: {
                 maxLength: 10,
-                type: 'number'
               },
             },
           ],
@@ -186,12 +181,12 @@
                 change: (val)=>{
                   if (val === '1') {
                     this.$set(this.formOptions.zqj[4].formItem, 'rules', [
-                      ruleMoreThan9999
+                      formRules.number5
                     ]);
                   } else {
                     this.$set(this.formOptions.zqj[4].formItem, 'rules', [
                       djForm.rules.required('双机压订单不能为空'),
-                      ruleMoreThan9999
+                      formRules.number5
                     ]);
                   }
                 }
@@ -223,11 +218,8 @@
                 label: '单台压轮数',
                 rules: [
                   djForm.rules.required('单台压轮数不能为空'),
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
-              },
-              attrs: {
-                type: 'number'
               }
             },
             {
@@ -237,12 +229,9 @@
                 label: '压轮最小间距',
                 rules: [
                   djForm.rules.required('压轮最小间距不能为空'),
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
               },
-              attrs: {
-                type: 'number'
-              }
             },
             {
               type: 'input',
@@ -250,12 +239,9 @@
                 prop: 'slimachWdoubleMinLength',
                 label: '双机压订单',
                 rules: [
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
               },
-              attrs: {
-                type: 'number'
-              }
             },
             {
               type: 'input',
@@ -264,12 +250,9 @@
                 label: '单台纵切刀数',
                 rules: [
                   djForm.rules.required('单台纵切刀数不能为空'),
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
               },
-              attrs: {
-                type: 'number'
-              }
             },
             {
               type: 'input',
@@ -278,11 +261,8 @@
                 label: '纵切刀间距',
                 rules: [
                   djForm.rules.required('纵切刀间距不能为空'),
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
-              },
-              attrs: {
-                type: 'number'
               }
             },
             {
@@ -292,11 +272,8 @@
                 label: '换单排刀时间',
                 rules: [
                   djForm.rules.required('换单排刀时间不能为空'),
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
-              },
-              attrs: {
-                type: 'number'
               }
             },
           ],
@@ -308,11 +285,9 @@
                 label: '分线机宽度',
                 rules: [
                   djForm.rules.required('分线机宽度不能为空'),
-                  ruleMoreThan9999
+                  formRules.float,
+                  formRules.float5,
                 ],
-              },
-              attrs: {
-                type: 'number'
               },
             },
             {
@@ -322,12 +297,9 @@
                 label: '最小切长',
                 rules: [
                   djForm.rules.required('最小切长不能为空'),
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
               },
-              attrs: {
-                type: 'number'
-              }
             },
             {
               type: 'select',
@@ -355,12 +327,10 @@
                       label: '最小叠单米数',
                       rules: [
                         djForm.rules.required('最小叠单米数不能为空'),
-                        {type: 'number', max: 9999, message: '只可输入数字', trigger: 'change'}
+                        formRules.number,
+                        formRules.number5
                       ],
                     },
-                    attrs: {
-                      type: 'number'
-                    }
                   };
                   if (val === 2) {
                     if (this.prodLineData.fxj.basketLength !== '') {
@@ -380,12 +350,9 @@
                 label: '吊篮长度',
                 rules: [
                   djForm.rules.required('吊篮长度不能为空'),
-                  ruleMoreThan9999
+                  formRules.number5
                 ],
               },
-              attrs: {
-                type: 'number'
-              }
             }
           ],
         },

@@ -32,6 +32,8 @@
   import materialCodeService from '../../api/service/materialCode';
   import paperCodeService from '../../api/service/paperCode';
   import {djForm} from 'djweb';
+  import formRules from "./formRules";
+
   const validateCode = (rule, selectArr, callback) => {
     if (selectArr.length === 10) {
       callback(new Error('最多支持10个原纸组合!'));
@@ -78,7 +80,7 @@
               prop: 'materialCode',
               label: '用料代码',
               rules: [
-                djForm.rules.required('请选择相应的用料代码'),
+                djForm.rules.required('请选择用料代码'),
                 { validator: validateCode, trigger: 'blur' }
                 ],
             },
@@ -100,8 +102,8 @@
               prop: 'platformMaterialCode',
               label: '平台材料名称：',
               rules: [
-                djForm.rules.required('平台材料名称不能为空'),
-                {required: true, pattern: /[a-zA-Z0-9]/g, message: '只可输入字母、数字', trigger: 'blur'},
+                djForm.rules.required('请输入平台材料名称'),
+                formRules.word_number
               ],
             },
             attrs: {
@@ -121,57 +123,14 @@
         searchData: {}
       };
     },
-    // computed: {
-    //   formOptions() {
-    //     return [
-    //       {
-    //         type: 'select',
-    //         formItem: {
-    //           prop: 'materialCode',
-    //           label: '用料代码',
-    //           rules: [
-    //             djForm.rules.required('请选择相应的用料代码'),
-    //             { validator: validateCode, trigger: 'blur' }
-    //           ],
-    //         },
-    //         attrs: {
-    //           class: 'code',
-    //           key: 'multiple',
-    //           type: 'multiple',
-    //           keyMap: {
-    //             label: 'paperCode',
-    //             value: 'id'
-    //           },
-    //           // options: this.optionalPaper,
-    //         },
-    //       },
-    //       {
-    //         type: 'input',
-    //         formItem: {
-    //           prop: 'platformMaterialCode',
-    //           label: '平台材料名称：',
-    //           rules: [
-    //             djForm.rules.required('平台材料名称不能为空'),
-    //             {required: true, pattern: /[a-zA-Z0-9]/g, message: '只可输入字母、数字', trigger: 'blur'},
-    //           ],
-    //         },
-    //         attrs: {
-    //           maxLength: 20,
-    //         },
-    //         listeners: {
-    //           'input': (val) => {
-    //             this.formData.platformMaterialCode = val.toUpperCase();
-    //           },
-    //         },
-    //       },
-    //     ];
-    //   }
-    // },
     methods: {
       selectPaper(obj) {
-        // console.log({...obj, id: `${obj.id}+${new Date().getTime()}`});
-        // this.formData.materialCode.push({...obj, id: `${obj.id}+${new Date().getTime()}`});
-        this.formData.materialCode.push(obj);
+        const materialCode = this.formData.materialCode;
+        if (materialCode.length > 10) {
+          this.$message('最多支持10个原纸组合！', 'warning');
+        } else {
+          this.formData.materialCode.push(obj);
+        }
       },
       add() {
         this.dialogTypeIsAdd = true;
@@ -297,7 +256,6 @@
 
   .material-code-dialog {
     width: 50vw;
-    padding-top: 20px;
     @{deep} .dj-form .el-form-item{
       .el-form-item__label{
         float: unset;
@@ -320,7 +278,6 @@
         pointer-events: none;
       }
     }
-    // todo 修改背景色，不限制重复选择，最多选十个
     @{deep} .optional{
       width: 100%;
       min-height: 120px;
@@ -333,7 +290,6 @@
         margin: 0;
       }
       &-area{
-        width: 100%;
         min-height: 80px;
         display: flex;
         flex-wrap: wrap;

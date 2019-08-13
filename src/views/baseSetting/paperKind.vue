@@ -27,6 +27,7 @@
   import paperCodeService from '../../api/service/paperCode';
   import paperWarehouseService from '../../api/service/paperWarehouse';
   import {djForm} from 'djweb';
+  import formRules from "./formRules";
   const initFormData = {
     paperNumber: undefined,
     paperCodeId: undefined,
@@ -98,8 +99,8 @@
               prop: 'paperNumber',
               label: '原纸编号',
               rules: [
-                djForm.rules.required('原纸编号不能为空'),
-                {pattern: /^\w+$/g, message: '只可输入字母、数字'},
+                djForm.rules.required('请输入原纸编号'),
+                formRules.word_number
               ],
             },
             attrs: {
@@ -117,7 +118,7 @@
               prop: 'paperCodeId',
               label: '原纸代码',
               rules: [
-                djForm.rules.required('原纸代码不能为空'),
+                djForm.rules.required('请选择原纸代码'),
               ],
             },
             attrs: {
@@ -129,7 +130,7 @@
             },
             listeners: {
               'input': (val) => {
-                this.getPaperCodeById(val)
+                this.getPaperCodeById(val);
               },
             },
           },
@@ -138,7 +139,7 @@
             formItem: {
               prop: 'paperType',
               label: '原纸类型',
-              rules: [djForm.rules.required('请选择相应的原纸类型')],
+              rules: [djForm.rules.required('请选择原纸类型')],
             },
             attrs: {
               disabled: true,
@@ -151,13 +152,12 @@
               prop: 'paperGram',
               label: '克重',
               rules: [
-                djForm.rules.required('克重不能为空'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'}
+                djForm.rules.required('请输入克重'),
+                formRules.number
               ],
             },
             attrs: {
               disabled: true,
-              type: 'number',
             },
           },
           {
@@ -166,13 +166,10 @@
               prop: 'paperSize',
               label: '门幅',
               rules: [
-                djForm.rules.required('门幅不能为空'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'},
-                {type: 'number', max: 9999, message: '不能超过9999', trigger: 'change'}
+                djForm.rules.required('请输入门幅'),
+                formRules.number,
+                formRules.number5
               ],
-            },
-            attrs: {
-              type: 'number',
             },
           },
           {
@@ -181,7 +178,7 @@
               prop: 'warehouseId',
               label: '仓库名称',
               rules: [
-                djForm.rules.required('请选择相应的仓库名称'),
+                djForm.rules.required('请选择仓库名称'),
               ],
             },
             attrs: {
@@ -206,7 +203,7 @@
               prop: 'warehouseAreaId',
               label: '库区名称',
               rules: [
-                djForm.rules.required('请选择相应的库区名称'),
+                djForm.rules.required('请选择库区名称'),
               ],
             },
             attrs: {
@@ -217,7 +214,7 @@
               options: this.warehouseAreaList,
             },
           },
-        ]
+        ];
       }
     },
     methods: {
@@ -282,9 +279,9 @@
       },
       changeStatus(row) {
         // 接口
-        let  post = {
+        let post = {
           id: row.id,
-          effected: row.isEffected ? 0 : 1 ,
+          effected: row.isEffected ? 0 : 1,
         };
         if (row.isEffected) {
           this.$confirm('确定禁用该条内容吗？', '', {

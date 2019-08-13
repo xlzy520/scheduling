@@ -35,6 +35,8 @@
   import productionLineTrimService from '../../api/service/productionLineTrim';
   import productionLineService from '../.././api/service/productionLine';
   import {djForm} from 'djweb';
+  import formRules from "./formRules";
+
   const cengshuOption = [
       {label: '二层', value: 2},
       {label: '三层', value: 3},
@@ -49,7 +51,7 @@
       formItem: {
         prop: 'lineId',
         label: '生产线',
-        rules: [djForm.rules.required('请选择相应的生产线')],
+        rules: [djForm.rules.required('请选择生产线')],
       },
       attrs: {
         options: [],
@@ -61,7 +63,7 @@
         prop: 'layer',
         label: '层数',
         rules: [
-          djForm.rules.required('请选择相应的层数'),
+          djForm.rules.required('请选择层数'),
         ],
       },
       attrs: {
@@ -74,14 +76,11 @@
         prop: 'wasteSize',
         label: '修边',
         rules: [
-          {type: 'number', message: '只可输入数字', trigger: 'change'},
-          {type: 'number', max: 9999, message: '不能超过9999', trigger: 'change'},
-          djForm.rules.required('修边不能为空'),
+          djForm.rules.required('请输入修边'),
+          formRules.number,
+          formRules.number5
         ],
-      },
-      attrs: {
-        type: 'number'
-      },
+      }
     },
     {
       type: 'i',

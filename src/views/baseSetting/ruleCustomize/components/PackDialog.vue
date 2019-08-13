@@ -20,17 +20,17 @@
                 </el-form-item>
                 <el-form-item label="单位面积" class="unit-area">
                   <el-form-item prop="startUnitarea">
-                    <dj-input v-model.number="child.startUnitarea" placeholder="请输入"
+                    <dj-input v-model.number="child.startUnitarea" placeholder="请输入" maxLength="10"
                               disabled suffix-icon="m²"></dj-input>
                   </el-form-item>
                   <div style="margin: 0 5px">至</div>
                   <el-form-item prop="endUnitarea">
                     <dj-input type="float" v-model.number="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
-                              @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
+                              maxLength="10" @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
                   </el-form-item>
                 </el-form-item>
-                <el-form-item label="打包数量" prop="packpiece" class="packpiece">
-                  <el-input v-model="child.packpiece"></el-input>
+                <el-form-item label="打包数量" prop="packpiece" class="packpiece" >
+                  <el-input v-model="child.packpiece" maxLength="10"></el-input>
                 </el-form-item>
                 <div class="button-col">
                   <i class="el-icon-delete" v-if="childIndex===condition.length - 1"
@@ -50,6 +50,7 @@
 
 <script>
   import {djForm} from 'djweb';
+  import formRules from "../../formRules";
   const layerOptions = [
     {label: '二层', value: '2', disabled: false},
     {label: '三层', value: '3', disabled: false},
@@ -80,7 +81,7 @@
               label: '规则名称',
               rules: [
                 djForm.rules.required('请输入规则名称'),
-                {pattern: /^[\u4e00-\u9fa5a-zA-Z0-9]+$/g, message: '只可输入汉字、字母、数字'},
+                formRules.word_number_chinese
               ],
             },
             attrs: {
@@ -94,11 +95,10 @@
               label: '单批打包重量',
               rules: [
                 djForm.rules.required('请输入单批打包重量'),
-                {type: 'number', message: '只可输入数字'},
+                formRules.float
               ],
             },
             attrs: {
-              type: 'number',
               maxLength: 20,
               suffixIcon: "Kg"
             },
@@ -110,11 +110,10 @@
               label: 'A楞型楞率',
               rules: [
                 djForm.rules.required('请输入A楞型楞率'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'}
+                formRules.float
               ],
             },
             attrs: {
-              type: 'number',
               maxLength: 20,
             },
           },
@@ -125,11 +124,10 @@
               label: 'B楞型楞率',
               rules: [
                 djForm.rules.required('请输入B楞型楞率'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'}
+                formRules.float
               ],
             },
             attrs: {
-              type: 'number',
               maxLength: 20,
             },
           },
@@ -140,11 +138,10 @@
               label: 'C楞型楞率',
               rules: [
                 djForm.rules.required('请输入C楞型楞率'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'}
+                formRules.float
               ],
             },
             attrs: {
-              type: 'number',
               maxLength: 20,
             },
           },
@@ -155,11 +152,10 @@
               label: 'E楞型楞率',
               rules: [
                 djForm.rules.required('请输入E楞型楞率'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'}
+                formRules.float
               ],
             },
             attrs: {
-              type: 'number',
               maxLength: 20,
             },
           },
@@ -170,11 +166,10 @@
               label: 'F楞型楞率',
               rules: [
                 djForm.rules.required('请输入F楞型楞率'),
-                {type: 'number', message: '只可输入数字', trigger: 'change'}
+                formRules.float
               ],
             },
             attrs: {
-              type: 'number',
               maxLength: 20,
             },
           }
@@ -191,16 +186,19 @@
         ],
         packRules: {
           layer: [
-            {required: true, message: '请选择层数'}
+            djForm.rules.required('请选择层数'),
           ],
           packpiece: [
-            {required: true, message: '请填写打包数量'}
+            djForm.rules.required('请填写打包数量'),
+            formRules.number
           ],
           startUnitarea: [
-            {required: true, message: '请完成单位面积'}
+            djForm.rules.required('请完成单位面积'),
+            formRules.float
           ],
           endUnitarea: [
-            {required: true, message: '请完成单位面积'}
+            djForm.rules.required('请完成单位面积'),
+            formRules.float
           ]
         },
 
@@ -210,7 +208,7 @@
       };
     },
     methods: {
-      getLayers(){
+      getLayers() {
         return this.packConditionFormData.reduce((pre, cur)=>{
           return pre.concat(cur[0].layer);
         }, []);

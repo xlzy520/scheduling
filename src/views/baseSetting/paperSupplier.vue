@@ -26,6 +26,7 @@
 <script>
   import paperSupplierService from '../../api/service/paperSupplier';
   import {djForm} from 'djweb';
+  import formRules from "./formRules";
   const { rules } = djForm;
   const initFormData = {
     supplierNumber: '',
@@ -76,10 +77,10 @@
             type: 'input',
             formItem: {
               prop: 'supplierNumber',
-              label: '供应商编号:',
+              label: '供应商编号',
               rules: [
-                djForm.rules.required('供应商编号不能为空'),
-                {pattern: /[a-zA-Z0-9]/g, message: '只可输入数字、字母'},
+                djForm.rules.required('请输入供应商编号'),
+                formRules.word_number
               ],
             },
             attrs: {
@@ -91,10 +92,10 @@
             type: 'input',
             formItem: {
               prop: 'supplierName',
-              label: '供应商名称:',
+              label: '供应商名称',
               rules: [
-                djForm.rules.required('供应商名称不能为空'),
-                {pattern: /[a-zA-Z0-9\u4e00-\u9fa5]/g, message: '只可输入数字、字母、汉字'},
+                djForm.rules.required('请输入供应商名称'),
+                formRules.word_number_chinese
               ],
             },
             attrs: {
@@ -106,8 +107,8 @@
             type: 'input',
             formItem: {
               prop: 'socialCreditCode',
-              label: '社会信用代码:',
-              rules: [rules.required('社会信用代码不能为空')],
+              label: '社会信用代码',
+              rules: [rules.required('请输入社会信用代码')],
             },
             attrs: {
               maxLength: 18,
@@ -117,9 +118,9 @@
             type: 'input',
             formItem: {
               prop: 'legalRepresentative',
-              label: '法人代表:',
+              label: '法人代表',
               rules: [
-                {pattern: /[\u4e00-\u9fa5]/g, message: '只可输入汉字', trigger: 'change'}
+                formRules.chinese
               ],
             },
             attrs: {
@@ -130,9 +131,9 @@
             type: 'input',
             formItem: {
               prop: 'address',
-              label: '地址:',
+              label: '地址',
               rules: [
-                {pattern: /[a-zA-Z0-9\u4e00-\u9fa5]/g, message: '只可输入数字、字母、汉字'},
+                formRules.word_number_chinese
               ],
             },
             attrs: {
