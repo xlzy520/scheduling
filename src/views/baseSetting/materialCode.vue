@@ -46,8 +46,8 @@
     data() {
       return {
         searchConfig: [
-          {label: '用料代码：', key: 'materialCode', type: 'input'},
-          {label: '平台材料名称：', key: 'platformMaterialCode', type: 'input'},
+          {label: '用料代码', key: 'materialCode', type: 'input'},
+          {label: '平台材料名称', key: 'platformMaterialCode', type: 'input'},
         ],
         tableData: [],
         tableColumns: Object.freeze([
@@ -100,7 +100,7 @@
             type: 'input',
             formItem: {
               prop: 'platformMaterialCode',
-              label: '平台材料名称：',
+              label: '平台材料名称',
               rules: [
                 djForm.rules.required('请输入平台材料名称'),
                 formRules.word_number

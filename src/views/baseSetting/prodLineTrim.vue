@@ -98,9 +98,9 @@
     data() {
       return {
         searchConfig: [
-          {label: '生产线：', key: 'lineId', type: 'select', attrs: {options: []}},
-          {label: '层数：', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
-          {label: '修边：', key: 'wasteSize', type: 'input', attrs: {type: 'number'}},
+          {label: '生产线', key: 'lineId', type: 'select', attrs: {options: []}},
+          {label: '层数', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
+          {label: '修边', key: 'wasteSize', type: 'input', attrs: {type: 'number'}},
         ],
         tableData: [],
         tableColumns: Object.freeze([

@@ -40,8 +40,8 @@
     data() {
       return {
         searchConfig: [
-          {label: '供应商编号：', key: 'supplierNumber', type: 'input'},
-          {label: '供应商名称：', key: 'supplierName', type: 'input'},
+          {label: '供应商编号', key: 'supplierNumber', type: 'input'},
+          {label: '供应商名称', key: 'supplierName', type: 'input'},
         ],
         tableData: [],
         tableColumns: [
