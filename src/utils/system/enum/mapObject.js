@@ -18,7 +18,7 @@ MapObject.prototype.getReverseMap = function() {
 MapObject.prototype.changeKey = function(param) {
   let _obj = {};
   Object.keys(this).forEach(key => {
-    if (!this.ignoreKey.includes(key) && Object.prototype.toString.call(this[key]) === '[object Object]' && this[key][param]) {
+    if (!this.ignoreKey.includes(key) && Object.prototype.toString.call(this[key]) === '[object Object]') {
       let temp = JSON.parse(JSON.stringify(this[key]));
       temp[param] = key;
       _obj[this[key][param]] = temp;
