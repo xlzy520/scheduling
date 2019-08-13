@@ -1,5 +1,5 @@
 import MapObject from './mapObject';
-const fluteTypeLayer = [
+let fluteTypeLayer = [
   {
     label: '3层',
     fluteType: [
@@ -42,83 +42,113 @@ const fluteTypeLayer = [
     ]
   }
 ];
+function getValueByLabel(arr, children = 'fluteType') {
+  arr.forEach(obj=>{
+    obj.value = obj.label.replace(/[\u4e00-\u9fa5]/g, '');
+    if (Array.isArray(obj[children])) {
+      getValueByLabel(obj[children])
+    }
+  });
+}
+getValueByLabel(fluteTypeLayer);
 const fluteType = fluteTypeLayer.reduce((arr, obj)=>{
-  return arr.concat(obj.fluteType.map(obj=>({ label: obj.label, value: obj.label.replace(/[\u4e00-\u9fa5]/g, '') })));
+  return arr.concat(obj.fluteType);
+  // return arr.concat(obj.fluteType.map(obj=>({ label: obj.label, value: obj.label.replace(/[\u4e00-\u9fa5]/g, '') })));
 }, [{label: '全部', value: 'all'}]);
 
 export default {
   orderTip: new MapObject({
     'all': {
       label: '全部',
+      value: ''
+    },
+    'ordinary': {
+      label: '普通',
       value: 0
     },
     'urgent': {
       label: '加急',
+      omit: '急',
       value: 1
     },
     'delay': {
       label: '延期',
+      omit: '延',
       value: 2
-    },
-    'ordinary': {
-      label: '普通',
-      value: 3
     },
   }),
   productStatus: new MapObject({
     'all': {
       label: '全部',
-      value: '-1'
+      value: ''
     },
     'waitImport': {
       label: '待导入',
-      value: '0'
+      value: 0
     },
     'arranging': {
       label: '排单中',
-      value: '1'
+      value: 1
     },
     'producing': {
+      label: '生产中',
+      value: 2
+    },
+    'intoLocated': {
+      label: '已打包',
+      value: 4
+    },
+    'canceled': {
+      label: '生产取消',
+      value: 3
+    },
+  }),
+  orderStatus: new MapObject({
+    'waitImport': {
+      label: '待导入',
+      value: '1'
+    },
+    'producting': {
       label: '生产中',
       value: '2'
     },
     'apartIntoLocation': {
       label: '部分入库',
-      value: '21'
+      value: '3'
     },
-    'intoLocated': {
+    'readyIntoLocation': {
       label: '已入库',
       value: '4'
     },
     'canceled': {
       label: '已取消',
-      value: '6'
-    },
+      value: '5'
+    }
   }),
   orderType: new MapObject({
     'all': {
       label: '全部',
-      value: '-1'
+      value: ''
     },
     'groupPurchase': {
       label: '团购订单',
-      value: '0'
+      value: 1
     },
     'carton': {
       label: '纸箱订单',
-      value: '1'
+      value: 3
     },
     'offline': {
       label: '线下纸板订单',
-      value: '2'
+      value: 5
     },
     'preparingMaterials': {
       label: '备料订单',
-      value: '3'
+      value: 4
     },
     'abnormal': {
       label: '异常补单',
-      value: '4'
+      value: 2
     }
   }),
   linePressingWay: new MapObject({
@@ -164,27 +194,27 @@ export default {
   outStockType: new MapObject({
     'Sale': {
       label: '销售出库',
-      value: '2'
+      value: '销售出库'
     },
     'returnGoods': {
       label: '采购退货',
-      value: '3'
+      value: '采购退货'
     },
     'prodProvide': {
       label: '生产领料',
-      value: '1'
+      value: '生产领料'
     },
     'scrap': {
       label: '报废出库',
-      value: '4'
+      value: '报废出库'
     },
     'losses': {
       label: '盘亏出库',
-      value: '5'
+      value: '盘亏出库'
     },
     'allocation': {
       label: '调拨出库',
-      value: '6'
+      value: '调拨出库'
     }
   }),
   paperType: new MapObject({
