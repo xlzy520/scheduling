@@ -1,11 +1,14 @@
 //纸筒相关键值对
 export default {
   storageTime: 'createTime', //入库时间
+  outStockTime: 'createTime', //出库时间
   cylinderNo: 'paperTubeNumber', //纸筒编号
-  paperSupplier: 'paperSupplier', //原纸供应商
+  receiptNumber: 'receiptNumber', //单据编号
+  paperSupplierId: 'supplierId', //原纸供应商id
+  paperSupplierName: 'supplierName', //原纸供应商名称
   supplierId: 'supplierId', //原纸供应商编号
   storageType: 'storageType', //入库类型
-  outStockType: 'outStockType', //出库类型
+  outStockType: 'storageType', //出库类型
   documentNo: 'receiptNumber', //单据编号
   deliveryBillId: 'deliveryNumber', //送货单号
   deliveryNumber: 'deliveryCarNumber', //送货车号
