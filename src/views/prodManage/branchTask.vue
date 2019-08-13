@@ -300,18 +300,24 @@
           this.$message('订单未选择，请重新操作', 'info');
           return false;
         } else {
-          const canRemove = this.checkedList.some(v => !['已处理', '处理中'].includes(v.status));
-          if (canRemove) {
-            this.loading = true;
-            this.dj_api_extend(branchTaskService.removeOrder, this.checkedList).then(res => {
-              this.$message('移除成功', 'success');
-              this.$refs.search.search();
-            }).catch(() => {
-              this.loading = false;
-            });
-          } else {
-            this.$message(' 分线状态发生变化，无法进行操作', 'warning');
-          }
+          this.$confirm('确定禁用该条内容吗？', '', {
+            type: 'warning',
+            showClose: false,
+          }).then(() => {
+            const canRemove = this.checkedList.some(v => !['已处理', '处理中'].includes(v.status));
+            if (canRemove) {
+              this.loading = true;
+              this.dj_api_extend(branchTaskService.removeOrder, this.checkedList).then(res => {
+                this.$message('移除成功', 'success');
+                this.$refs.search.search();
+              }).catch(() => {
+                this.loading = false;
+              });
+            } else {
+              this.$message(' 分线状态发生变化，无法进行操作', 'warning');
+            }
+          });
+
         }
       },
       selectionChange(checkedList) {
