@@ -42,7 +42,7 @@ export default {
         title: '分线任务',
       },
       //组件路径
-      // component: 'views/prodManage/branchTask',
+      component: 'views/prodManage/branchTask',
     }
   ],
 };
