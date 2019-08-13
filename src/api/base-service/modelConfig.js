@@ -11,6 +11,8 @@ module.exports = [
   {name: 'productionLine', url: '/line'},
   {name: 'paperInStock', url: '/paperInStock'},
   {name: 'paperTable', url: '/report'},
-  {name: 'paperWarehouse', url: '/warehouse'},
+  {name: 'warehouse', url: '/warehouse'},
+  {name: 'paperWarehouse', url: '/paperWarehouse'},
   {name: 'innerUser', url: '/innerUser'},
+  {name: 'orderManage', url: '/producePlan'},
 ];

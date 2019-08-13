@@ -1,4 +1,5 @@
 import {paperWarehouse} from '../base-service/service';
+import {warehouse} from '../base-service/service';
 
 export default {
   getPaperWarehouse(data) {
@@ -9,9 +10,54 @@ export default {
         pageNo: 1
       });
     }
-    return paperWarehouse('/getWarehouseByAttribute.do', data);
+    return warehouse('/getWarehouseByAttribute.do', data);
   },
   getAreaAllList(data) {
-    return paperWarehouse('/getAreaAllList.do', data);
+    return warehouse('/getAreaAllList.do', data);
+  },
+  getTubeNumber(data) {
+    return paperWarehouse('/generateTubeNumber.do', data, 'get');
+  },
+  getReceiptId(data) {
+    return paperWarehouse('/generateNumber.do', data);
+  },
+  setAmount(data) {
+    return paperWarehouse('/setAmount.do', data);
+  },
+  editOutStorage(data) {
+    return paperWarehouse('/modifyPaperOutStorage.do', data);
+  },
+  editInStorage(data) {
+    return paperWarehouse('/modifyPaperInStorage.do', data);
+  },
+  getSupplierList(data) {
+    return paperWarehouse('/getSupplierList.do', data, 'get');
+  },
+  getPaperTube(data) {
+    return paperWarehouse('/getPaperTube.do', data, 'get');
+  },
+  getPaperOutStorage(data) {
+    return paperWarehouse('/getPaperOutStorage.do', data, 'get');
+  },
+  getPaperInStorage(data) {
+    return paperWarehouse('/getPaperInStorage.do', data, 'get');
+  },
+  listInStorage(data) {
+    return paperWarehouse('/getPaperInStorageList.do', data);
+  },
+  listOutStorage(data) {
+    return paperWarehouse('/getPaperOutStorageList.do', data);
+  },
+  exportPaperOutStorage(data) {
+    return paperWarehouse('/exportPaperOutStorage.do', data, 'download');
+  },
+  exportPaperInStorage(data) {
+    return paperWarehouse('/exportPaperInStorage.do', data, 'download');
+  },
+  addOutStorage(data) {
+    return paperWarehouse('/addPaperOutStorage.do', data);
+  },
+  addInStorage(data) {
+    return paperWarehouse('/addPaperInStorage.do', data);
   },
 };
