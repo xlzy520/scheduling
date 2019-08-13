@@ -5,6 +5,7 @@ import loopRoutes from './loopRoutes';
 import baseSetting from './modules/baseSetting';
 import prodManage from './modules/prodManage';
 import paperStockManage from './modules/paperStockManage';
+import statement from './modules/statement';
 
 const index = {
   path: 'index',
@@ -24,7 +25,8 @@ const routes = [
       index,
       baseSetting,
       prodManage,
-      paperStockManage
+      paperStockManage,
+      statement
     ]
   }
 ].map(route => {
