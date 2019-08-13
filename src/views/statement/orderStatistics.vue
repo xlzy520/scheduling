@@ -8,25 +8,126 @@
                 :columns="tableColumns"
                 :column-type="['index']"
                 @update-data="getList">
+        <div slot="btn">
+          <div class="ext-data">
+            <div class="ext-data-item">订单数: {{extData.orderNum}}</div>
+            <div class="ext-data-item">产品数量(片)：{{extData.prodNum}}</div>
+            <div class="ext-data-item">产品面积(㎡)：{{extData.area}}</div>
+          </div>
+        </div>
       </dj-table>
     </page-pane>
   </single-page>
 </template>
 <script>
-  const keys = {};
+  import dayjs from 'dayjs';
+  import orderStatisticsService from '../../api/service/orderStatistics';
   export default {
     name: 'orderStatistics',
     data: function () {
       return {
-        searchConfig: [],
+        searchConfig: [
+          {
+            label: '分发日期', key: 'timeRange', type: 'date', attrs: {
+              default: [dayjs(new Date()).subtract(7, 'day').format('YYYY-MM-DD'), dayjs(new Date()).format('YYYY-MM-DD')],
+              beforeChange: (val) => {
+                let _val = val;
+                if (val[0] && val[1]) {
+                  let day92 = dayjs(val[0]).add(92, 'day');
+                  if (day92.isBefore(dayjs(val[1]))) {
+                    this.$message('时间不能超过92天', 'error');
+                    _val = [val[0], day92.toDate()];
+                  }
+                }
+                return _val;
+              },
+              type: 'daterange',
+              pickerOptions: {
+                shortcuts: [
+                  {
+                    text: '今天',
+                    onClick(picker) {
+                      const end = new Date();
+                      const start = new Date();
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '近七天',
+                    onClick(picker) {
+                      const end = new Date();
+                      const start = new Date();
+                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '近30天',
+                    onClick(picker) {
+                      const end = new Date();
+                      const start = new Date();
+                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                      picker.$emit('pick', [start, end]);
+                    }
+                  }
+                ]
+              },
+              valueFormat: "yyyy-MM-dd"
+            }
+          },
+          {label: '材料名称', key: 'paperCode', type: 'input'},
+          {
+            key: 'fluteType',
+            label: '瓦楞楞型',
+            type: 'custom',
+            attrs: {
+              default: ['all']
+            },
+            component: {
+              props: ['value', 'default'],
+              render(h) {
+                // 全选逻辑
+                const input = (arr) => {
+                  let realArr;
+                  let lastValue = arr[arr.length - 1];
+                  if (lastValue === 'all') {
+                    realArr = [lastValue];
+                  } else {
+                    realArr = arr.filter(val => val !== 'all');
+                  }
+                  if (!arr.length) {
+                    realArr = ['all'];
+                  }
+                  console.log(realArr);
+                  this.$emit('input', realArr);
+                };
+                return (
+                  <dj-select value={this.value}
+                             collapse-tags
+                             type="multiple"
+                             default={this.default}
+                             options={this.$enum.fluteType}
+                             onInput={input}
+                  ></dj-select>
+                );
+              }
+            }
+          },
+        ],
         tableData: [],
         tableColumns: [
-          {
-            prop: 'col',
-            label: '第一列',
-          }
+          {label: '材料名称', prop: 'name'},
+          {label: '瓦楞楞型', prop: 'lengxing'},
+          {label: '订单数', prop: 'orderNum', sortable: true},
+          {label: '产品数量（片）', prop: 'prodNum', sortable: true},
+          {label: '产品面积（m²）', prop: 'area', sortable: true},
         ],
-        searchData: {}
+        searchData: {},
+        extData: {
+          orderNum: '',
+          prodNum: '',
+          area: ''
+        }
       };
     },
     created() {
@@ -40,18 +141,27 @@
           ...this.searchData,
           ...page
         };
-        console.log(post);
+        this.dj_api_extend(orderStatisticsService.list, post).then(res => {
+          this.tableData = res.list
+        })
       },
       search(query) {
         this.searchData = query;
         this.$refs.table.changePage(1);
       },
-      refresh() {
-        this.$refs.table.updateData();
-      },
     }
   };
 </script>
 <style lang="less" scoped>
-
+  .ext-data{
+    font-size:16px;
+    font-family:PingFang SC Medium,sans-serif;
+    font-weight:500;
+    color:rgba(48,49,51,1);
+    line-height:22px;
+    display: flex;
+    &-item{
+      margin-right: 20px;
+    }
+  }
 </style>
