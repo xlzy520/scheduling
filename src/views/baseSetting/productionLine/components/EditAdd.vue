@@ -37,6 +37,8 @@
       return {
         loading: false,
         columnNum: 4,
+        lineId: '',
+        lineNum: '',
         prodLineData: {
           jccs: {
             commonTilemodel: [],
@@ -395,13 +397,18 @@
                   return sum;
                 }, {});
                 params.commonTilemodel = params.commonTilemodel.join(',');
+                if (!this.dialogTypeIsAdd) {
+                  params.id = this.lineId;
+                  params.lineNum = this.lineNum;
+                  params.isEffected = 0;
+                }
                 const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
                 service(params).then(() => {
                   this.loading = false;
                   this.$emit('close');
                   const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
                   this.$message(message, 'success');
-                  this.$emit('getData');
+                  this.$emit('getData', this.lineNum);
                 }).catch(() => {
                   this.loading = false;
                 });

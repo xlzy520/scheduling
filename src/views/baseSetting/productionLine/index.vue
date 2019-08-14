@@ -29,6 +29,8 @@
       return {
         loading: false,
         statusLoading: false,
+
+        idMap: [],
         activeTab: '',
         tabsColumn: [],
         lineStatus: '1',
@@ -128,15 +130,16 @@
         }
       },
 
-      getData(data) {
+      getData(activeTab) {
         this.loading = true;
-        productionLineService.list(data).then((res) => {
+        productionLineService.list().then((res) => {
           let data = res.list;
+          this.idMap = data.map(v=>v.id);
           this.prodLineData = [];
           this.tabsColumn = [];
           if (data.length > 0) {
             data.map((v, index)=>{
-              this.activeTab = data[0].lineNum;
+              this.activeTab = activeTab || data[0].lineNum;
               this.tabsColumn.push({
                 label: v.lineNum + '号线',
                 value: v.lineNum,
@@ -198,6 +201,8 @@
           let copyData = this.$method.deepClone(this.prodLineData[this.activeTab - 1]);
           copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split(',');
           this.$refs.editAdd.prodLineData = copyData;
+          this.$refs.editAdd.lineId = this.idMap[this.activeTab - 1];
+          this.$refs.editAdd.lineNum = this.activeTab;
         });
       },
       close() {
