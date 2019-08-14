@@ -109,8 +109,8 @@
           id: this.tabsColumn[this.activeTab - 1].id
         }).then(() => {
           this.$message(text, 'success');
-          this.lineStatus = Math.pow(0, this.lineStatus);
-          this.getData();
+          this.tabsColumn[this.activeTab - 1].isEffected =  Math.pow(0, this.lineStatus);
+          this.tabClick();
         }).finally(()=>{
           this.statusLoading = false;
         });
