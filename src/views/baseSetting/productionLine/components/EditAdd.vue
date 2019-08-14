@@ -108,7 +108,7 @@
                 prop: 'lineSpeed',
                 label: '生产车速',
                 rules: [
-                  djForm.rules.required('生产车速不能为空'),
+                  djForm.rules.required('请输入生产车速'),
                   formRules.float
                 ],
               },
@@ -122,7 +122,7 @@
                 prop: 'changeorderMinLength',
                 label: '换纸最小米数',
                 rules: [
-                  djForm.rules.required('换纸最小米数不能为空'),
+                  djForm.rules.required('请输入换纸最小米数'),
                   formRules.number
                 ],
               },
@@ -136,7 +136,7 @@
                 prop: 'firstorderWasteWith',
                 label: '首单最小修边',
                 rules: [
-                  djForm.rules.required('首单最小修边不能为空'),
+                  djForm.rules.required('请输入首单最小修边'),
                   formRules.number
                 ],
               },
@@ -150,7 +150,7 @@
                 prop: 'lastorderMinLength',
                 label: '尾单最小米数',
                 rules: [
-                  djForm.rules.required('尾单最小米数不能为空'),
+                  djForm.rules.required('请输入尾单最小米数'),
                   formRules.number
                 ],
               },
@@ -166,7 +166,7 @@
                 prop: 'slimachNumbers',
                 label: '纵切机数',
                 rules: [
-                  djForm.rules.required('请选择相应的纵切机数'),
+                  djForm.rules.required('请输入请选择相应的纵切机数'),
                 ],
               },
               attrs: {
@@ -186,7 +186,7 @@
                     ]);
                   } else {
                     this.$set(this.formOptions.zqj[4].formItem, 'rules', [
-                      djForm.rules.required('双机压订单不能为空'),
+                      djForm.rules.required('请输入双机压订单'),
                       formRules.number5
                     ]);
                   }
@@ -199,7 +199,7 @@
                 prop: 'slimachWheelRows',
                 label: '压轮排数',
                 rules: [
-                  djForm.rules.required('请选择相应的压轮排数')
+                  djForm.rules.required('请输入请选择相应的压轮排数')
                 ],
               },
               attrs: {
@@ -218,7 +218,7 @@
                 prop: 'slimachWheelCount',
                 label: '单台压轮数',
                 rules: [
-                  djForm.rules.required('单台压轮数不能为空'),
+                  djForm.rules.required('请输入单台压轮数'),
                   formRules.number5
                 ],
               }
@@ -229,7 +229,7 @@
                 prop: 'slimachWheelSamesideSpace',
                 label: '压轮最小间距',
                 rules: [
-                  djForm.rules.required('压轮最小间距不能为空'),
+                  djForm.rules.required('请输入压轮最小间距'),
                   formRules.number5
                 ],
               },
@@ -250,7 +250,7 @@
                 prop: 'slimachKnifeCount',
                 label: '单台纵切刀数',
                 rules: [
-                  djForm.rules.required('单台纵切刀数不能为空'),
+                  djForm.rules.required('请输入单台纵切刀数'),
                   formRules.number5
                 ],
               },
@@ -261,7 +261,7 @@
                 prop: 'slimachKnifeSpace',
                 label: '纵切刀间距',
                 rules: [
-                  djForm.rules.required('纵切刀间距不能为空'),
+                  djForm.rules.required('请输入纵切刀间距'),
                   formRules.number5
                 ],
               }
@@ -272,7 +272,7 @@
                 prop: 'slimachKnifeChangetime',
                 label: '换单排刀时间',
                 rules: [
-                  djForm.rules.required('换单排刀时间不能为空'),
+                  djForm.rules.required('请输入换单排刀时间'),
                   formRules.number5
                 ],
               }
@@ -285,7 +285,7 @@
                 prop: 'partlineMachineWidth',
                 label: '分线机宽度',
                 rules: [
-                  djForm.rules.required('分线机宽度不能为空'),
+                  djForm.rules.required('请输入分线机宽度'),
                   formRules.float,
                   formRules.float5,
                 ],
@@ -297,7 +297,7 @@
                 prop: 'minCutLength',
                 label: '最小切长',
                 rules: [
-                  djForm.rules.required('最小切长不能为空'),
+                  djForm.rules.required('请输入最小切长'),
                   formRules.number5
                 ],
               },
@@ -327,7 +327,7 @@
                       prop: 'statckCount',
                       label: '最小叠单米数',
                       rules: [
-                        djForm.rules.required('最小叠单米数不能为空'),
+                        djForm.rules.required('请输入最小叠单米数'),
                         formRules.number,
                         formRules.number5
                       ],
@@ -350,7 +350,7 @@
                 prop: 'basketLength',
                 label: '吊篮长度',
                 rules: [
-                  djForm.rules.required('吊篮长度不能为空'),
+                  djForm.rules.required('请输入吊篮长度'),
                   formRules.number5
                 ],
               },
