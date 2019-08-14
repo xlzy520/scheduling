@@ -352,6 +352,13 @@
           {
             prop: paperKeys.paperStatus,
             label: '原纸状态',
+            formatter: (row, index, cur) => {
+              if (this.isEdit) {
+                return cur ? '已出库' : '已入库';
+              } else {
+                return ''
+              }
+            }
           },
         ],
         isEdit: false,
@@ -570,14 +577,14 @@
       //根据原纸编号获取相关原纸信息
       getPaperDetail(num) {
         let { paperCode, paperType, paperSize, warehouseAreaId, warehouseId } = paperKeys;
-        let keyList = [paperCode, paperType, paperSize, warehouseAreaId, warehouseId, 'id'];
+        let keyList = [paperCode, paperType, paperSize, warehouseAreaId, warehouseId];
         return paperKindService.list({pageNo: 1, pageSize: 10000000, paperNumber: num}).then(res=>{
           let list = res.list || [];
           let data = list.filter(obj=>obj[paperKeys.paperNumber] === num)[0];
           if (!data) {
             return Promise.reject();
           } else {
-            return cloneData(keyList, {}, data);
+            return cloneData(keyList, {paperVarietyId: data['id']}, data);
           }
         }).catch(()=>{
           this.$confirm('无对应原纸编号，请先设置原纸品种.', '提示', {
@@ -675,7 +682,7 @@
             tubeList: this.effectiveTableData.map((obj, index)=>{
               let _obj = {...obj};
               _obj['sortNumber'] = index + 1;
-              _obj['paperVarietyId'] = obj['id'];
+              // _obj['paperVarietyId'] = obj['id'];
               _obj[cylinderKeys.length] = Number(_obj[cylinderKeys.length]).toFixed(2);
               _obj[cylinderKeys.area] = Number(_obj[cylinderKeys.area]).toFixed(2);
               return _obj;
