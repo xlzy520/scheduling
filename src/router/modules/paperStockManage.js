@@ -23,7 +23,7 @@ export default {
     {
       path: 'paperStockDetailTable',
       meta: {
-        title: '明细表',
+        title: '原纸出入库明细表',
       },
       //组件路径
       component: 'views/paperStockManage/paperStockDetailTable',
@@ -31,7 +31,7 @@ export default {
     {
       path: 'paperStockSummaryTable',
       meta: {
-        title: '汇总表',
+        title: '原纸出入库汇总表',
       },
       //组件路径
       component: 'views/paperStockManage/paperStockSummaryTable',
@@ -39,7 +39,7 @@ export default {
     {
       path: 'paperStockTable',
       meta: {
-        title: '报表',
+        title: '原纸库存表',
       },
       //组件路径
       component: 'views/paperStockManage/paperStockTable',
