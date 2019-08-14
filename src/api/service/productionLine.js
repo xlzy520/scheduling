@@ -13,4 +13,7 @@ export default {
   showAllLine() {
     return productionLine('/showAllLine.do');
   },
+  modifyLine(data) {
+    return productionLine('/modifyLine.do', data);
+  },
 };
