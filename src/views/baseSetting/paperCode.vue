@@ -6,7 +6,7 @@
       :data="tableData"
       :columns="tableColumns"
       :column-type="['index']"
-      :total="pageTotal"
+      :total="pageTotal" height="100%"
       @update-data="getList"
     >
       <div slot="btn">

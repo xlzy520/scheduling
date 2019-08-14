@@ -4,7 +4,7 @@
       <dj-table
         :data="tableData"
         :columns="tableColumns"
-        :total="pageTotal"
+        :total="pageTotal" height="100%"
         v-loading="tableLoading"
       >
         <div slot="btn">

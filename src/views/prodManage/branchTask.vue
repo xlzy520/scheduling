@@ -8,6 +8,7 @@
       :column-type="['selection', 'index']"
       @selection-change="selectionChange"
       :total="pageTotal"
+      height="100%"
       @update-data="getTableData"
     >
       <div slot="btn">

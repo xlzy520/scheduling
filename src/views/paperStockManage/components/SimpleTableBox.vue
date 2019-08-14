@@ -7,6 +7,7 @@
         :columns="tableColumns"
         :column-type="['index']"
         :total="pageTotal"
+        height="100%"
         @update-data="pageChange"
       >
         <div slot="btn">
