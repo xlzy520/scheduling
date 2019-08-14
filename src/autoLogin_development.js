@@ -69,7 +69,7 @@ const autoLogin = () => {
   }).then(res => {
     let url = JSON.parse(res.data.content).data.url;
     let array = url.split('=');
-    return array[1];
+    return array[array.length - 1];
   }).catch((err) => {
     Message.error(err.message);
     throw new Error(err);
