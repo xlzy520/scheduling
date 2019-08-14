@@ -11,14 +11,14 @@
                 @update-data="getList">
         <div slot="btn">
           <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
-          <el-button type="primary">导出记录</el-button>
+          <el-button type="primary" @click="fileDownload">导出记录</el-button>
           <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
         </div>
       </dj-table>
     </page-pane>
-    <add-or-edit-dialog ref="addOrEditDialog" v-if="addOrEditDialogFlag" @close="addOrEditDialogFlag = false"></add-or-edit-dialog>
+    <add-or-edit-dialog ref="addOrEditDialog" v-if="addOrEditDialogFlag" @close="addOrEditDialogFlag = false" @success="refresh"></add-or-edit-dialog>
     <look-dialog ref="lookDialog" v-if="lookDialogFlag" @close="lookDialogFlag = false"></look-dialog>
-    <set-unit-price-dialog ref="setUnitPriceDialog" v-if="setUnitPriceDialogFlag" @close="setUnitPriceDialogFlag = false"></set-unit-price-dialog>
+    <set-unit-price-dialog ref="setUnitPriceDialog" v-if="setUnitPriceDialogFlag" @close="setUnitPriceDialogFlag = false" @success="refresh"></set-unit-price-dialog>
     <print-tag-dialog ref="printTagDialog" v-if="printTagDialogFlag" @close="printTagDialogFlag = false"></print-tag-dialog>
   </single-page>
 </template>
@@ -29,8 +29,7 @@
   import setUnitPriceDialog from './paperInStockModule/setUnitPriceDialog';
   import dayjs from 'dayjs';
   import { cylinderKeys } from "../../utils/system/constant/dataKeys";
-  import paperInStock from '../../api/service/paperInStock';
-  import SinglePage from "../../components/page/singlePage";
+  import paperWarehouseService from '../../api/service/paperWarehouse';
   export default {
     name: 'paperInStock',
     data: function () {
@@ -41,11 +40,13 @@
             key: cylinderKeys.storageTime,
             label: '入库时间',
             attrs: {
+              clearable: false,
+              valueFormat: 'yyyy-MM-dd',
               type: 'daterange',
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
-                console.log(dayjs(val[0]).valueOf());
-                console.log(dayjs(val[1]).valueOf());
+                // console.log(dayjs(val[0]).valueOf());
+                // console.log(dayjs(val[1]).valueOf());
                 let _val = val;
                 if (val[0] && val[1]) {
                   let towMonth = dayjs(val[0]).add(92, 'day');
@@ -53,6 +54,8 @@
                     this.$message('时间不能超过92天', 'error');
                     _val = [val[0], towMonth.toDate()];
                   }
+                  val[0] = dayjs(val[0]).format('YYYY-MM-DD');
+                  val[1] = dayjs(val[1]).format('YYYY-MM-DD');
                 }
                 return _val;
               },
@@ -69,7 +72,7 @@
           },
           {
             type: 'input',
-            key: cylinderKeys.paperSupplier,
+            key: cylinderKeys.paperSupplierName,
             label: '原纸供应商',
             atrrs: {
               maxlength: 30
@@ -80,8 +83,8 @@
             key: cylinderKeys.storageType,
             label: '入库类型',
             attrs: {
-              options: [{label: '全部', value: '0'}, ...this.$enum.storageType._arr],
-              default: '0'
+              options: [{label: '全部', value: ''}, ...this.$enum.storageType._arr],
+              default: ''
             }
           },
         ],
@@ -113,10 +116,13 @@
           {
             prop: cylinderKeys.storageTime,
             label: '入库时间',
-            width: 202
+            width: 202,
+            formatter(row, index, cur) {
+              return dayjs(cur).format('YYYY-MM-DD hh:mm:ss');
+            }
           },
           {
-            prop: cylinderKeys.paperSupplier,
+            prop: cylinderKeys.paperSupplierName,
             label: '原纸供应商',
             width: 193
           },
@@ -177,24 +183,37 @@
       };
     },
     created() {
-      this.tableData = [{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},{deliveryBillId: 11111, id: 'dsfsdf'},]
     },
     mounted() {
       this.$refs.search.search();
     },
     methods: {
+      refresh() {
+        this.$refs.table.updateData();
+      },
+      fileDownload() {
+        this.dj_api_extend(paperWarehouseService.exportPaperInStorage, this.searchData).then(res=>{
+          this.$method.fileDownload(res, `原纸入库表 ${dayjs().format('YYYYMMDD')}.xlsx`);
+        });
+      },
       getList(page) {
         let post = {
           ...this.searchData,
-          ...page
+          ...page,
+          // startTime: this.searchData[cylinderKeys.storageTime][0],
+          // endTime: this.searchData[cylinderKeys.storageTime][1],
         };
-        this.dj_api_extend(paperInStock.list, post).then(res=>{
+        this.dj_api_extend(paperWarehouseService.listInStorage, post).then(res=>{
           this.tableData = res.list || [];
           this.total = res.total || 0;
         });
       },
       search(query) {
-        this.searchData = query;
+        this.searchData = {
+          ...query,
+          startTime: query[cylinderKeys.storageTime][0],
+          endTime: dayjs(query[cylinderKeys.storageTime][1]).add(1, 'day').format('YYYY-MM-DD'),
+        };
         this.$refs.table.changePage(1);
       },
       openDialog(name, row) {
@@ -216,10 +235,7 @@
       //   });
       // }
     },
-    components: {
-      SinglePage,
-      addOrEditDialog, lookDialog, setUnitPriceDialog, printTagDialog}
-  };
+    components: {addOrEditDialog, lookDialog, setUnitPriceDialog, printTagDialog}};
 </script>
 <style lang="less" scoped>
 

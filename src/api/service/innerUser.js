@@ -1,4 +1,4 @@
-import {innerUser} from '../base-service/service';
+import {innerUser, paperWarehouse} from '../base-service/service';
 
 export default {
   getToken(params) {

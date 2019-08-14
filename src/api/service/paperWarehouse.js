@@ -60,4 +60,34 @@ export default {
   addInStorage(data) {
     return paperWarehouse('/addPaperInStorage.do', data);
   },
+  getDepartment(data) {
+    return paperWarehouse('/getDepartment.do', data, 'get').then(res=>{
+      return (res.list || []).map(obj=>{
+        return {
+          label: obj.name,
+          value: obj.id
+        };
+      })
+    });
+  },
+  getRole(data) {
+    return paperWarehouse('/getRole.do', data, 'get').then(res=>{
+      return (res.list || []).map(obj=>{
+        return {
+          label: obj.name,
+          value: obj.id
+        };
+      })
+    });
+  },
+  getMember(data) {
+    return paperWarehouse('/getMember.do', data, 'get').then(res=>{
+      return (res.list || []).map(obj=>{
+        return {
+          label: obj.name,
+          value: obj.id
+        };
+      })
+    });
+  },
 };

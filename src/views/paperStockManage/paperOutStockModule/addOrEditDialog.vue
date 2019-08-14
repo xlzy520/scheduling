@@ -11,11 +11,14 @@
       <base-table ref="table"
                   :data="tableData"
                   max-height="370"
+                  :lazy-total="tableMaxLength"
+                  :lazy-remote="()=>getEmptyData(10)"
+                  @row-click="rowClick"
                   :columns="tableColumns"
                   :column-type="['index']">
       </base-table>
     </dj-dialog>
-    <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" @close="selectUsePersonFlag = false"></select-use-person>
+    <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" @close="selectUsePersonFlag = false" @selectPerson="changeUserPerson"></select-use-person>
   </div>
 </template>
 <script>
@@ -25,6 +28,8 @@
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import selectUsePerson from './selectUsePerson';
   import {Scanner} from "../../../utils";
+  import paperWarehouseService from '../../../api/service/paperWarehouse';
+
 
   export default {
     name: 'addOrEditInStock',
@@ -32,7 +37,7 @@
       return {
         selectUsePersonFlag: false,
         formData: {},
-        tableData: [{}],
+        tableData: [],
         tableColumns: [
           {
             prop: 'operate',
@@ -57,19 +62,30 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 123,
+            width: 150,
             propsHandler: (props) => {
               const beforeEnter = (val, cb, props) => {
-                console.log('beforeEnter对接接口');
-                console.log('beforeEnter接口参数', props);
-                if (props.index === this.tableData.length - 1) {
-                  this.tableData.push({});
-                  this.$nextTick(()=>{
-                    cb();
-                  });
+                let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val)[0];
+                if (sameRow && sameRow[paperKeys.paperCode]) {
+                  this.$message('该纸筒编号已存在', 'error');
                 } else {
+                  this.getTubeByNumber(val).then(obj=>{
+                    if (obj[paperKeys.paperStatus]) {
+                      this.$message('该纸筒编号已出库', 'error');
+                    } else {
+                      this.$set(this.tableData, props.index, obj);
+                    }
+                  });
                   cb();
                 }
+                // if (props.index === this.tableData.length - 1) {
+                //   this.tableData.push({});
+                //   this.$nextTick(()=>{
+                //     cb();
+                //   });
+                // } else {
+                //   cb();
+                // }
               };
               return {...props, beforeEnter}
             },
@@ -121,13 +137,17 @@
             width: 121,
           },
           {
-            prop: cylinderKeys.paperSupplier,
+            prop: cylinderKeys.paperSupplierName,
             label: '原纸供应商',
             width: 156,
           },
         ],
         isEdit: false,
-        scanner: undefined
+        scanner: undefined,
+        activeIndex: undefined,
+        tableMaxLength: 150,
+        member_arr: [],
+        department_arr: [],
       };
     },
     computed: {
@@ -144,17 +164,37 @@
             }
           },
           {
+            // type: this.isEdit ? 'input' : 'dj-cascader',
             type: 'custom',
             formItem: {
-              prop: 'department/person',
+              // prop: this.isEdit ? 'department-person-name' : 'department-person',
+              prop: 'department-person-name',
               label: '领用部门/领用人'
             },
-            render: (h, {props: {value}}) => {
+            attrs: {
+              props: {
+                checkStrictly: false,
+              },
+              disabled: this.isEdit,
+              apiArray: [()=>this.dj_api_extend(paperWarehouseService.getDepartment), this.getRole, this.getMember],
+            },
+            render: (h, {props: {value, disabled}}) => {
               return (
-                <el-input value={value}>
-                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>this.openSelectUsePerson()}></i>
+                <el-input value={value} disabled={disabled}>
+                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled&&this.openSelectUsePerson()}></i>
                 </el-input>
               );
+            }
+          },
+          {
+            type: 'input',
+            formItem: {
+              prop: cylinderKeys.useGroup,
+              label: '领用单元',
+              // rules: [rules.required('领用单元不能为空')]
+            },
+            attrs: {
+              disabled: this.isEdit
             }
           },
           // {
@@ -207,13 +247,18 @@
           //   }
           // },
           {
-            type: 'input',
+            type: this.isEdit ? 'input' : 'dj-cascader',
             formItem: {
-              prop: cylinderKeys.forkliftDriver,
+              prop: this.isEdit ? cylinderKeys.forkliftDriverName : 'forkliftDriver',
               label: '叉车员'
             },
             attrs: {
-              disabled: this.isEdit
+              showAllLevels: false,
+              props: {
+                checkStrictly: false,
+              },
+              disabled: this.isEdit,
+              apiArray: [this.getDepartment, this.getRole, this.getMember],
             }
           },
           {
@@ -226,7 +271,7 @@
               disabled: true
             },
             computed: () => {
-              return this.tableData.reduce((sum, obj) => {
+              return this.effectiveTableData.reduce((sum, obj) => {
                 let weight = Number(obj[cylinderKeys.weight]) || 0;
                 sum += weight;
                 return sum;
@@ -243,7 +288,7 @@
               disabled: true
             },
             computed: () => {
-              return this.tableData.length;
+              return this.effectiveTableData.length;
             }
           },
           {
@@ -255,8 +300,14 @@
             attrs: {
               type: 'textarea',
               height: 100,
+              // reg: /.*/,
               maxlength: 50,
-            }
+            },
+            // listeners: {
+            //   input(val) {
+            //     console.log(val);
+            //   }
+            // }
           },
           // {
           //   type: 'input',
@@ -266,20 +317,111 @@
           //   }
           // },
         ];
+      },
+      effectiveTableData() {
+        return this.tableData.filter(obj=>{
+          let arr = [cylinderKeys.cylinderNo, paperKeys.paperGram, cylinderKeys.weight, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
+          return arr.every(key=>{
+            return !['', undefined, null].includes(obj[key]);});
+        });
       }
     },
     created() {
       this.scanner = new Scanner();
       this.scanner.listener(this.scannerAdd);
+      this.getEmptyData(10).then(res=>{
+        this.tableData.push(...res);
+      });
+      this.addListener(window, 'keyup', this.shortcut);
     },
     destroyed() {
       this.scanner.end();
     },
     methods: {
+      getDepartment() {
+        return this.dj_api_extend(paperWarehouseService.getDepartment).then(arr=>{
+          this.department_arr = arr;
+          return arr;
+        });
+      },
+      getRole(val) {
+        return this.dj_api_extend(paperWarehouseService.getRole, {id:val});
+      },
+      getMember(val) {
+        return this.dj_api_extend(paperWarehouseService.getMember, {id:val}).then(arr=>{
+          this.member_arr = arr;
+          return arr;
+        });
+      },
+      //获取纸筒信息
+      getTubeByNumber(num) {
+        return this.dj_api_extend(paperWarehouseService.getPaperTube, {paperTubeNumber: num})
+      },
+      //获取单据编号
+      getReceiptId() {
+        this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType:"YZC"}).then(res=>{
+          this.$set(this.formData, cylinderKeys.receiptNumber, res);
+        })
+      },
+      rowClick(row) {
+        let index = this.tableData.findIndex(obj=>obj === row);
+        if (index !== 1) {
+          this.activeIndex = index;
+        }
+      },
+      shortcut(e) {
+        let keyCode = e.keyCode;
+        if (this.activeIndex !== undefined) {
+          if (keyCode === 13 && e.target.tagName !== 'INPUT') {
+            if (this.tableData.length >= this.tableMaxLength && !Object.keys(this.tableData[this.tableData.length - 1]).length) {
+              this.tableData.pop();
+            }
+            if (this.tableData.length < this.tableMaxLength) {
+              this.tableData.splice(this.activeIndex + 1, 0, {});
+            }
+          }
+        }
+      },
+      getEmptyData(num) {
+        let reset = this.tableMaxLength - this.tableData.length;
+        return new Promise(resolve => {
+          let data = [];
+          for (let i = 0; i < (reset > num ? num : reset); i++) {
+            data.push({});
+          }
+          // setTimeout(()=>{
+          resolve(data);
+          // }, 8000);
+        });
+        // let data = [];
+        // for (let i = 0; i < num; i++) {
+        //   data.push({});
+        // }
+        // return Promise.resolve(data);
+      },
       scannerAdd(text) {
         if (text) {
-          this.tableData.push({});
-          console.log('扫码枪新增')
+          console.log('扫码枪新增');
+          let index_r = [...this.tableData].reverse().findIndex(obj=>Object.keys(obj).length);
+          let index = index_r === -1 ? 0 : this.tableData.length - index_r;
+          if (index > this.tableMaxLength - 1) {
+            this.$message('数据超出最大长度', 'error');
+            return;
+          }
+          this.getTubeByNumber(text).finally((obj = {})=>{
+            if (obj[paperKeys.paperStatus]) {
+              this.$message('该纸筒编号已出库', 'error');
+              return;
+            }
+            if (index < this.tableMaxLength - 1) {
+              if (this.tableData.length === this.tableMaxLength) {
+                this.tableData.pop();
+              }
+              this.tableData.splice(index, 0, obj);
+            } else {
+              this.tableData.splice(index, 1, obj);
+            }
+          });
         }
       },
       openSelectUsePerson() {
@@ -289,17 +431,81 @@
         });
       },
       colRule(item) {
-        return [cylinderKeys.remark, 'tag'].includes(item.formItem.prop) ? 24 : 8;
+        return 8;
       },
       confirm() {
-        console.log(this.formData);
-        this.$refs.form.validate();
+        this.$refs.form.validate(()=>{
+          if (!this.effectiveTableData.length) {
+            this.$message('纸筒信息不能为空', 'error');
+            return;
+          }
+          let message;
+          let api;
+          let post = {
+            ...this.formData,
+            tubeList: this.effectiveTableData.map((obj, index)=>{
+              let _obj = {...obj};
+              _obj['sortNumber'] = index + 1;
+              return _obj;
+            })
+          };
+          let recipient = this.formData['department-person'];
+          if (Array.isArray(recipient) && recipient.length) {
+            let id = recipient[recipient.length - 1];
+            post[cylinderKeys.usePerson] = id;
+            post[cylinderKeys.usePersonName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
+            post[cylinderKeys.useDepartment] = recipient[0];
+            post[cylinderKeys.useDepartmentName] = this.department_arr.filter(obj=>obj['value'] === recipient[0])[0]['label'];
+          }
+          let forkliftDriver_arr = post['forkliftDriver'];
+          if (Array.isArray(forkliftDriver_arr) && forkliftDriver_arr.length) {
+            let id = forkliftDriver_arr[forkliftDriver_arr.length - 1];
+            post[cylinderKeys.forkliftDriverId] = id;
+            post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
+          }
+          if (!this.isEdit) {
+            message = '新增成功';
+            api = paperWarehouseService.addOutStorage;
+          } else {
+            message = '编辑成功';
+            api = paperWarehouseService.editOutStorage;
+            // post.id = this.formData.id;
+          }
+          this.dj_api_extend(api, post).then((res) => {
+            this.$emit('success');
+            this.$message(message);
+            this.close();
+          });
+        });
       },
       open(param) {
         this.$refs.dialog.open();
         if (param) {
           this.isEdit = true;
+          this.dj_api_extend(paperWarehouseService.getPaperOutStorage, param).then(res=>{
+            res['department-person-name'] = `${res[cylinderKeys.useDepartmentName]} / ${res[cylinderKeys.usePersonName]}`;
+            this.formData = Object.assign({}, this.formData, res);
+            this.tableData = res.tubeList || [];
+            this.getEmptyData(10).then(arr=>{
+              this.tableData = this.tableData.concat(arr);
+            });
+          });
+        } else {
+          this.getReceiptId();
         }
+      },
+      changeUserPerson(arr) {
+        console.log(arr);
+        let data = {};
+        data[cylinderKeys.usePerson] = arr[1]['value'];
+        data[cylinderKeys.usePersonName] = arr[1]['label'];
+        data[cylinderKeys.useDepartment] = arr[0]['value'];
+        data[cylinderKeys.useDepartmentName] = arr[0]['label'];
+        data['department-person-name'] = arr.reduce((str, obj, index)=>{
+          str += (index ? ' / ' : '') + obj.label;
+          return str;
+        }, '');
+        Object.assign(this.formData, data);
       },
       close() {
         this.$refs.dialog.close();

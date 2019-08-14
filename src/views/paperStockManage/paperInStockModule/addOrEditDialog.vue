@@ -23,6 +23,7 @@
   import {djForm} from 'djweb';
   import paperKindService from '../../../api/service/paperKind';
   import paperWarehouseService from '../../../api/service/paperWarehouse';
+
   const {rules} = djForm;
   import tableInput from './tableInput'
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
@@ -141,7 +142,7 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 100
+            width: 150
           },
           {
             prop: paperKeys.paperNumber,
@@ -158,10 +159,11 @@
               };
               const beforeEnter = (val, cb) => {
                 if (val) {
-                  Promise.all([this.getPaperDetail(val), this.getCylinderId()]).then(result=>{
+                  Promise.all([this.getPaperDetail(val), this.getCylinderId(props.row)]).then(result=>{
                     let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
                     delete result[0][paperKeys.warehouseAreaId];
-                    Object.assign(props.row, result[0], result[1]);
+                    result[0][cylinderKeys.cylinderNo] = result[1];
+                    Object.assign(props.row, result[0]);
                     updateLength.bind(this)(props.row);
                     this.$nextTick(()=>{
                       Object.assign(props.row, _obj);
@@ -177,10 +179,11 @@
             listeners: {
               select: (obj, props) => {
                 if (obj) {
-                  Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId()]).then(result=>{
+                  Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId(props.row)]).then(result=>{
                     let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
                     delete result[0][paperKeys.warehouseAreaId];
-                    Object.assign(props.row, result[0], result[1]);
+                    result[0][cylinderKeys.cylinderNo] = result[1];
+                    Object.assign(props.row, result[0]);
                     updateLength.bind(this)(props.row);
                     this.$nextTick(()=>{
                       Object.assign(props.row, _obj);
@@ -250,7 +253,7 @@
               //     cb();
               //   }
               // };
-              return {...props, reg: this.$reg.FIGURE_REGEXP}
+              return {...props, reg: this.$reg.getFloatReg(3)}
             },
             component: tableInput,
             listeners: {
@@ -275,7 +278,7 @@
               //   value = value.toFixed(2);
               // }
               if (cur) {
-                cur = cur.toFixed(2);
+                cur = Number(cur).toFixed(2);
               }
               return cur;
             }
@@ -296,7 +299,7 @@
               // }
               // return value;
               if (cur) {
-                cur = cur.toFixed(2);
+                cur = Number(cur).toFixed(2);
               }
               return cur;
             }
@@ -355,7 +358,9 @@
         readyTable: false,
         activeIndex: undefined,
         warehouseList: [],
-        tableMaxLength: tableMaxLength
+        tableMaxLength: tableMaxLength,
+        supplier_arr: [],
+        member_arr: [],
       };
     },
     computed: {
@@ -372,13 +377,23 @@
             }
           },
           {
-            type: 'input',
+            type: 'select',
             formItem: {
-              prop: cylinderKeys.paperSupplier,
+              prop: 'supplier',
               label: '原纸供应商'
             },
             attrs: {
-              disabled: this.isEdit
+              filterable: true,
+              disabled: this.isEdit,
+              bindObject: true,
+              keyMap: {
+                value: cylinderKeys.paperSupplierId,
+                label: cylinderKeys.paperSupplierName,
+              },
+              options: this.supplier_arr,
+              // type: 'service',
+              // valueKey: 'label',
+              // service: this.getSupplierList
             }
           },
           {
@@ -401,6 +416,9 @@
               rules: [rules.required('入库类型不能为空')]
             },
             attrs: {
+              keyMap: {
+                value: 'label'
+              },
               disabled: this.isEdit,
               options: this.$enum.storageType._arr
             }
@@ -418,17 +436,18 @@
             }
           },
           {
-            type: 'dj-cascader',
+            type: this.isEdit ? 'input' : 'dj-cascader',
             formItem: {
-              prop: cylinderKeys.forkliftDriver,
+              prop: this.isEdit ? cylinderKeys.forkliftDriverName : 'forkliftDriver',
               label: '叉车员'
             },
             attrs: {
+              showAllLevels: false,
               props: {
-                checkStrictly: false
+                checkStrictly: false,
               },
               disabled: this.isEdit,
-              apiArray: []
+              apiArray: [()=>this.dj_api_extend(paperWarehouseService.getDepartment), this.getRole, this.getMember],
             }
           },
           {
@@ -463,10 +482,23 @@
           },
           {
             type: 'input',
+            // type: 'custom',
             formItem: {
               prop: cylinderKeys.remark,
               label: '备注信息'
             },
+            // component: {
+            //   props: ['value'],
+            //   render(h) {
+            //     const input = (val) => {
+            //       console.log(val);
+            //       this.$emit('input', val)
+            //     };
+            //     return (
+            //       <dj-input value={this.value} type="textarea" height={100} maxlength={50} on-input={input}></dj-input>
+            //     );
+            //   },
+            // },
             attrs: {
               type: 'textarea',
               height: 100,
@@ -488,6 +520,7 @@
         this.tableData.push(...res);
       });
       this.getAllWarehouse();
+      this.getSupplierList();
       this.addListener(window, 'keyup', this.shortcutCopy);
     },
     mounted() {
@@ -497,11 +530,35 @@
       });
     },
     methods: {
+      getRole(val) {
+        return this.dj_api_extend(paperWarehouseService.getRole, {id:val});
+      },
+      getMember(val) {
+        return this.dj_api_extend(paperWarehouseService.getMember, {id:val}).then(arr=>{
+          this.member_arr = arr;
+          return arr;
+        });
+      },
+      getSupplierList() {
+        this.dj_api_extend(paperWarehouseService.getSupplierList).then(res=>{
+          this.supplier_arr = Object.keys(res).reduce((arr, key)=>{
+            arr.push(res[key]);
+            return arr;
+          }, [])
+        });
+      },
+      //获取单据编号
+      getReceiptId() {
+        this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType:"YZR"}).then(res=>{
+          this.$set(this.formData, cylinderKeys.receiptNumber, res);
+        })
+      },
       //获取纸筒编号
-      getCylinderId() {
-        let data = {};
-        data[cylinderKeys.cylinderNo] = 213435345435;
-        return Promise.resolve(data);
+      getCylinderId(row) {
+        if (row[cylinderKeys.cylinderNo]) {
+          return Promise.resolve(row[cylinderKeys.cylinderNo]);
+        }
+        return this.dj_api_extend(paperWarehouseService.getTubeNumber);
       },
       //获取所有原纸编号
       getPaperNoList(val) {
@@ -513,7 +570,7 @@
       //根据原纸编号获取相关原纸信息
       getPaperDetail(num) {
         let { paperCode, paperType, paperSize, warehouseAreaId, warehouseId } = paperKeys;
-        let keyList = [paperCode, paperType, paperSize, warehouseAreaId, warehouseId];
+        let keyList = [paperCode, paperType, paperSize, warehouseAreaId, warehouseId, 'id'];
         return paperKindService.list({pageNo: 1, pageSize: 10000000, paperNumber: num}).then(res=>{
           let list = res.list || [];
           let data = list.filter(obj=>obj[paperKeys.paperNumber] === num)[0];
@@ -541,8 +598,8 @@
             delete cloneObj[paperKeys.warehouseAreaId];
             this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
             if (cloneObj[cylinderKeys.cylinderNo]) {
-              this.getCylinderId().then(res=>{
-                Object.assign(cloneObj, res);
+              this.getCylinderId(cloneObj).then(res=>{
+                cloneObj[cylinderKeys.cylinderNo] = res;
               })
             }
             this.$nextTick(()=>{
@@ -556,8 +613,14 @@
             //   let _obj = this.$method.deepClone(this.tableData[this.activeIndex]);
             //   this.tableData.splice(this.activeIndex + 1, 0, {..._obj, ...res});
             // });
-          } else if (keyCode === 13 && e.target.tagName !== 'INPUT' && this.tableData.length < tableMaxLength) {
-            this.tableData.splice(this.activeIndex + 1, 0, {});
+          } else if (keyCode === 13 && e.target.tagName !== 'INPUT') {
+            // this.tableData.splice(this.activeIndex + 1, 0, {});
+            if (this.tableData.length >= this.tableMaxLength && !Object.keys(this.tableData[this.tableData.length - 1]).length) {
+              this.tableData.pop();
+            }
+            if (this.tableData.length < this.tableMaxLength) {
+              this.tableData.splice(this.activeIndex + 1, 0, {});
+            }
           }
         }
       },
@@ -599,12 +662,67 @@
       },
       confirm() {
         console.log(this.formData);
-        this.$refs.form.validate();
+        this.$refs.form.validate(()=>{
+          if (!this.effectiveTableData.length) {
+            this.$message('纸筒信息不能为空', 'error');
+            return;
+          }
+          let message;
+          let api;
+          let post = {
+            ...this.formData,
+            ...this.formData['supplier'],
+            tubeList: this.effectiveTableData.map((obj, index)=>{
+              let _obj = {...obj};
+              _obj['sortNumber'] = index + 1;
+              _obj['paperVarietyId'] = obj['id'];
+              _obj[cylinderKeys.length] = Number(_obj[cylinderKeys.length]).toFixed(2);
+              _obj[cylinderKeys.area] = Number(_obj[cylinderKeys.area]).toFixed(2);
+              return _obj;
+            })
+          };
+          let forkliftDriver_arr = post['forkliftDriver'];
+          if (Array.isArray(forkliftDriver_arr) && forkliftDriver_arr.length) {
+            let id = forkliftDriver_arr[forkliftDriver_arr.length - 1];
+            post[cylinderKeys.forkliftDriverId] = id;
+            post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
+          }
+          if (!this.isEdit) {
+            message = '新增成功';
+            api = paperWarehouseService.addInStorage;
+          } else {
+            message = '编辑成功';
+            api = paperWarehouseService.editInStorage;
+            // post.id = this.formData.id;
+          }
+          this.dj_api_extend(api, post).then((res) => {
+            this.$emit('success');
+            this.$message(message);
+            this.close();
+          });
+        });
       },
       open(param) {
         this.$refs.dialog.open();
         if (param) {
           this.isEdit = true;
+          this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
+            res['supplier'] = {supplierId: res[cylinderKeys.paperSupplierId], supplierName: res[cylinderKeys.paperSupplierName]};
+            this.formData = Object.assign({}, this.formData, res);
+            let tableData = res.tubeList || [];
+            let _arr = tableData.map(obj=>this.$method.cloneData([paperKeys.warehouseAreaId], {}, obj));
+            this.tableData = tableData;
+            this.$nextTick(()=>{
+              this.tableData.map((obj, index)=>{
+                Object.assign(obj, _arr[index]);
+              });
+            });
+            this.getEmptyData(10).then((arr)=>{
+              this.tableData = this.tableData.concat(arr);
+            });
+          });
+        } else {
+          this.getReceiptId();
         }
       },
       close() {

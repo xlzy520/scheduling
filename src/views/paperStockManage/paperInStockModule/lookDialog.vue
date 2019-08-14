@@ -24,6 +24,7 @@
 <script>
   import {djForm} from 'djweb';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
+  import paperWarehouseService from '../../../api/service/paperWarehouse';
   const {rules} = djForm;
   export default {
     name: 'lookDialog',
@@ -38,7 +39,7 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.paperSupplier,
+              prop: cylinderKeys.paperSupplierName,
               label: '原纸供应商'
             }
           },
@@ -63,7 +64,7 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.forkliftDriver,
+              prop: cylinderKeys.forkliftDriverName,
               label: '叉车员'
             }
           },
@@ -98,7 +99,7 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 100
+            width: 150
           },
           {
             prop: paperKeys.paperNumber,
@@ -141,12 +142,12 @@
             width: 97,
           },
           {
-            prop: paperKeys.warehouseId,
+            prop: paperKeys.warehouseName,
             label: '仓库',
             width: 139,
           },
           {
-            prop: paperKeys.warehouseAreaId,
+            prop: paperKeys.warehouseAreaName,
             label: '库区',
             width: 121,
           },
@@ -161,7 +162,10 @@
           },
           {
             prop: paperKeys.paperStatus,
-            label: '原纸状态'
+            label: '原纸状态',
+            formatter(row, index, cur) {
+              return cur ? '已出库' : '已入库';
+            }
           },
         ],
         recordData: [],
@@ -181,6 +185,10 @@
       },
       open(param) {
         this.$refs.dialog.open();
+        this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
+          this.formData = res;
+          this.tableData = res.tubeList;
+        });
       },
       close() {
         this.$refs.dialog.close();

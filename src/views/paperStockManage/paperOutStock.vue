@@ -5,6 +5,7 @@
       <dj-table ref="table"
                 :data="tableData"
                 height="100%"
+                :total="total"
                 :columns="tableColumns"
                 :column-type="['index']"
                 @update-data="getList">
@@ -15,7 +16,7 @@
         </div>
       </dj-table>
     </page-pane>
-    <add-or-edit-dialog ref="addOrEditDialog" v-if="addOrEditDialogFlag" @close="addOrEditDialogFlag = false"></add-or-edit-dialog>
+    <add-or-edit-dialog ref="addOrEditDialog" v-if="addOrEditDialogFlag" @close="addOrEditDialogFlag = false" @success="refresh"></add-or-edit-dialog>
     <look-dialog ref="lookDialog" v-if="lookDialogFlag" @close="lookDialogFlag = false"></look-dialog>
   </single-page>
 </template>
@@ -24,6 +25,7 @@
   import {cylinderKeys} from "../../utils/system/constant/dataKeys";
   import addOrEditDialog from './paperOutStockModule/addOrEditDialog';
   import lookDialog from './paperOutStockModule/lookDialog';
+  import paperWarehouseService from '../../api/service/paperWarehouse';
 
   export default {
     name: 'paperOutStock',
@@ -32,9 +34,11 @@
         searchConfig: [
           {
             type: 'date',
-            key: cylinderKeys.storageTime,
-            label: '入库时间',
+            key: cylinderKeys.outStockTime,
+            label: '出库时间',
             attrs: {
+              clearable: false,
+              valueFormat: 'yyyy-MM-dd',
               type: 'daterange',
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
@@ -45,6 +49,8 @@
                     this.$message('时间不能超过92天', 'error');
                     _val = [val[0], towMonth.toDate()];
                   }
+                  val[0] = dayjs(val[0]).format('YYYY-MM-DD');
+                  val[1] = dayjs(val[1]).format('YYYY-MM-DD');
                 }
                 return _val;
               },
@@ -64,8 +70,8 @@
             key: cylinderKeys.storageType,
             label: '出库类型',
             attrs: {
-              options: [{label: '全部', value: '0'}, ...this.$enum.outStockType._arr],
-              default: '0'
+              options: [{label: '全部', value: ''}, ...this.$enum.outStockType._arr],
+              default: ''
             }
           },
         ],
@@ -94,6 +100,9 @@
             prop: cylinderKeys.storageTime,
             label: '出库时间',
             width: 224,
+            formatter(row, index, cur) {
+              return dayjs(cur).format('YYYY-MM-DD hh:mm:ss');
+            }
           },
           {
             prop: cylinderKeys.usePerson,
@@ -149,30 +158,45 @@
           },
         ],
         searchData: {},
+        total: 0,
         isShowMoney: true,
         addOrEditDialogFlag: false,
         lookDialogFlag: false,
       };
     },
     created() {
-      this.tableData = [{}]
+      // this.tableData = [{}]
     },
     mounted() {
       this.$refs.search.search();
     },
     methods: {
+      refresh() {
+        this.$refs.table.updateData();
+      },
       fileDownload() {
-        console.log('调用下载接口，获取下载路径');
+        this.dj_api_extend(paperWarehouseService.exportPaperOutStorage, this.searchData).then(res=>{
+          this.$method.fileDownload(res, `原纸出库表 ${dayjs().format('YYYYMMDD')}.xlsx`);
+        });
       },
       getList(page) {
         let post = {
           ...this.searchData,
-          ...page
+          ...page,
+          // startTime: this.searchData[cylinderKeys.outStockTime][0],
+          // endTime: this.searchData[cylinderKeys.outStockTime][1],
         };
-        console.log(post);
+        this.dj_api_extend(paperWarehouseService.listOutStorage, post).then(res=>{
+          this.tableData = res.list || [];
+          this.total = res.total || 0;
+        });
       },
       search(query) {
-        this.searchData = query;
+        this.searchData = {
+          ...query,
+          startTime: query[cylinderKeys.outStockTime][0],
+          endTime: dayjs(query[cylinderKeys.outStockTime][1]).add(1, 'day').format('YYYY-MM-DD'),
+        };
         this.$refs.table.changePage(1);
       },
       openDialog(name, row) {

@@ -16,6 +16,7 @@
 <script>
   import {cylinderKeys, paperKeys} from "../../../utils/system/constant/dataKeys";
   import printTag from './printTag';
+  import paperWarehouseService from '../../../api/service/paperWarehouse';
 
   export default {
     name: 'printTagDialog',
@@ -57,53 +58,6 @@
       };
     },
     created() {
-      this.tableData = [
-        {
-          paperTubeNumber: 'TD324234432424',
-          paperType: 1,
-          gram: 23,
-          paperCode: '32456434323',
-          paperSize: 1800,
-          weight: 'sadasdgdwsww',
-          paperSupplier: '高威'
-        },
-        {
-          paperTubeNumber: 'TD000000000000',
-          paperType: 2,
-          gram: 63,
-          paperCode: 'dsfdsfdsfery',
-          paperSize: 2100,
-          weight: '2334',
-          paperSupplier: '高威2'
-        },
-        {
-          paperTubeNumber: 'TD000000000000',
-          paperType: 2,
-          gram: 63,
-          paperCode: 'dsfdsfdsfery',
-          paperSize: 2100,
-          weight: '2334',
-          paperSupplier: '高威2'
-        },
-        {
-          paperTubeNumber: 'TD000000000000',
-          paperType: 2,
-          gram: 63,
-          paperCode: 'dsfdsfdsfery',
-          paperSize: 2100,
-          weight: '2334',
-          paperSupplier: '高威2'
-        },
-        {
-          paperTubeNumber: 'TD000000000000',
-          paperType: 2,
-          gram: 63,
-          paperCode: 'dsfdsfdsfery',
-          paperSize: 2100,
-          weight: '2334',
-          paperSupplier: '高威2'
-        }
-      ];
     },
     methods: {
       selectionChange(selectList) {
@@ -121,6 +75,9 @@
       },
       open(param) {
         this.$refs.dialog.open();
+        this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
+          this.tableData = res.tubeList;
+        });
       },
       close() {
         this.$refs.dialog.close();

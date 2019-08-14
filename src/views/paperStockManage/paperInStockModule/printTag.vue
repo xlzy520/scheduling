@@ -7,7 +7,7 @@
           <p class="fl">原纸类型：{{$enum.paperType._swap[item[paperKeys.paperType]].label}}</p>
           <p class="fl">门幅：{{item[paperKeys.paperSize]}}</p>
         </div>
-        <p>供应商：{{item[cylinderKeys.paperSupplier]}}</p>
+        <p>供应商：{{item[cylinderKeys.paperSupplierName]}}</p>
         <div class="clearfix">
           <canvas ref="canvas" width="152" height="152" class="qrcode fl"></canvas>
           <div class="fl">

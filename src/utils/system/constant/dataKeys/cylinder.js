@@ -16,13 +16,16 @@ export default {
   totalAmount: 'totalNumber', //总件数
   totalMoney: 'totalAmount', //总金额
   remark: 'note', //备注信息
-  forkliftDriver: 'forkliftWorker', //叉车员
+  forkliftDriverId: 'forkliftWorker', //叉车员
+  forkliftDriverName: 'forkliftWorkerName', //叉车员姓名
   weight: 'weight', //重量
   length: 'length', //长度
   area: 'area', //面积
   unitPrice: 'unitPrice', //单价
   money: 'amount', //金额
   usePerson: 'recipient', //领用人
+  usePersonName: 'recipientName', //领用人名称
   useDepartment: 'receiveDepartment', //领用部门
+  useDepartmentName: 'receiveDepartmentName', //领用部门
   useGroup: 'receiveTeam', //领用班组
 };

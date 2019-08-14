@@ -24,6 +24,8 @@
 <script>
   import {djForm} from 'djweb';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
+  import paperWarehouseService from '../../../api/service/paperWarehouse';
+
   const {rules} = djForm;
   export default {
     name: 'lookDialog',
@@ -38,7 +40,7 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.usePerson,
+              prop: cylinderKeys.usePersonName,
               label: '领用人',
               rules: [rules.required('')]
             }
@@ -59,13 +61,13 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.useDepartment,
+              prop: cylinderKeys.useDepartmentName,
               label: '领用部门'
             }
           },
           {
             formItem: {
-              prop: cylinderKeys.forkliftDriver,
+              prop: cylinderKeys.forkliftDriverName,
               label: '叉车员'
             }
           },
@@ -148,7 +150,7 @@
             width: 121,
           },
           {
-            prop: cylinderKeys.paperSupplier,
+            prop: cylinderKeys.paperSupplierName,
             label: '原纸供应商',
             width: 156,
           },
@@ -174,6 +176,10 @@
       },
       open(param) {
         this.$refs.dialog.open();
+        this.dj_api_extend(paperWarehouseService.getPaperOutStorage, param).then(res=>{
+          this.formData = res;
+          this.tableData = res.tubeList;
+        });
       },
       close() {
         this.$refs.dialog.close();
