@@ -81,7 +81,10 @@
     },
     methods: {
       handlePaperSize(arr = []) {
-        return arr.join('，') + '。';
+        if (arr.length > 0) {
+          return arr.map(v=>v.paperSize).join('，') + '。';
+        }
+        return '';
       },
       rowRule(item) {
         let map = {commonTilemodel: 0, lineSpeed: 0, changeorderMinLength: 0, firstorderWasteWith: 1,

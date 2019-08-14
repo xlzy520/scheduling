@@ -1,5 +1,5 @@
 <template>
-  <div class="production-line">
+  <div class="production-line" v-loading="loading">
     <el-button type="primary" @click="addProdLine">新增</el-button>
     <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
       <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
@@ -27,6 +27,7 @@
     components: {EditAdd, ProdLineContent},
     data() {
       return {
+        loading: false,
         statusLoading: false,
         activeTab: '',
         tabsColumn: [],
@@ -128,6 +129,7 @@
       },
 
       getData(data) {
+        this.loading = true;
         productionLineService.list(data).then((res) => {
           let data = res.list;
           this.prodLineData = [];
@@ -171,7 +173,12 @@
                 for (let i = 0; i < module.length; i++) {
                   const prop = module[i].prop;
                   if (item === 'jccs' && prop === 'linePaperSizeModels') {
-                    this.prodLineData[index][item][prop] = v[prop].map(v=>v.paperSize);
+                    this.prodLineData[index][item][prop] = v[prop].map(v=>{
+                      return {
+                        paperSize: v.paperSize,
+                        id: v.id
+                      };
+                    });
                   } else {
                     this.prodLineData[index][item][prop] = v[prop];
                   }
@@ -179,6 +186,9 @@
               }
             });
           }
+          this.loading = false;
+        }).catch(() => {
+          this.loading = false;
         });
       },
       edit() {

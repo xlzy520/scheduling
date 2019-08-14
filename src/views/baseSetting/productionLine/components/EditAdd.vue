@@ -1,6 +1,6 @@
 <template>
   <dj-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增生产线': '编辑生产线'">
-    <div class="production-line-dialog">
+    <div class="production-line-dialog" v-loading="loading">
       <h4>基础参数</h4>
       <dj-form ref="form1" :form-data="prodLineData.jccs" :form-options="formOptions.jccs" :column-num="columnNum"></dj-form>
       <h4>纵切机</h4>
@@ -10,9 +10,9 @@
                :column-num="columnNum" :col-rule="()=>columnNum===4?6:8"></dj-form>
       <h4>门幅范围</h4>
       <div class="optional">
-        <div class="optional-area" @click="selectPaper($event)">
+        <div class="optional-area">
           <div class="optional-area-item" :class="isIncludesPaper(code)?'selected': ''"
-               v-for="code in optionalPaper" :key="code">{{code}}
+               v-for="code in optionalPaper" :key="code" @click="selectPaper(code)">{{code}}
           </div>
         </div>
       </div>
@@ -35,6 +35,7 @@
     },
     data() {
       return {
+        loading: false,
         columnNum: 4,
         prodLineData: {
           jccs: {
@@ -357,7 +358,8 @@
           ],
         },
         optionalPaper: [],
-        cache: {}
+        cache: {},
+        removedOptionalPaper: []
       };
     },
     methods: {
@@ -379,21 +381,29 @@
         formValidate.then(res=>{
           if (res.length === 3) {
             if (this.isModify()) {
+              if (this.prodLineData.jccs.linePaperSizeModels.length === 0) {
+                this.$message('请选择门幅范围', 'warning');
+                return false;
+              }
               this.$confirm('是否保存填写内容？', '', {
                 type: 'warning',
                 showClose: false,
               }).then(() => {
+                this.loading = true;
                 const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
                   sum = Object.assign(sum, this.prodLineData[val]);
                   return sum;
                 }, {});
-                params.linePaperSizeModels = params.linePaperSizeModels.map(v=>{return {paperSize: v};});
                 params.commonTilemodel = params.commonTilemodel.join(',');
-                productionLineService.addLine(params).then((res) => {
+                const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
+                service(params).then(() => {
+                  this.loading = false;
                   this.$emit('close');
                   const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
                   this.$message(message, 'success');
                   this.$emit('getData');
+                }).catch(() => {
+                  this.loading = false;
                 });
               });
             } else {
@@ -436,18 +446,25 @@
       },
       isIncludesPaper(code) {
         const { linePaperSizeModels } = this.prodLineData.jccs;
-        return linePaperSizeModels.includes(code);
+        return linePaperSizeModels.findIndex(v=>v.paperSize === code) > -1;
       },
-      selectPaper(evt) {
-        let { innerText: code, className } = evt.target;
-        code = Number(code);
+      selectPaper(code) {
+        // 新增的时候 候选是没有id的，编辑的时候 选过的会带有id
         let linePaperSizeModels = this.prodLineData.jccs.linePaperSizeModels;
-        if (code && className.includes('optional-area-item')) {
-          if (this.isIncludesPaper(code)) {
-            const index = linePaperSizeModels.findIndex(v=>v === code);
-            linePaperSizeModels.splice(index, 1);
+        if (this.isIncludesPaper(code)) {
+          let index = linePaperSizeModels.findIndex(v=>v.paperSize === code);
+          const { paperSize, id } = linePaperSizeModels[index];
+          const item = Object.assign({paperSize: paperSize}, id ? {id: id} : {});
+          this.removedOptionalPaper.push(item);
+          linePaperSizeModels.splice(index, 1);
+        } else {
+          if (this.dialogTypeIsAdd) {
+            linePaperSizeModels.push({
+              paperSize: code
+            });
           } else {
-            linePaperSizeModels.push(code);
+            const item = this.removedOptionalPaper.find(v=>v.paperSize === code) || {paperSize: code};
+            linePaperSizeModels.push(item);
           }
         }
       },
