@@ -1,6 +1,7 @@
 <template>
-  <div class="table-page paper-kind">
-    <dj-table
+  <single-page class="table-page paper-kind">
+    <page-pane>
+      <dj-table
       ref="table"
       :data="tableData"
       :columns="tableColumns"
@@ -12,19 +13,21 @@
         <el-button type="primary" @click="add">新增</el-button>
       </div>
     </dj-table>
+    </page-pane>
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸代码': '编辑原纸代码'">
       <div class="paper-kind-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="1"></dj-form>
       </div>
     </dj-dialog>
-  </div>
+  </single-page>
 </template>
 
 <script>
   import paperCodeService from '../../api/service/paperCode';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
+  import PagePane from "../../components/page/pagePane";
 
   const initFormData = {
     paperCode: '',
@@ -33,6 +36,7 @@
   };
   export default {
     name: 'paperCode',
+    components: {PagePane},
     data() {
       return {
         tableData: [],

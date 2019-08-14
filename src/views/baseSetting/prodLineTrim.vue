@@ -1,17 +1,20 @@
 <template>
-  <div class="plts">
+  <single-page class="plts">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table
-      :data="tableData"
-      :columns="tableColumns"
-      :column-type="['index']"
-      :total="pageTotal"
-      @update-data="pageChange"
-    >
-      <div slot="btn">
-        <el-button type="primary" @click="add">新增</el-button>
-      </div>
-    </dj-table>
+    <page-pane>
+      <dj-table
+        :data="tableData"
+        :columns="tableColumns"
+        :column-type="['index']"
+        :total="pageTotal"
+        @update-data="pageChange"
+      >
+        <div slot="btn">
+          <el-button type="primary" @click="add">新增</el-button>
+        </div>
+      </dj-table>
+    </page-pane>
+
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增流水线修边': '编辑流水线修边'">
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}">
@@ -28,7 +31,7 @@
         </div>
       </div>
     </dj-dialog>
-  </div>
+  </single-page>
 </template>
 
 <script>
@@ -36,6 +39,7 @@
   import productionLineService from '../.././api/service/productionLine';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
+  import PagePane from "../../components/page/pagePane";
 
   const cengshuOption = [
       {label: '二层', value: 2},
@@ -95,6 +99,7 @@
   ];
   export default {
     name: 'productionLineTrim',
+    components: {PagePane},
     data() {
       return {
         searchConfig: [

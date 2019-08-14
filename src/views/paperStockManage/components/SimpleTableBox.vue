@@ -1,31 +1,36 @@
 <template>
-  <div class="table-page">
+  <single-page class="table-page">
     <dj-search ref="search" :config="searchConfig" @search="getTableData"></dj-search>
-    <dj-table
-      :data="tableData"
-      :columns="tableColumns"
-      :column-type="['index']"
-      :total="pageTotal"
-      @update-data="pageChange"
-    >
-      <div slot="btn">
-        <div class="ext-content">
-          <el-button type="primary" @click="exportRecord">导出记录</el-button>
-          <div class="ext-data">
-            <div v-if="totalCount">总件数： {{totalCount}}</div>
-            <div v-if="totalWeight">总重量： {{totalWeight}}</div>
+    <page-pane>
+      <dj-table
+        :data="tableData"
+        :columns="tableColumns"
+        :column-type="['index']"
+        :total="pageTotal"
+        @update-data="pageChange"
+      >
+        <div slot="btn">
+          <div class="ext-content">
+            <el-button type="primary" @click="exportRecord">导出记录</el-button>
+            <div class="ext-data">
+              <div v-if="totalCount">总件数： {{totalCount}}</div>
+              <div v-if="totalWeight">总重量： {{totalWeight}}</div>
+            </div>
           </div>
         </div>
-      </div>
-    </dj-table>
-  </div>
+      </dj-table>
+    </page-pane>
+
+  </single-page>
 </template>
 
 <script>
   import paperTableService from '@/api/service/paperTable';
   import axios from 'axios';
+  import PagePane from "../../../components/page/pagePane";
   export default {
     name: 'SimpleTableBox',
+    components: {PagePane},
     props: {
       searchConfig: {
         type: Array,
@@ -63,9 +68,9 @@
           responseType: 'blob'
         }).then(res=>{
           const dataUrl = URL.createObjectURL(res.data);
-          const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH：mm：ss');
+          const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH：mm：ss') + 'xlsx';
           const eleLink = document.createElement('a');
-          eleLink.download = decodeURIComponent(filename);
+          eleLink.download = filename;
           eleLink.style.display = 'none';
           eleLink.href = dataUrl;
           document.body.appendChild(eleLink);
@@ -85,8 +90,8 @@
         }).then((res) => {
           this.tableData = res.list || res.data.list;
           this.pageTotal = res.total || res.data.total;
-          this.totalCount = res.totalCount
-          this.totalWeight = res.totalWeight
+          this.totalCount = res.totalCount;
+          this.totalWeight = res.totalWeight;
         });
       },
       pageChange(option) {

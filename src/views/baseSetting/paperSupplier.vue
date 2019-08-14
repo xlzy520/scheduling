@@ -1,18 +1,21 @@
 <template>
-  <div class="paper-supplier">
+  <single-page class="paper-supplier">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table
-      ref="table"
-      :data="tableData"
-      :columns="tableColumns"
-      :column-type="['index']"
-      :total="pageTotal"
-      @update-data="getList"
-    >
-      <div slot="btn">
-        <el-button type="primary" @click="add">新增</el-button>
-      </div>
-    </dj-table>
+    <page-pane>
+      <dj-table
+        ref="table"
+        :data="tableData"
+        :columns="tableColumns"
+        :column-type="['index']"
+        :total="pageTotal"
+        @update-data="getList"
+      >
+        <div slot="btn">
+          <el-button type="primary" @click="add">新增</el-button>
+        </div>
+      </dj-table>
+    </page-pane>
+
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸供应商': '编辑原纸供应商'">
       <div class="paper-supplier-dialog">
@@ -20,13 +23,14 @@
                  :form-options="formOptions" :column-num="2"></dj-form>
       </div>
     </dj-dialog>
-  </div>
+  </single-page>
 </template>
 
 <script>
   import paperSupplierService from '../../api/service/paperSupplier';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
+  import PagePane from "../../components/page/pagePane";
   const { rules } = djForm;
   const initFormData = {
     supplierNumber: '',
@@ -37,6 +41,7 @@
   };
   export default {
     name: 'paperSupplier',
+    components: {PagePane},
     data() {
       return {
         searchConfig: [

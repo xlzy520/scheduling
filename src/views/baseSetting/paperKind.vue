@@ -1,25 +1,28 @@
 <template>
-  <div class="table-page paper-kind">
+  <single-page class="table-page paper-kind">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table
-      ref="table"
-      :data="tableData"
-      :columns="tableColumns"
-      :column-type="['index']"
-      :total="pageTotal"
-      @update-data="getList"
-    >
-      <div slot="btn">
-        <el-button type="primary" @click="add">新增</el-button>
-      </div>
-    </dj-table>
+    <page-pane>
+      <dj-table
+        ref="table"
+        :data="tableData"
+        :columns="tableColumns"
+        :column-type="['index']"
+        :total="pageTotal"
+        @update-data="getList"
+      >
+        <div slot="btn">
+          <el-button type="primary" @click="add">新增</el-button>
+        </div>
+      </dj-table>
+    </page-pane>
+
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
       <div class="paper-kind-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="2"></dj-form>
       </div>
     </dj-dialog>
-  </div>
+  </single-page>
 </template>
 
 <script>
@@ -28,6 +31,7 @@
   import paperWarehouseService from '../../api/service/paperWarehouse';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
+  import PagePane from "../../components/page/pagePane";
   const initFormData = {
     paperNumber: undefined,
     paperCodeId: undefined,
@@ -39,6 +43,7 @@
   };
   export default {
     name: 'paperKind',
+    components: {PagePane},
     data() {
       return {
         searchConfig: [

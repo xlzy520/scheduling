@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <simple-table-box
-      ref="table"
-      :search-config="searchConfig"
-      :table-columns="tableColumns"
-      :download="downloadConfig"
-      serviceUrl="listSummary"></simple-table-box>
-  </div>
+  <simple-table-box
+    ref="table"
+    :search-config="searchConfig"
+    :table-columns="tableColumns"
+    :download="downloadConfig"
+    serviceUrl="listSummary"></simple-table-box>
 </template>
 
 <script>

@@ -1,18 +1,20 @@
 <template>
-  <div class="material-code">
+  <single-page class="material-code">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-    <dj-table
-      ref="table"
-      :data="tableData"
-      :columns="tableColumns"
-      :column-type="['index']"
-      :total="pageTotal"
-      @update-data="getList"
-    >
-      <div slot="btn">
-        <el-button type="primary" @click="add">新增</el-button>
-      </div>
-    </dj-table>
+    <page-pane>
+      <dj-table
+        ref="table"
+        :data="tableData"
+        :columns="tableColumns"
+        :column-type="['index']"
+        :total="pageTotal"
+        @update-data="getList"
+      >
+        <div slot="btn">
+          <el-button type="primary" @click="add">新增</el-button>
+        </div>
+      </dj-table>
+    </page-pane>
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
       <div class="material-code-dialog">
@@ -25,7 +27,7 @@
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
       </div>
     </dj-dialog>
-  </div>
+  </single-page>
 </template>
 
 <script>
@@ -33,6 +35,7 @@
   import paperCodeService from '../../api/service/paperCode';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
+  import PagePane from "../../components/page/pagePane";
 
   const validateCode = (rule, selectArr, callback) => {
     if (selectArr.length === 10) {
@@ -43,6 +46,7 @@
   };
   export default {
     name: 'materialCode',
+    components: {PagePane},
     data() {
       return {
         searchConfig: [

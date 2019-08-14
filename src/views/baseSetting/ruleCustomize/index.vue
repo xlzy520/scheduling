@@ -1,23 +1,26 @@
 <template>
-  <div class="table-page rule-customize" v-loading="loading">
-    <dj-table
-      :data="tableData"
-      :columns="tableColumns"
-      :total="pageTotal"
-      v-loading="tableLoading"
-    >
-      <div slot="btn">
-        <el-button type="primary" @click="addStackOrPack('stack')">新增叠单规则</el-button>
-        <el-button type="primary" @click="addStackOrPack('pack')">新增打包规则</el-button>
-        <!--<el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>-->
-      </div>
-    </dj-table>
+  <single-page class="table-page rule-customize" v-loading="loading">
+    <page-pane>
+      <dj-table
+        :data="tableData"
+        :columns="tableColumns"
+        :total="pageTotal"
+        v-loading="tableLoading"
+      >
+        <div slot="btn">
+          <el-button type="primary" @click="addStackOrPack('stack')">新增叠单规则</el-button>
+          <el-button type="primary" @click="addStackOrPack('pack')">新增打包规则</el-button>
+          <!--<el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>-->
+        </div>
+      </dj-table>
+    </page-pane>
+
     <stack-dialog v-if="dialogType==='stack'" ref="dialog" @close="close" @confirm="stackConfirm"
                  :dialog-type-is-add="dialogTypeIsAdd"></stack-dialog>
     <pack-dialog v-if="dialogType==='pack'" ref="dialog" @close="close" @confirm="packConfirm"
                  :dialog-type-is-add="dialogTypeIsAdd"></pack-dialog>
     <view-dialog  ref="viewDialog" v-if="dialogType.includes('view')" @close="close" :dialogType="dialogType"></view-dialog>
-  </div>
+  </single-page>
 </template>
 
 <script>
@@ -25,10 +28,11 @@
   import ViewDialog from './components/ViewDialog';
   import PackDialog from './components/PackDialog';
   import StackDialog from './components/StackDialog';
+  import PagePane from "../../../components/page/pagePane";
 
   export default {
     name: 'ruleCustomize',
-    components: {ViewDialog, PackDialog, StackDialog},
+    components: {PagePane, ViewDialog, PackDialog, StackDialog},
     data() {
       return {
         loading: false,
