@@ -11,6 +11,12 @@
 <script>
   import autoProgress from '../../../components/autoProgress';
   import productionLineService from '../../../api/service/productionLine';
+  import orderManageService from '../../../api/service/orderManage';
+  import { orderKeys } from "../../../utils/system/constant/dataKeys";
+
+  import {djForm} from 'djweb';
+  const {rules} = djForm;
+
   export default {
     name: 'importDialog',
     data: function () {
@@ -19,8 +25,9 @@
           {
             type: 'custom',
             formItem: {
-              prop: 'prodLine',
-              label: '生产线'
+              prop: 'lineId',
+              label: '生产线',
+              rules: [rules.required('请选择生产线')]
             },
             component: {
               computed: {
@@ -39,7 +46,7 @@
                 const input = (val) => {
                   this.$emit('input', val);
                 };
-                let select = h('dj-select', {props: {value: this.value, options: this.prodLine_arr, ...this.$attrs, label: '生产线'}, on: {input}});
+                let select = h('dj-select', {props: {value: this.value, options: this.prodLine_arr, ...this.$attrs, label: '生产线', keyMap: {value: 'id'}}, on: {input}});
                 return (
                   <div>
                     {select}
@@ -67,14 +74,36 @@
           console.log('addOrder');
           this.importing = true;
           this.$refs.progress.start();
-          setTimeout(()=>{
-            this.$refs.progress.done(this.close);
-          }, Math.random()*5000);
+          let api;
+          let post = {
+            ...this.formData,
+            orderList: this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null
+          };
+          if (this.isImportAll) {
+            api = orderManageService.importAllOrder;
+          } else {
+            api = orderManageService.importOrder;
+          }
+          this.dj_api_extend(api, post).then(()=>{
+            this.$refs.progress.done(()=>{
+              this.$message('导入成功');
+              this.$emit('success');
+              this.close();
+            });
+          }).catch(e=>{
+            this.$refs.progress.done(()=>{
+              this.$emit('success');
+              this.close();
+            });
+          });
         });
       },
       getAllLine() {
         this.dj_api_extend(productionLineService.list, {pageNo: 1, pageSize: 9999999}).then(res=>{
-          this.prodLine_arr = res.list || [];
+          this.prodLine_arr = (res.list || []).map(obj=>{
+            obj.label = obj['lineNum'] + '号生产线';
+            return obj;
+          });
         });
       },
       open(orders) {

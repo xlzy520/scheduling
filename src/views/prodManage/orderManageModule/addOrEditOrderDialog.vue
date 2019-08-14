@@ -1,17 +1,20 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="780px" :title="`${isEdit ? '修改' : '新增'}备料订单`" @confirm="confirm">
+    <dj-dialog ref="dialog" @close="close" width="770px" :title="`${isEdit ? '修改' : '新增'}备料订单`" @confirm="confirm">
       <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
     </dj-dialog>
 </template>
 <script>
   import materialCodeService from '../../../api/service/materialCode';
+  import orderManageService from '../../../api/service/orderManage';
   import materialSizeInput from '../../../components/materialSizeInput';
   import longitudinalPressureInput from '../../../components/longitudinalPressureInput';
   import dayjs from 'dayjs';
   import {djForm} from 'djweb';
+  import { orderKeys } from "../../../utils/system/constant/dataKeys";
+
   const {rules} = djForm;
   const checkValue = function (rule, value, callback) {
-    if (!value.every(val=>/^\d{0,4}(\.\d{0,2})?$/.test(val))) {
+    if (value && !value.every(val=>!val || /^\d{0,4}(\.\d{0,2})?$/.test(val))) {
       callback(new Error('限0~9999两位小数'));
     } else {
       callback();
@@ -20,7 +23,7 @@
   const materialSizeRules = [
     {
       validator: (rule, value, callback) => {
-        if (!value[0]) {
+        if (!(value && value[0])) {
           callback(new Error('切长不能为空'));
         } else if (!value[1]) {
           callback(new Error('切宽不能为空'));
@@ -49,36 +52,39 @@
           {
             type: 'input',
             formItem: {
-              prop: 'customerName',
+              prop: orderKeys.customerName,
               label: '客户名称'
             },
             attrs: {
-              disabled: true
+              // todo 以后需要后端获取客户名称
+              default: '写死的客户名称',
+              disabled: true,
             }
           },
           {
             type: 'date',
             formItem: {
-              prop: 'deliveryTime',
+              prop: orderKeys.deliveryTime,
               label: '订单交期',
               rules: [rules.required('请选择订单交期')]
             },
             attrs: {
               type: 'date',
+              valueFormat: 'yyyy-MM-dd',
               default: dayjs().add(1, 'day').format('YYYY-MM-DD')
             }
           },
           {
             type: 'select',
             formItem: {
-              prop: 'materialCode',
+              prop: orderKeys.materialName,
               label: '用料代码',
               rules: [rules.required('请选择用料代码')]
             },
             attrs: {
               keyMap: {
-                label: 'materialCode',
-                value: 'id'
+                label: orderKeys.materialCode,
+                value: orderKeys.materialCode
               },
               options: this.materialCodeList
             }
@@ -86,14 +92,14 @@
           {
             type: 'djCascader',
             formItem: {
-              prop: 'fluteType',
+              prop: 'fluteTypeAndLayers',
               label: '瓦楞楞型',
               rules: [rules.required('请选择瓦楞楞型')]
             },
             attrs: {
               props: {
                 checkStrictly: false,
-                value: 'label',
+                // value: 'label',
                 lazy: false,
                 children: 'fluteType'
               },
@@ -103,16 +109,19 @@
           {
             type: 'custom',
             formItem: {
-              prop: 'materialSize',
+              prop: orderKeys.materialSize,
               label: '下料规格',
               rules: [rules.required('请输入下料规格'), ...materialSizeRules]
+            },
+            attrs: {
+              default: []
             },
             component: materialSizeInput
           },
           {
             type: 'input',
             formItem: {
-              prop: 'orderAmount',
+              prop: orderKeys.orderAmount,
               label: '订单数量',
               rules: [rules.required('订单数量不可为空')]
             },
@@ -124,31 +133,53 @@
           {
             type: 'select',
             formItem: {
-              prop: 'linePressingMethod',
+              prop: orderKeys.linePressingMethod,
               label: '压线方式',
               rules: [rules.required('压线方式不可为空')]
             },
             attrs: {
+              keyMap: {
+                value: 'label'
+              },
               options: this.$enum.linePressingWay._arr
             }
           },
           {
             type: 'input',
             formItem: {
-              prop: 'transversePressure',
+              prop: orderKeys.transversePressure,
               label: '横压公式'
+            },
+            attrs: {
+              maxlength: 100
             }
           },
           {
             type: 'custom',
             formItem: {
-              prop: 'longitudinalPressure',
+              prop: orderKeys.longitudinalPressure,
               label: '纵压公式',
-              rules: [{validator: checkValue}]
+              rules: [{validator: checkValue}, { validator: (rule, value, callback) => {
+                let materialSize = this.formData[orderKeys.materialSize];
+                  if (value && value.reduce((sum, cur)=>{
+                      sum += Number(cur || 0);
+                    return sum;
+                  }, 0) !== Number(materialSize && materialSize[1])) {
+                    callback(new Error('请输入正确的压线公式'));
+                  } else {
+                    callback();
+                  }
+                }}]
             },
             component: longitudinalPressureInput
           }
         ];
+      },
+      key_arr() {
+        return this.formOptions.reduce((arr, obj)=>{
+          arr.push(obj.formItem.prop);
+          return arr;
+        }, this.isEdit ? [orderKeys.productionNo] : []);
       }
     },
     created() {
@@ -161,28 +192,58 @@
         });
       },
       colRule(item) {
-        if (item.formItem.prop === 'longitudinalPressure') {
+        if (item.formItem.prop === orderKeys.longitudinalPressure) {
           return 24;
         } else {
           return 12;
         }
       },
       confirm() {
-        console.log(this.formData);
         this.$refs.form.validate(()=>{
-          //todo 发送新增订单接口
-          console.log('addOrder');
+          let message;
+          let api;
+          let post = {
+            ...this.formData,
+            ...(this.formData.customer || {}),
+            // todo customerId需要后端获取，现在写死
+            customerId: '1111111111',
+            tileModel: this.formData.fluteTypeAndLayers[1],
+            layers: this.formData.fluteTypeAndLayers[0],
+            materialLength: this.formData[orderKeys.materialSize][0],
+            materialWidth: this.formData[orderKeys.materialSize][1],
+            vformula: this.formData[orderKeys.longitudinalPressure] && this.formData[orderKeys.longitudinalPressure].join('+')
+            // grouponProductName: this.formData['grouponProduct'][orderKeys.materialCode],
+            // grouponProductCode: this.formData['grouponProduct']['id']
+          };
+          if (!this.isEdit) {
+            message = '新增成功';
+            api = orderManageService.add;
+          } else {
+            message = '编辑成功';
+            api = orderManageService.edit;
+          }
+          this.dj_api_extend(api, post).then(()=>{
+            this.$message(message);
+            this.$emit('success');
+            this.close();
+          });
         });
       },
       getOrderDetail(orderId) {
-        // todo 对接获取订单详情接口
-        console.log('getOrderDetail');
+        this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: orderId}).then(res=>{
+          let _res = this.$method.cloneData(this.key_arr, {}, res);
+          _res[orderKeys.longitudinalPressure] = res[orderKeys.longitudinalPressure] && res[orderKeys.longitudinalPressure].split('+');
+          _res[orderKeys.materialSize] = [res[orderKeys.materialLength], res[orderKeys.materialWidth]];
+          _res['fluteTypeAndLayers'] = [res[orderKeys.layer] + '', res[orderKeys.fluteType]];
+          _res[orderKeys.deliveryTime] = dayjs(res[orderKeys.deliveryTime]).format('YYYY-MM-DD');
+          this.formData = _res;
+        });
       },
-      open(orderId) {
+      open(order) {
         this.$refs.dialog.open();
-        if (orderId) {
+        if (order) {
           this.isEdit = true;
-          this.getOrderDetail(orderId);
+          this.getOrderDetail(order[orderKeys.productionNo]);
         }
       },
       close() {

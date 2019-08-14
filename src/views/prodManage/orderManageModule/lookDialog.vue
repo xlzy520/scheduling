@@ -3,16 +3,16 @@
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
           <el-row>
-            <el-col :span="17"><span class="bold">订单编号: {{order.orderId}}</span></el-col>
-            <el-col :span="7"><span class="bold">生产状态: <span class="status">{{order.productStatus}}</span></span></el-col>
+            <el-col :span="17"><span class="bold">生产编号: {{order[orderKeys.productionNo]}}</span></el-col>
+            <el-col :span="7"><span class="bold">生产状态: <span class="status">{{$enum.productStatus._swap[order[orderKeys.productStatus]] && $enum.productStatus._swap[order[orderKeys.productStatus]].label}}</span></span></el-col>
             <el-col :span="24"><span class="bold">订单消息</span></el-col>
             <template v-for="(item, index) in orderOptions[isStore]">
-              <el-col :span="index%2 ? 10 : 14"><span class="">{{item.label}}: {{order[item.prop]}}</span></el-col>
+              <el-col :span="index%2 ? 10 : 14"><span class="">{{item.label}}: {{item.formatter ? item.formatter(order[item.prop]) : order[item.prop]}}</span></el-col>
             </template>
             <el-col :span="24"><p class="line"></p></el-col>
             <el-col :span="24"><span class="bold">产品信息</span></el-col>
             <template v-for="(item, index) in messageOptions[isStore]">
-              <el-col :span="index%2 ? 10 : 14"><span class="">{{item.label}}: {{order[item.prop]}}</span></el-col>
+              <el-col :span="index%2 ? 10 : 14"><span class="">{{item.label}}: {{item.formatter ? item.formatter(order[item.prop]) : order[item.prop]}}</span></el-col>
             </template>
           </el-row>
         </el-tab-pane>
@@ -26,6 +26,9 @@
     </dj-dialog>
 </template>
 <script>
+  import { orderKeys } from "../../../utils/system/constant/dataKeys";
+  import orderManageService from '../../../api/service/orderManage';
+  import dayjs from 'dayjs';
   export default {
     name: 'lookDialog',
     data: function () {
@@ -39,246 +42,155 @@
         activeTab: '1',
         order: {},
         orderOptions: {
-          true: [
+          false: [
             {
-              prop: 'customerName',
+              prop: orderKeys.customerName,
               label: '客户名称',
             },
             {
-              prop: 'Contacts',
+              prop: orderKeys.contacts,
               label: '联系人',
             },
             {
-              prop: 'phone',
+              prop: orderKeys.contactWay,
               label: '联系方式',
             },
             {
-              prop: 'orderTip',
+              prop: orderKeys.orderTip,
               label: '订单标记',
+              formatter: (cur) => {
+                let obj = this.$enum.orderTip._swap[cur] || {};
+                return obj.label || ''
+              }
             },
             {
-              prop: 'address',
+              prop: orderKeys.address,
               label: '地址',
             },
             {
-              prop: 'deliveryTime',
+              prop: orderKeys.deliveryTime,
               label: '订单交期',
+              formatter(cur) {
+                return dayjs(cur).format('YYYY-MM-DD');
+              }
             },
           ],
-          false: [
+          true: [
             {
               prop: 'orderTip',
               label: '订单标记',
+              formatter: (cur) => {
+                let obj = this.$enum.orderTip._swap[cur] || {};
+                return obj.label || ''
+              }
             },
             {
-              prop: 'deliveryTime',
+              prop: orderKeys.deliveryTime,
               label: '订单交期',
+              formatter(cur) {
+                return dayjs(cur).format('YYYY-MM-DD');
+              }
             },
           ]
         },
         messageOptions: {
-          true:  [
+          false:  [
             {
-              prop: 'productName',
+              prop: orderKeys.productName,
               label: '产品名称',
             },
             {
-              prop: 'orderAmount',
+              prop: orderKeys.orderAmount,
               label: '订单数量',
             },
             {
-              prop: 'materialName',
+              prop: orderKeys.materialName,
               label: '材料名称',
             },
             {
-              prop: 'fluteType',
+              prop: orderKeys.fluteType,
               label: '瓦楞楞型',
             },
+            // todo 暂时没有，等待后端更新
             {
-              prop: 'productSize',
+              prop: orderKeys.productSize,
               label: '产品规格',
             },
             {
-              prop: 'materialSize',
+              prop: orderKeys.materialSize,
               label: '下料规格',
+              formatter: () => {
+                return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
+              }
             },
             {
-              prop: 'linePressingMethod',
+              prop: orderKeys.linePressingMethod,
               label: '压线方式',
             },
             {
-              prop: 'longitudinalPressure',
+              prop: orderKeys.longitudinalPressure,
               label: '纵压公式',
             },
             {
-              prop: 'transversePressure',
+              prop: orderKeys.transversePressure,
               label: '横压公式',
             },
           ],
-          false: [
+          true: [
             {
-              prop: 'materialCode',
+              prop: orderKeys.materialName,
               label: '用料代码',
             },
             {
-              prop: 'materialSize',
+              prop: orderKeys.orderAmount,
               label: '订单数量',
             },
             {
-              prop: 'materialSize',
+              prop: orderKeys.materialSize,
               label: '下料规格',
+              formatter: () => {
+                return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
+              }
             },
             {
-              prop: 'fluteType',
+              prop: orderKeys.fluteType,
               label: '瓦楞楞型',
             },
             {
-              prop: 'linePressingMethod',
+              prop: orderKeys.linePressingMethod,
               label: '压线方式',
             },
             {
-              prop: 'longitudinalPressure',
+              prop: orderKeys.longitudinalPressure,
               label: '纵压公式',
             },
             {
-              prop: 'transversePressure',
+              prop: orderKeys.transversePressure,
               label: '横压公式',
             },
           ]
         },
-        isStore: true // 是否是备料订单
+        isStore: true, // 是否是备料订单
+        orderKeys,
       };
     },
-    // computed: {
-    //   orderOptions() {
-    //     if (true) {
-    //       return [
-    //         {
-    //           prop: 'customerName',
-    //           label: '客户名称',
-    //         },
-    //         {
-    //           prop: 'Contacts',
-    //           label: '联系人',
-    //         },
-    //         {
-    //           prop: 'phone',
-    //           label: '联系方式',
-    //         },
-    //         {
-    //           prop: 'orderTip',
-    //           label: '订单标记',
-    //         },
-    //         {
-    //           prop: 'address',
-    //           label: '地址',
-    //         },
-    //         {
-    //           prop: 'deliveryTime',
-    //           label: '订单交期',
-    //         },
-    //       ]
-    //     } else {
-    //       return [
-    //         {
-    //           prop: 'orderTip',
-    //           label: '订单标记',
-    //         },
-    //         {
-    //           prop: 'deliveryTime',
-    //           label: '订单交期',
-    //         },
-    //       ];
-    //     }
-    //   },
-    //   messageOptions() {
-    //     if (true) {
-    //       return [
-    //         {
-    //           prop: 'productName',
-    //           label: '产品名称',
-    //         },
-    //         {
-    //           prop: 'orderAmount',
-    //           label: '订单数量',
-    //         },
-    //         {
-    //           prop: 'materialName',
-    //           label: '材料名称',
-    //         },
-    //         {
-    //           prop: 'fluteType',
-    //           label: '瓦楞楞型',
-    //         },
-    //         {
-    //           prop: 'productSize',
-    //           label: '产品规格',
-    //         },
-    //         {
-    //           prop: 'materialSize',
-    //           label: '下料规格',
-    //         },
-    //         {
-    //           prop: 'linePressingMethod',
-    //           label: '压线方式',
-    //         },
-    //         {
-    //           prop: 'longitudinalPressure',
-    //           label: '纵压公式',
-    //         },
-    //         {
-    //           prop: 'transversePressure',
-    //           label: '横压公式',
-    //         },
-    //       ]
-    //     } else {
-    //       return [
-    //         {
-    //           prop: 'materialCode',
-    //           label: '用料代码',
-    //         },
-    //         {
-    //           prop: 'materialSize',
-    //           label: '订单数量',
-    //         },
-    //         {
-    //           prop: 'materialSize',
-    //           label: '下料规格',
-    //         },
-    //         {
-    //           prop: 'fluteType',
-    //           label: '瓦楞楞型',
-    //         },
-    //         {
-    //           prop: 'linePressingMethod',
-    //           label: '压线方式',
-    //         },
-    //         {
-    //           prop: 'longitudinalPressure',
-    //           label: '纵压公式',
-    //         },
-    //         {
-    //           prop: 'transversePressure',
-    //           label: '横压公式',
-    //         },
-    //       ]
-    //     }
-    //   }
-    // },
     created() {
     },
     methods: {
-      open(orderId) {
+      open(order) {
         this.$refs.dialog.open();
-        this.getOrderDetail(orderId);
+        this.isStore = this.$enum.orderType.preparingMaterials.value === order[orderKeys.orderType];
+        this.getOrderDetail(order[orderKeys.productionNo]);
       },
       close() {
         this.$refs.dialog.close();
         this.$emit('close');
       },
-      getOrderDetail(orderId) {
-        // todo 对接获取订单详情接口
-        console.log('getOrderDetail');
+      getOrderDetail(prodId) {
+        this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: prodId}).then(res=>{
+          this.order = res;
+          console.log(this.order);
+        });
       },
       handleClick() {
         if (this.activeTab === '2' && !this.recordData.length) {

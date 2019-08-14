@@ -7,6 +7,9 @@ export default {
   importOrder(data) {
     return orderManage('/importProduceOrder.do', data);
   },
+  importAllOrder(data) {
+    return orderManage('/importAllProduceOrder.do', data);
+  },
   getOrderById(data) {
     return orderManage('/selectPlanById.do', data);
   },
