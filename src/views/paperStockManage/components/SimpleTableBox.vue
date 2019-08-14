@@ -107,9 +107,6 @@
 </script>
 
 <style lang="less" scoped>
-  .table-page {
-    padding-top: 20px;
-  }
   .ext-content{
     padding-left: 15px;
   }

@@ -79,9 +79,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .table-page {
-    padding-top: 20px;
-  }
   .ext-data{
     display: flex;
   }
