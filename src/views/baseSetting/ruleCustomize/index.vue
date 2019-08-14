@@ -5,6 +5,7 @@
         :data="tableData"
         :columns="tableColumns"
         :total="pageTotal" height="100%"
+        @update-data="getTableData"
         v-loading="tableLoading"
       >
         <div slot="btn">
@@ -68,12 +69,6 @@
             },
           },
         ],
-
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 20,
-        },
-        // todo 是否不能修改页号
         pageTotal: 0,
       };
     },
@@ -231,11 +226,9 @@
         this.dialogType = '';
       },
       getTableData(data) {
+        console.log(data);
         this.tableLoading = true;
-        ruleCustomizeService.list({
-          ...data,
-          ...this.pageOptions
-        }).then((res) => {
+        this.dj_api_extend(ruleCustomizeService.list, data).then((res) => {
           this.tableData = res.list;
           this.pageTotal = res.total;
         }).finally(()=>{
@@ -243,8 +236,8 @@
         });
       },
     },
-    created() {
-      this.getTableData();
+    mounted() {
+      this.$refs.table.changePage(1);
     },
   };
 </script>
