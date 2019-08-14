@@ -477,7 +477,7 @@
       },
       getColumnNum() {
         const width = window.innerWidth;
-        this.columnNum = width < 1367 ? 3 : 4;
+        this.columnNum = width < 1920 ? 3 : 4;
       },
     },
     created() {
