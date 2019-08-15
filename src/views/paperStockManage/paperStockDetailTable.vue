@@ -19,29 +19,36 @@
         searchConfig: [
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
           {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
-          {label: '仓库：', key: 'warehouseId', type: 'select', attrs: {
-              options: [{
-                label: '丽岙原纸仓库1',
-                value: 'chu',
-              }, {
-                label: '丽岙原纸仓库2',
-                value: 'gao',
-              }, {
-                label: '丽岙原纸仓库3',
-                value: 'da',
-              }],
-            }},
+          {label: '仓库：', type: 'select', key: 'warehouseId', attrs: {
+              keyMap: {
+                label: 'name',
+                value: 'warehouseId'
+              },
+              options: [],
+            },
+            listeners: {
+              input: (val) => {
+                if (!['', undefined, null].includes(val)) {
+                  this.dj_api_extend(this.getWarehouseArea, val);
+                }
+              }
+            }
+          },
           {label: '库区：', key: 'warehouseAreaId', type: 'select', attrs: {
-              options: [{
-                label: '丽岙原纸仓库1',
-                value: 'chu',
-              }, {
-                label: '丽岙原纸仓库2',
-                value: 'gao',
-              }, {
-                label: '丽岙原纸仓库3',
-                value: 'da',
-              }],
+              keyMap: {
+                label: 'name',
+                value: 'warehouseAreaId'
+              },
+              options: [],
+            },
+            linkListeners: {
+              warehouseId: {
+                input: (val, com) => {
+                  if (com) {
+                    com.$emit('input', '');
+                  }
+                }
+              }
             }},
           {label: '原纸供应商：', key: 'supplierName', type: 'input'},
         ],
@@ -67,12 +74,21 @@
         totalQuality: 0,
       };
     },
+    methods: {
+      getWarehouse() {
+        return this.dj_api_extend(paperWarehouseService.getPaperWarehouse).then((res) => {
+          this.searchConfig[2].attrs.options = res.list || [];
+        });
+      },
+      getWarehouseArea(id) {
+        return this.dj_api_extend(paperWarehouseService.getAreaAllList, {warehouseId: id}).then((res) => {
+          this.searchConfig[3].attrs.options = res.list || [];
+        });
+      },
+    },
     mounted() {
       this.$refs.table.getTableData();
-      paperWarehouseService.getPaperWarehouse({}).then(res=>{
-        console.log(res);
-        // todo 完成仓库、库区选择
-      });
+      this.getWarehouse();
     }
   };
 </script>
