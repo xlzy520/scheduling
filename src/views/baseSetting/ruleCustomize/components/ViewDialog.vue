@@ -86,7 +86,7 @@
           ruleId: row.id
         }).then(res => {
           (res.detailModels || res.packRuleDetails).map(v=>{
-            const key = v.tilemodel || v.v.layer;
+            const key = v.tilemodel || v.layer;
             if (this.kind[key] === undefined) {
               this.kind[key] = 1;
             } else {
