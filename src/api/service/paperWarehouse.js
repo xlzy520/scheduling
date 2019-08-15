@@ -49,10 +49,10 @@ export default {
     return paperWarehouse('/getPaperOutStorageList.do', data);
   },
   exportPaperOutStorage(data) {
-    return paperWarehouse('/exportPaperOutStorage.do', data, 'download');
+    return paperWarehouse('/exportPaperOutStorage.do', data, 'download_post');
   },
   exportPaperInStorage(data) {
-    return paperWarehouse('/exportPaperInStorage.do', data, 'download');
+    return paperWarehouse('/exportPaperInStorage.do', data, 'download_post');
   },
   addOutStorage(data) {
     return paperWarehouse('/addPaperOutStorage.do', data);
