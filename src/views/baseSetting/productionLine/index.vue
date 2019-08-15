@@ -109,25 +109,29 @@
           id: this.tabsColumn[this.activeTab - 1].id
         }).then(() => {
           this.$message(text, 'success');
-          this.tabsColumn[this.activeTab - 1].isEffected =  Math.pow(0, this.lineStatus);
+          this.tabsColumn[this.activeTab - 1].isEffected = Math.pow(0, this.lineStatus);
           this.tabClick();
         }).finally(()=>{
           this.statusLoading = false;
         });
       },
       changeLineStatus(val) {
-        if (val) {
-          this.$confirm('确定禁用该条内容吗？', '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
-            this.lineStatus = val;
-            this.changeLineEffectedApi(val, '禁用成功');
+        let post = {
+          id: this.tabsColumn[this.activeTab - 1].id,
+          effected: val ? 0 : 1,
+        };
+        let text = val ? '禁用' : '启用';
+        this.$confirm(`确定${text}该条内容吗？`, '', {
+          type: 'warning',
+          showClose: false,
+        }).then(() => {
+          this.dj_api_extend(productionLineService.changeLineEffected, post).then((res) => {
+            // this.lineStatus = val;
+            this.$message(`${text}成功`, 'success');
+            this.tabsColumn[this.activeTab - 1].isEffected = val ? 0 : 1;
+            this.tabClick();
           });
-        } else {
-          this.lineStatus = val;
-          this.changeLineEffectedApi(val, '启用成功');
-        }
+        });
       },
 
       getData(activeTab) {

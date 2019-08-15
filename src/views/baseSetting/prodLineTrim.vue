@@ -200,27 +200,22 @@
           this.pageTotal = res.total;
         });
       },
-      changeLineEffectedApi(val, id) {
-        productionLineTrimService.changeEffected({
-          effected: Math.pow(0, val), // 0、1数字取反
-          id: id
-        }).then(() => {
-          this.$message(val ? '禁用成功' : '启用成功', 'success');
-          this.search();
-        });
-      },
       changeStatus(row) {
         // 接口
-        if (row.isEffected) {
-          this.$confirm('确定禁用该条内容吗？', '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
-            this.changeLineEffectedApi(row.isEffected, row.id);
+        let post = {
+          id: row.id,
+          effected: row.isEffected ? 0 : 1,
+        };
+        let text = row.isEffected ? '禁用' : '启用';
+        this.$confirm(`确定${text}该条内容吗？`, '', {
+          type: 'warning',
+          showClose: false,
+        }).then(() => {
+          this.dj_api_extend(productionLineTrimService.changeEffected, post).then((res) => {
+            this.$message(`${text}成功`, 'success');
+            row.isEffected = !row.isEffected;
           });
-        } else {
-          this.changeLineEffectedApi(row.isEffected, row.id);
-        }
+        });
       },
       formReset() {
         this.formOptions = [baseOption];

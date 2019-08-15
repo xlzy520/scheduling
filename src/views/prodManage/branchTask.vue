@@ -28,7 +28,6 @@
 
 <script>
   import dayjs from 'dayjs';
-  import axios from 'axios';
   import branchTaskService from '../../api/service/branchTask';
   import {djForm} from 'djweb';
   import formRules from "../baseSetting/formRules";
@@ -105,9 +104,9 @@
               valueFormat: "yyyy-MM-dd"
             }
           },
-          {label: '分线状态', key: 'paperNumber', type: 'select', attrs: {options: branchStatusOptions}},
-          {label: '用料代码', key: 'branchTask', type: 'input'},
-          {label: '订单编号', key: 'paperSize', type: 'input', attrs: {reg: /\w+/g}},
+          {label: '分线状态', key: 'divideState', type: 'select', attrs: {options: branchStatusOptions}},
+          {label: '用料代码', key: 'materialCode', type: 'input'},
+          {label: '订单编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /\w+/g}},
           {
             label: '下料规格', key: 'guige', type: 'custom',
             component: {
@@ -277,7 +276,7 @@
         this.$refs.form.validate((valid) => {
           if (valid) {
             this.loading = true;
-            this.dj_api_extend(branchTaskService.handle, this.formData).then(res => {
+            this.dj_api_extend(branchTaskService.processe, this.formData).then(res => {
               this.$message('保存成功', 'success');
               this.close();
               this.$refs.search.search();
@@ -301,14 +300,16 @@
           this.$message('订单未选择，请重新操作', 'info');
           return false;
         } else {
-          this.$confirm('确定禁用该条内容吗？', '', {
+          this.$confirm('确定移除该条内容吗？', '', { //todo
             type: 'warning',
             showClose: false,
           }).then(() => {
             const canRemove = this.checkedList.some(v => !['已处理', '处理中'].includes(v.status));
             if (canRemove) {
               this.loading = true;
-              this.dj_api_extend(branchTaskService.removeOrder, this.checkedList).then(res => {
+              this.dj_api_extend(branchTaskService.removeOrder, {
+                list: this.checkedList
+              }).then(res => {
                 this.$message('移除成功', 'success');
                 this.$refs.search.search();
               }).catch(() => {
@@ -325,16 +326,23 @@
         this.checkedList = checkedList;
       },
       search(query) {
-        this.searchData = query;
+        const {timeRange, guige, ...restQuery} = query
+        this.searchData = {
+          ...restQuery,
+          startTime: timeRange[0],
+          endTime: timeRange[1],
+          materialLength: guige[0],
+          materialWidth: guige[1],
+        };
         this.$refs.table.changePage(1);
       },
       getTableData(data) {
         this.loading = true;
-        axios.post('http://192.168.23.4:3000/mock/5d131431c07efa4fd83ae7ae/djsupplier/branchTask/list', {
+        this.dj_api_extend(branchTaskService.removeOrder, {
           ...data,
           ...this.searchData
         }).then(res => {
-          const {list, total} = res.data.data;
+          const {list, total} = res.data;
           this.tableData = list;
           this.pageTotal = total;
         }).finally(() => {
