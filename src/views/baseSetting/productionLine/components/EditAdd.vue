@@ -327,7 +327,7 @@
                     type: 'input',
                     formItem: {
                       prop: 'statckCount',
-                      label: '最小叠单米数',
+                      label: '堆叠数',
                       rules: [
                         djForm.rules.required('请输入最小叠单米数'),
                         formRules.number,
@@ -335,7 +335,7 @@
                       ],
                     },
                   };
-                  if (val === 2) {
+                  if (val === 1) {
                     if (this.prodLineData.fxj.basketLength !== '') {
                       this.prodLineData.fxj.basketLength = '';
                     }
