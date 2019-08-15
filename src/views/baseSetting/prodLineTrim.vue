@@ -16,10 +16,10 @@
     </page-pane>
 
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
-               :title="dialogTypeIsAdd?'新增流水线修边': '编辑流水线修边'">
+               :title="dialogTypeIsAdd?'新增生产线修边': '编辑生产线修边'">
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}">
         <dj-form  v-for="(formOption, index) in formOptions"
-                  :ref="'form'+index"
+                  ref="form"
                   :column-num="dialogTypeIsAdd?4: 1"
                   labelWidth="80px"
                   @click.native="()=>deleteCurRow($event, index)"
@@ -161,6 +161,10 @@
     methods: {
       deleteCurRow(evt, index) {
         if (evt.target.className === 'el-icon-delete') {
+          if (this.formOptions.length === 1) {
+            this.$message('最后一条记录不可删除', 'warning');
+            return false;
+          }
           this.formOptions.splice(index, 1);
           this.formData.splice(index, 1);
           this.addLayerNum -= 1;
@@ -188,7 +192,6 @@
           layer: '',
           wasteSize: ''
         });
-        // baseOption[0].attrs.options = this.lineOptions
         this.formOptions.push(baseOption);
       },
       getTableData(data) {
@@ -257,17 +260,27 @@
       confirm() {
         const formValidate = new Promise((resolve) => {
           let allIsTrue = [];
-          for (let i = 0; i < this.addLayerNum; i++) {
-            this.$refs['form' + i][0].validate(() => {
-              allIsTrue.push(true);
-              if (i === this.addLayerNum - 1) {
+          this.$refs.form.map((v, index)=>{
+            v.validate((valid) => {
+              if (valid) {
+                allIsTrue.push(true);
+              }
+              if (index === this.addLayerNum - 1) {
                 resolve(allIsTrue);
               }
             });
-          }
+          });
         });
         formValidate.then(res=>{
           if (res.length === this.addLayerNum && res.every(v=>v)) {
+            let poor = this.formData.map(v=>v.layer.toString() + v.lineId);
+            const existIndex = this.formData.findIndex(v=>poor.includes(v.layer.toString() + v.lineId));
+            if (existIndex > -1) {
+              const {layer, lineId} = this.formData[existIndex];
+              const lineNum = baseOption[0].attrs.options.find(v=>v.value === lineId).label;
+              this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
+              return false;
+            }
             const request = this.dialogTypeIsAdd
             ? productionLineTrimService.add(this.formData)
             : productionLineTrimService.modifyWasterLineByid({
