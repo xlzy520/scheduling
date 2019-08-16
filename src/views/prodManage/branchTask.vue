@@ -39,8 +39,8 @@
     {label: '全部', value: '3'},
   ];
   const initFormData = {
-    mergeNum: '',
-    prodNum: '',
+    mergeOrderNumber: '',
+    produceOrderNumber: '',
     waitHandleNum: 222,
     handledNum: '',
   };
@@ -151,20 +151,21 @@
         tableData: [],
         tableColumns: [
           {
-            label: '订单标记', prop: 'mark', render: (h, {props: {row}}) => {
+            label: '订单标记', prop: 'grouponOrderFlag', render: (h, {props: {row}}) => {
               return (
-                <div class={row.mark === '急' ? 'urgent' : 'delay'}>{row.mark}</div>
+                <div class={row.grouponOrderFlag === '急' ? 'urgent' : 'delay'}>{row.grouponOrderFlag}</div>
               );
             }
           },
-          {label: '分线状态', prop: 'status'},
-          {label: '合并编号', prop: 'mergeNum'},
-          {label: '订单编号', prop: 'orderNum'},
-          {label: '生产编号', prop: 'prodNum'},
-          {label: '用料代码', prop: 'code'},
-          {label: '瓦楞楞型', prop: 'lengxing'},
-          {label: '订单数量', prop: 'orderAmount'},
-          {label: '处理数量', prop: 'handleAmount'},
+          {label: '分线状态', prop: 'divideState'},
+          {label: '合并编号', prop: 'combineId'},
+          {label: '订单编号', prop: 'grouponOrderNumber'},
+          {label: '生产编号', prop: 'produceOrderNumber'},
+          {label: '用料代码', prop: 'materialCode'},
+          {label: '瓦楞楞型', prop: 'tilemodel'},
+          {label: '订单数量', prop: 'pieceAmount'},
+          {label: '生产数量', prop: 'prodAmount'},
+          {label: '处理数量', prop: 'pieceAmount'},
           {label: '下料规格(cm)', prop: 'xialiaoguige'},
           {label: '产品规格', prop: 'prodGuige'},
           {label: '压线方式', prop: 'yaxianMethod'},
@@ -173,16 +174,15 @@
           {label: '订单交期', prop: 'jiaoqi'},
           {label: '客户名称', prop: 'name'},
           {label: '产品名称', prop: 'prodName'},
+          {label: '生成时间', prop: 'createTime'},
           {label: '操作人', prop: 'man'},
           {label: '操作时间', prop: 'operatTime'},
-          {label: '生产数量', prop: 'prodAmount'},
-          {label: '生成时间', prop: 'createTime'},
           {
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
               return (
                 <div class="operation">
-                  <a class={row.status === '已处理' ? 'status-completed' : ''}
+                  <a class={row.divideState === '已处理' ? 'divideState-completed' : ''}
                      onClick={() => this.handle(row)}>处理</a>
                 </div>
               );
@@ -199,7 +199,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'mergeNum',
+              prop: 'mergeOrderNumber',
               label: '合并编号',
             },
             attrs: {
@@ -209,7 +209,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'prodNum',
+              prop: 'produceOrderNumber',
               label: '生产编号',
             },
             attrs: {
@@ -229,7 +229,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'platformMaterialCode',
+              prop: 'processeAmount',
               label: '处理数量',
               rules: [
                 djForm.rules.required('请输入处理数量'),
@@ -243,7 +243,7 @@
           },
         ],
         orderFormOptions: [
-          {formItem: {prop: 'orderNum', label: '订单编号：'}},
+          {formItem: {prop: 'grouponOrderNumber', label: '订单编号：'}},
           {formItem: {prop: 'orderAmount', label: '订单数量：'}},
           {formItem: {prop: 'jiaoqi', label: '订单交期：'}},
           {formItem: {prop: 'prodName', label: '产品名称：'}},
@@ -304,7 +304,7 @@
             type: 'warning',
             showClose: false,
           }).then(() => {
-            const canRemove = this.checkedList.some(v => !['已处理', '处理中'].includes(v.status));
+            const canRemove = this.checkedList.some(v => !['已处理', '处理中'].includes(v.divideState));
             if (canRemove) {
               this.loading = true;
               this.dj_api_extend(branchTaskService.removeOrder, {
@@ -326,23 +326,29 @@
         this.checkedList = checkedList;
       },
       search(query) {
-        const {timeRange, guige, ...restQuery} = query
-        this.searchData = {
+        const {timeRange, guige, ...restQuery} = query;
+        let params = {
           ...restQuery,
           startTime: timeRange[0],
           endTime: timeRange[1],
-          materialLength: guige[0],
-          materialWidth: guige[1],
         };
+        if (guige!== undefined) {
+          let guigeparams = {
+            materialLength: guige[0],
+            materialWidth: guige[1],
+          };
+          Object.assign(params, guigeparams);
+        }
+        this.searchData = params;
         this.$refs.table.changePage(1);
       },
       getTableData(data) {
         this.loading = true;
-        this.dj_api_extend(branchTaskService.removeOrder, {
+        this.dj_api_extend(branchTaskService.list, {
           ...data,
           ...this.searchData
         }).then(res => {
-          const {list, total} = res.data;
+          const {list, total} = res;
           this.tableData = list;
           this.pageTotal = total;
         }).finally(() => {
@@ -372,7 +378,7 @@
       padding: 2px 10px;
       cursor: pointer;
     }
-    .status-completed {
+    .divideState-completed {
       pointer-events: none;
       color: #909399;
     }
