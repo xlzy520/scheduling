@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" width="1160px" title="设置单价" @confirm="confirm">
+  <dj-dialog ref="dialog" @close="confirmClose" width="1160px" title="设置单价" @confirm="confirm">
     <p class="font-subhead">基础信息</p>
     <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"
              :col-rule="colRule"></dj-form>
@@ -135,6 +135,10 @@
             prop: paperKeys.paperType,
             label: '原纸类型',
             width: 90,
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.paperType._swap[cur] || {};
+              return obj.label || '';
+            }
           },
           {
             prop: paperKeys.paperSize,
@@ -156,7 +160,7 @@
             label: '单价',
             width: 96,
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3)}
+              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6}
             },
             component: tableInput,
             listeners: {
@@ -170,6 +174,12 @@
             prop: cylinderKeys.money,
             label: '金额',
             width: 105,
+            formatter(row, index, cur) {
+              if (cur) {
+                cur = Number(cur).toFixed(2);
+              }
+              return cur;
+            }
           },
           {
             prop: paperKeys.paperStatus,
@@ -189,8 +199,11 @@
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       confirm() {
-        console.log(this.formData);
         this.$refs.form.validate(()=>{
+          if (!this.changeCheck()) {
+            this.$message('未编辑数据，请确认', 'error');
+            return;
+          }
           let post = {
             id: this.formData.id,
             tubeList: this.tableData
@@ -207,7 +220,33 @@
         this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
           this.formData = res;
           this.tableData = res.tubeList;
+          this.saveDefaultData();
         });
+      },
+      saveDefaultData() {
+        this.defaultTableData = this.$method.deepClone(this.tableData);
+      },
+      changeCheck() {
+        let tableKeys = [cylinderKeys.money];
+        let longTable = this.tableData;
+        let shortTable = this.defaultTableData;
+        if (this.defaultTableData.length > this.tableData.length) {
+          longTable = this.defaultTableData;
+          shortTable = this.tableData;
+        }
+        return !longTable.every((obj, index) => tableKeys.every(key=>(Number(obj[key]) === Number((shortTable[index] || {})[key])) || (['', undefined, null].includes(obj[key]) && ['', undefined, null].includes((shortTable[index] || {})[key]))));
+      },
+      confirmClose() {
+        if (this.changeCheck()) {
+          this.$confirm('信息未保存，确认是否关闭？', '', {
+            type: 'warning',
+            showClose: false,
+          }).then(() => {
+            this.close();
+          });
+        } else {
+          this.close();
+        }
       },
       close() {
         this.$refs.dialog.close();

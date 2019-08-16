@@ -3,6 +3,7 @@
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table ref="table"
+                :loading="isTableLoading"
                 :data="tableData"
                 height="100%"
                 :total="total"
@@ -11,7 +12,7 @@
                 @update-data="getList">
         <div slot="btn">
           <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
-          <el-button type="primary" @click="fileDownload">导出记录</el-button>
+          <el-button :loading="isExporting" type="primary" @click="fileDownload">导出记录</el-button>
           <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
         </div>
       </dj-table>
@@ -38,7 +39,7 @@
             label: '出库时间',
             attrs: {
               clearable: false,
-              valueFormat: 'yyyy-MM-dd',
+              // valueFormat: 'yyyy-MM-dd',
               type: 'daterange',
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
@@ -162,6 +163,9 @@
         isShowMoney: true,
         addOrEditDialogFlag: false,
         lookDialogFlag: false,
+
+        isTableLoading: false,
+        isExporting: false,
       };
     },
     created() {
@@ -175,8 +179,11 @@
         this.$refs.table.updateData();
       },
       fileDownload() {
+        this.isExporting = true;
         this.dj_api_extend(paperWarehouseService.exportPaperOutStorage, this.searchData).then(res=>{
           this.$method.fileDownload(res, `原纸出库表 ${dayjs().format('YYYYMMDD')}.xlsx`);
+        }).finally(()=>{
+          this.isExporting = false;
         });
       },
       getList(page) {
@@ -186,9 +193,12 @@
           // startTime: this.searchData[cylinderKeys.outStockTime][0],
           // endTime: this.searchData[cylinderKeys.outStockTime][1],
         };
+        this.isTableLoading = true;
         this.dj_api_extend(paperWarehouseService.listOutStorage, post).then(res=>{
           this.tableData = res.list || [];
           this.total = res.total || 0;
+        }).finally(()=>{
+          this.isTableLoading = false;
         });
       },
       search(query) {

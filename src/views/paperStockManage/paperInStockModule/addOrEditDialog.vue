@@ -1,10 +1,11 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+  <div>
+    <dj-dialog ref="dialog" @close="confirmClose" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
       <p class="font-subhead">基础信息</p>
-        <dj-form ref="form"
-                 :formData="formData"
-                 :formOptions="formOptions"
-                 :column-num="3"></dj-form>
+      <dj-form ref="form"
+               :formData="formData"
+               :formOptions="formOptions"
+               :column-num="3"></dj-form>
       <p class="font-subhead">纸筒信息</p>
       <base-table ref="table"
                   v-if="readyTable"
@@ -18,21 +19,24 @@
                   :column-type="['index']">
       </base-table>
     </dj-dialog>
+    <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @selectPerson="changeForkliftDriver"></select-use-person>
+  </div>
 </template>
 <script>
   import {djForm} from 'djweb';
   import paperKindService from '../../../api/service/paperKind';
   import paperWarehouseService from '../../../api/service/paperWarehouse';
+  import selectUsePerson from '../paperOutStockModule/selectUsePerson';
 
   const {rules} = djForm;
-  import tableInput from './tableInput'
+  import tableInput from './tableInput.vue'
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   const updateArea = function (row) {
     let value;
     let length = row[cylinderKeys.length];
     let paperSize = row[paperKeys.paperSize];
     value = paperSize*length/1000;
-    if (isNaN(value)) {
+    if (isNaN(value) || !value) {
       value = '';
     }
     this.$set(row, cylinderKeys.area, value);
@@ -44,16 +48,21 @@
     let paperSize = row[paperKeys.paperSize];
     let paperGram = row[paperKeys.paperGram];
     value = weight/(paperSize*paperGram/1000/1000);
-    if (isNaN(value)) {
+    if (isNaN(value) || !paperGram || !paperSize) {
       value = '';
     }
+    // console.log(value);
     this.$set(row, cylinderKeys.length, value);
     updateArea.bind(this)(row);
+  };
+  const checkDisabled = function (row) {
+    return row[paperKeys.paperStatus] || Boolean(Number(row[cylinderKeys.unitPrice]));
   };
   const TABLE_SELECT = {
     render(h) {
       let { row, index, col, keyMap } = this;
       const input = (val)=>{
+        row[paperKeys.warehouseAreaId] = undefined;
         this.$set(row, col.prop, val);
       };
       return (
@@ -62,23 +71,26 @@
                    key-map={keyMap}
                    value={row[col.prop]}
                    placeholder="请选择"
+                   disabled={this.disabled}
                    on-input={input}
         ></dj-select>
       );
     },
-    props: ['row', 'index', 'col', 'service', 'keyMap', 'options'],
+    props: ['row', 'index', 'col', 'service', 'keyMap', 'options', 'disabled'],
   };
   const TABLE_SELECT2 = {
     render(h) {
       let { row, index, col, keyMap } = this;
       const input = (val)=>{
         this.$set(row, col.prop, val);
+        this.$emit('input', this)
       };
       return (
         <dj-select ref="select"
                    options={this.realOptions}
                    key-map={keyMap}
                    value={row[col.prop]}
+                   disabled={this.disabled}
                    placeholder="请选择"
                    on-input={input}
         ></dj-select>
@@ -87,7 +99,7 @@
     mounted() {
       if (!this.$parent.fixed) {
         this.$watch(`row.${paperKeys.warehouseId}`, (val) => {
-          this.row[paperKeys.warehouseAreaId] = undefined;
+          // this.row[paperKeys.warehouseAreaId] = undefined;
           if (![null, undefined, ''].includes(val)) {
             this.service(val).then(res=>{
               this.realOptions = res;
@@ -103,7 +115,7 @@
         realOptions: []
       }
     },
-    props: ['row', 'index', 'col', 'service', 'keyMap', 'options'],
+    props: ['row', 'index', 'col', 'service', 'keyMap', 'options', 'disabled'],
   };
   const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
     arr.forEach(key=>{
@@ -123,7 +135,7 @@
             prop: 'operate',
             label: '操作',
             width: 57,
-            render: (h, {props: {index}}) => {
+            render: (h, {props: {index, row}}) => {
               const disabled = () => {
                 return this.tableData.length === 1;
               };
@@ -135,7 +147,9 @@
                 }
               };
               return (
-                <i class="dj-common-red-delete" on-click={remove}></i>
+                <div class="td-btn-group">
+                  <a class={{'dj-common-red-delete': true, disabled: checkDisabled(row)}} on-click={()=>!checkDisabled(row)&&remove()}></a>
+                </div>
               );
             }
           },
@@ -173,21 +187,30 @@
                   cb();
                 }
               };
-              return {...props, service, beforeEnter, label: 'paperNumber', valueKey: 'paperNumber'}
+              return {...props, service, beforeEnter, label: 'paperNumber', valueKey: 'paperNumber', disabled: checkDisabled(props.row)}
             },
             component: tableInput,
             listeners: {
+              input: (val, {index, row}) => {
+                // 当前输入框内容变化时需要清空原纸代码等有原纸编号带出的数据
+                if (row[paperKeys.paperCode]) {
+                  let obj = this.$method.cloneData([cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight], {}, row);
+                  this.$set(this.tableData, index, obj);
+                }
+              },
               select: (obj, props) => {
                 if (obj) {
                   Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId(props.row)]).then(result=>{
-                    let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
-                    delete result[0][paperKeys.warehouseAreaId];
+                    // let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
+                    // delete result[0][paperKeys.warehouseAreaId];
                     result[0][cylinderKeys.cylinderNo] = result[1];
                     Object.assign(props.row, result[0]);
                     updateLength.bind(this)(props.row);
-                    this.$nextTick(()=>{
-                      Object.assign(props.row, _obj);
-                    });
+                    // this.$nextTick(()=>{
+                    //   Object.assign(props.row, _obj);
+                    // });
+                  }).catch(()=>{
+                    this.$method.cloneData([paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, result[0]);
                   });
                 }
               }
@@ -203,19 +226,7 @@
               );
             },
             propsHandler: (props) => {
-              // const service = (val, cb) => {
-              //   console.log('对接接口');
-              //   console.log('接口参数', val);
-              //   let data = {};
-              //   data[props.col.prop] = '234345345';
-              //   cb([data]);
-              // };
-              // const beforeEnter = (val, cb) => {
-              //   // console.log('beforeEnter对接接口');
-              //   // console.log('beforeEnter接口参数', val);
-              //   cb();
-              // };
-              return {...props, reg: this.$reg.FIGURE_REGEXP}
+              return {...props, reg: this.$reg.FIGURE_REGEXP, disabled: checkDisabled(props.row), maxlength: 3}
             },
             component: tableInput,
             listeners: {
@@ -234,26 +245,7 @@
               );
             },
             propsHandler: (props) => {
-              // const service = (val, cb) => {
-              //   console.log('对接接口');
-              //   console.log('接口参数', val);
-              //   let data = {};
-              //   data[props.col.prop] = 'saffdgjghjygj';
-              //   cb([data]);
-              // };
-              // const beforeEnter = (val, cb, props) => {
-              //   // console.log('beforeEnter对接接口');
-              //   // console.log('beforeEnter接口参数', props);
-              //   if (props.index === this.tableData.length - 1) {
-              //     this.tableData.push({});
-              //     this.$nextTick(()=>{
-              //       cb();
-              //     });
-              //   } else {
-              //     cb();
-              //   }
-              // };
-              return {...props, reg: this.$reg.getFloatReg(3)}
+              return {...props, reg: this.$reg.getFloatReg(3), disabled: checkDisabled(props.row)}
             },
             component: tableInput,
             listeners: {
@@ -267,18 +259,10 @@
             label: '长度(m)',
             width: 105,
             formatter(row, index, cur) {
-              // let value;
-              // let weight = row[cylinderKeys.weight];
-              // let paperSize = row[paperKeys.paperSize];
-              // let paperGram = row[paperKeys.paperGram];
-              // value = weight/(paperSize/1000*paperGram/1000);
-              // if (isNaN(value)) {
-              //   value = '';
-              // } else {
-              //   value = value.toFixed(2);
-              // }
               if (cur) {
                 cur = Number(cur).toFixed(2);
+              } else {
+                cur = '';
               }
               return cur;
             }
@@ -288,18 +272,10 @@
             label: '面积(㎡)',
             width: 105,
             formatter(row, index, cur) {
-              // let value;
-              // let length = row[cylinderKeys.length];
-              // let paperSize = row[paperKeys.paperSize];
-              // value = paperSize/1000*length;
-              // if (isNaN(value)) {
-              //   value = '';
-              // } else {
-              //   value = value.toFixed(2);
-              // }
-              // return value;
               if (cur) {
                 cur = Number(cur).toFixed(2);
+              } else {
+                cur = '';
               }
               return cur;
             }
@@ -328,7 +304,7 @@
             label: '仓库',
             width: 139,
             propsHandler: (props) => {
-              return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}}
+              return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}, disabled: checkDisabled(props.row)}
             },
             component: TABLE_SELECT
           },
@@ -337,26 +313,25 @@
             label: '库区',
             width: 121,
             propsHandler: (props) => {
-              // const service = (val, cb) => {
-              //   // console.log('对接接口');
-              //   // console.log('接口参数', val);
-              //   let data = {};
-              //   data[paperKeys.warehouseAreaName] = 'yutyuhg';
-              //   data[paperKeys.warehouseAreaId] = '1';
-              //   return Promise.resolve([data]);
-              // };
-              return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}}
+              return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}, disabled: checkDisabled(props.row)}
             },
-            component: TABLE_SELECT2
+            component: TABLE_SELECT2,
+            listeners: {
+              input: (props) => {
+                this.tableData.splice(props.index, 1, props.row);
+              }
+            }
           },
           {
             prop: paperKeys.paperStatus,
             label: '原纸状态',
             formatter: (row, index, cur) => {
-              if (this.isEdit) {
-                return cur ? '已出库' : '已入库';
-              } else {
-                return ''
+              switch (cur) {
+                case true:
+                  return '已出库';
+                case false:
+                  return '已入库';
+                default: return '';
               }
             }
           },
@@ -368,6 +343,12 @@
         tableMaxLength: tableMaxLength,
         supplier_arr: [],
         member_arr: [],
+
+        defaultFormData: {},
+        defaultTableData: {},
+        defaultEffectiveTableData: {},
+
+        selectForkliftDriverFlag: false
       };
     },
     computed: {
@@ -443,20 +424,44 @@
             }
           },
           {
-            type: this.isEdit ? 'input' : 'dj-cascader',
+            // type: this.isEdit ? 'input' : 'dj-cascader',
+            type: 'custom',
             formItem: {
-              prop: this.isEdit ? cylinderKeys.forkliftDriverName : 'forkliftDriver',
+              // prop: this.isEdit ? cylinderKeys.forkliftDriverName : 'forkliftDriver',
+              prop: cylinderKeys.forkliftDriverName,
               label: '叉车员'
             },
             attrs: {
-              showAllLevels: false,
-              props: {
-                checkStrictly: false,
-              },
+              // showAllLevels: false,
+              // props: {
+              //   checkStrictly: false,
+              // },
               disabled: this.isEdit,
-              apiArray: [()=>this.dj_api_extend(paperWarehouseService.getDepartment), this.getRole, this.getMember],
+              // apiArray: [this.getDepartment, this.getRole, this.getMember],
+            },
+            render: (h, {props: {value, disabled}}) => {
+              return (
+                <el-input placeholder="请选择叉车员" value={value} disabled={disabled} on-focus={()=>!disabled&&this.openSelectForkliftDriver()}>
+                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled&&this.openSelectForkliftDriver()}></i>
+                </el-input>
+              );
             }
           },
+          // {
+          //   type: this.isEdit ? 'input' : 'dj-cascader',
+          //   formItem: {
+          //     prop: this.isEdit ? cylinderKeys.forkliftDriverName : 'forkliftDriver',
+          //     label: '叉车员'
+          //   },
+          //   attrs: {
+          //     showAllLevels: false,
+          //     props: {
+          //       checkStrictly: false,
+          //     },
+          //     disabled: this.isEdit,
+          //     apiArray: [()=>this.dj_api_extend(paperWarehouseService.getDepartment), this.getRole, this.getMember],
+          //   }
+          // },
           {
             type: 'input',
             formItem: {
@@ -489,23 +494,10 @@
           },
           {
             type: 'input',
-            // type: 'custom',
             formItem: {
               prop: cylinderKeys.remark,
               label: '备注信息'
             },
-            // component: {
-            //   props: ['value'],
-            //   render(h) {
-            //     const input = (val) => {
-            //       console.log(val);
-            //       this.$emit('input', val)
-            //     };
-            //     return (
-            //       <dj-input value={this.value} type="textarea" height={100} maxlength={50} on-input={input}></dj-input>
-            //     );
-            //   },
-            // },
             attrs: {
               type: 'textarea',
               height: 100,
@@ -537,15 +529,15 @@
       });
     },
     methods: {
-      getRole(val) {
-        return this.dj_api_extend(paperWarehouseService.getRole, {id:val});
-      },
-      getMember(val) {
-        return this.dj_api_extend(paperWarehouseService.getMember, {id:val}).then(arr=>{
-          this.member_arr = arr;
-          return arr;
-        });
-      },
+      // getRole(val) {
+      //   return this.dj_api_extend(paperWarehouseService.getRole, {id:val});
+      // },
+      // getMember(val) {
+      //   return this.dj_api_extend(paperWarehouseService.getMember, {id:val}).then(arr=>{
+      //     this.member_arr = arr;
+      //     return arr;
+      //   });
+      // },
       getSupplierList() {
         this.dj_api_extend(paperWarehouseService.getSupplierList).then(res=>{
           this.supplier_arr = Object.keys(res).reduce((arr, key)=>{
@@ -556,15 +548,15 @@
       },
       //获取单据编号
       getReceiptId() {
-        this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType:"YZR"}).then(res=>{
+        return this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType:"YZR"}).then(res=>{
           this.$set(this.formData, cylinderKeys.receiptNumber, res);
         })
       },
       //获取纸筒编号
       getCylinderId(row) {
-        if (row[cylinderKeys.cylinderNo]) {
-          return Promise.resolve(row[cylinderKeys.cylinderNo]);
-        }
+        // if (row[cylinderKeys.cylinderNo]) {
+        //   return Promise.resolve(row[cylinderKeys.cylinderNo]);
+        // }
         return this.dj_api_extend(paperWarehouseService.getTubeNumber);
       },
       //获取所有原纸编号
@@ -600,18 +592,20 @@
         let keyCode = e.keyCode;
         if (this.activeIndex !== undefined) {
           if (keyCode === 17) {
-            let cloneObj = this.$method.deepClone(this.tableData[this.activeIndex]);
-            let _obj = cloneData([paperKeys.warehouseAreaId], {}, cloneObj);
-            delete cloneObj[paperKeys.warehouseAreaId];
+            let row = this.tableData[this.activeIndex];
+            // let cloneObj = this.$method.deepClone(this.tableData[this.activeIndex]);
+            let cloneObj = this.$method.cloneData([paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, this.tableData[this.activeIndex]);
+            // delete cloneObj[paperKeys.warehouseAreaId];
             this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
-            if (cloneObj[cylinderKeys.cylinderNo]) {
-              this.getCylinderId(cloneObj).then(res=>{
-                cloneObj[cylinderKeys.cylinderNo] = res;
+            if (row[cylinderKeys.cylinderNo]) {
+              this.getCylinderId().then(res=>{
+                this.$set(cloneObj, cylinderKeys.cylinderNo, res);
+                // cloneObj[cylinderKeys.cylinderNo] = res;
               })
             }
-            this.$nextTick(()=>{
-              Object.assign(cloneObj, _obj);
-            });
+            // this.$nextTick(()=>{
+            //   Object.assign(cloneObj, _obj);
+            // });
             // this.getCylinderId().then(res=>{
             //   let _obj = cloneData([paperKeys.warehouseAreaId], {}, res);
             //   delete result[0][paperKeys.warehouseAreaId];
@@ -668,10 +662,13 @@
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       confirm() {
-        console.log(this.formData);
         this.$refs.form.validate(()=>{
           if (!this.effectiveTableData.length) {
             this.$message('纸筒信息不能为空', 'error');
+            return;
+          }
+          if (!this.changeCheck(true)) {
+            this.$message('未编辑数据，请确认', 'error');
             return;
           }
           let message;
@@ -688,12 +685,12 @@
               return _obj;
             })
           };
-          let forkliftDriver_arr = post['forkliftDriver'];
-          if (Array.isArray(forkliftDriver_arr) && forkliftDriver_arr.length) {
-            let id = forkliftDriver_arr[forkliftDriver_arr.length - 1];
-            post[cylinderKeys.forkliftDriverId] = id;
-            post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
-          }
+          // let forkliftDriver_arr = post['forkliftDriver'];
+          // if (Array.isArray(forkliftDriver_arr) && forkliftDriver_arr.length) {
+          //   let id = forkliftDriver_arr[forkliftDriver_arr.length - 1];
+          //   post[cylinderKeys.forkliftDriverId] = id;
+          //   post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
+          // }
           if (!this.isEdit) {
             message = '新增成功';
             api = paperWarehouseService.addInStorage;
@@ -724,31 +721,98 @@
                 Object.assign(obj, _arr[index]);
               });
             });
-            this.getEmptyData(10).then((arr)=>{
+            return this.getEmptyData(10).then((arr)=>{
               this.tableData = this.tableData.concat(arr);
             });
-          });
+          }).finally(this.saveDefaultData);
         } else {
           this.getReceiptId();
+          this.$nextTick(()=>{
+            this.saveDefaultData();
+          });
         }
+      },
+      saveDefaultData() {
+        this.defaultFormData = this.$method.deepClone(this.formData);
+        this.defaultTableData = this.$method.deepClone(this.tableData);
+        this.defaultEffectiveTableData = this.$method.deepClone(this.effectiveTableData);
+      },
+      changeCheck(bool) {
+        let formKeys = this.formOptions.reduce((arr, obj)=>{
+          if (!(obj.attrs || {}).disabled) {
+            arr.push(obj.formItem.prop);
+          }
+          return arr;
+        }, []);
+        let tableKeys = this.tableColumns.reduce((arr, obj)=>{
+          if (obj.component) {
+            arr.push(obj.prop);
+          }
+          return arr;
+        }, [cylinderKeys.cylinderNo]);
+        let longTable;
+        let shortTable;
+        if (bool) {
+          longTable = this.effectiveTableData;
+          shortTable = this.defaultEffectiveTableData;
+          if (this.defaultEffectiveTableData.length > this.effectiveTableData.length) {
+            longTable = this.defaultEffectiveTableData;
+            shortTable = this.effectiveTableData;
+          }
+        } else {
+          longTable = this.tableData;
+          shortTable = this.defaultTableData;
+          if (this.defaultTableData.length > this.tableData.length) {
+            longTable = this.defaultTableData;
+            shortTable = this.tableData;
+          }
+        }
+        return !(formKeys.every(key=>this.formData[key] === this.defaultFormData[key]) && longTable.every((obj, index) => tableKeys.every(key=>(obj[key] === (shortTable[index] || {})[key]) || (['', undefined, null].includes(obj[key]) && ['', undefined, null].includes((shortTable[index] || {})[key])))));
+      },
+      confirmClose() {
+        if (this.changeCheck()) {
+          this.$confirm('信息未保存，确认是否关闭？', '', {
+            type: 'warning',
+            showClose: false,
+          }).then(() => {
+            this.close();
+          });
+        } else {
+          this.close();
+        }
+      },
+      openSelectForkliftDriver() {
+        this.selectForkliftDriverFlag = true;
+        this.$nextTick(() => {
+          this.$refs.selectForkliftDriver.open();
+        });
+      },
+      changeForkliftDriver(arr) {
+        let data = {};
+        data[cylinderKeys.forkliftDriverId] = arr[1]['value'];
+        data[cylinderKeys.forkliftDriverName] = arr[1]['label'];
+        Object.assign(this.formData, data);
       },
       close() {
         this.$refs.dialog.close();
         this.$emit('close');
       }
+    },
+    components: {
+      selectUsePerson
     }
   };
 </script>
 <style lang="less" scoped>
-  /deep/ .dj-common-red-delete {
+  .base-table /deep/ .td-btn-group .dj-common-red-delete {
     color: red;
     cursor: pointer;
-  }
-  /deep/ .el-scrollbar__bar.is-horizontal {
-    display: none;
   }
   /deep/ .icon-require {
     color: red;
     vertical-align: middle;
+  }
+  /deep/ .loading-wrap {
+    display: none;
   }
 </style>

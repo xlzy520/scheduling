@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dj-dialog ref="dialog" @close="close" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+    <dj-dialog ref="dialog" @close="confirmClose" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
       <p class="font-subhead">基础信息</p>
       <dj-form ref="form"
                :formData="formData"
@@ -11,6 +11,7 @@
       <base-table ref="table"
                   :data="tableData"
                   max-height="370"
+                  :column-type-props="columnsTypeProps"
                   :lazy-total="tableMaxLength"
                   :lazy-remote="()=>getEmptyData(10)"
                   @row-click="rowClick"
@@ -18,7 +19,8 @@
                   :column-type="['index']">
       </base-table>
     </dj-dialog>
-    <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" @close="selectUsePersonFlag = false" @selectPerson="changeUserPerson"></select-use-person>
+    <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" title="选择责任部门/责任人" @close="selectUsePersonFlag = false" @selectPerson="changeUserPerson"></select-use-person>
+    <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @selectPerson="changeForkliftDriver"></select-use-person>
   </div>
 </template>
 <script>
@@ -30,12 +32,12 @@
   import {Scanner} from "../../../utils";
   import paperWarehouseService from '../../../api/service/paperWarehouse';
 
-
   export default {
     name: 'addOrEditInStock',
     data: function () {
       return {
         selectUsePersonFlag: false,
+        selectForkliftDriverFlag: false,
         formData: {},
         tableData: [],
         tableColumns: [
@@ -64,17 +66,23 @@
             label: '纸筒编号',
             width: 150,
             propsHandler: (props) => {
-              const beforeEnter = (val, cb, props) => {
-                let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val)[0];
+              const beforeEnter = (val, cb) => {
+                let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val && props.row !== obj)[0];
                 if (sameRow && sameRow[paperKeys.paperCode]) {
-                  this.$message('该纸筒编号已存在', 'error');
+                  this.$message('纸筒编号已存在', 'error');
+                  this.$set(this.tableData, props.index, {});
+                  // props.row[cylinderKeys.cylinderNo] = '';
                 } else {
                   this.getTubeByNumber(val).then(obj=>{
-                    if (obj[paperKeys.paperStatus]) {
-                      this.$message('该纸筒编号已出库', 'error');
-                    } else {
-                      this.$set(this.tableData, props.index, obj);
-                    }
+                    // if (obj[paperKeys.paperStatus]) {
+                    //   this.$message('该纸筒编号已出库', 'error');
+                    //   this.$set(this.tableData, props.index, {});
+                    // } else {
+                      this.$set(this.tableData, props.index, {...obj, isError: false, id: undefined});
+                    // }
+                  }).catch(()=>{
+                    this.$set(this.tableData, props.index, {});
+                    // this.tableData.splice(index, 1, {});
                   });
                   cb();
                 }
@@ -87,9 +95,15 @@
                 //   cb();
                 // }
               };
-              return {...props, beforeEnter}
+              return {...props, beforeEnter, reg: /^\d*$/, 'class': {'is-error': props.row['isError']}, maxlength: 12}
             },
-            component: tableInput
+            component: tableInput,
+            listeners: {
+              input: (val, {index, row}) => {
+                let obj = this.$method.cloneData([cylinderKeys.cylinderNo], {}, row);
+                this.$set(this.tableData, index, obj);
+              }
+            }
           },
           {
             prop: paperKeys.paperCode,
@@ -100,6 +114,10 @@
             prop: paperKeys.paperType,
             label: '原纸类型',
             width: 90,
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.paperType._swap[cur] || {};
+              return obj.label || '';
+            }
           },
           {
             prop: paperKeys.paperSize,
@@ -142,6 +160,11 @@
             width: 156,
           },
         ],
+        columnsTypeProps: {
+          index: {
+            fixed: false
+          }
+        },
         isEdit: false,
         scanner: undefined,
         activeIndex: undefined,
@@ -172,15 +195,15 @@
               label: '领用部门/领用人'
             },
             attrs: {
-              props: {
-                checkStrictly: false,
-              },
+              // props: {
+              //   checkStrictly: false,
+              // },
               disabled: this.isEdit,
-              apiArray: [()=>this.dj_api_extend(paperWarehouseService.getDepartment), this.getRole, this.getMember],
+              // apiArray: [()=>this.dj_api_extend(paperWarehouseService.getDepartment), this.getRole, this.getMember],
             },
             render: (h, {props: {value, disabled}}) => {
               return (
-                <el-input value={value} disabled={disabled}>
+                <el-input placeholder="请选择领用部门/领用人" value={value} disabled={disabled} on-focus={()=>!disabled&&this.openSelectUsePerson()}>
                   <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled&&this.openSelectUsePerson()}></i>
                 </el-input>
               );
@@ -194,7 +217,9 @@
               // rules: [rules.required('领用单元不能为空')]
             },
             attrs: {
-              disabled: this.isEdit
+              disabled: this.isEdit,
+              maxlength: 10,
+              reg: this.$reg.NORMAL_TEXT_REGEXP
             }
           },
           // {
@@ -247,18 +272,27 @@
           //   }
           // },
           {
-            type: this.isEdit ? 'input' : 'dj-cascader',
+            // type: this.isEdit ? 'input' : 'dj-cascader',
+            type: 'custom',
             formItem: {
-              prop: this.isEdit ? cylinderKeys.forkliftDriverName : 'forkliftDriver',
+              // prop: this.isEdit ? cylinderKeys.forkliftDriverName : 'forkliftDriver',
+              prop: cylinderKeys.forkliftDriverName,
               label: '叉车员'
             },
             attrs: {
-              showAllLevels: false,
-              props: {
-                checkStrictly: false,
-              },
+              // showAllLevels: false,
+              // props: {
+              //   checkStrictly: false,
+              // },
               disabled: this.isEdit,
-              apiArray: [this.getDepartment, this.getRole, this.getMember],
+              // apiArray: [this.getDepartment, this.getRole, this.getMember],
+            },
+            render: (h, {props: {value, disabled}}) => {
+              return (
+                <el-input placeholder="请选择叉车员" value={value} disabled={disabled} on-focus={()=>!disabled&&this.openSelectForkliftDriver()}>
+                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled&&this.openSelectForkliftDriver()}></i>
+                </el-input>
+              );
             }
           },
           {
@@ -355,7 +389,11 @@
       },
       //获取纸筒信息
       getTubeByNumber(num) {
-        return this.dj_api_extend(paperWarehouseService.getPaperTube, {paperTubeNumber: num})
+        let post = {
+          paperTubeNumber: num
+        };
+        this.isEdit && (post['id'] = this.formData['id']);
+        return this.dj_api_extend(paperWarehouseService.getPaperTube, post)
       },
       //获取单据编号
       getReceiptId() {
@@ -430,6 +468,12 @@
           this.$refs.selectUsePerson.open();
         });
       },
+      openSelectForkliftDriver() {
+        this.selectForkliftDriverFlag = true;
+        this.$nextTick(() => {
+          this.$refs.selectForkliftDriver.open();
+        });
+      },
       colRule(item) {
         return 8;
       },
@@ -437,6 +481,10 @@
         this.$refs.form.validate(()=>{
           if (!this.effectiveTableData.length) {
             this.$message('纸筒信息不能为空', 'error');
+            return;
+          }
+          if (!this.changeCheck()) {
+            this.$message('页面信息没有变化', 'error');
             return;
           }
           let message;
@@ -449,20 +497,20 @@
               return _obj;
             })
           };
-          let recipient = this.formData['department-person'];
-          if (Array.isArray(recipient) && recipient.length) {
-            let id = recipient[recipient.length - 1];
-            post[cylinderKeys.usePerson] = id;
-            post[cylinderKeys.usePersonName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
-            post[cylinderKeys.useDepartment] = recipient[0];
-            post[cylinderKeys.useDepartmentName] = this.department_arr.filter(obj=>obj['value'] === recipient[0])[0]['label'];
-          }
-          let forkliftDriver_arr = post['forkliftDriver'];
-          if (Array.isArray(forkliftDriver_arr) && forkliftDriver_arr.length) {
-            let id = forkliftDriver_arr[forkliftDriver_arr.length - 1];
-            post[cylinderKeys.forkliftDriverId] = id;
-            post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
-          }
+          // let recipient = this.formData['department-person'];
+          // if (Array.isArray(recipient) && recipient.length) {
+          //   let id = recipient[recipient.length - 1];
+          //   post[cylinderKeys.usePerson] = id;
+          //   post[cylinderKeys.usePersonName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
+          //   post[cylinderKeys.useDepartment] = recipient[0];
+          //   post[cylinderKeys.useDepartmentName] = this.department_arr.filter(obj=>obj['value'] === recipient[0])[0]['label'];
+          // }
+          // let forkliftDriver_arr = post['forkliftDriver'];
+          // if (Array.isArray(forkliftDriver_arr) && forkliftDriver_arr.length) {
+          //   let id = forkliftDriver_arr[forkliftDriver_arr.length - 1];
+          //   post[cylinderKeys.forkliftDriverId] = id;
+          //   post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
+          // }
           if (!this.isEdit) {
             message = '新增成功';
             api = paperWarehouseService.addOutStorage;
@@ -475,6 +523,17 @@
             this.$emit('success');
             this.$message(message);
             this.close();
+          }).catch((res)=>{
+            let arr = res.data || [];
+            let map = arr.reduce((map, str) => {
+              map[str] = true;
+              return map;
+            }, {});
+            this.tableData.map(obj=>{
+              if (map[obj[cylinderKeys.cylinderNo]]) {
+                this.$set(obj, 'isError', true);
+              }
+            });
           });
         });
       },
@@ -486,16 +545,18 @@
             res['department-person-name'] = `${res[cylinderKeys.useDepartmentName]} / ${res[cylinderKeys.usePersonName]}`;
             this.formData = Object.assign({}, this.formData, res);
             this.tableData = res.tubeList || [];
-            this.getEmptyData(10).then(arr=>{
+            return this.getEmptyData(10).then(arr=>{
               this.tableData = this.tableData.concat(arr);
-            });
+            }).finally(this.saveDefaultData);
           });
         } else {
           this.getReceiptId();
+          this.$nextTick(()=>{
+            this.saveDefaultData();
+          });
         }
       },
       changeUserPerson(arr) {
-        console.log(arr);
         let data = {};
         data[cylinderKeys.usePerson] = arr[1]['value'];
         data[cylinderKeys.usePersonName] = arr[1]['label'];
@@ -506,6 +567,60 @@
           return str;
         }, '');
         Object.assign(this.formData, data);
+      },
+      changeForkliftDriver(arr) {
+        let data = {};
+        data[cylinderKeys.forkliftDriverId] = arr[1]['value'];
+        data[cylinderKeys.forkliftDriverName] = arr[1]['label'];
+        Object.assign(this.formData, data);
+      },
+      saveDefaultData() {
+        this.defaultFormData = this.$method.deepClone(this.formData);
+        this.defaultTableData = this.$method.deepClone(this.effectiveTableData);
+      },
+      changeCheck() {
+        let formKeys = this.formOptions.reduce((arr, obj)=>{
+          if (!(obj.attrs || {}).disabled) {
+            arr.push(obj.formItem.prop);
+          }
+          return arr;
+        }, []);
+        let tableKeys = this.tableColumns.reduce((arr, obj)=>{
+          if (obj.component) {
+            arr.push(obj.prop);
+          }
+          return arr;
+        }, []);
+        let longTable = this.effectiveTableData;
+        let shortTable = this.defaultTableData;
+        if (this.defaultTableData.length > this.effectiveTableData.length) {
+          longTable = this.defaultTableData;
+          shortTable = this.effectiveTableData;
+        }
+        return !(formKeys.every(key=>this.formData[key] === this.defaultFormData[key]) && longTable.every((obj, index) => tableKeys.every(key=>(obj[key] === (shortTable[index] || {})[key]) || (['', undefined, null].includes(obj[key]) && ['', undefined, null].includes((shortTable[index] || {})[key])))));
+        // return !(formKeys.every(key=>this.formData[key] === this.defaultFormData[key]) && this.tableData.every((obj, index) => tableKeys.every(key=>(obj[key] === (this.defaultTableData[index] || {})[key]) || (['', undefined, null].includes(obj[key]) && ['', undefined, null].includes((this.defaultTableData[index] || {})[key])))));
+        // if (formKeys.every(key=>this.formData[key] === this.defaultFormData[key]) && this.tableData.every((obj, index) => tableKeys.every(key=>(obj[key] === (this.defaultTableData[index] || {})[key]) || (['', undefined, null].includes(obj[key]) && ['', undefined, null].includes((this.defaultTableData[index] || {})[key]))))) {
+        //   this.close();
+        // } else {
+        //   this.$confirm('信息未保存，确认是否关闭？', '', {
+        //     type: 'warning',
+        //     showClose: false,
+        //   }).then(() => {
+        //     this.close();
+        //   });
+        // }
+      },
+      confirmClose() {
+        if (this.changeCheck()) {
+          this.$confirm('信息未保存，确认是否关闭？', '', {
+            type: 'warning',
+            showClose: false,
+          }).then(() => {
+            this.close();
+          });
+        } else {
+          this.close();
+        }
       },
       close() {
         this.$refs.dialog.close();
@@ -519,5 +634,11 @@
   /deep/ .dj-common-red-delete {
     color: red;
     cursor: pointer;
+  }
+  .base-table /deep/ .is-error .el-input__inner {
+    border-color: red;
+  }
+  .base-table /deep/ .loading-wrap {
+    display: none;
   }
 </style>

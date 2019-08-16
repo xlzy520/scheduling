@@ -113,6 +113,10 @@
             prop: paperKeys.paperType,
             label: '原纸类型',
             width: 90,
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.paperType._swap[cur] || {};
+              return obj.label || '';
+            }
           },
           {
             prop: paperKeys.paperSize,

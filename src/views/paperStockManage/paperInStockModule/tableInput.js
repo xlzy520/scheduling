@@ -1,4 +1,6 @@
+// 使用该组件时最外层传过来的参数有时会无法往下传递，故将该组件转化为.vue文件
 export default {
+  name: 'tableInput',
   render(h) {
     let {row, index, col, reg} = this;
     const input = (val) => {
@@ -30,6 +32,7 @@ export default {
     };
     return h(this.service ? 'el-autocomplete' : 'dj-input', {
       ref: 'input',
+      'class': this.$attrs.class,
       props: {
         value: row[col.prop],
         fetchSuggestions: (val, cb) => this.service(val, cb, {row, index, col, ...this.$attrs}),
@@ -37,6 +40,7 @@ export default {
         valueKey: col.prop,
         placeholder: "请输入",
         reg: this.reg,
+        disabled: this.disabled,
         ...this.$attrs
       },
       nativeOn: {keyup},
@@ -75,7 +79,7 @@ export default {
       }, {});
     }
   },
-  props: ['row', 'index', 'col', 'service', 'beforeEnter', 'reg'],
+  props: ['row', 'index', 'col', 'service', 'beforeEnter', 'reg', 'disabled'],
   methods: {
     focus(index, prop, arrow = 'right') {
       let _index = index;

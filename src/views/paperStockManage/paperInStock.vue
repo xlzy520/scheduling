@@ -3,6 +3,7 @@
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table ref="table"
+                :loading="isTableLoad"
                 :data="tableData"
                 :total="total"
                 height="100%"
@@ -11,7 +12,7 @@
                 @update-data="getList">
         <div slot="btn">
           <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
-          <el-button type="primary" @click="fileDownload">导出记录</el-button>
+          <el-button :loading="isExporting" type="primary" @click="fileDownload">导出记录</el-button>
           <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
         </div>
       </dj-table>
@@ -41,13 +42,11 @@
             label: '入库时间',
             attrs: {
               clearable: false,
-              valueFormat: 'yyyy-MM-dd',
+              // valueFormat: 'yyyy-MM-dd',
               type: 'daterange',
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
-                // console.log(dayjs(val[0]).valueOf());
-                // console.log(dayjs(val[1]).valueOf());
-                let _val = val;
+                let _val = val ? [...val] : [];
                 if (val[0] && val[1]) {
                   let towMonth = dayjs(val[0]).add(92, 'day');
                   if (towMonth.isBefore(dayjs(val[1]))) {
@@ -66,17 +65,13 @@
             key: cylinderKeys.cylinderNo,
             label: '纸筒编号',
             attrs: {
-              reg: /^\d{0,12}$/,
-              maxlength: 12
+              reg: /^\d*$/,
             }
           },
           {
             type: 'input',
             key: cylinderKeys.paperSupplierName,
             label: '原纸供应商',
-            atrrs: {
-              maxlength: 30
-            }
           },
           {
             type: 'select',
@@ -97,7 +92,7 @@
             render: (h, {props: {row}}) => {
               return (
                 <span class="td-btn-group">
-                  <a on-click={()=>this.openDialog('lookDialog', row)}>查看</a>
+                  <a on-click={()=>this.openDialog('lookDialog', {...row, isShowMoney: this.isShowMoney})}>查看</a>
                   <span></span>
                   <a on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
                   <span></span>
@@ -180,6 +175,8 @@
         lookDialogFlag: false,
         setUnitPriceDialogFlag: false,
         printTagDialogFlag: false,
+        isTableLoad: false,
+        isExporting: false
       };
     },
     created() {
@@ -192,8 +189,11 @@
         this.$refs.table.updateData();
       },
       fileDownload() {
+        this.isExporting = true;
         this.dj_api_extend(paperWarehouseService.exportPaperInStorage, this.searchData).then(res=>{
           this.$method.fileDownload(res, `原纸入库表 ${dayjs().format('YYYYMMDD')}.xlsx`);
+        }).finally(()=>{
+          this.isExporting = false;
         });
       },
       getList(page) {
@@ -203,9 +203,12 @@
           // startTime: this.searchData[cylinderKeys.storageTime][0],
           // endTime: this.searchData[cylinderKeys.storageTime][1],
         };
+        this.isTableLoad = true;
         this.dj_api_extend(paperWarehouseService.listInStorage, post).then(res=>{
           this.tableData = res.list || [];
           this.total = res.total || 0;
+        }).finally(()=>{
+          this.isTableLoad = false;
         });
       },
       search(query) {

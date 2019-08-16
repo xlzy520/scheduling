@@ -1,5 +1,5 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="700px" title="选择责任部门/责任人" @confirm="confirm">
+    <dj-dialog ref="dialog" @close="close" width="700px" :title="title" @confirm="confirm">
       <el-tree @node-click="handleNodeClick"
                :props="props"
                :load="remote"
@@ -12,6 +12,7 @@
 
   export default {
     name: 'selectUsePerson',
+    props: ['title'],
     data: function () {
       return {
         // data: [],

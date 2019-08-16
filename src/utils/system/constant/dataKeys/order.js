@@ -24,5 +24,6 @@ export default {
   longitudinalPressure: 'vformula', //纵压公式
   transversePressure: 'hformula', //横压公式
   materialCode: 'materialCode', //用料代码
+  platformMaterialName: 'platformMaterialCode', //平台材料名称
   orderTip: 'grouponOrderFlag', //订单标签
 };

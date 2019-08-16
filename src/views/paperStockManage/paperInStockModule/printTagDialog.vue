@@ -70,7 +70,7 @@
             this.$refs.print.print();
           });
         } else {
-          this.$message('请选择需要打印的纸筒', 'error');
+          this.$message('请选择纸筒信息', 'error');
         }
       },
       open(param) {
