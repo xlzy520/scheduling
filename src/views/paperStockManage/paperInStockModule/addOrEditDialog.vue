@@ -654,7 +654,7 @@
         });
       },
       getWarehouseArea(id) {
-        return this.dj_api_extend(paperWarehouseService.getAreaAllList, {warehouseId: id}).then((res) => {
+        return paperWarehouseService.getAreaAllList({warehouseId: id}).then((res) => {
           return res.list || [];
         });
       },
