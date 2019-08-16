@@ -2,9 +2,16 @@
 // 你应该修改 vue.config.js 中的 outputDir 选项而不是修改 output.path；
 // 你应该修改 vue.config.js 中的 publicPath 选项而不是修改 output.publicPath。
 // 这些配置项，在configureWebpack中直接修改build会报错，只能通过vue cli3.0的 api 配置项进行修改
+const config = {
+  assetsDir: 'nameStatic',
+  fileServe: process.env.fileServe || '/'
+
+};
 const production = {
-  publicPath: 'http://192.168.2.167:9000/cloud_menu_dist/',
-  outputDir: './dist',
+  // 项目静态资源文件服务地址，包括整个打包后输出的文件static assets (js, css, img, fonts)
+  publicPath: config.fileServe,
+  // A directory (relative to outputDir) to nest generated static assets (js, css, img, fonts) under.
+  assetsDir: config.assetsDir,
   productionSourceMap: false,
   configureWebpack: config => {
     config.entry.app = ['babel-polyfill', './src/main.js'];
@@ -17,20 +24,12 @@ const production = {
       // 组件库也会影响打包的大小，赞不去除
       // 'djweb': 'djweb',
     };
-  },
-  // 修改plugin配置
-  chainWebpack: config => {
-    config
-      .plugin('html')
-      .tap(args => {
-        args[0].template = 'index.html';
-        return args;
-      });
   }
 };
 const development = {
   configureWebpack: config => {
-
+    // 如果需要浏览器vue的调试插件，就全部注释externals
+    // 不需要就全部开启
     config.externals = {
       'vue': 'Vue',
       "element-ui": "ELEMENT",

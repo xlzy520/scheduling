@@ -33,5 +33,5 @@ const routes = [
   route.name = route.path;
   return route;
 });
-loopRoutes(routes);
+export const routesMap = loopRoutes(routes);
 export default routes;

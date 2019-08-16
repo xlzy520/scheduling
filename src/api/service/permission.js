@@ -1,8 +1,16 @@
-import { permission } from '../base-service/service';
+import baseService from '../base-service/base/base';
+
+const {deepClone} = require('djweb').methods;
+const envConfig = require('../../../config');
 
 export default {
-  menu(value) {
-    return permission('/menu.do', value).then(res => {
+  menu(params) {
+    if (window.MENU_CACHE === undefined) {
+      window.MENU_CACHE = baseService('/djintelligent')('/firstPage/getWebFirstPageAll.do', params,'get');
+    }
+    return window.MENU_CACHE.then(res => {
+      res = res.list || [];
+      let _res = deepClone(res).find(item => item.id === envConfig.PROJECTID).children;
       const filterMenus = (routes, menu, parentPath = '/home') => {
         return routes.filter(route => {
           route.path = route.path.startsWith('/') ? route.path : '/' + route.path;
@@ -15,8 +23,8 @@ export default {
         });
       };
       let permissionMenu = {};
-      let menus = filterMenus(res, permissionMenu);
-      return { permissionMenu, menus };
+      let menus = filterMenus(_res, permissionMenu);
+      return {permissionMenu, menus};
     });
-  }
+  },
 };

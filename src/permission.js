@@ -1,5 +1,5 @@
 import router from './router';
-import { asyncRouter } from './router';
+import {asyncRouter} from './router';
 // import { Loading } from 'element-ui';
 import { permission } from 'djweb';
 import { methods } from 'djweb';
@@ -22,24 +22,24 @@ function getPermission() {
   return permissionService.menu().then(res => {
     store.dispatch('addMenus', res.menus);
     store.dispatch('addPermission', res.permissionMenu);
-    // return [...Object.keys(res.permissionMenu), '/home'];
-    return new Promise(resolve => {
-      function getPer(routes, menu) {
-        routes.forEach(route => {
-          menu.push(route.path);
-          if (route.children) {
-            getPer(route.children, menu);
-          }
-        });
-      }
-      let permissionMenu = ['/home', 'product', 'index'];
-      //如果是开发者状态，获取全部权限
-      // if (process.env.NODE_ENV === 'development') {
-      getPer(asyncRouter, permissionMenu);
-      // }
-      // console.log(permissionMenu);
-      resolve(permissionMenu);
-    });
+    return Object.keys(res.permissionMenu);
+    // return new Promise(resolve => {
+    //   function getPer(routes, menu) {
+    //     routes.forEach(route => {
+    //       menu.push(route.path);
+    //       if (route.children) {
+    //         getPer(route.children, menu);
+    //       }
+    //     });
+    //   }
+    //   let permissionMenu = ['/home', 'product', 'index'];
+    //   //如果是开发者状态，获取全部权限
+    //   // if (process.env.NODE_ENV === 'development') {
+    //   getPer(asyncRouter, permissionMenu);
+    //   // }
+    //   // console.log(permissionMenu);
+    //   resolve(permissionMenu);
+    // });
   });
 }
 
@@ -48,20 +48,21 @@ function getPermission() {
  * @param to
  * @returns {Promise<any>}
  */
-function login() {
+function login(to) {
   //该项目由自己的登录页，所以登录请求在登录页发送，此处直接处理没有登录情况下需要采取的措施就行了
   // todo 获取token，开发使用，以后删除
-  return autoLogin().then(res=>{
-    console.log(res);
-    return innerUser.getToken({token: res});
-  }).then(()=>{
-    setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
-    return '/login'
-  })
-    .catch(()=>{
-    setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
-    return '/login'
-  });
+  if (process.env.NODE_ENV === 'development') {
+    return autoLogin().then(res=>{
+      console.log(res);
+      return innerUser.getToken({token: res});
+    }).then(()=>{
+      setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
+      return to.path
+    });
+  } else {
+    return Promise.resolve(to.path);
+  }
+
   // return new Promise((resolve) => {
   //   setCookiesItem('userName', 'gw');
   //   // reject();

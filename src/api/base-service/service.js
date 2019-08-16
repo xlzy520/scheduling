@@ -1,7 +1,7 @@
-import base from './base/base';
+import baseService from './base/base';
 import config from './modelConfig.js';
-
+const envConfig = require('../../../config');
 module.exports = config.reduce((sum, item) => {
-  sum[item.name] = base(item.url);
+  sum[item.name] = baseService(envConfig.PROJECTID + item.url);
   return sum;
 }, {});

@@ -14,4 +14,9 @@ const store = new DjStore(Vuex, {
   }
 });
 
+window.subject.listen('cachedViews', updateCachedViews);
+function updateCachedViews(...param) {
+  store.dispatch(...param);
+}
+
 export default store;
