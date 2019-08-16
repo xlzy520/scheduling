@@ -104,8 +104,7 @@
               ],
             },
             attrs: {
-              maxLength: 60,
-              disabled: !this.dialogTypeIsAdd
+              maxLength: 60
             }
           },
           {
