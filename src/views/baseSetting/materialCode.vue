@@ -57,7 +57,7 @@
         tableColumns: Object.freeze([
           {label: '用料代码', prop: 'materialCode'},
           {label: '平台材料名称', prop: 'platformMaterialCode'},
-          {label: '操作人', prop: 'supplierId'},
+          {label: '操作人', prop: 'operator'},
           {label: '操作时间', prop: 'updateTime'},
           {label: '启用状态', prop: 'isEffected', formatter: row => row.isEffected ? '启用' : '禁用'},
           {

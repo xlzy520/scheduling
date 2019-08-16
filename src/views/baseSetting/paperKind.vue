@@ -1,5 +1,5 @@
 <template>
-  <single-page class="table-page paper-kind">
+  <single-page class="table-page paper-kind" v-loading="loading">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table
@@ -92,7 +92,8 @@
         warehouseList: [],
         warehouseAreaList: [],
         warehouseList_map: [],
-        paperCodeList: []
+        paperCodeList: [],
+        loading: false
       };
     },
     computed: {
@@ -137,6 +138,11 @@
               'input': (val) => {
                 this.getPaperCodeById(val);
               },
+              'visible-change': (val)=>{
+                if (val) {
+                  this.getAllPaperCode();
+                }
+              }
             },
           },
           {
@@ -268,6 +274,7 @@
         });
       },
       getList(page) {
+        this.loading = true;
         let post = {
           ...this.searchData,
           ...page
@@ -275,11 +282,12 @@
         this.dj_api_extend(paperKindService.list, post).then((res) => {
           let list = res.list || [];
           list.forEach(obj=>{
-            obj.warehouseName = this.warehouseList_map[obj.warehouseId] && this.warehouseList_map[obj.warehouseId].name;
             obj.paperTypeName = this.$enum.paperType._swap[obj.paperType] && this.$enum.paperType._swap[obj.paperType].label;
           });
           this.tableData = list;
           this.pageTotal = res.total;
+        }).finally(() => {
+          this.loading = false;
         });
       },
       changeStatus(row) {
@@ -344,10 +352,8 @@
       }
     },
     mounted() {
+      this.$refs.search.search();
       this.getAllPaperCode();
-      this.getWarehouse().finally(()=>{
-        this.$refs.search.search();
-      });
     },
   };
 </script>
