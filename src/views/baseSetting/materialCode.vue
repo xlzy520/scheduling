@@ -139,6 +139,7 @@
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
+        this.getAllPaperCode();
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
@@ -173,6 +174,7 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
+        this.getAllPaperCode();
         this.dj_api_extend(materialCodeService.getMaterialByid, {id: row.id}).then(res=>{
           let data = {
             materialCode: (res.codeDetail || []).map(obj=>({id: obj.paperCodeId, _id: obj.id})),
