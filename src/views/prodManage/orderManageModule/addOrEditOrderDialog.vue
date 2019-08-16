@@ -78,13 +78,13 @@
             type: 'select',
             formItem: {
               prop: orderKeys.materialName,
-              label: '用料代码',
-              rules: [rules.required('请选择用料代码')]
+              label: '材料名称',
+              rules: [rules.required('请选择材料名称')]
             },
             attrs: {
               keyMap: {
-                label: orderKeys.materialCode,
-                value: orderKeys.materialCode
+                label: orderKeys.platformMaterialName,
+                value: orderKeys.platformMaterialName
               },
               options: this.materialCodeList
             }

@@ -61,14 +61,14 @@
             label: '订单交期',
             type: 'date',
             attrs: {
-              // clearable: false,
+              clearable: false,
               default: [dayjs(new Date()).subtract(30, 'day').format('YYYY-MM-DD'), dayjs(new Date()).add(1, 'day').format('YYYY-MM-DD')],
               beforeChange: (val) => {
                 let _val = val;
                 if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(60, 'day');
+                  let towMonth = dayjs(val[0]).add(92, 'day');
                   if (towMonth.isBefore(dayjs(val[1]))) {
-                    this.$message('时间不能超过两个月', 'error');
+                    this.$message('时间不能超过92天', 'error');
                     _val = [val[0], towMonth.toDate()];
                   }
                   val[0] = dayjs(val[0]).format('YYYY-MM-DD');
@@ -115,7 +115,7 @@
                 ]
               },
               type: 'daterange'
-            }
+            },
           },
           {
             key: orderKeys.orderTip,
@@ -235,8 +235,9 @@
             render: (h, {props:{row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
+              let key = obj.value || '';
               return (
-                <span>{text}</span>
+                <span class={key? key : '' }>{text}</span>
               )
             }
           },
@@ -385,3 +386,13 @@
     components: { lookDialog, importDialog, addOrEditOrderDialog }
   };
 </script>
+<style lang="less" scoped>
+  .dj-table-container {
+    /deep/ .urgent {
+      color: #FF0000;
+    }
+    /deep/ .delay {
+      color: #F89816;
+    }
+  }
+</style>
