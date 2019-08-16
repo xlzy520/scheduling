@@ -201,16 +201,23 @@
           if (flag) {
             this.$refs.dialog.loading = true;
             const packRuleDetails = this.$refs.dialog.packConditionFormData.reduce((pre, cur)=>{
-              let cache = cur.map(v=> v.layer.map(vlayer=>{
-                return {
-                  endUnitarea: v.endUnitarea,
-                  layer: vlayer,
-                  packpiece: v.packpiece,
-                  startUnitarea: v.startUnitarea
-                };
-              }));
-              return pre.concat(...cache);
+              if (this.dialogTypeIsAdd) {
+                let cache = cur.map(v=> v.layer.map(vlayer=>{
+                  return {
+                    endUnitarea: v.endUnitarea,
+                    layer: vlayer,
+                    packpiece: v.packpiece,
+                    startUnitarea: v.startUnitarea
+                  };
+                }));
+                return pre.concat(...cache);
+              } else {
+                let cache = cur.map(v=> v);
+                return pre.concat(...cache);
+              }
+
             }, []);
+            console.log(packRuleDetails);
             const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
             packRequest({
               ...this.$refs.dialog.packFormData,

@@ -15,7 +15,7 @@
               <div class="rule-row">
                 <el-form-item label="层数" prop="layer" v-if="childIndex===0" class="layer">
                   <dj-select v-model="child.layer" :options="layerOptions"
-                             type="multiple" collapse-tags
+                             :type="dialogTypeIsAdd?'multiple':''" collapse-tags
                              @visible-change="visible=>selectOptionChange(visible, index)"></dj-select>
                 </el-form-item>
                 <el-form-item label="单位面积" class="unit-area">
@@ -250,6 +250,11 @@
         }
       },
       changeNextInput(val, index, childIndex) {
+        if (val <= this.packConditionFormData[index][childIndex].startUnitarea) {
+          this.$message('不能比前面输入的单位面积小', 'info');
+          this.packConditionFormData[index][childIndex].endUnitarea = '';
+          return false;
+        }
         if (this.packConditionFormData[index].length > childIndex + 1) {
           this.packConditionFormData[index][childIndex + 1].startUnitarea = val;
         }
@@ -273,8 +278,8 @@
       close() {
         this.$emit('close');
       },
-      renderAllCondition(id){
-        this.loading = true
+      renderAllCondition(id) {
+        this.loading = true;
         ruleCustomizeService.getRuleDetail({
           ruleId: id
         }).then(res => {
@@ -290,33 +295,11 @@
               }
             }
           }
-          const formatData = cache.map(v=>{
-            let mergePiece = [];
-            let pieceMap = Array.from(new Set(v.map(p=>p.piece)));
-            pieceMap.forEach(()=>mergePiece.push([]));
-            v.map(p=>{
-              for (let i = 0; i < pieceMap.length; i++) {
-                if (pieceMap[i] === p.piece) {
-                  mergePiece[i].push(p);
-                }
-              }
-            });
-            let merge = mergePiece.map(mp=>{
-              let cuts = mp.map(c=>c.cut);
-              return {
-                ...mp[0],
-                cut: cuts
-              };
-            });
-            return merge;
-          });
-          console.log(formatData);
-          debugger
-          this.packConditionFormData = formatData;
-          this.loading = false
+          this.packConditionFormData = cache;
+          this.loading = false;
         }).catch(() => {
-          this.loading = false
-        })
+          this.loading = false;
+        });
       },
       zqjGetColumnNum() {
         const width = window.innerWidth;
@@ -352,6 +335,7 @@
   @deep: ~'>>>';
   .pack-dialog {
     width: 80vw;
+    height: 708px;
   }
 
   .condition-item {

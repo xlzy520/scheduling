@@ -317,6 +317,7 @@
   @deep: ~'>>>';
   .stack-dialog {
     width: 80vw;
+    height: 708px;
   }
   .dj-form{
     width: 100%;
@@ -324,6 +325,7 @@
   @media screen and (max-width: 1367px) {
     .stack-dialog {
       width: 90vw;
+      height: 549px;
     }
     .dj-form{
       width: 90%;
@@ -356,7 +358,7 @@
         }
         &.tilemodel{
           .el-form-item__label{
-            width: 80px;
+            width: 78px;
           }
         }
         &.piece{
