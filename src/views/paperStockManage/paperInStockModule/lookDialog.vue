@@ -127,7 +127,7 @@
         //   },
         //   {
         //     prop: paperKeys.paperCode,
-        //     label: '原值代码',
+        //     label: '原纸代码',
         //     width: 129,
         //   },
         //   {
@@ -286,7 +286,7 @@
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码',
+            label: '原纸代码',
             width: 129,
           },
           {

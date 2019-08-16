@@ -15,7 +15,7 @@
 <script>
   import {djForm} from 'djweb';
   import {cylinderKeys, paperKeys} from "../../../utils/system/constant/dataKeys";
-  import tableInput from './tableInput';
+  import tableInput from './tableInput.vue';
   import paperWarehouseService from '../../../api/service/paperWarehouse';
 
   const {rules} = djForm;
@@ -52,7 +52,7 @@
             formItem: {
               prop: cylinderKeys.forkliftDriverName,
               label: '叉车员',
-              rules: [rules.required('')]
+              // rules: [rules.required('')]
             }
           },
           {
@@ -83,7 +83,7 @@
               return this.tableData.reduce((sum, obj) => {
                 sum += Number(obj[cylinderKeys.money]) || 0;
                 return sum;
-              }, 0);
+              }, 0).toFixed(2);
             }
           },
           {
@@ -128,7 +128,7 @@
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码',
+            label: '原纸代码',
             width: 129,
           },
           {
@@ -210,7 +210,7 @@
           };
           this.dj_api_extend(paperWarehouseService.setAmount, post).then((res) => {
             this.$emit('success');
-            this.$message('设置单价成功');
+            this.$message('操作成功');
             this.close();
           });
         });

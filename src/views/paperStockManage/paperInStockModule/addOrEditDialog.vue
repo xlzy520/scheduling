@@ -476,7 +476,7 @@
                 let weight = Number(obj[cylinderKeys.weight]) || 0;
                 sum += weight;
                 return sum;
-              }, 0);
+              }, 0).toFixed(3);
             }
           },
           {
@@ -671,7 +671,7 @@
             this.$message('未编辑数据，请确认', 'error');
             return;
           }
-          let message;
+          // let message;
           let api;
           let post = {
             ...this.formData,
@@ -692,16 +692,16 @@
           //   post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
           // }
           if (!this.isEdit) {
-            message = '新增成功';
+            // message = '新增成功';
             api = paperWarehouseService.addInStorage;
           } else {
-            message = '编辑成功';
+            // message = '编辑成功';
             api = paperWarehouseService.editInStorage;
             // post.id = this.formData.id;
           }
           this.dj_api_extend(api, post).then((res) => {
             this.$emit('success');
-            this.$message(message);
+            this.$message('操作成功');
             this.close();
           });
         });
@@ -711,7 +711,7 @@
         if (param) {
           this.isEdit = true;
           this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
-            res['supplier'] = {supplierId: res[cylinderKeys.paperSupplierId], supplierName: res[cylinderKeys.paperSupplierName]};
+            res['supplier'] = {paperSupplierId: res[cylinderKeys.paperSupplierId], supplierName: res[cylinderKeys.paperSupplierName]};
             this.formData = Object.assign({}, this.formData, res);
             let tableData = res.tubeList || [];
             let _arr = tableData.map(obj=>this.$method.cloneData([paperKeys.warehouseAreaId], {}, obj));

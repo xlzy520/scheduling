@@ -69,7 +69,7 @@
               const beforeEnter = (val, cb) => {
                 let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val && props.row !== obj)[0];
                 if (sameRow && sameRow[paperKeys.paperCode]) {
-                  this.$message('纸筒编号已存在', 'error');
+                  this.$message('纸筒已录入', 'error');
                   this.$set(this.tableData, props.index, {});
                   // props.row[cylinderKeys.cylinderNo] = '';
                 } else {
@@ -78,7 +78,7 @@
                     //   this.$message('该纸筒编号已出库', 'error');
                     //   this.$set(this.tableData, props.index, {});
                     // } else {
-                      this.$set(this.tableData, props.index, {...obj, isError: false, id: undefined});
+                      this.$set(this.tableData, props.index, {...obj, isError: false});
                     // }
                   }).catch(()=>{
                     this.$set(this.tableData, props.index, {});
@@ -107,7 +107,7 @@
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码',
+            label: '原纸代码',
             width: 129,
           },
           {
@@ -309,7 +309,7 @@
                 let weight = Number(obj[cylinderKeys.weight]) || 0;
                 sum += weight;
                 return sum;
-              }, 0);
+              }, 0).toFixed(3);
             }
           },
           {
@@ -487,7 +487,7 @@
             this.$message('页面信息没有变化', 'error');
             return;
           }
-          let message;
+          // let message;
           let api;
           let post = {
             ...this.formData,
@@ -512,16 +512,16 @@
           //   post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
           // }
           if (!this.isEdit) {
-            message = '新增成功';
+            // message = '新增成功';
             api = paperWarehouseService.addOutStorage;
           } else {
-            message = '编辑成功';
+            // message = '编辑成功';
             api = paperWarehouseService.editOutStorage;
             // post.id = this.formData.id;
           }
           this.dj_api_extend(api, post).then((res) => {
             this.$emit('success');
-            this.$message(message);
+            this.$message('操作成功');
             this.close();
           }).catch((res)=>{
             let arr = res.data || [];

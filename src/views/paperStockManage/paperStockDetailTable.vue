@@ -11,6 +11,7 @@
 <script>
   import paperWarehouseService from '../../api/service/paperWarehouse';
   import SimpleTableBox from './components/SimpleTableBox';
+  import dayjs from 'dayjs';
   export default {
     name: 'paperStockDetailTable',
     components: {SimpleTableBox},
@@ -53,11 +54,19 @@
           {label: '原纸供应商：', key: 'supplierName', type: 'input'},
         ],
         tableColumns: [
-          {label: '入库时间', prop: 'createTime'},
+          {label: '入库时间', prop: 'createTime',
+            formatter(row, index, cur) {
+              return dayjs(cur).format('YYYY-MM-DD hh:mm:ss');
+            }},
           {label: '原纸供应商', prop: 'supplierName'},
           {label: '纸筒编号', prop: 'paperTubeNumber'},
           {label: '原纸代码', prop: 'paperCode'},
-          {label: '原纸类型', prop: 'paperType'},
+          {label: '原纸类型', prop: 'paperType',
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.paperType._swap[cur] || {};
+              return obj.label || '';
+            }
+          },
           {label: '克重（g）', prop: 'gram'},
           {label: '门幅（mm）', prop: 'paperSize'},
           {label: '重量（Kg）', prop: 'weight'},
@@ -68,7 +77,7 @@
         ],
         downloadConfig: {
           url: 'printDetail',
-          filename: '原纸出入库明细表'
+          filename: '原纸库存明细表'
         },
         totalQuantity: 0,
         totalQuality: 0,

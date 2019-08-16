@@ -66,13 +66,13 @@
     data() {
       return {
         packFormData: {
-          name: '11',
-          eachPackWeight: 222,
-          aTilemodelRate: 44,
-          bTilemodelRate: '44',
-          cTilemodelRate: '44',
-          eTilemodelRate: '44',
-          fTilemodelRate: '44',
+          name: '',
+          eachPackWeight: '',
+          aTilemodelRate: '',
+          bTilemodelRate: '',
+          cTilemodelRate: '',
+          eTilemodelRate: '',
+          fTilemodelRate: '',
         },
         packFormOptions: [
           {
@@ -178,10 +178,10 @@
         packConditionFormData: [
           [
             {
-              layer: ['3'],
+              layer: [],
               startUnitarea: '0',
-              endUnitarea: '4',
-              packpiece: '6',
+              endUnitarea: '',
+              packpiece: '',
             }
           ]
         ],

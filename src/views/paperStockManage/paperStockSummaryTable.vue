@@ -51,14 +51,39 @@
           {label: '原纸供应商', prop: 'supplierName'},
           {label: '原纸代码', prop: 'paperCode'},
           {label: '门幅(mm)', prop: 'paperSize'},
-          {label: '入库件数', prop: 'inNum'},
-          {label: '入库重量(Kg)', prop: 'inWeight'},
-          {label: '入库长度(m)', prop: 'inLength'},
-          {label: '入库面积(㎡)', prop: 'inArea'},
-          {label: '出库件数', prop: 'outNum'},
-          {label: '出库重量(Kg)', prop: 'outWeight'},
-          {label: '出库长度(m)', prop: 'outLength'},
-          {label: '出库面积(㎡)', prop: 'outArea'},
+          {label: '入库件数', prop: 'inNum',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="blue">{row[col.prop]}</span>);
+            }
+          },
+          {label: '入库重量(Kg)', prop: 'inWeight',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="blue">{row[col.prop]}</span>);
+            }},
+          {label: '入库长度(m)', prop: 'inLength',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="blue">{row[col.prop]}</span>);
+            }},
+          {label: '入库面积(㎡)', prop: 'inArea',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="blue">{row[col.prop]}</span>);
+            }},
+          {label: '出库件数', prop: 'outNum',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="gress">{row[col.prop]}</span>);
+            }},
+          {label: '出库重量(Kg)', prop: 'outWeight',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="gress">{row[col.prop]}</span>);
+            }},
+          {label: '出库长度(m)', prop: 'outLength',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="gress">{row[col.prop]}</span>);
+            }},
+          {label: '出库面积(㎡)', prop: 'outArea',
+            render: (h, {props: {row, col}}) => {
+              return (<span class="gress">{row[col.prop]}</span>);
+            }},
         ],
         downloadConfig: {
           url: 'printSummary',
@@ -73,5 +98,10 @@
 </script>
 
 <style lang="less" scoped>
-
+/deep/ .gress {
+  color: #40B317;
+}
+/deep/ .blue {
+  color: #3654EA;
+}
 </style>

@@ -58,11 +58,11 @@
     data() {
       return {
         stackFormData: {
-          name: '222',
+          name: '',
           produceLineId: '',
-          maxOrderCut: '222',
-          maxStackHeight: '222',
-          maxStackCount: '222',
+          maxOrderCut: '',
+          maxStackHeight: '',
+          maxStackCount: '',
         },
         stackFormOptions: [
           {

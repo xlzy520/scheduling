@@ -98,7 +98,84 @@
         ],
         formData: {},
         tableData: [],
-        tableColumns: [
+        // tableColumns: [
+        //   {
+        //     prop: cylinderKeys.cylinderNo,
+        //     label: '纸筒编号',
+        //     width: 123,
+        //   },
+        //   {
+        //     prop: paperKeys.paperCode,
+        //     label: '原纸代码',
+        //     width: 129,
+        //   },
+        //   {
+        //     prop: paperKeys.paperType,
+        //     label: '原纸类型',
+        //     width: 90,
+        //     formatter: (row, index, cur) => {
+        //       let obj = this.$enum.paperType._swap[cur] || {};
+        //       return obj.label || '';
+        //     }
+        //   },
+        //   {
+        //     prop: paperKeys.paperSize,
+        //     label: '门幅(mm)',
+        //     width: 97,
+        //   },
+        //   {
+        //     prop: paperKeys.paperGram,
+        //     label: '克重(g)',
+        //     width: 139,
+        //   },
+        //   {
+        //     prop: cylinderKeys.weight,
+        //     label: '重量(kg)',
+        //     width: 139,
+        //   },
+        //   {
+        //     prop: cylinderKeys.length,
+        //     label: '长度(m)',
+        //     width: 98,
+        //   },
+        //   {
+        //     prop: cylinderKeys.area,
+        //     label: '面积(㎡)',
+        //     width: 91,
+        //   },
+        //   {
+        //     prop: paperKeys.warehouseName,
+        //     label: '仓库',
+        //     width: 139,
+        //   },
+        //   {
+        //     prop: paperKeys.warehouseAreaName,
+        //     label: '库区',
+        //     width: 121,
+        //   },
+        //   {
+        //     prop: cylinderKeys.paperSupplierName,
+        //     label: '原纸供应商',
+        //     width: 156,
+        //   },
+        //   {
+        //     prop: cylinderKeys.money,
+        //     label: '金额'
+        //   },
+        // ],
+        recordData: [],
+        recordColumns: [
+          {label: '操作时间', prop: 'time', width: 226},
+          {label: '操作人', prop: 'operator', width: 136},
+          {label: '操作内容', prop: 'event', width: 742}
+        ],
+        activeTab: '1',
+        isShowMoney: false
+      };
+    },
+    computed: {
+      tableColumns() {
+        let total_arr = [
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
@@ -106,7 +183,7 @@
           },
           {
             prop: paperKeys.paperCode,
-            label: '原值代码',
+            label: '原纸代码',
             width: 129,
           },
           {
@@ -162,15 +239,13 @@
             prop: cylinderKeys.money,
             label: '金额'
           },
-        ],
-        recordData: [],
-        recordColumns: [
-          {label: '操作时间', prop: 'time', width: 226},
-          {label: '操作人', prop: 'operator', width: 136},
-          {label: '操作内容', prop: 'event', width: 742}
-        ],
-        activeTab: '1',
-      };
+        ];
+        let hidden_arr = [];
+        if (!this.isShowMoney) {
+          hidden_arr = [cylinderKeys.money]
+        }
+        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop))
+      }
     },
     created() {
     },
@@ -179,6 +254,7 @@
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       open(param) {
+        this.isShowMoney = param.isShowMoney;
         this.$refs.dialog.open();
         this.dj_api_extend(paperWarehouseService.getPaperOutStorage, param).then(res=>{
           this.formData = res;

@@ -271,6 +271,7 @@
         this.dialogVisible = true;
         this.$nextTick(()=>{
           this.$refs.dialog.open();
+          this.getWarehouse();
         });
       },
       getList(page) {

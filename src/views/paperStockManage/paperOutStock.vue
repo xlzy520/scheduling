@@ -85,7 +85,7 @@
             render: (h, {props: {row}}) => {
               return (
                 <span class="td-btn-group">
-                  <a on-click={()=>this.openDialog('lookDialog', row)}>查看</a>
+                  <a on-click={()=>this.openDialog('lookDialog', {...row, isShowMoney: this.isShowMoney})}>查看</a>
                   <span></span>
                   <a on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
                 </span>

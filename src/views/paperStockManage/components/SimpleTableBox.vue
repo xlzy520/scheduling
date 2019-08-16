@@ -69,7 +69,7 @@
           responseType: 'blob'
         }).then(res=>{
           const dataUrl = URL.createObjectURL(res.data);
-          const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH：mm：ss') + '.xlsx';
+          const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH:mm:ss') + '.xlsx';
           const eleLink = document.createElement('a');
           eleLink.download = filename;
           eleLink.style.display = 'none';
