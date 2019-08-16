@@ -19,4 +19,7 @@ export default {
   add(data) {
     return orderManage('/insertPreOrder.do', data);
   },
+  orderStatistics(data) {
+    return orderManage('/orderStatistics.do', data);
+  }
 };

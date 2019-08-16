@@ -7,7 +7,7 @@ export default {
   removeOrder(data) {
     return branchTask('/removeOrder.do', data);
   },
-  handle(data) {
-    return branchTask('/handle.do', data);
+  processe(data) {
+    return branchTask('/processe.do', data);
   },
 };

@@ -14,7 +14,7 @@ module.exports = [
   {name: 'warehouse', url: '/warehouse'},
   {name: 'paperWarehouse', url: '/paperWarehouse'},
   {name: 'innerUser', url: '/innerUser'},
-  {name: 'branchTask', url: '/branchTask'},
+  {name: 'branchTask', url: '/divide'},
   {name: 'orderManage', url: '/producePlan'},
   {name: 'orderStatistics', url: '/orderStatistics'},
   {name: 'productionMinority', url: '/few'},
