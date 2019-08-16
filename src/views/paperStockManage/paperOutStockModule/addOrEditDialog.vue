@@ -542,7 +542,9 @@
         if (param) {
           this.isEdit = true;
           this.dj_api_extend(paperWarehouseService.getPaperOutStorage, param).then(res=>{
-            res['department-person-name'] = `${res[cylinderKeys.useDepartmentName]} / ${res[cylinderKeys.usePersonName]}`;
+            if (res[cylinderKeys.useDepartmentName] && res[cylinderKeys.usePersonName]) {
+              res['department-person-name'] = `${res[cylinderKeys.useDepartmentName]} / ${res[cylinderKeys.usePersonName]}`;
+            }
             this.formData = Object.assign({}, this.formData, res);
             this.tableData = res.tubeList || [];
             return this.getEmptyData(10).then(arr=>{
