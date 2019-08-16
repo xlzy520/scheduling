@@ -13,5 +13,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: absolute;
+    width: 100%;
   }
 </style>

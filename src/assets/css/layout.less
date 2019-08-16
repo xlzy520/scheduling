@@ -8,10 +8,14 @@ body {
   // width: 100vw;
   // position: relative;
   // flex-grow: 1;
-  // // height: 100%;
+  height: 100%;
   // min-width: 1280px;
   // min-height: 600px;
   padding: 96px 0 0 0;
   // font-family: 'MicrosoftYaHei';
   // background: #f0f0f0;
+}
+//隐藏弹框组件自带的横向滚动条，避免横向滚动条覆盖在表格的横向滚动条上导致表格的横向滚动条无法拖动
+.el-dialog__wrapper .el-dialog__body > div > .dj-scroll-box .el-scrollbar__bar.is-horizontal {
+  display: none;
 }
