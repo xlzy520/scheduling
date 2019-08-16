@@ -9,8 +9,10 @@
             <el-form :model="child" :rules="stackRules" ref="childConditionForm" class="stack-form"
                      :key="child.time||childIndex" v-for="(child, childIndex) in condition">
               <div class="rule-row">
-                <el-form-item label="楞型" prop="tilemodel" class="tilemodel" v-if="childIndex===0">
+                <el-form-item label="楞型" prop="tilemodel" class="tilemodel"
+                              :class="childIndex===0?'': 'form-hidden'">
                   <dj-select v-model="child.tilemodel" :options="lengxingOptions"
+                             @visible-change="visible=>tileModelSelectOptionChange(visible, index)"
                              @change="val=>tilemodelChange(val,index, childIndex)"></dj-select>
                 </el-form-item>
                 <el-form-item label="切数" prop="cut">
@@ -154,16 +156,39 @@
           ]
         },
 
-        lengxingOptions: this.$enum.fluteType,
         qieshuOptions: qieshuOptions,
 
         loading: false
       };
     },
+    computed: {
+      lengxingOptions() {
+       return this.$enum.fluteType.map(v=>{
+         v.disabled = false;
+         return v
+       });
+      }
+    },
     methods: {
-      tilemodelChange(val, index, childIndex){
+      tilemodelChange(val, index, childIndex) {
         if (childIndex === 0) {
-          this.stackConditionFormData[index].map(v=>v.tilemodel === val)
+          this.stackConditionFormData[index].map(v=>{
+            v.tilemodel = val;
+          });
+        }
+      },
+      tileModelSelectOptionChange(visible, index) {
+        if (visible) {
+          const tileModels = this.stackConditionFormData.reduce((pre, cur, cutIndex)=>{
+            if (index === cutIndex) {
+              return pre.concat([]);
+            }
+            return pre.concat(cur[0].tilemodel);
+          }, []);
+          console.log(tileModels);
+          this.lengxingOptions.map(v=>{
+            v.disabled = tileModels.includes(v.value);
+          });
         }
       },
       selectOptionChange(visible, index, childIndex) {
@@ -208,7 +233,7 @@
       },
       removeCondition(index, childIndex) {
         const targetArr = this.stackConditionFormData;
-        if (targetArr.length === 1) {
+        if (targetArr.length === 1 && targetArr[0].length === 1) {
           return false;
         }
         if (targetArr[index].length === 1) {
@@ -309,6 +334,9 @@
     .rule-row{
       display: flex;
       justify-content: flex-end;
+      .form-hidden{
+        visibility: hidden;
+      }
       @{deep} .el-form-item{
         width: 32%;
         &.packpiece{

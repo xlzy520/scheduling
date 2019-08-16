@@ -178,7 +178,7 @@
         packConditionFormData: [
           [
             {
-              layer: '3',
+              layer: ['3'],
               startUnitarea: '0',
               endUnitarea: '4',
               packpiece: '6',
@@ -232,7 +232,7 @@
         }
         this.packConditionFormData.push(
           [{
-            layer: '',
+            layer: [],
             startUnitarea: 0,
             endUnitarea: '',
             packpiece: ''
@@ -240,7 +240,7 @@
       },
       removeCondition(index, childIndex) {
         const targetArr = this['packConditionFormData'];
-        if (targetArr.length === 1) {
+        if (targetArr.length === 1 && targetArr[0].length === 1) {
           return false;
         }
         if (targetArr[index].length === 1) {
@@ -250,7 +250,9 @@
         }
       },
       changeNextInput(val, index, childIndex) {
-        this.packConditionFormData[index][childIndex + 1].startUnitarea = val;
+        if (this.packConditionFormData[index].length > childIndex + 1) {
+          this.packConditionFormData[index][childIndex + 1].startUnitarea = val;
+        }
       },
       selectOptionChange(visible, index) {
         if (visible) {
@@ -278,11 +280,39 @@
         }).then(res => {
           let { packRuleDetails, ...rest } = res;
           this.packFormData = rest;
-          let cache = [[], [], [], [], [], []];
+          let cache = [];
+          let tileModelMap = Array.from(new Set(packRuleDetails.map(v=>v.layer)));
+          tileModelMap.forEach(()=>cache.push([]));
           for (let i = 0; i < packRuleDetails.length; i++) {
-            cache[packRuleDetails[i].layer - 2].push(packRuleDetails[i]);
+            for (let j = 0; j < tileModelMap.length; j++) {
+              if (packRuleDetails[i].layer === tileModelMap[j]) {
+                cache[j].push(packRuleDetails[i]);
+              }
+            }
           }
-          this.packConditionFormData = cache;
+          const formatData = cache.map(v=>{
+            let mergePiece = [];
+            let pieceMap = Array.from(new Set(v.map(p=>p.piece)));
+            pieceMap.forEach(()=>mergePiece.push([]));
+            v.map(p=>{
+              for (let i = 0; i < pieceMap.length; i++) {
+                if (pieceMap[i] === p.piece) {
+                  mergePiece[i].push(p);
+                }
+              }
+            });
+            let merge = mergePiece.map(mp=>{
+              let cuts = mp.map(c=>c.cut);
+              return {
+                ...mp[0],
+                cut: cuts
+              };
+            });
+            return merge;
+          });
+          console.log(formatData);
+          debugger
+          this.packConditionFormData = formatData;
           this.loading = false
         }).catch(() => {
           this.loading = false

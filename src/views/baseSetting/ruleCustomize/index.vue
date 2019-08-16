@@ -190,16 +190,14 @@
       },
       packConfirm() {
         this.formValidate('pack').then(()=>{
-          const flag = this.$refs.dialog.packConditionFormData.every((v, index)=>{
-            const layers = v.reduce((pre, cur)=>pre.concat(cur.layer), []);
-            const allLayers = new Array(6).fill('').map((v, i)=>(i + 2).toString());
-            const layer = allLayers.find(c=>!layers.includes(c));
-            if (layer > 0) {
-              this.$message(`层数${layer}未选择`, 'warning');
-              return false;
-            }
-            return true;
-          });
+          let flag = true;
+          const layers = this.$refs.dialog.getLayers();
+          const allLayers = new Array(6).fill('').map((v, i)=>(i + 2).toString());
+          const layer = allLayers.find(c=>!layers.includes(c));
+          if (layer > 0) {
+            this.$message(`层数${layer}未选择`, 'warning');
+            flag = false
+          }
           if (flag) {
             this.$refs.dialog.loading = true;
             const packRuleDetails = this.$refs.dialog.packConditionFormData.reduce((pre, cur)=>{
