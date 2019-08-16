@@ -365,16 +365,17 @@
     a {
       padding: 2px 10px;
       cursor: pointer;
+      color: #3654EA;
       &:not(:last-child){
-        border-right: 1px solid #f0f2f5;
+        border-right: 1px solid #EBEEF5;
       }
     }
   }
   @{deep} .status-off{
-    color: #afb1b5;
+    color: #909399;
   }
 
   .paper-kind-dialog {
-    padding-top: 20px;
+    width: 780px;
   }
 </style>

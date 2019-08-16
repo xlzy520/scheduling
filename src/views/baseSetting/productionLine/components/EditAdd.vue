@@ -529,21 +529,21 @@
       box-sizing: border-box;
       padding: 15px;
       &-item{
+        width: 55px;
         text-align: center;
         font-size: 16px;
-        min-width: 60px;
         height: 24px;
         line-height: 24px;
         padding: 5px 10px;
         margin: 5px;
         color: #606266;
-        background: #f0f2f5;
+        background: #EBEEF5;
         border-radius: 5px;
         cursor: pointer;
         user-select: none;
         &.selected{
           color: #fff;
-          background: #3654ea;
+          background: #3654EA;
         }
       }
     }

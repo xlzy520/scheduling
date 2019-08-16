@@ -229,6 +229,7 @@
         min-width: 80%;
       }
       .el-tabs__item{
+        font-size: 16px;
         max-width: 180px;
       }
 

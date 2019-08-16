@@ -22,15 +22,17 @@ export default {
 <style lang="less" scoped>
   .bs-card{
     width: 100%;
+    font-size: 14px;
     &-header{
-      font-size: 18px;
-      font-weight: bold;
+      font-family:PingFang SC Medium,sans-serif;
+      font-weight:500;
       background: #fafafa;
-      color: #666;
-      padding: 20px;
+      color: #606266;
+      padding: 15px;
     }
     &-content{
       padding: 20px 0 20px 10px;
+      color: #606266;
     }
   }
 </style>

@@ -411,7 +411,7 @@
       padding: 2px 10px;
       cursor: pointer;
       &:not(:last-child){
-        border-right: 1px solid #f0f2f5;
+        border-right: 1px solid #EBEEF5;
       }
     }
   }

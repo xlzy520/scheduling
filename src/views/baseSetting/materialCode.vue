@@ -248,14 +248,15 @@
     a {
       padding: 2px 10px;
       cursor: pointer;
+      color: #3654EA;
       &:not(:last-child){
-        border-right: 1px solid #f0f2f5;
+        border-right: 1px solid #EBEEF5;
       }
     }
   }
 
   .material-code-dialog {
-    width: 50vw;
+    width: 836px;
     @{deep} .dj-form .el-form-item{
       .el-form-item__label{
         float: unset;
@@ -280,7 +281,6 @@
     }
     @{deep} .optional{
       width: 100%;
-      min-height: 120px;
       margin-bottom: 20px;
       &-label{
         font-size: 14px;
@@ -290,21 +290,21 @@
         margin: 0;
       }
       &-area{
-        min-height: 80px;
+        height: 192px;
         display: flex;
         flex-wrap: wrap;
-        justify-content: flex-start;
+        align-content: flex-start;
         border: 1px solid #eee;
         border-radius: 4px;
         &-item{
           text-align: center;
           font-size: 16px;
-          min-width: 60px;
+          width: 72px;
           height: 24px;
           line-height: 24px;
           padding: 5px 10px;
           margin: 5px;
-          color: #747579;
+          color: #606266;
           background: #F0F2F5;
           border-radius: 5px;
           cursor: pointer;

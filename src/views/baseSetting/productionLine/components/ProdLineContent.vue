@@ -130,7 +130,6 @@
     .bs-card-row {
       display: flex;
       line-height: 1.5;
-      color: #8b8b8b;
       padding: 5px 0;
       .bs-card-label {
         text-align: left;

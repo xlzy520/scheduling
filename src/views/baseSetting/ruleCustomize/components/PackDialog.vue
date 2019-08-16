@@ -43,7 +43,7 @@
           </transition-group>
         </div>
       </div>
-      <el-button type="primary" @click.prevent="addCondition">添加条件</el-button>
+      <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px">添加条件</el-button>
     </div>
   </dj-dialog>
 </template>
@@ -334,6 +334,7 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .pack-dialog {
+    padding-left: 10px;
     width: 80vw;
     height: 708px;
   }

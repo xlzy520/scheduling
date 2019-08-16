@@ -15,7 +15,7 @@
       </dj-table>
     </page-pane>
 
-    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
+    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" append-to-body
                :title="dialogTypeIsAdd?'新增生产线修边': '编辑生产线修边'">
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}">
         <dj-form  v-for="(formOption, index) in formOptions"
@@ -27,7 +27,7 @@
                   :form-data="formData[index]"
                   :form-options="formOption"></dj-form>
         <div class="plts-dialog-aside" v-if="dialogTypeIsAdd">
-          <el-button type="primary" @click.prevent="addLayer">+添加层数修边</el-button>
+          <el-button type="primary" @click.prevent="addLayer">添加生产线</el-button>
         </div>
       </div>
     </dj-dialog>
@@ -324,13 +324,14 @@
     a {
       padding: 2px 10px;
       cursor: pointer;
+      color: #3654EA;
       &:not(:last-child){
-        border-right: 1px solid #f0f2f5;
+        border-right: 1px solid #EBEEF5;
       }
     }
   }
   @{deep} .status-off{
-    color: #afb1b5;
+    color: #909399;
   }
 
   @{deep} .el-col-8 {
@@ -341,16 +342,20 @@
       display: block;
       .el-form-item__content{
         cursor: pointer;
-        margin-left: unset!important;
+        margin-left: 12px!important;
       }
     }
   }
   .plts-dialog {
-    width: 1200px;
+    width: 1018px;
+    height: 497px;
     margin-bottom: 20px;
-    padding-top: 20px;
+    &-aside{
+      margin-left: 90px;
+    }
     &.edit{
       width: 400px;
+      height: 157px;
       @{deep} .el-col-delete{
         .el-form-item__content{
           display: none;

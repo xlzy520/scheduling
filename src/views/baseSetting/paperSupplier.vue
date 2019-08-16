@@ -219,12 +219,12 @@
   @{deep} .operation {
     a {
       cursor: pointer;
+      color: #3654EA;
     }
   }
 
   .paper-supplier-dialog {
-    width: 60vw;
-    padding-top: 20px;
+    width: 780px;
     @{deep} .dj-form .el-form-item{
       .el-form-item__content{
         width: auto;
