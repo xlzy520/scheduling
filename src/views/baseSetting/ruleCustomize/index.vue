@@ -2,9 +2,11 @@
   <single-page class="table-page rule-customize" v-loading="loading">
     <page-pane>
       <dj-table
+        ref="table"
         :data="tableData"
         :columns="tableColumns"
-        :total="pageTotal" height="100%"
+        :total="pageTotal"
+        height="100%"
         @update-data="getTableData"
         v-loading="tableLoading"
       >
@@ -44,7 +46,7 @@
         tableColumns: [
           {label: '名称', prop: 'name'},
           {label: '规则类型', prop: 'typeName'},
-          {label: '生效时间', prop: 'effectiveTime'},
+          {label: '生效时间', prop: 'effectTime'},
           {label: '操作人', prop: 'operator'},
           {label: '操作时间', prop: 'updateTime'},
           {label: '启用状态', prop: 'isEffected',
@@ -80,26 +82,21 @@
           this.$refs.dialog.open();
         });
       },
-      changeRuleEffectedApi({isEffected, id}) {
-        ruleCustomizeService.changeEffected({
-          effected: Math.pow(0, isEffected), // 0、1数字取反
-          ruleId: id
-        }).then(() => {
-          this.$message(isEffected ? '禁用成功' : '启用成功', 'success');
-          this.getTableData();
-        });
-      },
       changeStatus(row) {
-        if (!row.isEffected) {
-          this.$confirm('确定启用该条内容吗？', '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
-            this.changeRuleEffectedApi(row);
+        let post = {
+          ruleId: row.id,
+          effected: row.isEffected ? 0 : 1,
+        };
+        let text = row.isEffected ? '禁用' : '启用';
+        this.$confirm(`确定${text}该条内容吗？`, '', {
+          type: 'warning',
+          showClose: false,
+        }).then(() => {
+          this.dj_api_extend(ruleCustomizeService.changeEffected, post).then((res) => {
+            this.$message(`${text}成功`, 'success');
+            row.isEffected = !row.isEffected;
           });
-        } else {
-          this.changeRuleEffectedApi(row);
-        }
+        });
       },
       view(row) {
         this.dialogType = (row.typeName === '叠单规则' ? 'stack' : 'pack') + '_view';
@@ -112,28 +109,7 @@
         this.dialogTypeIsAdd = false;
         this.$nextTick(()=>{
           this.$refs.dialog.open();
-        });
-        ruleCustomizeService.getRuleDetail({
-          ruleId: row.id
-        }).then(res=>{
-          if (this.dialogType === 'stack') {
-            let { detailModels, ...rest } = res;
-            this.$refs.dialog.stackFormData = rest;
-            let cache = [[], [], [], [], [], [], []];
-            for (let i = 0; i < detailModels.length; i++) {
-              detailModels[i].cut = [detailModels[i].cut ];
-              cache[detailModels[i].cut - 1].push(detailModels[i]);
-            }
-            this.$refs.dialog.stackConditionFormData = cache;
-          } else {
-            let { packRuleDetails, ...rest } = res;
-            this.$refs.dialog.packFormData = rest;
-            let cache = [[], [], [], [], [], []];
-            for (let i = 0; i < packRuleDetails.length; i++) {
-              cache[packRuleDetails[i].layer - 2].push(packRuleDetails[i]);
-            }
-            this.$refs.dialog.packConditionFormData = cache;
-          }
+          this.$refs.dialog.renderAllCondition(row.id);
         });
       },
       closeSuoBian() {
@@ -173,60 +149,87 @@
         this.close();
         const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
         this.$message(message, 'success');
-        this.$refs.search.search();
+        this.$refs.table.updateData();
       },
       stackConfirm() {
         this.formValidate('stack').then(()=>{
-          this.loading = true;
-          const detailModels = this.$refs.dialog.stackConditionFormData.reduce((pre, cur)=>{
-            let cache = cur.map(v=> v.cut.map(vcut=>{
+          const flag = this.$refs.dialog.stackConditionFormData.every((v, index)=>{
+            const cuts = v.reduce((pre, cur)=>pre.concat(cur.cut), []);
+            const allCuts = new Array(7).fill('').map((v, i)=>(i + 1).toString());
+            const cut = allCuts.find(c=>!cuts.includes(c));
+            if (cut > 0) {
+              this.$message(`条件${index + 1}: 切数${cut}未选择`, 'warning');
+              return false;
+            }
+            return true;
+          });
+          if (flag) {
+            this.$refs.dialog.loading = true;
+            const detailModels = this.$refs.dialog.stackConditionFormData.reduce((pre, cur)=>{
+              let cache = cur.map(v=> v.cut.map(vcut=>{
                 return {
                   tilemodel: v.tilemodel,
                   cut: vcut,
                   piece: v.piece,
                 };
               }));
-            return pre.concat(...cache);
-          }, []);
-          const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
-          packRequest({
-            ...this.$refs.dialog.stackFormData,
-            detailModels: detailModels
-          }).then(() => {
-            this.loading = false;
-            this.submitSuccess();
-          }).catch(() => {
-            this.loading = false;
-          });
+              return pre.concat(...cache);
+            }, []);
+            const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
+            packRequest({
+              ...this.$refs.dialog.stackFormData,
+              detailModels: detailModels
+            }).then(() => {
+              this.$refs.dialog.loading = false;
+              this.submitSuccess();
+            }).catch(() => {
+              this.$refs.dialog.loading = false;
+            });
+          }
         });
       },
       packConfirm() {
         this.formValidate('pack').then(()=>{
-          const packRuleDetails = this.$refs.dialog.packConditionFormData.reduce((pre, cur)=>{
-            let cache = cur.map(v=> v.layer.map(vlayer=>{
-              return {
-                endUnitarea: v.endUnitarea,
-                layer: vlayer,
-                packpiece: v.packpiece,
-                startUnitarea: v.startUnitarea
-              };
-            }));
-            return pre.concat(...cache);
-          }, []);
-          const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
-          packRequest({
-            ...this.$refs.dialog.packFormData,
-            packRuleDetails: packRuleDetails
-          }).then((res) => {
-            this.submitSuccess();
+          const flag = this.$refs.dialog.packConditionFormData.every((v, index)=>{
+            const layers = v.reduce((pre, cur)=>pre.concat(cur.layer), []);
+            const allLayers = new Array(6).fill('').map((v, i)=>(i + 2).toString());
+            const layer = allLayers.find(c=>!layers.includes(c));
+            if (layer > 0) {
+              this.$message(`层数${layer}未选择`, 'warning');
+              return false;
+            }
+            return true;
           });
+          if (flag) {
+            this.$refs.dialog.loading = true;
+            const packRuleDetails = this.$refs.dialog.packConditionFormData.reduce((pre, cur)=>{
+              let cache = cur.map(v=> v.layer.map(vlayer=>{
+                return {
+                  endUnitarea: v.endUnitarea,
+                  layer: vlayer,
+                  packpiece: v.packpiece,
+                  startUnitarea: v.startUnitarea
+                };
+              }));
+              return pre.concat(...cache);
+            }, []);
+            const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
+            packRequest({
+              ...this.$refs.dialog.packFormData,
+              packRuleDetails: packRuleDetails
+            }).then((res) => {
+              this.$refs.dialog.loading = false;
+              this.submitSuccess();
+            }).catch(() => {
+              this.$refs.dialog.loading = false;
+            });
+          }
         });
       },
       close() {
         this.dialogType = '';
       },
       getTableData(data) {
-        console.log(data);
         this.tableLoading = true;
         this.dj_api_extend(ruleCustomizeService.list, data).then((res) => {
           this.tableData = res.list;

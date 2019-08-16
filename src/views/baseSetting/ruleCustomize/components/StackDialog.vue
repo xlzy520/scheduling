@@ -1,24 +1,24 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" @confirm="confirm"
-             :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
-    <div class="stack-dialog">
+  <dj-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
+    <div class="stack-dialog" v-loading="loading">
       <dj-form ref="stackForm" :form-data="stackFormData" :form-options="stackFormOptions" :column-num="3"/>
       <div v-for="(condition, index) in stackConditionFormData" class="condition-item stack">
         <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
         <div class="child-condition-list">
           <transition-group name="childCondition">
             <el-form :model="child" :rules="stackRules" ref="childConditionForm" class="stack-form"
-                     :key="child.time" v-for="(child, childIndex) in condition">
+                     :key="child.time||childIndex" v-for="(child, childIndex) in condition">
               <div class="rule-row">
                 <el-form-item label="楞型" prop="tilemodel" class="tilemodel" v-if="childIndex===0">
-                  <dj-select v-model="child.tilemodel" :options="lengxingOptions"></dj-select>
+                  <dj-select v-model="child.tilemodel" :options="lengxingOptions"
+                             @change="val=>tilemodelChange(val,index, childIndex)"></dj-select>
                 </el-form-item>
                 <el-form-item label="切数" prop="cut">
                   <dj-select type="multiple" collapse-tags v-model="child.cut"
-                             @visible-change="visible=>selectOptionChange(visible, childIndex)"
+                             @visible-change="visible=>selectOptionChange(visible, index, childIndex)"
                              :options="qieshuOptions"></dj-select>
                 </el-form-item>
-                <el-form-item label="片数：" prop="piece" class="piece">
+                <el-form-item label="片数" prop="piece" class="piece">
                   <dj-input v-model="child.piece"></dj-input>
                 </el-form-item>
                 <div class="button-col">
@@ -40,8 +40,6 @@
   import {djForm} from 'djweb';
   import ruleCustomizeService from '@/api/service/ruleCustomize';
   import formRules from "../../formRules";
-
-
 
   const qieshuOptions = [
     {label: '1', value: '1', disabled: false},
@@ -158,25 +156,41 @@
 
         lengxingOptions: this.$enum.fluteType,
         qieshuOptions: qieshuOptions,
+
+        loading: false
       };
     },
     methods: {
-      selectOptionChange(visible, childIndex) {
+      tilemodelChange(val, index, childIndex){
+        if (childIndex === 0) {
+          this.stackConditionFormData[index].map(v=>v.tilemodel === val)
+        }
+      },
+      selectOptionChange(visible, index, childIndex) {
         if (visible) {
-          this.stackConditionFormData.map((v)=>{
-            const cuts = v.reduce((pre, cur, cutIndex)=>{
-              if (childIndex === cutIndex) {
-                return pre.concat([]);
-              }
-              return pre.concat(cur.cut);
-            }, []);
-            this.qieshuOptions.map(v=>{
-              v.disabled = cuts.includes(v.value);
-            });
+          this.stackConditionFormData.map((v, sIndex)=>{
+            if (sIndex === index) {
+              const cuts = v.reduce((pre, cur, cutIndex)=>{
+                if (childIndex === cutIndex) {
+                  return pre.concat([]);
+                }
+                return pre.concat(cur.cut);
+              }, []);
+              this.qieshuOptions.map(v=>{
+                v.disabled = cuts.includes(v.value);
+              });
+            }
           });
         }
       },
       addChildCondition(index) {
+        const cuts = this.stackConditionFormData.reduce((pre, cur)=>{
+          return pre.concat(cur[0].cut);
+        }, []);
+        if (cuts.length === 7) {
+          this.$message('所有切数已选择，无法新增', 'warning');
+          return false;
+        }
         this.stackConditionFormData[index].push({
           tilemodel: this.stackConditionFormData[index][0].tilemodel,
           cut: '',
@@ -204,17 +218,6 @@
         }
       },
       confirm() {
-        this.stackConditionFormData.map((v,index)=>{
-          const cuts = v.reduce((pre, cur)=>{
-            return pre.concat(cur.cut);
-          }, []);
-          for (let i = 1; i < 8; i++) {
-            if (!cuts.includes(i.toString())) {
-              this.$message(`条件${index+1}: 切数${i}未选择`, 'warning');
-              return false;
-            }
-          }
-        });
         this.$emit('confirm');
       },
       close() {
@@ -232,6 +235,50 @@
             };
           });
           this.$set(this.stackFormOptions[1].attrs, 'options', lineOptions);
+        });
+      },
+      renderAllCondition(id) {
+        this.loading = true;
+        ruleCustomizeService.getRuleDetail({
+          ruleId: id
+        }).then(res => {
+          let { detailModels, ...rest } = res;
+          // 一下操作皆为将一组数据根据两个关键词合并同类
+          this.stackFormData = rest;
+          let cache = [];
+          let tileModelMap = Array.from(new Set(detailModels.map(v=>v.tilemodel)));
+          tileModelMap.forEach(()=>cache.push([]));
+          for (let i = 0; i < detailModels.length; i++) {
+            for (let j = 0; j < tileModelMap.length; j++) {
+              if (detailModels[i].tilemodel === tileModelMap[j]) {
+                cache[j].push(detailModels[i]);
+              }
+            }
+          }
+          const formatData = cache.map(v=>{
+            let mergePiece = [];
+            let pieceMap = Array.from(new Set(v.map(p=>p.piece)));
+            pieceMap.forEach(()=>mergePiece.push([]));
+            v.map(p=>{
+              for (let i = 0; i < pieceMap.length; i++) {
+                if (pieceMap[i] === p.piece) {
+                  mergePiece[i].push(p);
+                }
+              }
+            });
+            let merge = mergePiece.map(mp=>{
+              let cuts = mp.map(c=>c.cut);
+              return {
+                ...mp[0],
+                cut: cuts
+              };
+            });
+            return merge;
+          });
+          this.stackConditionFormData = formatData;
+          this.loading = false;
+        }).catch(() => {
+          this.loading = false;
         });
       }
     },

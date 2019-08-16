@@ -1,7 +1,7 @@
 <template>
   <dj-dialog ref="dialog" @close="close" @confirm="confirm"
              :title="dialogTypeIsAdd?'新增打包规则': '编辑打包规则'">
-    <div class="pack-dialog">
+    <div class="pack-dialog" v-loading="loading">
       <dj-form ref="packForm" :form-data="packFormData" :form-options="packFormOptions"
                :column-num="zqjColumnNum" :col-rule="()=>zqjColRule"></dj-form>
       <div v-for="(condition, index) in packConditionFormData" class="condition-item">
@@ -50,6 +50,7 @@
 
 <script>
   import {djForm} from 'djweb';
+  import ruleCustomizeService from '@/api/service/ruleCustomize';
   import formRules from "../../formRules";
   const layerOptions = [
     {label: '二层', value: '2', disabled: false},
@@ -205,6 +206,8 @@
         zqjColumnNum: '',
         zqjColRule: '',
         layerOptions: layerOptions,
+
+        loading: false
       };
     },
     methods: {
@@ -263,25 +266,35 @@
         }
       },
       confirm() {
-        const layers = this.getLayers();
-        for (let i = 2; i < 8; i++) {
-          if (!layers.includes(i.toString())) {
-            this.$message(`层数${i}未选择`, 'warning');
-            return false;
-          }
-        }
         this.$emit('confirm');
       },
       close() {
         this.$emit('close');
       },
+      renderAllCondition(id){
+        this.loading = true
+        ruleCustomizeService.getRuleDetail({
+          ruleId: id
+        }).then(res => {
+          let { packRuleDetails, ...rest } = res;
+          this.packFormData = rest;
+          let cache = [[], [], [], [], [], []];
+          for (let i = 0; i < packRuleDetails.length; i++) {
+            cache[packRuleDetails[i].layer - 2].push(packRuleDetails[i]);
+          }
+          this.packConditionFormData = cache;
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      },
       zqjGetColumnNum() {
         const width = window.innerWidth;
-        this.zqjColumnNum = width < 1400 ? 3 : 4;
+        this.zqjColumnNum = width < 1920 ? 3 : 4;
       },
       zqjGetColRule() {
         const width = window.innerWidth;
-        this.zqjColRule = width < 1400 ? 8 : 6;
+        this.zqjColRule = width < 1920 ? 8 : 6;
       },
 
       open() {
