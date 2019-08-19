@@ -579,12 +579,13 @@
             return cloneData(keyList, {paperVarietyId: data['id']}, data);
           }
         }).catch(()=>{
-          this.$confirm('无对应原纸编号，请先设置原纸品种.', '提示', {
-            confirmButtonText: '确认',
-            cancelButtonText: '取消',
-            type: 'error',
-            showClose: false
-          });
+          this.$message('无对应原纸编号，请先设置原纸品种', 'warning');
+          // this.$confirm('无对应原纸编号，请先设置原纸品种.', '提示', {
+          //   confirmButtonText: '确认',
+          //   cancelButtonText: '取消',
+          //   type: 'warning ',
+          //   showClose: false
+          // });
           return Promise.reject();
         });
       },
