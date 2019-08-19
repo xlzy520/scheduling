@@ -18,14 +18,14 @@
                              :type="dialogTypeIsAdd?'multiple':''" collapse-tags
                              @visible-change="visible=>selectOptionChange(visible, index)"></dj-select>
                 </el-form-item>
-                <el-form-item label="单位面积" class="unit-area">
+                <el-form-item label="单位面积" class="unit-area" ref="unitArea">
                   <el-form-item prop="startUnitarea">
-                    <dj-input v-model.number="child.startUnitarea" placeholder="请输入" maxLength="10"
+                    <dj-input v-model="child.startUnitarea" placeholder="请输入" maxLength="10"
                               disabled suffix-icon="m²"></dj-input>
                   </el-form-item>
                   <div style="margin: 0 5px">至</div>
                   <el-form-item prop="endUnitarea">
-                    <dj-input type="float" v-model.number="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
+                    <dj-input v-model="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
                               maxLength="10" @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
                   </el-form-item>
                 </el-form-item>
@@ -250,13 +250,19 @@
         }
       },
       changeNextInput(val, index, childIndex) {
-        if (val <= this.packConditionFormData[index][childIndex].startUnitarea) {
-          this.$message('不能比前面输入的单位面积小', 'info');
-          this.packConditionFormData[index][childIndex].endUnitarea = '';
+        val = Number(val);
+        const child = this.packConditionFormData[index];
+        if (val <= Number(child[childIndex].startUnitarea)) {
+          this.$message('结束单位面积小于或等于起始单位面积', 'info');
+          child[childIndex].endUnitarea = '';
           return false;
         }
-        if (this.packConditionFormData[index].length > childIndex + 1) {
-          this.packConditionFormData[index][childIndex + 1].startUnitarea = val;
+        if (child.length > childIndex + 1) {
+          child[childIndex + 1].startUnitarea = val.toString();
+          if (val >= Number(child[childIndex + 1].endUnitarea) && child[childIndex + 1].endUnitarea !== '') {
+            this.$message('结束单位面积小于或等于起始单位面积', 'info');
+            child[childIndex + 1].endUnitarea = '';
+          }
         }
       },
       selectOptionChange(visible, index) {
