@@ -53,7 +53,6 @@ function login(to) {
   // todo 获取token，开发使用，以后删除
   if (process.env.NODE_ENV === 'development') {
     return autoLogin().then(res=>{
-      console.log(res);
       return innerUser.getToken({token: res});
     }).then(()=>{
       setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
@@ -75,8 +74,11 @@ function login(to) {
  * @returns {boolean}
  */
 function isLogin(to) {
-  return getCookiesItem('username') !== undefined;
-  // return true;
+  if (process.env.NODE_ENV === 'development') {
+    return getCookiesItem('username') !== undefined;
+  } else {
+    return true;
+  }
 }
 
 permission({
