@@ -18,7 +18,7 @@
         </div>
       </dj-table>
     </page-pane>
-    <dj-dialog v-if="visible" ref="dialog" @close="close" @confirm="confirm" title="处理">
+    <dj-dialog v-if="visible" ref="dialog" @close="close" @confirm="confirm" title="处理" v-loading="dialogLoading">
       <div class="dialog">
         <dj-form :form-data="formData" ref="form" :form-options="formOptions" :column-num="2"></dj-form>
         <div class="order-info-text">订单信息</div>
@@ -205,6 +205,7 @@
         pageTotal: 0,
         searchData: {},
         loading: false,
+        dialogLoading: false,
         checkedList: [],
 
         formData: initFormData,
@@ -273,18 +274,6 @@
       };
     },
     methods: {
-      getDetail(row) {
-        this.dj_api_extend(branchTaskService.processe, {
-          id: row.id,
-          processeAmount: row.processeAmount,
-          divideState: row.divideState
-        }).then(res => {
-          this.$message('移除成功', 'success');
-          this.$refs.search.search();
-        }).catch(() => {
-          this.loading = false;
-        });
-      },
       handle(row) {
         this.formData = this.$method.deepClone(row);
         this.formData.processeAmount = '';
@@ -303,7 +292,7 @@
       confirm() {
         this.$refs.form.validate((valid) => {
           if (valid) {
-            this.loading = true;
+            this.dialogLoading = true;
             const {id, processeAmount, divideState } = this.formData;
             this.dj_api_extend(branchTaskService.processe, {
               id: id,
@@ -313,8 +302,8 @@
               this.$message('处理成功', 'success');
               this.close();
               this.$refs.search.search();
-            }).catch(() => {
-              this.loading = false;
+            }).finally(() => {
+              this.dialogLoading = false;
             });
           }
         });
