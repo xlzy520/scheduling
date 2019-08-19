@@ -561,7 +561,7 @@
       },
       //获取所有原纸编号
       getPaperNoList(val) {
-        return this.dj_api_extend(paperKindService.list, {pageNo: 1, pageSize: 10000000, paperNumber: val}).then(res=>{
+        return this.dj_api_extend(paperKindService.list, {pageNo: 1, pageSize: 10000000, paperNumber: val, effected: 1}).then(res=>{
           let list = res.list || [];
           return list;
         });
