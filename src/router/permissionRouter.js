@@ -7,28 +7,28 @@ import prodManage from './modules/prodManage';
 import paperStockManage from './modules/paperStockManage';
 import statement from './modules/statement';
 
-const index = {
-  path: 'index',
-  meta: {
-    title: '首页',
-    homeRoute: true
-  },
-  component: 'views/index/index'
-};
+// const index = {
+//   path: 'index',
+//   meta: {
+//     title: '首页',
+//     homeRoute: true
+//   },
+//   component: 'views/index/index'
+// };
 
 const routes = [
-  {
-    path: '/home',
-    redirect: '/home/index',
-    component: 'components/layout/layout',
-    children: [
-      index,
+  // {
+  //   path: '/home',
+  //   redirect: '/home/index',
+  //   component: 'components/layout/layout',
+  //   children: [
+  //     index,
       baseSetting,
       prodManage,
       paperStockManage,
       statement
-    ]
-  }
+    // ]
+  // }
 ].map(route => {
   route.name = route.path;
   return route;

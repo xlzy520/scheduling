@@ -45,7 +45,7 @@ module.exports = {
         // target: 'http://192.168.2.127:3000',
         changeOrigin: true,
         pathRewrite: {
-          '^/djintelligent/firstPage/getWebFirstPageAll.do': '/djsupplier/permission/consoleMenu1'
+          '^/djintelligent/firstPage/getWebFirstPageAll.do': '/djsupplier/permission/consoleMenu2'
         }
       },
     }),
