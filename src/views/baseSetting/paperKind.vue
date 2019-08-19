@@ -269,6 +269,7 @@
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
+        this.getWarehouse();
         this.$nextTick(()=>{
           this.$refs.dialog.open();
           this.getWarehouse();
@@ -311,10 +312,10 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
+        this.getWarehouse();
         this.getPaperKindById(row.id).then((res)=>{
           this.getWarehouseArea(res.warehouseId);
         });
-        // this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
