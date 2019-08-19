@@ -1,10 +1,12 @@
 <template>
     <dj-dialog ref="dialog" @close="close" width="700px" :title="title" @confirm="confirm">
-      <el-tree @node-click="handleNodeClick"
-               :props="props"
-               :load="remote"
-               lazy></el-tree>
-      <div slot="footer"></div>
+      <div class="dialog-wrap">
+        <el-tree @node-click="handleNodeClick"
+                 :props="props"
+                 :load="remote"
+                 lazy></el-tree>
+        <div slot="footer"></div>
+      </div>
     </dj-dialog>
 </template>
 <script>
@@ -101,3 +103,8 @@
     }
   };
 </script>
+<style lang="less" scoped>
+  .dialog-wrap {
+    height: 300px;
+  }
+</style>

@@ -65,6 +65,11 @@
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
             width: 150,
+            renderHeader() {
+              return (
+                <span><i class="icon-require">*</i>纸筒编号</span>
+              );
+            },
             propsHandler: (props) => {
               const beforeEnter = (val, cb) => {
                 let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val && props.row !== obj)[0];
@@ -642,5 +647,9 @@
   }
   .base-table /deep/ .loading-wrap {
     display: none;
+  }
+  /deep/ .icon-require {
+    color: red;
+    vertical-align: middle;
   }
 </style>

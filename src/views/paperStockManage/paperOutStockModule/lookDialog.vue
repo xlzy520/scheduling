@@ -2,8 +2,7 @@
     <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="基础信息" name="1">
-          <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"
-                   :col-rule="colRule"></dj-form>
+          <dj-form labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
           <p class="font-subhead">纸筒信息</p>
           <base-table ref="table"
                       :data="tableData"
@@ -31,71 +30,69 @@
     name: 'lookDialog',
     data: function () {
       return {
-        formOptions: [
-          {
-            formItem: {
-              prop: cylinderKeys.documentNo,
-              label: '单据编号'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.usePersonName,
-              label: '领用人',
-              rules: [rules.required('')]
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.useGroup,
-              label: '领用班组',
-              rules: [rules.required('')]
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.outStockType,
-              label: '出库类型',
-              rules: [rules.required('')]
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.useDepartmentName,
-              label: '领用部门'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.forkliftDriverName,
-              label: '叉车员'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.totalWeight,
-              label: '总重量'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.totalAmount,
-              label: '总件数'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.totalMoney,
-              label: '总金额'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.remark,
-              label: '备注信息'
-            }
-          }
-        ],
+        // formOptions: [
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.documentNo,
+        //       label: '单据编号'
+        //     }
+        //   },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.usePersonName,
+        //       label: '领用部门/领用人',
+        //     }
+        //   },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.useGroup,
+        //       label: '领用单元',
+        //     }
+        //   },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.outStockType,
+        //       label: '出库类型',
+        //       // rules: [rules.required('')]
+        //     }
+        //   },
+        //   // {
+        //   //   formItem: {
+        //   //     prop: cylinderKeys.useDepartmentName,
+        //   //     label: '领用部门'
+        //   //   }
+        //   // },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.forkliftDriverName,
+        //       label: '叉车员'
+        //     }
+        //   },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.totalWeight,
+        //       label: '总重量'
+        //     }
+        //   },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.totalAmount,
+        //       label: '总件数'
+        //     }
+        //   },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.totalMoney,
+        //       label: '总金额'
+        //     }
+        //   },
+        //   {
+        //     formItem: {
+        //       prop: cylinderKeys.remark,
+        //       label: '备注信息'
+        //     }
+        //   }
+        // ],
         formData: {},
         tableData: [],
         // tableColumns: [
@@ -174,6 +171,76 @@
       };
     },
     computed: {
+      formOptions() {
+        let total_arr = [
+          {
+            formItem: {
+              prop: cylinderKeys.documentNo,
+              label: '单据编号'
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.usePersonName,
+              label: '领用部门/领用人',
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.useGroup,
+              label: '领用单元',
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.outStockType,
+              label: '出库类型',
+              // rules: [rules.required('')]
+            }
+          },
+          // {
+          //   formItem: {
+          //     prop: cylinderKeys.useDepartmentName,
+          //     label: '领用部门'
+          //   }
+          // },
+          {
+            formItem: {
+              prop: cylinderKeys.forkliftDriverName,
+              label: '叉车员'
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.totalWeight,
+              label: '总重量'
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.totalAmount,
+              label: '总件数'
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.totalMoney,
+              label: '总金额'
+            }
+          },
+          {
+            formItem: {
+              prop: cylinderKeys.remark,
+              label: '备注信息'
+            }
+          }
+        ];
+        let hidden_arr = [];
+        if (!this.isShowMoney) {
+          hidden_arr = [cylinderKeys.totalMoney]
+        }
+        return total_arr.filter(obj=>!hidden_arr.includes(obj.formItem.prop))
+      },
       tableColumns() {
         let total_arr = [
           {
@@ -274,3 +341,11 @@
     }
   };
 </script>
+<style lang="less" scoped>
+  .dj-form {
+    margin-bottom: 13px;
+    /deep/ .el-form-item {
+      margin-bottom: 0;
+    }
+  }
+</style>

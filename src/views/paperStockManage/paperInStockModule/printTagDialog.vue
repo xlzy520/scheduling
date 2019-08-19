@@ -87,3 +87,8 @@
     components: {printTag}
   };
 </script>
+<style lang="less" scoped>
+  .font-subhead {
+    margin-left: 16px;
+  }
+</style>

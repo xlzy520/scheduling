@@ -2,7 +2,7 @@
     <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="基础信息" name="1">
-          <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
+          <dj-form labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
           <p class="font-subhead">纸筒信息</p>
           <base-table ref="table"
                       :data="tableData"
@@ -366,5 +366,10 @@
   };
 </script>
 <style lang="less" scoped>
-
+  .dj-form {
+    margin-bottom: 13px;
+    /deep/ .el-form-item {
+      margin-bottom: 0;
+    }
+  }
 </style>
