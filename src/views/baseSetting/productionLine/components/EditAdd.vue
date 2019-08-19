@@ -63,7 +63,7 @@
             minCutLength: 222,
             basketType: '',
             basketLength: 222,
-            statckCount: 222,
+            stackCount: 222,
           }
         },
         formOptions: {
@@ -322,11 +322,11 @@
               },
               listeners: {
                 change: (val)=>{
-                  this.prodLineData.fxj.statckCount = '';
+                  this.prodLineData.fxj.stackCount = '';
                   const cache = {
                     type: 'input',
                     formItem: {
-                      prop: 'statckCount',
+                      prop: 'stackCount',
                       label: '堆叠数',
                       rules: [
                         djForm.rules.required('请输入最小叠单米数'),
