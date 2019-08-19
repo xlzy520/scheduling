@@ -21,7 +21,6 @@
         <dj-form  v-for="(formOption, index) in formOptions"
                   ref="form"
                   :column-num="dialogTypeIsAdd?4: 1"
-                  labelWidth="80px"
                   @click.native="()=>deleteCurRow($event, index)"
                   :col-rule="(item,ruleIndex)=>colRule(item,ruleIndex)"
                   :form-data="formData[index]"
@@ -339,7 +338,7 @@
     }
   }
   .plts-dialog {
-    width: 1018px;
+    width: 1164px;
     height: 497px;
     margin-bottom: 20px;
     &-aside{
