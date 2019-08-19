@@ -61,7 +61,7 @@
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
               return (
-                <div class="operation">
+                <div class="td-btn-group">
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
@@ -216,12 +216,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .operation {
-    a {
-      cursor: pointer;
-      color: #3654EA;
-    }
-  }
 
   .paper-supplier-dialog {
     width: 780px;

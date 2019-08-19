@@ -64,9 +64,10 @@
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
               return (
-                <div class="operation">
+                <div class="td-btn-group">
                   <a onClick={() => this.changeStatus(row)}>
                     {row.isEffected ? '禁用' : '启用'}</a>
+                  <span></span>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
@@ -243,18 +244,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .operation {
-    line-height: 1;
-    a {
-      padding: 2px 10px;
-      cursor: pointer;
-      color: #3654EA;
-      &:not(:last-child){
-        border-right: 1px solid #EBEEF5;
-      }
-    }
-  }
-
   .material-code-dialog {
     width: 836px;
     @{deep} .dj-form .el-form-item{

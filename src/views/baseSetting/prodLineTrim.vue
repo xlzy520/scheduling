@@ -130,9 +130,10 @@
             label: '操作', prop: 'operation',
             render: (h, {props: {row}}) => {
               return (
-                <div class="operation">
+                <div class="td-btn-group">
                   <a onClick={() => this.changeStatus(row)}>
                     {row.isEffected ? '禁用' : '启用'}</a>
+                  <span></span>
                   <a onClick={() => this.edit(row)}>编辑</a>
                 </div>
               );
