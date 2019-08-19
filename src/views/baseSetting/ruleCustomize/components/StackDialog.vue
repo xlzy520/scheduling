@@ -15,7 +15,7 @@
                              @visible-change="visible=>tileModelSelectOptionChange(visible, index)"
                              @change="val=>tilemodelChange(val,index, childIndex)"></dj-select>
                 </el-form-item>
-                <el-form-item label="切数" prop="cut">
+                <el-form-item label="切数" prop="cut" class="cut">
                   <dj-select type="multiple" collapse-tags v-model="child.cut"
                              @visible-change="visible=>selectOptionChange(visible, index, childIndex)"
                              :options="qieshuOptions"></dj-select>
@@ -107,6 +107,20 @@
           {
             type: 'input',
             formItem: {
+              prop: 'maxStackCount',
+              label: '最大堆叠单数',
+              rules: [
+                djForm.rules.required('请输入最大堆叠单数'),
+                formRules.number
+              ],
+            },
+            attrs: {
+              maxLength: 10,
+            }
+          },
+          {
+            type: 'input',
+            formItem: {
               prop: 'maxStackHeight',
               label: '订单最小米数',
               rules: [
@@ -117,20 +131,6 @@
             },
             attrs: {
               maxLength: 10
-            }
-          },
-          {
-            type: 'input',
-            formItem: {
-              prop: 'maxStackCount',
-              label: '最大堆叠单数',
-              rules: [
-                djForm.rules.required('请输入最大堆叠单数'),
-                formRules.number
-              ],
-            },
-            attrs: {
-              maxLength: 10,
             }
           },
         ],
@@ -316,20 +316,21 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .stack-dialog {
-    width: 80vw;
-    height: 708px;
+    width: 1196px;
+    height: 849-138px;
   }
-  .dj-form{
-    width: 100%;
+  @media screen and (max-width: 1601px) {
+    .stack-dialog {
+      height: 669-138px;
+    }
   }
   @media screen and (max-width: 1367px) {
     .stack-dialog {
-      width: 90vw;
-      height: 549px;
+      height: 549-138px;
     }
-    .dj-form{
-      width: 90%;
-    }
+  }
+  .dj-form{
+    padding-right: 65px;
   }
   .condition-item{
     display: flex;
@@ -340,30 +341,21 @@
         visibility: hidden;
       }
       @{deep} .el-form-item{
-        width: 32%;
-        &.packpiece{
-          margin-right: 33px;
-          .el-input{
-            width: 232px;
-          }
-        }
+        width: 30.8%;
         .el-select{
           width: 232px;
         }
         .el-form-item__content{
           float: left;
         }
-        .el-form-item__label{
-          width: 120px;
-        }
-        &.tilemodel{
+        &.cut{
           .el-form-item__label{
             width: 78px;
           }
         }
         &.piece{
           .el-form-item__label{
-            width: 160px;
+            width: 109px;
           }
           .dj-input{
             width: 232px;
@@ -372,16 +364,17 @@
       }
     }
     .condition-index-label{
-      font-family: "PingFang SC Regular",sans-serif;
-      font-weight: bold;
-      text-align: right;
-      width: 56px;
+      font-family: "PingFang SC",sans-serif;
+      font-weight: 500;
+      width: 50px;
+      box-sizing: content-box;
+      padding-left: 20px;
     }
     .button-col{
-      width: 50px;
+      width: 65px;
       display: flex;
       margin-top: 8px;
-      margin-right: 25px;
+      margin-right: 10px;
       i.el-icon-delete,i.el-icon-circle-plus{
         font-size: 18px;
         cursor: pointer;
@@ -396,39 +389,6 @@
     .child-condition-list{
       width: 100%;
     }
-    @media screen and (max-width: 1367px) {
-      .child-condition-list{
-        width: 94%;
-      }
-      .rule-row{
-        width: 100%;
-        @{deep} .el-form-item{
-          width: 351px;
-          .el-form-item__label{
-            width: 63px;
-          }
-          &.tilemodel{
-            .el-form-item__label{
-              width: unset;
-            }
-          }
-          &.piece{
-            .el-form-item__label{
-              width: 79px;
-            }
-            .dj-input{
-              width: 232px;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  @{deep} .m²::before {
-    content: "m²";
-    width: 5px;
-    height: 5px;
   }
   .childCondition-enter-active {
     transition: all .3s ease;

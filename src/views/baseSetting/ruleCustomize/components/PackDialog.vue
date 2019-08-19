@@ -3,7 +3,7 @@
              :title="dialogTypeIsAdd?'新增打包规则': '编辑打包规则'">
     <div class="pack-dialog" v-loading="loading">
       <dj-form ref="packForm" :form-data="packFormData" :form-options="packFormOptions"
-               :column-num="zqjColumnNum" :col-rule="()=>zqjColRule"></dj-form>
+               :column-num="3" :col-rule="()=>8"></dj-form>
       <div v-for="(condition, index) in packConditionFormData" class="condition-item">
         <span class="condition-index-label el-form-item__label">条件{{index+1}}</span>
         <div class="child-condition-list">
@@ -202,9 +202,6 @@
             formRules.float
           ]
         },
-
-        zqjColumnNum: '',
-        zqjColRule: '',
         layerOptions: layerOptions,
 
         loading: false
@@ -307,32 +304,9 @@
           this.loading = false;
         });
       },
-      zqjGetColumnNum() {
-        const width = window.innerWidth;
-        this.zqjColumnNum = width < 1920 ? 3 : 4;
-      },
-      zqjGetColRule() {
-        const width = window.innerWidth;
-        this.zqjColRule = width < 1920 ? 8 : 6;
-      },
-
       open() {
         this.$refs.dialog.open();
       }
-    },
-    created() {
-      this.zqjGetColRule();
-      this.zqjGetColumnNum();
-      window.addEventListener('resize', () => {
-        this.zqjGetColRule();
-        this.zqjGetColumnNum();
-      });
-    },
-    beforeDestroy() {
-      window.removeEventListener('resize', () => {
-        this.zqjGetColRule();
-        this.zqjGetColumnNum();
-      });
     }
   };
 </script>
@@ -340,9 +314,21 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .pack-dialog {
-    padding-left: 10px;
-    width: 80vw;
-    height: 708px;
+    width: 1196px;
+    height: 849-138px;
+  }
+  @media screen and (max-width: 1601px) {
+    .pack-dialog {
+      height: 669-138px;
+    }
+  }
+  @media screen and (max-width: 1367px) {
+    .pack-dialog {
+      height: 549-138px;
+    }
+  }
+  .dj-form{
+    padding-right: 65px;
   }
 
   .condition-item {
@@ -350,12 +336,18 @@
     .rule-row {
       display: flex;
       justify-content: flex-end;
-      width: 80%;
       &>@{deep} .el-form-item {
-        margin-right: 81px;
-        &.packpiece {
-          margin-right: 33px;
-          .el-input {
+        width: 30.8%;
+        &.unit-area{
+          .el-form-item__label{
+            width: 78px;
+          }
+        }
+        &.packpiece{
+          .el-form-item__label{
+            width: 109px;
+          }
+          .el-input{
             width: 232px;
           }
         }
@@ -368,16 +360,17 @@
       }
     }
     .condition-index-label {
-      font-family: "PingFang SC Regular", sans-serif;
-      font-weight: bold;
-      text-align: right;
-      width: 56px;
+      font-family: "PingFang SC",sans-serif;
+      font-weight: 500;
+      width: 50px;
+      box-sizing: content-box;
+      padding-left: 20px;
     }
     .button-col {
-      width: 50px;
+      width: 65px;
       display: flex;
       margin-top: 8px;
-      margin-right: 25px;
+      margin-right: 10px;
       i.el-icon-delete, i.el-icon-circle-plus {
         font-size: 18px;
         cursor: pointer;
@@ -392,21 +385,6 @@
     .child-condition-list {
       width: 100%;
     }
-    .pack-form {
-      @media screen and (max-width: 1367px) {
-        @{deep} .dj-input-content {
-          .el-input {
-            width: 160px;
-          }
-        }
-      }
-      .condition-index-label {
-        text-align: right;
-        width: 60px;
-        line-height: unset;
-        margin-right: 16px;
-      }
-    }
     @{deep} .unit-area {
       .el-form-item__content {
         display: flex;
@@ -415,27 +393,6 @@
         }
       }
     }
-    @media screen and (max-width: 1367px) {
-      .child-condition-list {
-        width: 94%;
-      }
-
-      .rule-row {
-        width: 100%;
-        &>@{deep} .el-form-item {
-          margin-right: 20px;
-        }
-      }
-
-      @{deep} .unit-area {
-        .el-form-item__content {
-          .el-input {
-            width: 90px;
-          }
-        }
-      }
-    }
-
   }
 
   .childCondition-enter-active {
@@ -450,6 +407,11 @@
   }
   @{deep} .Kg::before {
     content: "Kg";
+    width: 5px;
+    height: 5px;
+  }
+  @{deep} .m²::before {
+    content: "m²";
     width: 5px;
     height: 5px;
   }
