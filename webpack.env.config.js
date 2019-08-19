@@ -3,7 +3,7 @@
 // 你应该修改 vue.config.js 中的 publicPath 选项而不是修改 output.publicPath。
 // 这些配置项，在configureWebpack中直接修改build会报错，只能通过vue cli3.0的 api 配置项进行修改
 const config = {
-  assetsDir: 'nameStatic',
+  assetsDir: 'supplierStatic',
   fileServe: process.env.fileServe || '/'
 
 };
