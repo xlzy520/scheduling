@@ -269,12 +269,14 @@
         formValidate.then(res=>{
           if (res.length === this.addLayerNum && res.every(v=>v)) {
             let poor = this.formData.map(v=>v.layer.toString() + v.lineId);
-            const existIndex = this.formData.findIndex(v=>poor.includes(v.layer.toString() + v.lineId));
-            if (existIndex > -1) {
-              const {layer, lineId} = this.formData[existIndex];
-              const lineNum = baseOption[0].attrs.options.find(v=>v.value === lineId).label;
-              this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
-              return false;
+            if (this.dialogTypeIsAdd) {
+              const existIndex = this.formData.findIndex(v=>poor.includes(v.layer.toString() + v.lineId));
+              if (existIndex > -1) {
+                const {layer, lineId} = this.formData[existIndex];
+                const lineNum = baseOption[0].attrs.options.find(v=>v.value === lineId).label;
+                this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
+                return false;
+              }
             }
             const request = this.dialogTypeIsAdd
             ? productionLineTrimService.add(this.formData)
@@ -319,17 +321,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .operation {
-    line-height: 1;
-    a {
-      padding: 2px 10px;
-      cursor: pointer;
-      color: #3654EA;
-      &:not(:last-child){
-        border-right: 1px solid #EBEEF5;
-      }
-    }
-  }
   @{deep} .status-off{
     color: #909399;
   }
