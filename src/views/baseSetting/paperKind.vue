@@ -1,9 +1,10 @@
 <template>
-  <single-page class="table-page paper-kind" v-loading="loading">
+  <single-page class="table-page paper-kind">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table
         ref="table"
+        :loading="loading"
         :data="tableData"
         :columns="tableColumns"
         :column-type="['index']"
@@ -18,7 +19,7 @@
 
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
-      <div class="paper-kind-dialog">
+      <div class="paper-kind-dialog" v-loading="dialogLoading">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="2"></dj-form>
       </div>
     </dj-dialog>
@@ -29,6 +30,7 @@
   import paperKindService from '../../api/service/paperKind';
   import paperCodeService from '../../api/service/paperCode';
   import paperWarehouseService from '../../api/service/paperWarehouse';
+  import loadingMixins from '../../mixins/loading';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
@@ -44,6 +46,7 @@
   export default {
     name: 'paperKind',
     components: {PagePane},
+    mixins: [loadingMixins],
     data() {
       return {
         searchConfig: [
@@ -94,7 +97,6 @@
         warehouseAreaList: [],
         warehouseList_map: [],
         paperCodeList: [],
-        loading: false
       };
     },
     computed: {
@@ -313,9 +315,12 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
+        this.dialogLoading = true
         this.getWarehouse();
         this.getPaperKindById(row.id).then((res)=>{
           this.getWarehouseArea(res.warehouseId);
+        }).finally(() => {
+          this.dialogLoading = false
         });
         this.$nextTick(()=>{
           this.$refs.dialog.open();
@@ -327,6 +332,7 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
+          this.dialogLoading = true;
           let message;
           let api;
           let { paperCodeId, paperGram, paperNumber, paperSize, paperType, warehouseAreaId, warehouseId } = this.formData;
@@ -343,6 +349,9 @@
             this.close();
             this.$refs.table.updateData();
             this.$message(message, 'success');
+            this.dialogLoading = false;
+          }).catch(() => {
+            this.dialogLoading = false;
           });
         });
       },

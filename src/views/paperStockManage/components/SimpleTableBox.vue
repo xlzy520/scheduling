@@ -7,6 +7,7 @@
         :columns="tableColumns"
         :column-type="['index']"
         :total="pageTotal"
+        :loading="loading"
         height="100%"
         @update-data="pageChange"
       >
@@ -59,7 +60,7 @@
         searchData: {},
         totalCount: '',
         totalWeight: '',
-
+        loading: false
       };
     },
     methods: {
@@ -80,6 +81,7 @@
         });
       },
       getTableData(data) {
+        this.loading = true;
         if (data && data.timeRange) {
           data.startTime = data.timeRange[0];
           data.endTime = data.timeRange[1];
@@ -93,6 +95,8 @@
           this.pageTotal = res.total || res.data.total;
           this.totalCount = res.totalCount;
           this.totalWeight = res.totalWeight;
+        }).finally(() => {
+          this.loading = false;
         });
       },
       pageChange(option) {

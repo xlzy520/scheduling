@@ -4,6 +4,7 @@
       <dj-table
       ref="table"
       :data="tableData"
+      :loading="loading"
       :columns="tableColumns"
       :column-type="['index']"
       :total="pageTotal" height="100%"
@@ -16,7 +17,7 @@
     </page-pane>
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸代码': '编辑原纸代码'">
-      <div class="paper-kind-dialog">
+      <div class="paper-kind-dialog" v-loading="dialogLoading">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="1"></dj-form>
       </div>
     </dj-dialog>
@@ -25,6 +26,7 @@
 
 <script>
   import paperCodeService from '../../api/service/paperCode';
+  import loadingMixins from '../../mixins/loading';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
@@ -37,6 +39,7 @@
   export default {
     name: 'paperCode',
     components: {PagePane},
+    mixins: [loadingMixins],
     data() {
       return {
         tableData: [],
@@ -128,6 +131,7 @@
         });
       },
       getList(page) {
+        this.loading = true;
         this.dj_api_extend(paperCodeService.list, page).then((res) => {
           let list = res.list || [];
           list.forEach(obj=>{
@@ -135,6 +139,8 @@
           });
           this.tableData = list;
           this.pageTotal = res.total;
+        }).finally(() => {
+          this.loading = false;
         });
       },
       changeStatus(row) {
@@ -157,8 +163,11 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
+        this.dialogLoading = true;
         this.dj_api_extend(paperCodeService.getPaperCodeByid, {id: row.id}).then(res=>{
           this.formData = res;
+        }).finally(() => {
+          this.dialogLoading = false
         });
         this.$nextTick(()=>{
           this.$refs.dialog.open();
@@ -166,6 +175,7 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
+          this.dialogLoading = true;
           let message;
           let api;
           let post = {
@@ -185,6 +195,9 @@
             this.close();
             this.$refs.table.updateData();
             this.$message(message, 'success');
+            this.dialogLoading = true;
+          }).catch(() => {
+            this.dialogLoading = false;
           });
         });
       },

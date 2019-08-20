@@ -5,6 +5,7 @@
       <dj-table
         ref="table"
         :data="tableData"
+        :loading="loading"
         :columns="tableColumns"
         :column-type="['index']"
         :total="pageTotal" height="100%"
@@ -17,7 +18,7 @@
     </page-pane>
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
-      <div class="material-code-dialog">
+      <div class="material-code-dialog" v-loading="dialogLoading">
         <div class="optional">
           <div class="optional-label">可选原纸</div>
           <div class="optional-area">
@@ -33,6 +34,7 @@
 <script>
   import materialCodeService from '../../api/service/materialCode';
   import paperCodeService from '../../api/service/paperCode';
+  import loadingMixins from '../../mixins/loading';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
@@ -47,6 +49,7 @@
   export default {
     name: 'materialCode',
     components: {PagePane},
+    mixins: [loadingMixins],
     data() {
       return {
         searchConfig: [
@@ -146,6 +149,7 @@
         });
       },
       getList(page) {
+        this.loading = true;
         let post = {
           ...this.searchData,
           ...page
@@ -153,6 +157,8 @@
         this.dj_api_extend(materialCodeService.list, post).then((res) => {
           this.tableData = res.list || [];
           this.pageTotal = res.total;
+        }).finally(() => {
+          this.loading = false;
         });
       },
       changeStatus(row) {
@@ -175,6 +181,7 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
+        this.dialogLoading = true;
         this.getAllPaperCode();
         this.dj_api_extend(materialCodeService.getMaterialByid, {id: row.id}).then(res=>{
           let data = {
@@ -182,8 +189,9 @@
             id: row.id
           };
           this.formData = {...(res || {}), ...data};
+        }).finally(() => {
+          this.dialogLoading = false;
         });
-        // this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
@@ -194,6 +202,7 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
+          this.dialogLoading = true;
           let message;
           let api;
           let post = {
@@ -216,6 +225,9 @@
             this.close();
             this.$refs.table.updateData();
             this.$message(message, 'success');
+            this.dialogLoading = false;
+          }).catch(() => {
+            this.dialogLoading = false;
           });
         });
       },

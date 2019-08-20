@@ -5,6 +5,7 @@
       <dj-table
         ref="table"
         :data="tableData"
+        :loading="loading"
         :columns="tableColumns"
         :column-type="['index']"
         :total="pageTotal" height="100%"
@@ -18,7 +19,7 @@
 
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸供应商': '编辑原纸供应商'">
-      <div class="paper-supplier-dialog">
+      <div class="paper-supplier-dialog" v-loading="dialogLoading">
         <dj-form ref="form" :form-data="formData" labelWidth="120px"
                  :form-options="formOptions" :column-num="2"></dj-form>
       </div>
@@ -28,6 +29,7 @@
 
 <script>
   import paperSupplierService from '../../api/service/paperSupplier';
+  import loadingMixins from '../../mixins/loading';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
@@ -42,6 +44,7 @@
   export default {
     name: 'paperSupplier',
     components: {PagePane},
+    mixins: [loadingMixins],
     data() {
       return {
         searchConfig: [
@@ -156,6 +159,7 @@
         });
       },
       getList(page) {
+        this.loading = true;
         let post = {
           ...this.searchData,
           ...page
@@ -163,15 +167,19 @@
         this.dj_api_extend(paperSupplierService.list, post).then((res) => {
           this.tableData = res.list || [];
           this.pageTotal = res.total;
+        }).finally(() => {
+          this.loading = false;
         });
       },
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
+        this.dialogLoading = true;
         this.dj_api_extend(paperSupplierService.getSupplierById, {id: row.id}).then(res=>{
           this.formData = res;
+        }).finally(() => {
+          this.dialogLoading = false;
         });
-        // this.formData = this.$method.deepClone(row);
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
@@ -182,6 +190,7 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
+          this.loading = true;
           let message;
           let api;
           let { supplierNumber, supplierName, address, socialCreditCode, legalRepresentative } = this.formData;
@@ -198,6 +207,9 @@
             this.close();
             this.$refs.table.updateData();
             this.$message(message, 'success');
+            this.loading = false;
+          }).catch(() => {
+            this.loading = false;
           });
         });
       },

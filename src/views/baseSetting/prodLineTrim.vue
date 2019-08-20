@@ -5,6 +5,7 @@
       <dj-table
         :data="tableData"
         :columns="tableColumns"
+        :loading="loading"
         :column-type="['index']"
         :total="pageTotal" height="100%"
         @update-data="pageChange"
@@ -17,7 +18,7 @@
 
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" append-to-body
                :title="dialogTypeIsAdd?'新增生产线修边': '编辑生产线修边'">
-      <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}">
+      <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}" v-loading="dialogLoading">
         <dj-form  v-for="(formOption, index) in formOptions"
                   ref="form"
                   :column-num="dialogTypeIsAdd?4: 1"
@@ -34,8 +35,9 @@
 </template>
 
 <script>
-  import productionLineTrimService from '../../api/service/productionLineTrim';
-  import productionLineService from '../.././api/service/productionLine';
+  import prodLineTrimService from '../../api/service/productionLineTrim';
+  import prodLineService from '../.././api/service/productionLine';
+  import loadingMixins from '../../mixins/loading';
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
@@ -99,6 +101,7 @@
   export default {
     name: 'productionLineTrim',
     components: {PagePane},
+    mixins: [loadingMixins],
     data() {
       return {
         searchConfig: [
@@ -195,9 +198,12 @@
         this.formOptions.push(baseOption);
       },
       getTableData(data) {
-        productionLineTrimService.list(data).then((res) => {
+        this.loading = true;
+        prodLineTrimService.list(data).then((res) => {
           this.tableData = res.list;
           this.pageTotal = res.total;
+        }).finally(() => {
+          this.loading = false;
         });
       },
       changeStatus(row) {
@@ -211,7 +217,7 @@
           type: 'warning',
           showClose: false,
         }).then(() => {
-          this.dj_api_extend(productionLineTrimService.changeEffected, post).then((res) => {
+          this.dj_api_extend(prodLineTrimService.changeEffected, post).then((res) => {
             this.$message(`${text}成功`, 'success');
             row.isEffected = !row.isEffected;
           });
@@ -226,8 +232,11 @@
         }];
       },
       edit(row) {
+        this.dialogVisible = true;
+        this.dialogTypeIsAdd = false;
+        this.dialogLoading = true;
         this.addLayerNum = 1;
-        productionLineTrimService.getWasterLineByid({
+        this.dj_api_extend(prodLineTrimService.getWasterLineByid, {
           id: row.id
         }).then(res=>{
           this.formData = [{
@@ -236,14 +245,14 @@
             layer: res.layer,
             wasteSize: res.wasteSize
           }];
-          this.dialogVisible = true;
-          this.dialogTypeIsAdd = false;
           this.formOptions = [this.$method.deepClone(baseOption).splice(0, 3)];
-          this.$nextTick(()=>{
-            this.$refs.dialog.open();
-          });
         }).catch(err=>{
           this.$message('获取信息失败', 'error');
+        }).finally(() => {
+          this.dialogLoading = false;
+        });
+        this.$nextTick(()=>{
+          this.$refs.dialog.open();
         });
       },
       search(data) {
@@ -268,6 +277,7 @@
         });
         formValidate.then(res=>{
           if (res.length === this.addLayerNum && res.every(v=>v)) {
+            this.dialogLoading = true;
             let poor = this.formData.map(v=>v.layer.toString() + v.lineId);
             if (this.dialogTypeIsAdd) {
               const existIndex = this.formData.findIndex(v=>poor.includes(v.layer.toString() + v.lineId));
@@ -279,8 +289,8 @@
               }
             }
             const request = this.dialogTypeIsAdd
-            ? productionLineTrimService.add(this.formData)
-            : productionLineTrimService.modifyWasterLineByid({
+            ? prodLineTrimService.add(this.formData)
+            : prodLineTrimService.modifyWasterLineByid({
                 ...this.formData[0],
               });
             request.then((res) => {
@@ -288,6 +298,8 @@
               const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
               this.$message(message, 'success');
               this.$refs.search.search();
+            }).finally(() => {
+              this.dialogLoading = false;
             });
           }
         });
@@ -304,7 +316,7 @@
 
     },
     created() {
-      productionLineService.showAllLine().then(res=>{
+      prodLineService.showAllLine().then(res=>{
         const lineOptions = res.list.map(v=>{
           return {
             label: v.lineNum + '号线',
