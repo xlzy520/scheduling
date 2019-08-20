@@ -6,7 +6,7 @@ const envConfig = require('../../../config');
 export default {
   menu(params) {
     if (window.MENU_CACHE === undefined) {
-      window.MENU_CACHE = baseService('/djintelligent')('/firstPage/getWebFirstPageAll.do', params,'get');
+      window.MENU_CACHE = baseService('/djsupplier')('/firstPage/getWebFirstPageAll.do', params,'get');
     }
     return window.MENU_CACHE.then(res => {
       res = res.list || [];
