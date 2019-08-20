@@ -38,7 +38,7 @@
     {label: '待处理', value: '0'},
     {label: '处理中', value: '1'},
     {label: '已处理', value: '2'},
-    {label: '全部', value: '3'},
+    {label: '全部', value: ''},
   ];
   const initFormData = {
     mergeOrderNumber: '',
