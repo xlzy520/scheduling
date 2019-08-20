@@ -401,7 +401,7 @@
             formItem: {
               prop: cylinderKeys.storageType,
               label: '入库类型',
-              rules: [rules.required('入库类型不能为空')]
+              rules: [rules.required('请选择入库类型')]
             },
             attrs: {
               keyMap: {

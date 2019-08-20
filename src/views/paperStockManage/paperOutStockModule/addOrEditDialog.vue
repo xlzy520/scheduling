@@ -254,7 +254,7 @@
             formItem: {
               prop: cylinderKeys.outStockType,
               label: '出库类型',
-              rules: [rules.required('出库类型不能为空')]
+              rules: [rules.required('请选择出库类型')]
             },
             attrs: {
               disabled: this.isEdit,
