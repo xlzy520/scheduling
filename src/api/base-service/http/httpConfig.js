@@ -1,7 +1,7 @@
 import { Message } from 'element-ui';
 // import { messageConfig } from '@/elementUI/elementConfig';
 var config = {
-  // baseURL: '/djsupplier', //url根路径
+  baseURL: location.origin, //url根路径
   onResponse(res) { //后端返回数据时执行（不管success时true还是false）
     return res;
   },
