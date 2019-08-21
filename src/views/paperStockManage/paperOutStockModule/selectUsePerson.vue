@@ -5,8 +5,8 @@
                  :props="props"
                  :load="remote"
                  lazy></el-tree>
-        <div slot="footer"></div>
       </div>
+      <div slot="footer"></div>
     </dj-dialog>
 </template>
 <script>
