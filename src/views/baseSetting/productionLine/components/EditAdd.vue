@@ -12,7 +12,7 @@
       <div class="optional">
         <div class="optional-area">
           <div class="optional-area-item" :class="isIncludesPaper(code)?'selected': ''"
-               v-for="code in optionalPaper" :key="code" @click="selectPaper(code)">{{code}}
+               v-for="code in optionalPaper" :key="code" :title="code"  @click="selectPaper(code)">{{code}}
           </div>
         </div>
       </div>
@@ -541,6 +541,9 @@
         border-radius: 5px;
         cursor: pointer;
         user-select: none;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+        overflow:hidden;
         &.selected{
           color: #fff;
           background: #3654EA;
