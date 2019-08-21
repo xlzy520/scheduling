@@ -61,6 +61,13 @@
       attrs: {
         options: [],
       },
+      listeners: {
+        'visible-change': (val)=>{
+          if (val) {
+            this.showAllLine();
+          }
+        }
+      }
     },
     {
       type: 'select',
@@ -321,19 +328,22 @@
         this.pageOptions = option;
         this.$refs.search.search();
       },
+      showAllLine (){
+        prodLineService.showAllLine().then(res=>{
+          const lineOptions = res.list.map(v=>{
+            return {
+              label: v.lineNum + '号线',
+              value: v.id
+            };
+          });
+          baseOption[0].attrs.options = lineOptions;
+          this.searchConfig[0].attrs.options = lineOptions;
+        });
+      },
 
     },
     created() {
-      prodLineService.showAllLine().then(res=>{
-        const lineOptions = res.list.map(v=>{
-          return {
-            label: v.lineNum + '号线',
-            value: v.id
-          };
-        });
-        baseOption[0].attrs.options = lineOptions;
-        this.searchConfig[0].attrs.options = lineOptions;
-      });
+     this.showAllLine()
       this.search();
     },
   };
