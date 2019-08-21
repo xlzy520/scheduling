@@ -227,7 +227,7 @@
         this.defaultTableData = this.$method.deepClone(this.tableData);
       },
       changeCheck() {
-        let tableKeys = [cylinderKeys.money];
+        let tableKeys = [cylinderKeys.unitPrice];
         let longTable = this.tableData;
         let shortTable = this.defaultTableData;
         if (this.defaultTableData.length > this.tableData.length) {
