@@ -112,7 +112,14 @@
     data() {
       return {
         searchConfig: [
-          {label: '生产线', key: 'lineId', type: 'select', attrs: {options: []}},
+          {label: '生产线', key: 'lineId', type: 'select', attrs: {options: []},listeners: {
+              'visible-change': (val)=>{
+                console.log(val);
+                if (val) {
+                  this.showAllLine();
+                }
+              }
+            }},
           {label: '层数', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
           {label: '修边', key: 'wasteSize', type: 'input', attrs: {type: 'number'}},
         ],
