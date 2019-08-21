@@ -22,7 +22,7 @@ const production = {
       'vuex': 'Vuex',
       'axios': 'axios',
       // 组件库也会影响打包的大小，赞不去除
-      // 'djweb': 'djweb',
+      'djweb': 'djweb',
     };
   }
 };
