@@ -541,7 +541,6 @@
         border-radius: 5px;
         cursor: pointer;
         user-select: none;
-        white-space:nowrap;
         text-overflow: ellipsis;
         overflow:hidden;
         &.selected{
