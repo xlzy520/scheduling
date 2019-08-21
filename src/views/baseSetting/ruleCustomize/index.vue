@@ -96,7 +96,7 @@
         }).then(() => {
           this.dj_api_extend(ruleCustomizeService.changeEffected, post).then((res) => {
             this.$message(`${text}成功`, 'success');
-            row.isEffected = !row.isEffected;
+            this.$refs.table.updateData();
           });
         });
       },
@@ -219,7 +219,6 @@
               }
 
             }, []);
-            console.log(packRuleDetails);
             const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
             packRequest({
               ...this.$refs.dialog.packFormData,
