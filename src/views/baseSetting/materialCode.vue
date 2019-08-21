@@ -26,7 +26,7 @@
                  :title="code.paperCode" :key="code.id">{{code.paperCode}}</div>
           </div>
         </div>
-        <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
+        <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
       </div>
     </dj-dialog>
   </single-page>
@@ -40,21 +40,18 @@
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
 
+  const validateCode = (rule, selectArr, callback) => {
+    if (selectArr.length === 10) {
+      callback(new Error('最多支持10个原纸组合!'));
+    } else {
+      callback();
+    }
+  };
   export default {
     name: 'materialCode',
     components: {PagePane},
     mixins: [loadingMixins],
     data() {
-      const validateCode = (rule, selectArr, callback) => {
-        const l = selectArr.length;
-        if (l > 10) {
-          callback(new Error('最多支持10个原纸组合'));
-        } else if (l === 0) {
-          callback(new Error('请选择用料代码'));
-        } else {
-          callback();
-        }
-      };
       return {
         searchConfig: [
           {label: '用料代码', key: 'materialCode', type: 'input'},
@@ -93,7 +90,7 @@
               label: '用料代码',
               rules: [
                 djForm.rules.required('请选择用料代码'),
-                { validator: validateCode, trigger: 'change' }
+                { validator: validateCode, trigger: 'blur' }
                 ],
             },
             attrs: {
@@ -138,10 +135,10 @@
     methods: {
       selectPaper(obj) {
         const materialCode = this.formData.materialCode;
-        if (materialCode.length === 10) {
+        if (materialCode.length > 10) {
           this.$message('最多支持10个原纸组合！', 'warning');
         } else {
-          this.formData.materialCode = this.formData.materialCode.concat([obj]);
+          this.formData.materialCode.push(obj);
         }
       },
       add() {
@@ -205,9 +202,7 @@
         this.$refs.table.changePage(1);
       },
       confirm() {
-        console.log(0);
         this.$refs.form.validate(()=>{
-          console.log(1);
           this.dialogLoading = true;
           let message;
           let api;
@@ -235,8 +230,6 @@
           }).catch(() => {
             this.dialogLoading = false;
           });
-        }, ()=>{
-          console.log(2);
         });
       },
       close() {
@@ -285,7 +278,6 @@
         pointer-events: visible;
       }
       .el-select__tags-text{
-        user-select: none;
         pointer-events: none;
       }
     }
@@ -317,10 +309,16 @@
           color: #606266;
           background: #F0F2F5;
           border-radius: 5px;
+          cursor: pointer;
           user-select: none;
           text-overflow: ellipsis;
           overflow:hidden;
-          cursor: pointer;
+          &.selected{
+            pointer-events: none;
+            cursor: not-allowed;
+            color: #45464a;
+            background: #c2c3c7;
+          }
         }
       }
     }
