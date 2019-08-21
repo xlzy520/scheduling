@@ -1,4 +1,5 @@
-import { HttpFactory } from 'djweb';
+import HttpFactory from '../../../package/httpFactory';
+// import { HttpFactory } from 'djweb';
 import httpConfig from '../http/httpConfig';
 const apiService = new HttpFactory(httpConfig);
 
