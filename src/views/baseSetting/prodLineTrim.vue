@@ -266,7 +266,11 @@
           let allIsTrue = [];
           this.$refs.form.map((v, index)=>{
             v.validate((valid) => {
-              allIsTrue.push(valid);
+              if (valid) {
+                allIsTrue.push(true);
+              } else {
+                allIsTrue.push(false);
+              }
               if (index === this.addLayerNum - 1) {
                 resolve(allIsTrue);
               }
@@ -276,7 +280,6 @@
         formValidate.then(res=>{
           if (res.length === this.addLayerNum && res.every(v=>v)) {
             let poor = this.formData.map(v=>v.layer.toString() + '&' + v.lineId);
-            console.log(poor);
             if (this.dialogTypeIsAdd) {
               let existData;
               for (let i = 0; i < poor.length; i++) {
@@ -284,7 +287,6 @@
                   existData = poor[i].split('&');
                 }
               }
-              console.log(existData);
               if (existData && existData.length > 1) {
                 const [layer, lineId] = existData;
                 const lineNum = baseOption[0].attrs.options.find(v=>v.value === lineId).label;
