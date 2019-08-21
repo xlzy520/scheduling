@@ -23,7 +23,7 @@ export default {
     {
       path: 'paperStockDetailTable',
       meta: {
-        title: '原纸出入库明细表',
+        title: '原纸库存明细表',
       },
       //组件路径
       component: 'views/paperStockManage/paperStockDetailTable',
