@@ -280,9 +280,9 @@
             this.dialogLoading = true;
             let poor = this.formData.map(v=>v.layer.toString() + v.lineId);
             if (this.dialogTypeIsAdd) {
-              const existIndex = this.formData.findIndex(v=>poor.includes(v.layer.toString() + v.lineId));
-              if (existIndex > -1) {
-                const {layer, lineId} = this.formData[existIndex];
+              const existData = this.formData.filter(v=>poor.includes(v.layer.toString() + v.lineId));
+              if (existData.length > 1) {
+                const {layer, lineId} = existData[1];
                 const lineNum = baseOption[0].attrs.options.find(v=>v.value === lineId).label;
                 this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
                 return false;
@@ -305,6 +305,7 @@
         });
       },
       close() {
+        this.dialogLoading = false;
         this.$refs.dialog.close();
         this.dialogVisible = false;
         this.formReset();

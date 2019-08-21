@@ -102,19 +102,6 @@
       tabClick() {
         this.lineStatus = this.tabsColumn[this.activeTab - 1].isEffected;
       },
-      changeLineEffectedApi(val, text) {
-        this.statusLoading = true;
-        productionLineService.changeLineEffected({
-          effected: Math.pow(0, val),
-          id: this.tabsColumn[this.activeTab - 1].id
-        }).then(() => {
-          this.$message(text, 'success');
-          this.tabsColumn[this.activeTab - 1].isEffected = Math.pow(0, this.lineStatus);
-          this.tabClick();
-        }).finally(()=>{
-          this.statusLoading = false;
-        });
-      },
       changeLineStatus(val) {
         let post = {
           id: this.tabsColumn[this.activeTab - 1].id,
@@ -125,11 +112,14 @@
           type: 'warning',
           showClose: false,
         }).then(() => {
+          this.statusLoading = true;
           this.dj_api_extend(productionLineService.changeLineEffected, post).then((res) => {
             // this.lineStatus = val;
             this.$message(`${text}成功`, 'success');
             this.tabsColumn[this.activeTab - 1].isEffected = val ? 0 : 1;
             this.tabClick();
+          }).finally(() => {
+            this.statusLoading = false;
           });
         });
       },
