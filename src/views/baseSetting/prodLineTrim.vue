@@ -266,9 +266,7 @@
           let allIsTrue = [];
           this.$refs.form.map((v, index)=>{
             v.validate((valid) => {
-              if (valid) {
-                allIsTrue.push(true);
-              }
+              allIsTrue.push(valid);
               if (index === this.addLayerNum - 1) {
                 resolve(allIsTrue);
               }
@@ -277,12 +275,18 @@
         });
         formValidate.then(res=>{
           if (res.length === this.addLayerNum && res.every(v=>v)) {
-            this.dialogLoading = true;
-            let poor = this.formData.map(v=>v.layer.toString() + v.lineId);
+            let poor = this.formData.map(v=>v.layer.toString() + '&' + v.lineId);
+            console.log(poor);
             if (this.dialogTypeIsAdd) {
-              const existData = this.formData.filter(v=>poor.includes(v.layer.toString() + v.lineId));
-              if (existData.length > 1) {
-                const {layer, lineId} = existData[1];
+              let existData;
+              for (let i = 0; i < poor.length; i++) {
+                if (poor.findIndex(v=>poor[i] === v) !== i) {
+                  existData = poor[i].split('&');
+                }
+              }
+              console.log(existData);
+              if (existData && existData.length > 1) {
+                const [layer, lineId] = existData;
                 const lineNum = baseOption[0].attrs.options.find(v=>v.value === lineId).label;
                 this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
                 return false;
@@ -293,6 +297,7 @@
             : prodLineTrimService.modifyWasterLineByid({
                 ...this.formData[0],
               });
+            this.dialogLoading = true;
             request.then((res) => {
               this.close();
               const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
