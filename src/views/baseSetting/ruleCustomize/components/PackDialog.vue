@@ -190,15 +190,15 @@
             djForm.rules.required('请选择层数'),
           ],
           packpiece: [
-            djForm.rules.required('请填写打包数量'),
+            djForm.rules.required('请输入打包数量'),
             formRules.number
           ],
           startUnitarea: [
-            djForm.rules.required('请完成单位面积'),
+            djForm.rules.required('请输入单位面积'),
             formRules.float
           ],
           endUnitarea: [
-            djForm.rules.required('请完成单位面积'),
+            djForm.rules.required('请输入单位面积'),
             formRules.float
           ]
         },
