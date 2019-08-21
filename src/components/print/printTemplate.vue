@@ -31,8 +31,6 @@
           window.print();//关键
         }
         document.body.removeChild(parent);
-        // this.$emit('printTemplateState', false);//关键
-        // this.$emit('closePrint', false);//关键
         this.$emit('end');//关键
       },
     },

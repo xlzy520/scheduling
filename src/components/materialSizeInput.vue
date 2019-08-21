@@ -1,5 +1,5 @@
 <template>
-  <dj-input-group connector="-">
+  <dj-input-group connector="*">
     <dj-input placeholder="切长cm" :value="value[0]" @input="(val)=>input(val, 0)"></dj-input>
     <dj-input placeholder="切宽cm" :value="value[1]" @input="(val)=>input(val, 1)"></dj-input>
   </dj-input-group>

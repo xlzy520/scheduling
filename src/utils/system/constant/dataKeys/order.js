@@ -26,4 +26,14 @@ export default {
   materialCode: 'materialCode', //用料代码
   platformMaterialName: 'platformMaterialCode', //平台材料名称
   orderTip: 'grouponOrderFlag', //订单标签
+  packageAmount: 'processeAmount', //打包数量
+  consignee: 'consignee', //收货人
+  mergeStatus: 'mergeStatus', //合并状态
+  mergeTime: 'mergeTime', //合并时间
+  productAmount: 'productAmount', //生产数量
+  optimalSize: 'optimalSize', //最优门幅
+  cutNumber: 'cutNumber', //切数
+  orderMetres: 'orderMetres', //订单米数
+  trim: 'trim', //修边
+  trimRate: 'trimRate', //修边率
 };

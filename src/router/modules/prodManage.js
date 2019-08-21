@@ -18,7 +18,7 @@ export default {
         title: '计划合并',
       },
       //组件路径
-      // component: 'views/prodManage/plannedMerger',
+      component: 'views/prodManage/plannedMerger',
     },
     {
       path: 'planArrange',

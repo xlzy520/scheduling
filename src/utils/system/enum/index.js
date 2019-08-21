@@ -247,6 +247,16 @@ export default {
       value: 4,
     }
   }),
+  mergeStatus: new MapObject({
+    'wait': {
+      label: '待合并',
+      value: '1',
+    },
+    'already': {
+      label: '已合并',
+      value: '2',
+    }
+  }),
   fluteTypeLayer,
   fluteType
 };
