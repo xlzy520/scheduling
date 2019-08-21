@@ -39,13 +39,13 @@ export default {
       },
       component: 'views/baseSetting/prodLineTrim'
     },
-    {
-      path: 'customerPackageQuantity',
-      meta: {
-        title: '客户打包数量设置',
-      },
-      component: 'views/baseSetting/customerPackageQuantity'
-    },
+    // {
+    //   path: 'customerPackageQuantity',
+    //   meta: {
+    //     title: '客户打包数量设置',
+    //   },
+    //   component: 'views/baseSetting/customerPackageQuantity'
+    // },
     {
       path: 'ruleCustomize',
       meta: {
