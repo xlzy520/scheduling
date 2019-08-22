@@ -76,7 +76,11 @@
       open(param) {
         this.$refs.dialog.open();
         this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
-          this.tableData = res.tubeList;
+          let list = res.tubeList || [];
+          list.map(obj=>{
+            obj[cylinderKeys.paperSupplierName] = res[cylinderKeys.paperSupplierName];
+          });
+          this.tableData = list;
         });
       },
       close() {
