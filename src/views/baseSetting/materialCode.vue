@@ -26,7 +26,7 @@
                  :title="code.paperCode" :key="code.id">{{code.paperCode}}</div>
           </div>
         </div>
-        <dj-form ref="form" :form-data="formData" :form-options="formOptions" labelWidth="125px"></dj-form>
+        <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
       </div>
     </dj-dialog>
   </single-page>
@@ -51,6 +51,8 @@
           callback(new Error('最多支持10个原纸组合'));
         } else if (l === 0) {
           callback(new Error('请选择用料代码'));
+        } else {
+          callback();
         }
       };
       return {
@@ -90,6 +92,7 @@
               prop: 'materialCode',
               label: '用料代码',
               rules: [
+                djForm.rules.required('请选择用料代码'),
                 { validator: validateCode, trigger: 'change' }
                 ],
             },
@@ -202,7 +205,9 @@
         this.$refs.table.changePage(1);
       },
       confirm() {
+        console.log(0);
         this.$refs.form.validate(()=>{
+          console.log(1);
           this.dialogLoading = true;
           let message;
           let api;
@@ -230,6 +235,8 @@
           }).catch(() => {
             this.dialogLoading = false;
           });
+        }, ()=>{
+          console.log(2);
         });
       },
       close() {
@@ -243,12 +250,6 @@
       },
       getAllPaperCode() {
         return this.dj_api_extend(paperCodeService.getAllList).then(res=>{
-          res.list = [
-            {
-              paperCode: '22222222',
-              id: 55555
-            }
-          ];
           this.optionalPaper = res.list || [];
           this.$set(this.formOptions[0].attrs, 'options', this.optionalPaper);
         });
