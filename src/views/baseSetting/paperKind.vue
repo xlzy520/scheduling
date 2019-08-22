@@ -141,6 +141,9 @@
               'input': (val) => {
                 this.getPaperCodeById(val);
               },
+              'clear': ()=>{
+                this.resetSelect();
+              },
               'visible-change': (val)=>{
                 if (val) {
                   this.getAllPaperCode();
@@ -232,6 +235,10 @@
       }
     },
     methods: {
+      resetSelect() {
+        this.formData.paperType = '';
+        this.formData.paperGram = '';
+      },
       getAllPaperCode() {
         return this.dj_api_extend(paperCodeService.getAllList).then(res=>{
           this.paperCodeList = res.list || [];
@@ -315,12 +322,12 @@
       edit(row) {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
-        this.dialogLoading = true
+        this.dialogLoading = true;
         this.getWarehouse();
         this.getPaperKindById(row.id).then((res)=>{
           this.getWarehouseArea(res.warehouseId);
         }).finally(() => {
-          this.dialogLoading = false
+          this.dialogLoading = false;
         });
         this.$nextTick(()=>{
           this.$refs.dialog.open();
