@@ -323,7 +323,7 @@
               listeners: {
                 change: (val)=>{
                   this.prodLineData.fxj.stackCount = '';
-                  const cache = {
+                  const stackCount = {
                     type: 'input',
                     formItem: {
                       prop: 'stackCount',
@@ -335,13 +335,14 @@
                       ],
                     },
                   };
-                  if (val === 1) {
-                    if (this.prodLineData.fxj.basketLength !== '') {
-                      this.prodLineData.fxj.basketLength = '';
+                  // 小吊篮时需要输入堆叠数
+                  // 编辑时，不管是大吊篮还是小吊篮，都不显示堆叠数
+                  if (this.dialogTypeIsAdd) {
+                    if (val === 2) {
+                      this.formOptions.fxj.splice(4, 0, stackCount);
+                    } else {
+                      this.formOptions.fxj.splice(4, 1);
                     }
-                    this.formOptions.fxj.splice(4, 0, cache);
-                  } else {
-                    this.formOptions.fxj.splice(4, 1);
                   }
                 }
               }
