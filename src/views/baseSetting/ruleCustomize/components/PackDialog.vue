@@ -287,6 +287,15 @@
           ruleId: id
         }).then(res => {
           let { packRuleDetails, ...rest } = res;
+          for (let restKey in rest) {
+            if (Object.prototype.hasOwnProperty.call(rest, restKey)) {
+              if (rest[restKey]) {
+                if (rest[restKey].includes('.00')) {
+                  rest[restKey] = rest[restKey].replace('.00', '');
+                }
+              }
+            }
+          }
           this.packFormData = rest;
           let cache = [];
           let tileModelMap = Array.from(new Set(packRuleDetails.map(v=>v.layer)));
