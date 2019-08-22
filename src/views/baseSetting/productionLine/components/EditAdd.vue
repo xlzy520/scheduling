@@ -235,6 +235,9 @@
                   formRules.number5
                 ],
               },
+              attrs: {
+                placeholder: '请输入同排压轮最小间距',
+              }
             },
             {
               type: 'input',
@@ -245,6 +248,9 @@
                   formRules.number5
                 ],
               },
+              attrs: {
+                placeholder: '请输入最小上机米数',
+              }
             },
             {
               type: 'input',
