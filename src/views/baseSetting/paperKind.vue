@@ -142,7 +142,7 @@
                 this.getPaperCodeById(val);
               },
               'clear': ()=>{
-                this.resetSelect();
+                this.resetTypeAndGram();
               },
               'visible-change': (val)=>{
                 if (val) {
@@ -211,7 +211,11 @@
                 if (!['', undefined, null].includes(val)) {
                   this.dj_api_extend(this.getWarehouseArea, val);
                 }
-              }
+              },
+              'clear': ()=>{
+                this.formData.warehouseAreaId = '';
+                this.formOptions[this.formOptions.length-1].attrs.options = [];
+              },
             }
           },
           {
@@ -235,7 +239,7 @@
       }
     },
     methods: {
-      resetSelect() {
+      resetTypeAndGram() {
         this.formData.paperType = '';
         this.formData.paperGram = '';
       },
