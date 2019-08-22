@@ -398,7 +398,7 @@
           paperTubeNumber: num
         };
         this.isEdit && (post['id'] = this.formData['id']);
-        return this.dj_api_extend(paperWarehouseService.getPaperTube, post)
+        return paperWarehouseService.getPaperTube(post);
       },
       //获取单据编号
       getReceiptId() {
