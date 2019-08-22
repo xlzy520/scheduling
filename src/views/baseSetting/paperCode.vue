@@ -195,7 +195,7 @@
             this.close();
             this.$refs.table.updateData();
             this.$message(message, 'success');
-            this.dialogLoading = true;
+            this.dialogLoading = false;
           }).catch(() => {
             this.dialogLoading = false;
           });
