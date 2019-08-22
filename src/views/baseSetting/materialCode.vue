@@ -309,16 +309,10 @@
           color: #606266;
           background: #F0F2F5;
           border-radius: 5px;
-          cursor: pointer;
           user-select: none;
           text-overflow: ellipsis;
           overflow:hidden;
-          &.selected{
-            pointer-events: none;
-            cursor: not-allowed;
-            color: #45464a;
-            background: #c2c3c7;
-          }
+          cursor: pointer;
         }
       }
     }
