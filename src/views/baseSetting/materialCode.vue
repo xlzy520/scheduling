@@ -41,7 +41,7 @@
   import PagePane from "../../components/page/pagePane";
 
   const validateCode = (rule, selectArr, callback) => {
-    if (selectArr.length === 10) {
+    if (selectArr.length > 10) {
       callback(new Error('最多支持10个原纸组合!'));
     } else {
       callback();
@@ -135,7 +135,7 @@
     methods: {
       selectPaper(obj) {
         const materialCode = this.formData.materialCode;
-        if (materialCode.length > 10) {
+        if (materialCode.length === 10) {
           this.$message('最多支持10个原纸组合！', 'warning');
         } else {
           this.formData.materialCode.push(obj);
@@ -243,6 +243,12 @@
       },
       getAllPaperCode() {
         return this.dj_api_extend(paperCodeService.getAllList).then(res=>{
+          res.list = [
+            {
+              paperCode: '22222222',
+              id: 55555
+            }
+          ]
           this.optionalPaper = res.list || [];
           this.$set(this.formOptions[0].attrs, 'options', this.optionalPaper);
         });
