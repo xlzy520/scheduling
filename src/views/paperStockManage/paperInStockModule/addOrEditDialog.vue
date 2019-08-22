@@ -557,7 +557,7 @@
         // if (row[cylinderKeys.cylinderNo]) {
         //   return Promise.resolve(row[cylinderKeys.cylinderNo]);
         // }
-        return this.dj_api_extend(paperWarehouseService.getTubeNumber);
+        return paperWarehouseService.getTubeNumber;
       },
       //获取所有原纸编号
       getPaperNoList(val) {
