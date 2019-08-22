@@ -115,7 +115,10 @@
             formItem: {
               prop: 'socialCreditCode',
               label: '社会信用代码',
-              rules: [rules.required('请输入社会信用代码')],
+              rules: [
+                rules.required('请输入社会信用代码'),
+                formRules.word_number
+              ],
             },
             attrs: {
               maxLength: 18,
