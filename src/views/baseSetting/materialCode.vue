@@ -40,18 +40,19 @@
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
 
-  const validateCode = (rule, selectArr, callback) => {
-    if (selectArr.length > 10) {
-      callback(new Error('最多支持10个原纸组合!'));
-    } else {
-      callback();
-    }
-  };
   export default {
     name: 'materialCode',
     components: {PagePane},
     mixins: [loadingMixins],
     data() {
+      const validateCode = (rule, selectArr, callback) => {
+        const l = selectArr.length;
+        if (l > 10) {
+          callback(new Error('最多支持10个原纸组合'));
+        } else if (l === 0) {
+          callback(new Error('请选择用料代码'));
+        }
+      };
       return {
         searchConfig: [
           {label: '用料代码', key: 'materialCode', type: 'input'},
@@ -89,8 +90,7 @@
               prop: 'materialCode',
               label: '用料代码',
               rules: [
-                djForm.rules.required('请选择用料代码'),
-                { validator: validateCode, trigger: 'blur' }
+                { validator: validateCode, trigger: 'change' }
                 ],
             },
             attrs: {
@@ -138,7 +138,7 @@
         if (materialCode.length === 10) {
           this.$message('最多支持10个原纸组合！', 'warning');
         } else {
-          this.formData.materialCode.push(obj);
+          this.formData.materialCode = this.formData.materialCode.concat([obj]);
         }
       },
       add() {
@@ -248,7 +248,7 @@
               paperCode: '22222222',
               id: 55555
             }
-          ]
+          ];
           this.optionalPaper = res.list || [];
           this.$set(this.formOptions[0].attrs, 'options', this.optionalPaper);
         });
@@ -284,6 +284,7 @@
         pointer-events: visible;
       }
       .el-select__tags-text{
+        user-select: none;
         pointer-events: none;
       }
     }
