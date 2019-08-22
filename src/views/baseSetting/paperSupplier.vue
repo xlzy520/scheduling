@@ -121,7 +121,7 @@
               ],
             },
             attrs: {
-              maxLength: 18,
+              maxLength: 15,
             },
           },
           {
