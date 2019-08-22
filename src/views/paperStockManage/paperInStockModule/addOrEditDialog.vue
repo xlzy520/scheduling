@@ -595,7 +595,7 @@
           if (keyCode === 17) {
             let row = this.tableData[this.activeIndex];
             // let cloneObj = this.$method.deepClone(this.tableData[this.activeIndex]);
-            let cloneObj = this.$method.cloneData([paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, this.tableData[this.activeIndex]);
+            let cloneObj = this.$method.cloneData(['paperVarietyId', paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, this.tableData[this.activeIndex]);
             // delete cloneObj[paperKeys.warehouseAreaId];
             this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
             if (row[cylinderKeys.cylinderNo]) {
