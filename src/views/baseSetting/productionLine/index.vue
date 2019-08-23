@@ -65,8 +65,8 @@
         ],
         prodLineLabel: Object.freeze({
           jccs: [
-            {prop: 'commonTilemodel', label: '常用楞型'},
             {prop: 'lineSpeed', label: '生产车速(m/s)'},
+            {prop: 'commonTilemodel', label: '常用楞型'},
             {prop: 'changeorderMinLength', label: '换纸最小米数(m)'},
             {prop: 'firstorderWasteWith', label: '首单最小修边(mm)'},
             {prop: 'lastorderMinLength', label: '尾单最小米数(m)'},
@@ -142,8 +142,8 @@
               });
               this.prodLineData.push({
                 jccs: {
-                  commonTilemodel: [],
                   lineSpeed: '',
+                  commonTilemodel: [],
                   changeorderMinLength: '',
                   firstorderWasteWith: '',
                   lastorderMinLength: '',
@@ -165,7 +165,7 @@
                   basketType: '',
                   basketLength: '',
                 }});
-              for (const item of Object.keys(this.prodLineLabel)) {
+                for (const item of Object.keys(this.prodLineLabel)) {
                 const module = this.prodLineLabel[item];
                 for (let i = 0; i < module.length; i++) {
                   const prop = module[i].prop;

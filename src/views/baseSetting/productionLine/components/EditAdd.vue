@@ -2,12 +2,12 @@
   <dj-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增生产线': '编辑生产线'">
     <div class="production-line-dialog" v-loading="loading">
       <h4>基础参数</h4>
-      <dj-form ref="form1" :form-data="prodLineData.jccs" :form-options="formOptions.jccs" :column-num="columnNum"></dj-form>
+      <dj-form ref="form1" :form-data="prodLineData.jccs" :form-options="formOptions.jccs" :column-num="3"></dj-form>
       <h4>纵切机</h4>
-      <dj-form ref="form2" :form-data="prodLineData.zqj" :form-options="formOptions.zqj" :column-num="columnNum"></dj-form>
+      <dj-form ref="form2" :form-data="prodLineData.zqj" :form-options="formOptions.zqj" :column-num="3"></dj-form>
       <h4>分线机、横切机、吊篮</h4>
       <dj-form ref="form3" :form-data="prodLineData.fxj" :form-options="formOptions.fxj"
-               :column-num="columnNum" :col-rule="()=>columnNum===4?6:8"></dj-form>
+               :column-num="3" :col-rule="()=>8"></dj-form>
       <h4>门幅范围</h4>
       <div class="optional">
         <div class="optional-area">
@@ -36,7 +36,6 @@
     data() {
       return {
         loading: false,
-        columnNum: 4,
         lineId: '',
         lineNum: '',
         prodLineData: {
@@ -116,6 +115,7 @@
               },
               attrs: {
                 maxLength: 10,
+                suffixIcon: "m-s"
               },
             },
             {
@@ -130,6 +130,7 @@
               },
               attrs: {
                 maxLength: 10,
+                suffixIcon: "m"
               },
             },
             {
@@ -144,6 +145,7 @@
               },
               attrs: {
                 maxLength: 10,
+                suffixIcon: "mm"
               },
             },
             {
@@ -158,10 +160,61 @@
               },
               attrs: {
                 maxLength: 10,
+                suffixIcon: "m"
               },
             },
           ],
           zqj: [
+            {
+              type: 'input',
+              formItem: {
+                prop: 'slimachWheelCount',
+                label: '单台压轮数',
+                rules: [
+                  djForm.rules.required('请输入单台压轮数'),
+                  formRules.number5
+                ],
+              }
+            },
+            {
+              type: 'input',
+              formItem: {
+                prop: 'slimachWheelSamesideSpace',
+                label: '压轮最小间距',
+                rules: [
+                  djForm.rules.required('请输入压轮最小间距'),
+                  formRules.number5
+                ],
+              },
+              attrs: {
+                placeholder: '请输入同排压轮最小间距',
+                suffixIcon: "mm"
+              }
+            },
+            {
+              type: 'input',
+              formItem: {
+                prop: 'slimachWdoubleMinLength',
+                label: '双机压订单',
+                rules: [
+                  formRules.number5
+                ],
+              },
+              attrs: {
+                placeholder: '请输入最小上机米数',
+              }
+            },
+            {
+              type: 'input',
+              formItem: {
+                prop: 'slimachKnifeCount',
+                label: '单台纵切刀数',
+                rules: [
+                  djForm.rules.required('请输入单台纵切刀数'),
+                  formRules.number5
+                ],
+              },
+            },
             {
               type: 'radio',
               formItem: {
@@ -217,61 +270,15 @@
             {
               type: 'input',
               formItem: {
-                prop: 'slimachWheelCount',
-                label: '单台压轮数',
-                rules: [
-                  djForm.rules.required('请输入单台压轮数'),
-                  formRules.number5
-                ],
-              }
-            },
-            {
-              type: 'input',
-              formItem: {
-                prop: 'slimachWheelSamesideSpace',
-                label: '压轮最小间距',
-                rules: [
-                  djForm.rules.required('请输入压轮最小间距'),
-                  formRules.number5
-                ],
-              },
-              attrs: {
-                placeholder: '请输入同排压轮最小间距',
-              }
-            },
-            {
-              type: 'input',
-              formItem: {
-                prop: 'slimachWdoubleMinLength',
-                label: '双机压订单',
-                rules: [
-                  formRules.number5
-                ],
-              },
-              attrs: {
-                placeholder: '请输入最小上机米数',
-              }
-            },
-            {
-              type: 'input',
-              formItem: {
-                prop: 'slimachKnifeCount',
-                label: '单台纵切刀数',
-                rules: [
-                  djForm.rules.required('请输入单台纵切刀数'),
-                  formRules.number5
-                ],
-              },
-            },
-            {
-              type: 'input',
-              formItem: {
                 prop: 'slimachKnifeSpace',
                 label: '纵切刀间距',
                 rules: [
                   djForm.rules.required('请输入纵切刀间距'),
                   formRules.number5
                 ],
+              },
+              attrs: {
+                suffixIcon: "mm"
               }
             },
             {
@@ -283,6 +290,9 @@
                   djForm.rules.required('请输入换单排刀时间'),
                   formRules.number5
                 ],
+              },
+              attrs: {
+                suffixIcon: "s"
               }
             },
           ],
@@ -298,6 +308,9 @@
                   formRules.float5,
                 ],
               },
+              attrs: {
+                suffixIcon: "m"
+              }
             },
             {
               type: 'input',
@@ -309,6 +322,9 @@
                   formRules.number5
                 ],
               },
+              attrs: {
+                suffixIcon: "mm"
+              }
             },
             {
               type: 'select',
@@ -339,6 +355,9 @@
                         formRules.number,
                         formRules.number5
                       ],
+                      attrs: {
+                        suffixIcon: "m"
+                      }
                     },
                   };
                   // 小吊篮时需要输入堆叠数
@@ -363,6 +382,9 @@
                   formRules.number5
                 ],
               },
+              attrs: {
+                suffixIcon: "m"
+              }
             }
           ],
         },
@@ -481,11 +503,7 @@
             linePaperSizeModels.push(item);
           }
         }
-      },
-      getColumnNum() {
-        const width = window.innerWidth;
-        this.columnNum = width < 1920 ? 3 : 4;
-      },
+      }
     },
     created() {
       let mock = [];
@@ -502,10 +520,6 @@
           sum = Object.assign(sum, deepCloneData[val]);
           return sum;
         }, {});
-        this.getColumnNum();
-        window.addEventListener('resize', ()=>{
-          this.getColumnNum();
-        });
       });
     }
   };
@@ -531,25 +545,23 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-start;
-      border: 1px solid #eee;
+      border: 1px solid #DCDFE6;
       border-radius: 4px;
       box-sizing: border-box;
-      padding: 15px;
       &-item{
         width: 55px;
         text-align: center;
         font-size: 16px;
         height: 24px;
         line-height: 24px;
-        padding: 5px 10px;
-        margin: 5px;
+        padding: 6px 14px;
+        margin-left: 16px;
+        margin-top: 12px;
         color: #606266;
         background: #EBEEF5;
-        border-radius: 5px;
+        border-radius: 3px;
         cursor: pointer;
         user-select: none;
-        text-overflow: ellipsis;
-        overflow:hidden;
         &.selected{
           color: #fff;
           background: #3654EA;
