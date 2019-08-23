@@ -163,9 +163,12 @@
     },
     computed: {
       lengxingOptions() {
-       return this.$enum.fluteType.map(v=>{
+        const fluteTypeAllOptionIndex = this.$enum.fluteType.findIndex(v=>v.value === 'all');
+        const fluteTypeAll = this.$method.deepClone(this.$enum.fluteType);
+        fluteTypeAll.splice(fluteTypeAllOptionIndex, 1);
+        return fluteTypeAll.map(v=>{
          v.disabled = false;
-         return v
+         return v;
        });
       }
     },
