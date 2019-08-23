@@ -112,9 +112,8 @@
     data() {
       return {
         searchConfig: [
-          {label: '生产线', key: 'lineId', type: 'select', attrs: {options: []},listeners: {
+          {label: '生产线', key: 'lineId', type: 'select', attrs: {options: []}, listeners: {
               'visible-change': (val)=>{
-                console.log(val);
                 if (val) {
                   this.showAllLine();
                 }
@@ -335,7 +334,7 @@
         this.pageOptions = option;
         this.$refs.search.search();
       },
-      showAllLine (){
+      showAllLine () {
         prodLineService.showAllLine().then(res=>{
           const lineOptions = res.list.map(v=>{
             return {
@@ -350,7 +349,7 @@
 
     },
     created() {
-     this.showAllLine()
+      this.showAllLine();
       this.search();
     },
   };
@@ -377,13 +376,12 @@
   .plts-dialog {
     width: 1164px;
     height: 497px;
-    margin-bottom: 20px;
     &-aside{
       margin-left: 90px;
     }
     &.edit{
       width: 400px;
-      height: 157px;
+      height: auto;
       @{deep} .el-col-delete{
         .el-form-item__content{
           display: none;
