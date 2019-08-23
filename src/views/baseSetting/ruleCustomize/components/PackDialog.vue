@@ -321,6 +321,7 @@
 </script>
 
 <style lang="less" scoped>
+  @import "../../../../assets/css/func";
   @deep: ~'>>>';
   .pack-dialog {
     width: 1196px;
@@ -413,15 +414,5 @@
   .childCondition-enter, .childCondition-leave-to {
     transform: translateY(10px);
     opacity: 0;
-  }
-  @{deep} .Kg::before {
-    content: "Kg";
-    width: 5px;
-    height: 5px;
-  }
-  @{deep} .m²::before {
-    content: "m²";
-    width: 5px;
-    height: 5px;
   }
 </style>
