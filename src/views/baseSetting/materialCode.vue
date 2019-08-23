@@ -304,7 +304,7 @@
         display: flex;
         flex-wrap: wrap;
         align-content: flex-start;
-        border: 1px solid #eee;
+        border: 1px solid #DCDFE6;
         border-radius: 4px;
         &-item{
           text-align: center;
