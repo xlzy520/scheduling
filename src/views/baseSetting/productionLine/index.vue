@@ -193,7 +193,7 @@
         this.dialogTypeIsAdd = false;
         this.$nextTick(()=>{
           let copyData = this.$method.deepClone(this.prodLineData[this.activeTab - 1]);
-          copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split(',');
+          copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
           this.$refs.editAdd.prodLineData = copyData;
           this.$refs.editAdd.lineId = this.idMap[this.activeTab - 1];
           this.$refs.editAdd.lineNum = this.activeTab;

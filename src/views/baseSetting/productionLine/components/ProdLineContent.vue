@@ -87,7 +87,7 @@
         return '';
       },
       rowRule(item) {
-        let map = {commonTilemodel: 0, lineSpeed: 0, changeorderMinLength: 0, firstorderWasteWith: 1,
+        let map = {commonTilemodel: 0, lineSpeed: 0, changeorderMinLength: 1, firstorderWasteWith: 1,
           lastorderMinLength: 1, linePaperSizeModels: 2};
         return map[item.prop];
       },
@@ -95,7 +95,10 @@
         if (item.prop === 'linePaperSizeModels') {
           return 24;
         }
-        if (item.prop === 'statckCount') {
+        if (item.prop === 'commonTilemodel') {
+          return 16;
+        }
+        if (item.prop === ('statckCount' || 'commonTilemodel')) {
           return 16;
         }
         return 8;
@@ -144,13 +147,24 @@
 
     .left-content {
       width: 60%;
-      .el-col-24 {
+      .el-col-24{
         .jccs{
           .bs-card-value {
             width: 84%;
           }
           .bs-card-label {
             width: 125px;
+          }
+        }
+      }
+      .el-col-16{
+        .jccs{
+          .bs-card-label {
+            width: 85px;
+          }
+          .bs-card-value{
+            word-break: break-all;
+            width: 95%;
           }
         }
       }

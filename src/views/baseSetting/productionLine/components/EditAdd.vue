@@ -425,7 +425,7 @@
                   sum = Object.assign(sum, this.prodLineData[val]);
                   return sum;
                 }, {});
-                params.commonTilemodel = params.commonTilemodel.join(',');
+                params.commonTilemodel = params.commonTilemodel.join('、');
                 if (!this.dialogTypeIsAdd) {
                   params.id = this.lineId;
                   params.lineNum = this.lineNum;
