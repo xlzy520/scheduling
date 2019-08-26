@@ -54,26 +54,26 @@
           {label: '原纸供应商：', key: 'supplierName', type: 'input'},
         ],
         tableColumns: [
-          {label: '入库时间', prop: 'createTime',
+          {label: '入库时间', prop: 'createTime', width: 180,
             formatter(row, index, cur) {
               return dayjs(cur).format('YYYY-MM-DD hh:mm:ss');
             }},
-          {label: '原纸供应商', prop: 'supplierName'},
-          {label: '纸筒编号', prop: 'paperTubeNumber'},
-          {label: '原纸代码', prop: 'paperCode'},
-          {label: '原纸类型', prop: 'paperType',
+          {label: '原纸供应商', prop: 'supplierName', width: 120},
+          {label: '纸筒编号', prop: 'paperTubeNumber', width: 160},
+          {label: '原纸代码', prop: 'paperCode', width: 120},
+          {label: '原纸类型', prop: 'paperType', width: 120,
             formatter: (row, index, cur) => {
               let obj = this.$enum.paperType._swap[cur] || {};
               return obj.label || '';
             }
           },
-          {label: '克重（g）', prop: 'gram'},
-          {label: '门幅（mm）', prop: 'paperSize'},
-          {label: '重量（Kg）', prop: 'weight'},
-          {label: '长度（m）', prop: 'length'},
-          {label: '仓库', prop: 'warehouseName'},
-          {label: '库区', prop: 'warehouseAreaName'},
-          {label: '入库类型', prop: 'storageType'},
+          {label: '克重（g）', prop: 'gram', width: 120},
+          {label: '门幅（mm）', prop: 'paperSize', width: 120},
+          {label: '重量（Kg）', prop: 'weight', width: 120},
+          {label: '长度（m）', prop: 'length', width: 120},
+          {label: '仓库', prop: 'warehouseName', width: 120},
+          {label: '库区', prop: 'warehouseAreaName', width: 120},
+          {label: '入库类型', prop: 'storageType', width: 120},
         ],
         downloadConfig: {
           url: 'printDetail',
