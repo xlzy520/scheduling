@@ -102,7 +102,7 @@
             label: '出库时间',
             width: 224,
             formatter(row, index, cur) {
-              return dayjs(cur).format('YYYY-MM-DD hh:mm:ss');
+              return dayjs(cur).format('YYYY-MM-DD HH:mm:ss');
             }
           },
           {

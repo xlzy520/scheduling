@@ -56,7 +56,7 @@
         tableColumns: [
           {label: '入库时间', prop: 'createTime', width: 180,
             formatter(row, index, cur) {
-              return dayjs(cur).format('YYYY-MM-DD hh:mm:ss');
+              return dayjs(cur).format('YYYY-MM-DD HH:mm:ss');
             }},
           {label: '原纸供应商', prop: 'supplierName', width: 120},
           {label: '纸筒编号', prop: 'paperTubeNumber', width: 160},

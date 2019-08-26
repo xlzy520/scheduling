@@ -113,7 +113,7 @@
             label: '入库时间',
             width: 202,
             formatter(row, index, cur) {
-              return dayjs(cur).format('YYYY-MM-DD hh:mm:ss');
+              return dayjs(new Date(cur)).format('YYYY-MM-DD HH:mm:ss');
             }
           },
           {
