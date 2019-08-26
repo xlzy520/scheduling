@@ -234,13 +234,13 @@
                 }]
               },
               listeners: {
-                change: (val)=>{
-                  if (val === '1') {
-                    this.$set(this.formOptions.zqj[4].formItem, 'rules', [
+                change: (val) => {
+                  if (val === 1) {
+                    this.$set(this.formOptions.zqj[2].formItem, 'rules', [
                       formRules.number5
                     ]);
                   } else {
-                    this.$set(this.formOptions.zqj[4].formItem, 'rules', [
+                    this.$set(this.formOptions.zqj[2].formItem, 'rules', [
                       djForm.rules.required('请输入双机压订单'),
                       formRules.number5
                     ]);
