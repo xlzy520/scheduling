@@ -110,7 +110,7 @@
                 label: '生产车速',
                 rules: [
                   djForm.rules.required('请输入生产车速'),
-                  formRules.float
+                  formRules.float,
                 ],
               },
               attrs: {
@@ -379,7 +379,8 @@
                 label: '吊篮长度',
                 rules: [
                   djForm.rules.required('请输入吊篮长度'),
-                  formRules.number5
+                  formRules.float,
+                  formRules.float5
                 ],
               },
               attrs: {
