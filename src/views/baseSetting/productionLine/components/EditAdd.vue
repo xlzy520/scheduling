@@ -12,7 +12,7 @@
       <div class="optional">
         <div class="optional-area">
           <div class="optional-area-item" :class="isIncludesPaper(code)?'selected': ''"
-               v-for="code in optionalPaper" :key="code" :title="code"  @click="selectPaper(code)">{{code}}
+               v-for="code in optionalPaper" :key="code" :title="code" @click="selectPaper(code)">{{code}}
           </div>
         </div>
       </div>
@@ -343,7 +343,7 @@
                 }],
               },
               listeners: {
-                change: (val)=>{
+                change: (val) => {
                   this.prodLineData.fxj.stackCount = '';
                   const stackCount = {
                     type: 'input',
@@ -395,11 +395,53 @@
       };
     },
     methods: {
+      isObject(obj){
+        return Object.prototype.toString.call(obj)==='[object Object]';
+      },
+      isArray(arr) {
+        return Object.prototype.toString.call(arr) === '[object Array]';
+      },
+      /**
+       *  深度比较两个对象是否相同
+       * @param {Object} oldData
+       * @param {Object} newData
+       */
+      equalsObj(oldData, newData) {
+        //       类型为基本类型时,如果相同,则返回true
+        console.log(oldData, newData);
+        if (oldData == newData) return true;
+        if (this.isObject(oldData) && this.isObject(newData) && Object.keys(oldData).length === Object.keys(newData).length) {
+          //      类型为对象并且元素个数相同
+
+          //      遍历所有对象中所有属性,判断元素是否相同
+          for (const key in oldData) {
+            if (oldData.hasOwnProperty(key)) {
+              if (!this.equalsObj(oldData[key], newData[key]))
+              //      对象中具有不相同属性 返回false
+                return false;
+            }
+          }
+        } else if (this.isArray(oldData) && this.isArray(oldData) && oldData.length === newData.length) {
+          //      类型为数组并且数组长度相同
+
+          for (let i = 0, length = oldData.length; i < length; i++) {
+            if (!this.equalsObj(oldData[i], newData[i]))
+            //      如果数组元素中具有不相同元素,返回false
+              return false;
+          }
+        } else {
+          //      其它类型,均返回false
+          return false;
+        }
+
+        //      走到这里,说明数组或者对象中所有元素都相同,返回true
+        return true;
+      },
       confirm() {
         const formMap = ['1', '2', '3'];
         const formValidate = new Promise((resolve) => {
           let allIsTrue = [];
-          formMap.map((v, index)=>{
+          formMap.map((v, index) => {
             this.$refs['form' + v].validate((valid) => {
               if (valid) {
                 allIsTrue.push(true);
@@ -410,9 +452,9 @@
             });
           });
         });
-        formValidate.then(res=>{
+        formValidate.then(res => {
           if (res.length === 3) {
-            if (this.isModify()) {
+            if (!this.isModify()) {
               if (this.prodLineData.jccs.linePaperSizeModels.length === 0) {
                 this.$message('请选择门幅范围', 'warning');
                 return false;
@@ -422,10 +464,11 @@
                 showClose: false,
               }).then(() => {
                 this.loading = true;
-                const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
+                const params = Object.keys(this.prodLineData).reduce((sum, val) => {
                   sum = Object.assign(sum, this.prodLineData[val]);
                   return sum;
                 }, {});
+                console.log(params);
                 params.commonTilemodel = params.commonTilemodel.join('、');
                 if (!this.dialogTypeIsAdd) {
                   params.id = this.lineId;
@@ -444,7 +487,7 @@
                 });
               });
             } else {
-              this.$message('未修改', 'info');
+              this.$message('未编辑数据，请确认', 'info');
               return false;
             }
           }
@@ -452,25 +495,12 @@
 
       },
       isModify() {
-        const params = Object.keys(this.prodLineData).reduce((sum, val)=>{
-          sum = Object.assign(sum, this.prodLineData[val]);
-          return sum;
-        }, {});
-        const keysArr = Object.keys(params);
-        let modify = keysArr.findIndex(v=> {
-          if (typeof params[v] !== 'object') {
-            return params[v] !== this.cache[v];
-          } else {
-            let arrDiff = params[v].findIndex((v1, index)=> v1 !== this.cache[v][index]);
-            if (arrDiff > -1) {
-              return true;
-            }
-          }
-        });
-        return modify > -1;
+        const params = this.getFlatObject(this.prodLineData);
+        const isEqual = this.equalsObj(this.cache, params);
+        return isEqual;
       },
       close() {
-        if (this.isModify()) {
+        if (!this.isModify()) {
           this.$confirm('生产线信息未保存，确认是否关闭？', '', {
             type: 'warning',
             showClose: false,
@@ -482,15 +512,15 @@
         }
       },
       isIncludesPaper(code) {
-        const { linePaperSizeModels } = this.prodLineData.jccs;
-        return linePaperSizeModels.findIndex(v=>v.paperSize === code) > -1;
+        const {linePaperSizeModels} = this.prodLineData.jccs;
+        return linePaperSizeModels.findIndex(v => v.paperSize === code) > -1;
       },
       selectPaper(code) {
         // 新增的时候 候选是没有id的，编辑的时候 选过的会带有id
         let linePaperSizeModels = this.prodLineData.jccs.linePaperSizeModels;
         if (this.isIncludesPaper(code)) {
-          let index = linePaperSizeModels.findIndex(v=>v.paperSize === code);
-          const { paperSize, id } = linePaperSizeModels[index];
+          let index = linePaperSizeModels.findIndex(v => v.paperSize === code);
+          const {paperSize, id} = linePaperSizeModels[index];
           const item = Object.assign({paperSize: paperSize}, id ? {id: id} : {});
           this.removedOptionalPaper.push(item);
           linePaperSizeModels.splice(index, 1);
@@ -500,10 +530,19 @@
               paperSize: code
             });
           } else {
-            const item = this.removedOptionalPaper.find(v=>v.paperSize === code) || {paperSize: code};
+            const item = this.removedOptionalPaper.find(v => v.paperSize === code) || {paperSize: code};
             linePaperSizeModels.push(item);
           }
         }
+      },
+      getFlatObject(obj) {
+        if (Object.prototype.toString.call(obj) === '[object Object]') {
+          return Object.keys(obj).reduce((sum, val) => {
+            sum = Object.assign(sum, obj[val]);
+            return sum;
+          }, {});
+        }
+        return {};
       }
     },
     created() {
@@ -514,13 +553,18 @@
       this.optionalPaper = mock;
     },
     mounted() {
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.dialog.open();
         let deepCloneData = this.$method.deepClone(this.prodLineData);
-        this.cache = Object.keys(deepCloneData).reduce((sum, val)=>{
-          sum = Object.assign(sum, deepCloneData[val]);
-          return sum;
-        }, {});
+        let flatData = this.getFlatObject(deepCloneData);
+        let keys = Object.keys(flatData);
+        for (let i = 0; i < keys.length; i++) {
+          if (typeof flatData[keys[i]] === 'number' && flatData[keys[i]] > 0) {
+            // console.log(flatData[keys[i]]);
+            flatData[keys[i]] = String(flatData[keys[i]]);
+          }
+        }
+        this.cache = flatData;
       });
     }
   };
@@ -530,17 +574,20 @@
   @deep: ~'>>>';
   .production-line-dialog {
     width: 80vw;
-    h4{
+
+    h4 {
       padding: 10px 0;
     }
   }
-  @{deep} .optional{
+
+  @{deep} .optional {
     width: 100%;
     min-height: 120px;
     margin-bottom: 20px;
     padding-right: 20px;
     box-sizing: border-box;
-    &-area{
+
+    &-area {
       width: 100%;
       min-height: 80px;
       display: flex;
@@ -549,7 +596,8 @@
       border: 1px solid #DCDFE6;
       border-radius: 4px;
       box-sizing: border-box;
-      &-item{
+
+      &-item {
         width: 55px;
         text-align: center;
         font-size: 16px;
@@ -563,7 +611,8 @@
         border-radius: 3px;
         cursor: pointer;
         user-select: none;
-        &.selected{
+
+        &.selected {
           color: #fff;
           background: #3654EA;
         }
