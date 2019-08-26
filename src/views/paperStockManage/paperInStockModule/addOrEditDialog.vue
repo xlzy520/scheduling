@@ -244,7 +244,7 @@
               );
             },
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), disabled: checkDisabled(props.row)}
+              return {...props, reg: this.$reg.getFloatReg(3), disabled: checkDisabled(props.row), maxlength: 8}
             },
             component: tableInput,
             listeners: {
