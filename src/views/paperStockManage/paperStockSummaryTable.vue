@@ -9,6 +9,7 @@
 
 <script>
   import SimpleTableBox from './components/SimpleTableBox';
+  import dayjs from 'dayjs';
   export default {
     name: 'paperStockSummaryTable',
     components: {SimpleTableBox},
@@ -16,7 +17,9 @@
       return {
         searchConfig: [
           {label: '选择日期：', key: 'timeRange', type: 'date', attrs: {
-            type: 'daterange', pickerOptions: {
+              clearable: false, type: 'daterange', valueFormat: "yyyy-MM-dd",
+              default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+              pickerOptions: {
                 shortcuts: [
                   {text: '今天',
                     onClick(picker) {
@@ -41,7 +44,18 @@
                     }
                   }
                 ]
-              }, valueFormat: "yyyy-MM-dd"
+              },
+              beforeChange: (val) => {
+                let _val = val;
+                if (val[0] && val[1]) {
+                  let day92 = dayjs(val[0]).add(92, 'day');
+                  if (day92.isBefore(dayjs(val[1]))) {
+                    this.$message('时间不能超过92天', 'error');
+                    _val = [val[0], day92.toDate()];
+                  }
+                }
+                return _val;
+              },
               }},
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
           {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
