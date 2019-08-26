@@ -173,15 +173,20 @@
               const beforeEnter = (val, cb) => {
                 if (val) {
                   Promise.all([this.getPaperDetail(val), this.getCylinderId(props.row)]).then(result=>{
-                    let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
-                    delete result[0][paperKeys.warehouseAreaId];
                     result[0][cylinderKeys.cylinderNo] = result[1];
                     Object.assign(props.row, result[0]);
                     updateLength.bind(this)(props.row);
-                    this.$nextTick(()=>{
-                      Object.assign(props.row, _obj);
-                    });
                   }).finally(cb);
+                  // Promise.all([this.getPaperDetail(val), this.getCylinderId(props.row)]).then(result=>{
+                  //   let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
+                  //   delete result[0][paperKeys.warehouseAreaId];
+                  //   result[0][cylinderKeys.cylinderNo] = result[1];
+                  //   Object.assign(props.row, result[0]);
+                  //   updateLength.bind(this)(props.row);
+                  //   this.$nextTick(()=>{
+                  //     Object.assign(props.row, _obj);
+                  //   });
+                  // }).finally(cb);
                 } else {
                   cb();
                 }
@@ -193,23 +198,18 @@
               input: (val, {index, row}) => {
                 // 当前输入框内容变化时需要清空原纸代码等有原纸编号带出的数据
                 if (row[paperKeys.paperCode]) {
-                  let obj = this.$method.cloneData([cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight], {}, row);
+                  let obj = this.$method.cloneData(['id', cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight], {}, row);
                   this.$set(this.tableData, index, obj);
                 }
               },
               select: (obj, props) => {
                 if (obj) {
+                  //为避免input事件中将当前行的对象修改了，导致当前方法的赋值效果失效
+                  let row = this.tableData[props.index];
                   Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId(props.row)]).then(result=>{
-                    // let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
-                    // delete result[0][paperKeys.warehouseAreaId];
                     result[0][cylinderKeys.cylinderNo] = result[1];
-                    Object.assign(props.row, result[0]);
-                    updateLength.bind(this)(props.row);
-                    // this.$nextTick(()=>{
-                    //   Object.assign(props.row, _obj);
-                    // });
-                  }).catch(()=>{
-                    this.$method.cloneData([paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, result[0]);
+                    Object.assign(row, result[0]);
+                    updateLength.bind(this)(row);
                   });
                 }
               }
@@ -553,10 +553,10 @@
         })
       },
       //获取纸筒编号
-      getCylinderId(row) {
-        // if (row[cylinderKeys.cylinderNo]) {
-        //   return Promise.resolve(row[cylinderKeys.cylinderNo]);
-        // }
+      getCylinderId(row = {}) {
+        if (row[cylinderKeys.cylinderNo]) {
+          return Promise.resolve(row[cylinderKeys.cylinderNo]);
+        }
         return paperWarehouseService.getTubeNumber();
       },
       //获取所有原纸编号
