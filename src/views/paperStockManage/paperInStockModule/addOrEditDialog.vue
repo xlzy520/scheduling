@@ -564,7 +564,7 @@
         return this.dj_api_extend(paperKindService.list, {pageNo: 1, pageSize: 10000000, paperNumber: val, effected: 1}).then(res=>{
           let list = res.list || [];
           return list;
-        });
+        }).catch(()=>[]);
       },
       //根据原纸编号获取相关原纸信息
       getPaperDetail(num) {
