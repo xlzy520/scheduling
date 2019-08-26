@@ -50,7 +50,7 @@
     data() {
       return {
         searchConfig: [
-          {label: '原纸编号', key: 'paperNumber', type: 'input'},
+          {label: '原纸编号', key: 'paperNumber', type: 'input', attrs: {reg: /^\w*$/}},
           {label: '原纸代码', key: 'paperCode', type: 'input'},
           {label: '门幅', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
         ],
