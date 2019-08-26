@@ -160,13 +160,13 @@
             label: '单价',
             width: 96,
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6}
+              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled']}
             },
             component: tableInput,
             listeners: {
               input: (val, {row}) => {
                 let _val = parseFloat(val)*parseFloat(row[cylinderKeys.weight]);
-                this.$set(row, cylinderKeys.money, isNaN(_val) ? 0 : _val);
+                this.$set(row, cylinderKeys.money, isNaN(_val) || _val === 0 ? '' : _val);
               }
             }
           },
@@ -175,6 +175,7 @@
             label: '金额',
             width: 105,
             formatter(row, index, cur) {
+              // cur = cur || 0;
               if (cur) {
                 cur = Number(cur).toFixed(2);
               }
@@ -191,9 +192,7 @@
         ],
       };
     },
-    created() {
-      this.tableData = [{weight: 23}, {weight: 7}];
-    },
+    created() {},
     methods: {
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
@@ -204,6 +203,10 @@
             this.$message('未编辑数据，请确认', 'error');
             return;
           }
+          this.tableData.forEach(obj=>{
+            let unitPrice = Number(obj[cylinderKeys.unitPrice]) || '';
+            obj[cylinderKeys.unitPrice] = unitPrice;
+          });
           let post = {
             id: this.formData.id,
             tubeList: this.tableData
@@ -219,7 +222,10 @@
         this.$refs.dialog.open();
         this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
           this.formData = res;
-          this.tableData = res.tubeList;
+          this.tableData = res.tubeList.map(obj=>{
+            obj['disabled'] = Boolean(Number(obj[cylinderKeys.unitPrice]));
+            return obj;
+          });
           this.saveDefaultData();
         });
       },
@@ -256,5 +262,10 @@
   };
 </script>
 <style lang="less" scoped>
-
+  .dj-form {
+    margin-bottom: 13px;
+    /deep/ .el-form-item {
+      margin-bottom: 0;
+    }
+  }
 </style>
