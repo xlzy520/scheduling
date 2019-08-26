@@ -195,7 +195,7 @@
           ],
           startUnitarea: [
             djForm.rules.required('请输入单位面积'),
-            formRules.float2
+            // formRules.float2
           ],
           endUnitarea: [
             djForm.rules.required('请输入单位面积'),

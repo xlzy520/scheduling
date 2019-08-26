@@ -49,25 +49,75 @@
           {prop: 'fTilemodelRate', label: 'F楞型楞率'},
         ],
         kind: {},
+        position: 0,
+        rowSpanArr: [],
       };
     },
     methods: {
-      objectSpanMethod({row, column, rowIndex, columnIndex}) {
-        if (columnIndex === 0) {
-          const num = this.kind[row.tilemodel || row.layer];
-          if (rowIndex % num === 0) {
-            return {
-              rowspan: num,
-              colspan: 1
-            };
+      // 获取合并的数组
+      getRowSpan() {
+        this.rowSpanArr = [];
+        const {packRuleDetails} = this.viewData;
+        packRuleDetails.forEach((item, index) => {
+          if (index === 0) {
+            this.rowSpanArr.push(1);
+            this.position = 0;
           } else {
+            if (packRuleDetails[index].layer === packRuleDetails[index - 1].layer) {
+              this.rowSpanArr[this.position] += 1; //项目名称相同，合并到同一个数组中
+              this.rowSpanArr.push(0);
+              packRuleDetails[index].layer = packRuleDetails[index - 1].layer;
+            } else {
+              this.rowSpanArr.push(1);
+              this.position = index;
+            }
+          }
+        });
+      },
+      objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (this.dialogType === 'stack_view') {
+            if (columnIndex === 0) {
+              let num = this.kind[row.tilemodel || row.layer];
+              if (rowIndex % num === 0) {
+                return {
+                  rowspan: num,
+                  colspan: 1
+                };
+              } else {
+                return {
+                  rowspan: 0,
+                  colspan: 0
+                };
+              }
+            }
+        } else {
+          // 只合并区域位置
+          if (columnIndex === 0) {
+            const _row = this.rowSpanArr[rowIndex];
             return {
-              rowspan: 0,
-              colspan: 0
+              rowspan: _row, //行
+              colspan: 1 //列
             };
           }
         }
       },
+      // objectSpanMethod({row, column, rowIndex, columnIndex}) {
+      //   if (columnIndex === 0) {
+      //     let num = this.kind[row.tilemodel || row.layer];
+      //     console.log(rowIndex, num);
+      //     if (rowIndex % num === 0) {
+      //       return {
+      //         rowspan: num,
+      //         colspan: 1
+      //       };
+      //     } else {
+      //       return {
+      //         rowspan: 0,
+      //         colspan: 0
+      //       };
+      //     }
+      //   }
+      // },
       view(row) {
         this.$refs.dialog.open();
         this.viewLoading = true;
@@ -85,15 +135,19 @@
         ruleCustomizeService.getRuleDetail({
           ruleId: row.id
         }).then(res => {
-          (res.detailModels || res.packRuleDetails).map(v=>{
-            const key = v.tilemodel || v.layer;
-            if (this.kind[key] === undefined) {
-              this.kind[key] = 1;
-            } else {
-              this.kind[key] += 1;
-            }
-          });
           this.viewData = res;
+          if (this.dialogType === 'stack_view') {
+            res.detailModels.map(v=>{
+              const key = v.tilemodel || v.layer;
+              if (this.kind[key] === undefined) {
+                this.kind[key] = 1;
+              } else {
+                this.kind[key] += 1;
+              }
+            });
+          } else {
+            this.getRowSpan();
+          }
         }).finally(() => {
           this.viewLoading = false;
         });
