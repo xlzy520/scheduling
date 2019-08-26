@@ -36,7 +36,7 @@
     let length = row[cylinderKeys.length];
     let paperSize = row[paperKeys.paperSize];
     value = paperSize*length/1000;
-    if (isNaN(value) || !value) {
+    if (isNaN(value) || !value || !Number(length || 0)) {
       value = '';
     }
     this.$set(row, cylinderKeys.area, value);
@@ -48,10 +48,9 @@
     let paperSize = row[paperKeys.paperSize];
     let paperGram = row[paperKeys.paperGram];
     value = weight/(paperSize*paperGram/1000/1000);
-    if (isNaN(value) || !paperGram || !paperSize) {
+    if (isNaN(value) || !Number(paperGram || 0) || !Number(paperSize || 0)) {
       value = '';
     }
-    // console.log(value);
     this.$set(row, cylinderKeys.length, value);
     updateArea.bind(this)(row);
   };
@@ -508,9 +507,10 @@
       },
       effectiveTableData() {
         return this.tableData.filter(obj=>{
-          let arr = [cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
+          let arr = [cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
           return arr.every(key=>{
-            return !['', undefined, null].includes(obj[key]);});
+            return !['', undefined, null].includes(obj[key]);
+          });
         });
       }
     },
