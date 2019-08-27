@@ -114,7 +114,6 @@
               prop: 'platformMaterialCode',
               label: '平台材料名称',
               rules: [
-                djForm.rules.required('请输入平台材料名称'),
                 formRules.word_number
               ],
             },
