@@ -173,7 +173,7 @@
           {label: '订单编号', prop: 'grouponOrderNumber', width: 210},
           {label: '生产编号', prop: 'produceOrderNumber', width: 120},
           {label: '用料代码', prop: 'materialCode'},
-          {label: '瓦楞楞型', prop: 'tilemodel'},
+          {label: '瓦楞楞型', prop: 'tileModel'},
           {label: '订单数量', prop: 'pieceAmount'},
           {label: '生产数量', prop: 'produceAmount'},
           {label: '处理数量', prop: 'processeAmount'},
@@ -182,15 +182,15 @@
           {label: '产品规格', prop: 'prodGuige', width: 210, formatter: row=>{
               return row.productLength + '*' + row.productWidth + '*' + row.productHeight;
             }},
-          {label: '压线方式', prop: 'stavetype'},
+          {label: '压线方式', prop: 'staveType'},
           {label: '纵压公式', prop: 'vformula', width: 120},
           {label: '横压公式', prop: 'hformula', width: 160},
-          {label: '订单交期', prop: 'arrivetime', width: 180},
+          {label: '订单交期', prop: 'arriveTime', width: 180},
           {label: '客户名称', prop: 'customerName', width: 160},
           {label: '产品名称', prop: 'grouponProductName', width: 160},
-          {label: '生成时间', prop: 'createtime', width: 180},
+          {label: '生成时间', prop: 'createTime', width: 180},
           {label: '操作人', prop: 'operator', width: 120},
-          {label: '操作时间', prop: 'updatetime', width: 160},
+          {label: '操作时间', prop: 'updateTime', width: 160},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
