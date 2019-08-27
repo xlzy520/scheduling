@@ -305,6 +305,8 @@
         align-content: flex-start;
         border: 1px solid #DCDFE6;
         border-radius: 4px;
+        overflow-y: scroll;
+        padding-bottom: 10px;
         &-item{
           text-align: center;
           font-size: 12px;
