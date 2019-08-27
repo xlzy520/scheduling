@@ -50,65 +50,69 @@
       {label: '六层', value: 6},
       {label: '七层', value: 7},
       ];
-  let baseOption = [
-    {
-      type: 'select',
-      formItem: {
-        prop: 'lineId',
-        label: '生产线',
-        rules: [djForm.rules.required('请选择生产线')],
-      },
-      attrs: {
-        options: [],
-      },
-      listeners: {
-        'visible-change': (val)=>{
-          if (val) {
-            this.showAllLine();
-          }
-        }
-      }
-    },
-    {
-      type: 'select',
-      formItem: {
-        prop: 'layer',
-        label: '层数',
-        rules: [
-          djForm.rules.required('请选择层数'),
-        ],
-      },
-      attrs: {
-        options: cengshuOption,
-      },
-    },
-    {
-      type: 'input',
-      formItem: {
-        prop: 'wasteSize',
-        label: '修边',
-        rules: [
-          djForm.rules.required('请输入修边'),
-          formRules.number,
-          formRules.number5
-        ],
-      }
-    },
-    {
-      type: 'i',
-      formItem: {
-        prop: '',
-        label: '',
-      },
-      attrs: {
-        class: 'el-icon-delete'
-      }
-    }
-  ];
   export default {
     name: 'productionLineTrim',
     components: {PagePane},
     mixins: [loadingMixins],
+    computed: {
+      baseOption() {
+        return [
+          {
+            type: 'select',
+            formItem: {
+              prop: 'lineId',
+              label: '生产线',
+              rules: [djForm.rules.required('请选择生产线')],
+            },
+            attrs: {
+              options: [],
+            },
+            listeners: {
+              'visible-change': (val)=>{
+                if (val) {
+                  this.showAllLine();
+                }
+              }
+            }
+          },
+          {
+            type: 'select',
+            formItem: {
+              prop: 'layer',
+              label: '层数',
+              rules: [
+                djForm.rules.required('请选择层数'),
+              ],
+            },
+            attrs: {
+              options: cengshuOption,
+            },
+          },
+          {
+            type: 'input',
+            formItem: {
+              prop: 'wasteSize',
+              label: '修边',
+              rules: [
+                djForm.rules.required('请输入修边'),
+                formRules.number,
+                formRules.number5
+              ],
+            }
+          },
+          {
+            type: 'i',
+            formItem: {
+              prop: '',
+              label: '',
+            },
+            attrs: {
+              class: 'el-icon-delete'
+            }
+          }
+        ];
+      }
+    },
     data() {
       return {
         searchConfig: [
@@ -161,9 +165,7 @@
           wasteSize: ''
         }],
 
-        formOptions: [
-          baseOption
-        ],
+        formOptions: [],
         pageOptions: {
           pageNo: 1,
           pageSize: 20,
@@ -197,6 +199,7 @@
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
+        this.formOptions=[this.baseOption];
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
@@ -208,7 +211,7 @@
           layer: '',
           wasteSize: ''
         });
-        this.formOptions.push(baseOption);
+        this.formOptions.push(this.baseOption);
       },
       getTableData(data) {
         this.loading = true;
@@ -237,7 +240,7 @@
         });
       },
       formReset() {
-        this.formOptions = [baseOption];
+        this.formOptions = [this.baseOption];
         this.formData = [{
           lineId: '',
           layer: '',
@@ -258,7 +261,7 @@
             layer: res.layer,
             wasteSize: res.wasteSize
           }];
-          this.formOptions = [this.$method.deepClone(baseOption).splice(0, 3)];
+          this.formOptions = [this.$method.deepClone(this.baseOption).splice(0, 3)];
         }).catch(err=>{
           this.$message('获取信息失败', 'error');
         }).finally(() => {
@@ -302,7 +305,7 @@
               }
               if (existData && existData.length > 1) {
                 const [layer, lineId] = existData;
-                const lineNum = baseOption[0].attrs.options.find(v=>v.value === lineId).label;
+                const lineNum = this.baseOption[0].attrs.options.find(v=>v.value === lineId).label;
                 this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
                 return false;
               }
@@ -325,6 +328,7 @@
         });
       },
       close() {
+        this.addLayerNum = 1;
         this.dialogLoading = false;
         this.$refs.dialog.close();
         this.dialogVisible = false;
@@ -342,7 +346,7 @@
               value: v.id
             };
           });
-          baseOption[0].attrs.options = lineOptions;
+          this.baseOption[0].attrs.options = lineOptions;
           this.searchConfig[0].attrs.options = lineOptions;
         });
       },
