@@ -595,12 +595,17 @@
           if (keyCode === 17) {
             let row = this.tableData[this.activeIndex];
             if (row) {
-              let cloneObj = this.$method.cloneData(['paperVarietyId', paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, this.tableData[this.activeIndex]);
-              this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
-              if (row[cylinderKeys.cylinderNo]) {
-                this.getCylinderId().then(res=>{
-                  this.$set(cloneObj, cylinderKeys.cylinderNo, res);
-                })
+              if (this.activeIndex < this.tableMaxLength - 1) {
+                let cloneObj = this.$method.cloneData(['paperVarietyId', paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, this.tableData[this.activeIndex]);
+                if (this.tableData.length < this.tableMaxLength) {
+                  this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
+                } else {
+                  let lastObj = this.tableData[this.tableData.length - 1];
+                  if (!Object.keys(lastObj).length || Object.keys(lastObj).every(key=>['', undefined, null].includes(lastObj[key]))) {
+                    this.tableData.pop();
+                    this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
+                  }
+                }
               }
             }
           } else if (keyCode === 13 && e.target.tagName !== 'INPUT') {
