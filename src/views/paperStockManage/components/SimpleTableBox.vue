@@ -92,8 +92,9 @@
           ...data,
           ...this.pageOptions
         }).then((res) => {
-          this.tableData = res.list;
-          this.pageTotal = res.total;
+          // 没有额外数据的在list里，有额外数据的在data.list里
+          this.tableData = res.list || res.data.list;
+          this.pageTotal = res.total || res.data.total;
           this.totalCount = res.totalCount;
           this.totalWeight = res.totalWeight;
         }).finally(() => {
