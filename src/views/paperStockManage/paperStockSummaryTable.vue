@@ -27,7 +27,7 @@
                       const start = new Date();
                       picker.$emit('pick', [start, end]);
                     }},
-                  {text: '近七天',
+                  {text: '近7天',
                     onClick(picker) {
                       const end = new Date();
                       const start = new Date();

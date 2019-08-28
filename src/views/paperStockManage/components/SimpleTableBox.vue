@@ -91,8 +91,8 @@
           ...data,
           ...this.pageOptions
         }).then((res) => {
-          this.tableData = res.list || res.data.list;
-          this.pageTotal = res.total || res.data.total;
+          this.tableData = res.list;
+          this.pageTotal = res.total;
           this.totalCount = res.totalCount;
           this.totalWeight = res.totalWeight;
         }).finally(() => {
@@ -105,7 +105,7 @@
       },
     },
     mounted() {
-      this.getTableData();
+      this.$refs.search.search();
     },
   };
 </script>
