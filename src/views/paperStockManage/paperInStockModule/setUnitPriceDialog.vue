@@ -160,13 +160,16 @@
             label: '单价',
             width: 96,
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled']}
+              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}}
             },
             component: tableInput,
             listeners: {
               input: (val, {row}) => {
                 let _val = parseFloat(val)*parseFloat(row[cylinderKeys.weight]);
                 this.$set(row, cylinderKeys.money, isNaN(_val) || _val === 0 ? '' : _val);
+                if (row['isError']) {
+                  this.$set(row, 'isError', false);
+                }
               }
             }
           },
@@ -215,6 +218,17 @@
             this.$emit('success');
             this.$message('操作成功');
             this.close();
+          }).catch((res)=>{
+            let arr = res.data || [];
+            let map = arr.reduce((map, str) => {
+              map[str] = true;
+              return map;
+            }, {});
+            this.tableData.map(obj=>{
+              if (map[obj[cylinderKeys.cylinderNo]]) {
+                this.$set(obj, 'isError', true);
+              }
+            });
           });
         });
       },
@@ -267,5 +281,8 @@
     /deep/ .el-form-item {
       margin-bottom: 0;
     }
+  }
+  .base-table /deep/ .is-error .el-input__inner {
+    border-color: red;
   }
 </style>
