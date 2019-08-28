@@ -451,7 +451,7 @@
             this.$message('数据超出最大长度', 'error');
             return;
           }
-          this.getTubeByNumber(text).finally((obj = {})=>{
+          this.getTubeByNumber(text).then((obj = {})=>{
             if (obj[paperKeys.paperStatus]) {
               this.$message('该纸筒编号已出库', 'error');
               return;
