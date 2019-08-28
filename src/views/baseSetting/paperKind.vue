@@ -50,7 +50,7 @@
     data() {
       return {
         searchConfig: [
-          {label: '原纸编号', key: 'paperNumber', type: 'input', attrs: {reg: /^\w*$/}},
+          {label: '原纸编号', key: 'paperNumber', type: 'input'},
           {label: '原纸代码', key: 'paperCode', type: 'input'},
           {label: '门幅', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
         ],
@@ -214,7 +214,7 @@
               },
               'clear': ()=>{
                 this.formData.warehouseAreaId = '';
-                this.formOptions[this.formOptions.length-1].attrs.options = [];
+                this.formOptions[this.formOptions.length - 1].attrs.options = [];
               },
             }
           },
@@ -262,6 +262,10 @@
       },
       getPaperKindById(id) {
         return this.dj_api_extend(paperKindService.getPaperByid, {id}).then(res=>{
+          if (this.paperCodeList.findIndex(v=>v.id === res.paperCodeId) === -1) {
+            const { paperCodeId: id, paperCode, paperGram, paperType} = res;
+            this.paperCodeList.push({id, paperCode, paperGram, paperType});
+          }
           this.formData = res || {};
           return res;
         });
@@ -370,6 +374,7 @@
         this.$refs.form.resetFields();
         this.$refs.dialog.close();
         this.dialogVisible = false;
+        this.getAllPaperCode();
         this.formData = this.$method.deepClone(initFormData);
         this.warehouseAreaList = [];
       }
