@@ -361,13 +361,10 @@
                     },
                   };
                   // 小吊篮时需要输入堆叠数
-                  // 编辑时，不管是大吊篮还是小吊篮，都不显示堆叠数
-                  if (this.dialogTypeIsAdd) {
-                    if (val === 2) {
-                      this.formOptions.fxj.splice(4, 0, stackCount);
-                    } else {
-                      this.formOptions.fxj.splice(4, 1);
-                    }
+                  if (val === 2) {
+                    this.formOptions.fxj.splice(4, 0, stackCount);
+                  } else {
+                    this.formOptions.fxj.splice(4, 1);
                   }
                 }
               }
@@ -395,8 +392,8 @@
       };
     },
     methods: {
-      isObject(obj){
-        return Object.prototype.toString.call(obj)==='[object Object]';
+      isObject(obj) {
+        return Object.prototype.toString.call(obj) === '[object Object]';
       },
       isArray(arr) {
         return Object.prototype.toString.call(arr) === '[object Array]';
@@ -408,7 +405,7 @@
        */
       equalsObj(oldData, newData) {
         //       类型为基本类型时,如果相同,则返回true
-        console.log(oldData, newData);
+        // console.log(oldData, newData);
         if (oldData == newData) return true;
         if (this.isObject(oldData) && this.isObject(newData) && Object.keys(oldData).length === Object.keys(newData).length) {
           //      类型为对象并且元素个数相同
@@ -418,7 +415,7 @@
             if (oldData.hasOwnProperty(key)) {
               if (!this.equalsObj(oldData[key], newData[key]))
               //      对象中具有不相同属性 返回false
-                return false;
+                {return false;}
             }
           }
         } else if (this.isArray(oldData) && this.isArray(oldData) && oldData.length === newData.length) {
@@ -427,7 +424,7 @@
           for (let i = 0, length = oldData.length; i < length; i++) {
             if (!this.equalsObj(oldData[i], newData[i]))
             //      如果数组元素中具有不相同元素,返回false
-              return false;
+              {return false;}
           }
         } else {
           //      其它类型,均返回false
@@ -555,6 +552,27 @@
     mounted() {
       this.$nextTick(() => {
         this.$refs.dialog.open();
+        const stackCount = {
+          type: 'input',
+          formItem: {
+            prop: 'stackCount',
+            label: '堆叠数',
+            rules: [
+              djForm.rules.required('请输入最小叠单米数'),
+              formRules.number,
+              formRules.number5
+            ],
+            attrs: {
+              suffixIcon: "m"
+            }
+          },
+        };
+        // 小吊篮时需要输入堆叠数
+        if (this.prodLineData.fxj.basketType === 2) {
+          this.formOptions.fxj.splice(4, 0, stackCount);
+        } else {
+          this.formOptions.fxj.splice(4, 1);
+        }
         let deepCloneData = this.$method.deepClone(this.prodLineData);
         let flatData = this.getFlatObject(deepCloneData);
         let keys = Object.keys(flatData);

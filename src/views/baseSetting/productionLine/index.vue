@@ -60,6 +60,7 @@
               minCutLength: '',
               basketType: '',
               basketLength: '',
+              stackCount: ''
             }
           },
         ],
@@ -87,6 +88,7 @@
             {prop: 'minCutLength', label: '最小切长(mm)'},
             {prop: 'basketType', label: '吊篮类型'},
             {prop: 'basketLength', label: '吊篮长度(m)'},
+            {prop: 'stackCount', label: '堆叠数'},
           ],
         }),
 
@@ -164,6 +166,7 @@
                   minCutLength: '',
                   basketType: '',
                   basketLength: '',
+                  stackCount: ''
                 }});
                 for (const item of Object.keys(this.prodLineLabel)) {
                 const module = this.prodLineLabel[item];
@@ -194,6 +197,7 @@
         this.$nextTick(()=>{
           let copyData = this.$method.deepClone(this.prodLineData[this.activeTab - 1]);
           copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
+          console.log(copyData);
           this.$refs.editAdd.prodLineData = copyData;
           this.$refs.editAdd.lineId = this.idMap[this.activeTab - 1];
           this.$refs.editAdd.lineNum = this.activeTab;
