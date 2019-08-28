@@ -1,5 +1,5 @@
 export default {
-  chinese: {pattern: /[\u4e00-\u9fa5]/g, message: '请输入汉字', trigger: 'change'},
+  chinese: {pattern: /^[\u4e00-\u9fa5]+$/g, message: '请输入汉字', trigger: 'change'},
   word_number: {pattern: /^\w+$/g, message: '请输入字母、数字'},
   float: {pattern: /^(([1-9]\d*)(\.\d{1,2})?|0\.\d{1,2})$/g, message: '请输入最多两位小数，且不为0', trigger: 'change'}, //正整数或小数
   number: {pattern: /^[1-9]\d*$/g, message: '请输入正整数', trigger: 'change'}, //正整数

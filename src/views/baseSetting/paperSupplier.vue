@@ -192,7 +192,7 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          this.loading = true;
+          this.dialogLoading = true;
           let message;
           let api;
           let { supplierNumber, supplierName, address, socialCreditCode, legalRepresentative } = this.formData;
@@ -209,9 +209,9 @@
             this.close();
             this.$refs.table.updateData();
             this.$message(message, 'success');
-            this.loading = false;
+            this.dialogLoading = false;
           }).catch(() => {
-            this.loading = false;
+            this.dialogLoading = false;
           });
         });
       },
