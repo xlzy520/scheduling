@@ -106,18 +106,18 @@
             }
           },
           {
-            prop: cylinderKeys.usePerson,
+            prop: cylinderKeys.usePersonName,
             label: '领用人',
             width: 118,
           },
           {
-            prop: cylinderKeys.useDepartment,
+            prop: cylinderKeys.useDepartmentName,
             label: '领用部门',
             width: 145,
           },
           {
             prop: cylinderKeys.useGroup,
-            label: '领用班组',
+            label: '领用单元',
             width: 132,
           },
           {
