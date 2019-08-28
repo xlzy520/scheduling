@@ -599,11 +599,21 @@
                 let cloneObj = this.$method.cloneData(['paperVarietyId', paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId], {}, this.tableData[this.activeIndex]);
                 if (this.tableData.length < this.tableMaxLength) {
                   this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
+                  if (row[cylinderKeys.cylinderNo]) {
+                    this.getCylinderId().then(res=>{
+                      this.$set(cloneObj, cylinderKeys.cylinderNo, res);
+                    })
+                  }
                 } else {
                   let lastObj = this.tableData[this.tableData.length - 1];
                   if (!Object.keys(lastObj).length || Object.keys(lastObj).every(key=>['', undefined, null].includes(lastObj[key]))) {
                     this.tableData.pop();
                     this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
+                    if (row[cylinderKeys.cylinderNo]) {
+                      this.getCylinderId().then(res=>{
+                        this.$set(cloneObj, cylinderKeys.cylinderNo, res);
+                      })
+                    }
                   }
                 }
               }
