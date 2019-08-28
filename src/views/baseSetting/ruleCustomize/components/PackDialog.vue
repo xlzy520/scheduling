@@ -20,17 +20,17 @@
                 </el-form-item>
                 <el-form-item label="单位面积" class="unit-area" ref="unitArea">
                   <el-form-item prop="startUnitarea">
-                    <dj-input v-model="child.startUnitarea" placeholder="请输入" maxLength="10"
+                    <dj-input v-model="child.startUnitarea" placeholder="请输入" maxlength="10"
                               disabled suffix-icon="m²"></dj-input>
                   </el-form-item>
                   <div style="margin: 0 5px">至</div>
                   <el-form-item prop="endUnitarea">
                     <dj-input v-model="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
-                              maxLength="10" @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
+                              maxlength="10" @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
                   </el-form-item>
                 </el-form-item>
                 <el-form-item label="打包数量" prop="packpiece" class="packpiece" >
-                  <el-input v-model="child.packpiece" maxLength="10"></el-input>
+                  <el-input v-model="child.packpiece" maxlength="10"></el-input>
                 </el-form-item>
                 <div class="button-col">
                   <i class="el-icon-delete" v-if="childIndex===condition.length - 1"
@@ -86,7 +86,7 @@
               ],
             },
             attrs: {
-              maxLength: 40,
+              maxlength: 40,
             }
           },
           {
@@ -100,7 +100,7 @@
               ],
             },
             attrs: {
-              maxLength: 20,
+              maxlength: 20,
               suffixIcon: "Kg"
             },
           },
@@ -115,7 +115,7 @@
               ],
             },
             attrs: {
-              maxLength: 20,
+              maxlength: 20,
             },
           },
           {
@@ -129,7 +129,7 @@
               ],
             },
             attrs: {
-              maxLength: 20,
+              maxlength: 20,
             },
           },
           {
@@ -143,7 +143,7 @@
               ],
             },
             attrs: {
-              maxLength: 20,
+              maxlength: 20,
             },
           },
           {
@@ -157,7 +157,7 @@
               ],
             },
             attrs: {
-              maxLength: 20,
+              maxlength: 20,
             },
           },
           {
@@ -171,7 +171,7 @@
               ],
             },
             attrs: {
-              maxLength: 20,
+              maxlength: 20,
             },
           }
         ],

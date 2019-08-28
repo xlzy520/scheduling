@@ -113,7 +113,7 @@
               ],
             },
             attrs: {
-              maxLength: 5,
+              maxlength: 5,
             },
             listeners: {
               'input': (val) => {

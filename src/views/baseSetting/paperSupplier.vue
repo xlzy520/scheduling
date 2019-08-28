@@ -92,7 +92,7 @@
               ],
             },
             attrs: {
-              maxLength: 20,
+              maxlength: 20,
               disabled: !this.dialogTypeIsAdd
             },
           },
@@ -107,7 +107,7 @@
               ],
             },
             attrs: {
-              maxLength: 60
+              maxlength: 60
             }
           },
           {
@@ -120,7 +120,7 @@
               ],
             },
             attrs: {
-              maxLength: 18,
+              maxlength: 18,
             },
           },
           {
@@ -133,7 +133,7 @@
               ],
             },
             attrs: {
-              maxLength: 30,
+              maxlength: 30,
             },
           },
           {
@@ -146,7 +146,7 @@
               ],
             },
             attrs: {
-              maxLength: 200,
+              maxlength: 200,
             },
           },
         ];

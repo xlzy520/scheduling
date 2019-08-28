@@ -76,7 +76,7 @@
               ],
             },
             attrs: {
-              maxLength: 40,
+              maxlength: 40,
             }
           },
           {
@@ -101,7 +101,7 @@
               ],
             },
             attrs: {
-              maxLength: 10,
+              maxlength: 10,
             }
           },
           {
@@ -115,7 +115,7 @@
               ],
             },
             attrs: {
-              maxLength: 10,
+              maxlength: 10,
             }
           },
           {
@@ -130,7 +130,7 @@
               ],
             },
             attrs: {
-              maxLength: 10
+              maxlength: 10
             }
           },
         ],

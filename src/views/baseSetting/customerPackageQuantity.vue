@@ -318,7 +318,7 @@
             },
             attrs: {
               type: 'number',
-              maxLength: 10,
+              maxlength: 10,
             },
           },
         ],

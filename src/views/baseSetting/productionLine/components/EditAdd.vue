@@ -114,7 +114,7 @@
                 ],
               },
               attrs: {
-                maxLength: 10,
+                maxlength: 10,
                 suffixIcon: "m-s"
               },
             },
@@ -129,7 +129,7 @@
                 ],
               },
               attrs: {
-                maxLength: 10,
+                maxlength: 10,
                 suffixIcon: "m"
               },
             },
@@ -144,7 +144,7 @@
                 ],
               },
               attrs: {
-                maxLength: 10,
+                maxlength: 10,
                 suffixIcon: "mm"
               },
             },
@@ -159,7 +159,7 @@
                 ],
               },
               attrs: {
-                maxLength: 10,
+                maxlength: 10,
                 suffixIcon: "m"
               },
             },
