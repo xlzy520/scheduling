@@ -11,6 +11,13 @@ var config = {
   onFailure(data) { //请求没有连接上后端和success为false时执行
     // Message(Object.assign({}, messageConfig, {message: msg, type: 'error'}));
     Message(Object.assign({}, {message: data.msg, type: 'error'}));
+    if (data.code === '10001302') {
+      if (data.data) {
+        setTimeout(() => {
+          window.location.href = data.data.loginUrl;
+        }, 1000);
+      }
+    }
   }
 };
 
