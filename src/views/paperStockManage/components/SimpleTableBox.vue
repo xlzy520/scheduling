@@ -28,6 +28,7 @@
 
 <script>
   import paperTableService from '@/api/service/paperTable';
+  import dayjs from 'dayjs';
   import axios from 'axios';
   import PagePane from "../../../components/page/pagePane";
   export default {
@@ -83,8 +84,8 @@
       getTableData(data) {
         this.loading = true;
         if (data && data.timeRange) {
-          data.startTime = data.timeRange[0];
-          data.endTime = data.timeRange[1];
+          data.startTime = data.timeRange[0] + ' 00:00:00';
+          data.endTime = data.timeRange[1] + ' ' + dayjs().format('HH:mm:ss');
         }
         this.searchData = data;
         paperTableService[this.serviceUrl]({

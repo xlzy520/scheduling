@@ -96,7 +96,6 @@
       },
     },
     mounted() {
-      this.$refs.table.getTableData();
       this.getWarehouse();
     }
   };

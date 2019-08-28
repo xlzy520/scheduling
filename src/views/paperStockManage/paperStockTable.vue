@@ -36,10 +36,7 @@
           filename: '原纸库存表'
         },
       };
-    },
-    mounted() {
-      this.$refs.table.getTableData();
-    },
+    }
   };
 </script>
 

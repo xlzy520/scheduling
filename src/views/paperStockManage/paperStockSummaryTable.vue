@@ -104,9 +104,6 @@
           filename: '原纸出入库汇总表'
         }
       };
-    },
-    mounted() {
-      this.$refs.table.getTableData();
     }
   };
 </script>
