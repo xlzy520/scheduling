@@ -16,47 +16,26 @@
     data() {
       return {
         searchConfig: [
-          {label: '选择日期：', key: 'timeRange', type: 'date', attrs: {
-              clearable: false, type: 'daterange', valueFormat: "yyyy-MM-dd",
+          {label: '选择日期：', key: 'timeRange', type: 'date',
+            attrs: {
+              clearable: false,
+              type: 'daterange',
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
-              pickerOptions: {
-                shortcuts: [
-                  {text: '今天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      picker.$emit('pick', [start, end]);
-                    }},
-                  {text: '近7天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                      picker.$emit('pick', [start, end]);
-                    }},
-                  {
-                    text: '近30天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                      picker.$emit('pick', [start, end]);
-                    }
-                  }
-                ]
-              },
               beforeChange: (val) => {
-                let _val = val;
+                let _val = val ? [...val] : [];
                 if (val[0] && val[1]) {
-                  let day92 = dayjs(val[0]).add(92, 'day');
-                  if (day92.isBefore(dayjs(val[1]))) {
+                  let towMonth = dayjs(val[0]).add(92, 'day');
+                  if (towMonth.isBefore(dayjs(val[1]))) {
                     this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], day92.toDate()];
+                    _val = [val[0], dayjs(towMonth).toDate()];
                   }
+                  val[0] = dayjs(val[0]).format('YYYY-MM-DD');
+                  val[1] = dayjs(val[1]).format('YYYY-MM-DD');
                 }
                 return _val;
               },
-              }},
+            }
+            },
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
           {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
           {label: '原纸供应商：', key: 'supplierName', type: 'input'},

@@ -84,8 +84,8 @@
       getTableData(data) {
         this.loading = true;
         if (data && data.timeRange) {
-          data.startTime = data.timeRange[0] + ' 00:00:00';
-          data.endTime = data.timeRange[1] + ' ' + dayjs().format('HH:mm:ss');
+          data.startTime = dayjs(data.timeRange[0]).format('YYYY-MM-DD') + ' 00:00:00';
+          data.endTime = dayjs(data.timeRange[1]).format('YYYY-MM-DD') + ' ' + dayjs().format('HH:mm:ss');
         }
         this.searchData = data;
         paperTableService[this.serviceUrl]({
@@ -93,8 +93,8 @@
           ...this.pageOptions
         }).then((res) => {
           // 没有额外数据的在list里，有额外数据的在data.list里
-          this.tableData = res.list || res.data.list;
-          this.pageTotal = res.total || res.data.total;
+          this.tableData = res.list || res.data.list || [];
+          this.pageTotal = res.total || res.data.total || 0;
           this.totalCount = res.totalCount;
           this.totalWeight = res.totalWeight;
         }).finally(() => {
