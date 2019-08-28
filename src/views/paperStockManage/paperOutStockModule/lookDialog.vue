@@ -181,7 +181,7 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.usePersonName,
+              prop: 'department-person-name',
               label: '领用部门/领用人',
             }
           },
@@ -324,6 +324,9 @@
         this.isShowMoney = param.isShowMoney;
         this.$refs.dialog.open();
         this.dj_api_extend(paperWarehouseService.getPaperOutStorage, param).then(res=>{
+          if (res[cylinderKeys.useDepartmentName] && res[cylinderKeys.usePersonName]) {
+            res['department-person-name'] = `${res[cylinderKeys.useDepartmentName]} / ${res[cylinderKeys.usePersonName]}`;
+          }
           this.formData = res;
           this.tableData = res.tubeList;
         });
