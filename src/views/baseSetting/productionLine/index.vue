@@ -196,11 +196,9 @@
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
         let copyData = JSON.parse(JSON.stringify(this.prodLineData[this.activeTab - 1]));
-        console.log(copyData)
         copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
         this.$nextTick(()=>{
-          console.log(copyData);
-          this.$refs.editAdd.prodLineData = copyData;
+          this.$refs.editAdd.prodLineData = JSON.parse(JSON.stringify(copyData));
           this.$refs.editAdd.lineId = this.idMap[this.activeTab - 1];
           this.$refs.editAdd.lineNum = this.activeTab;
         });

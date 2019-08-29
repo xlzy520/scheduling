@@ -465,7 +465,6 @@
                   sum = Object.assign(sum, this.prodLineData[val]);
                   return sum;
                 }, {});
-                console.log(params);
                 params.commonTilemodel = params.commonTilemodel.join('、');
                 if (!this.dialogTypeIsAdd) {
                   params.id = this.lineId;
@@ -552,6 +551,11 @@
     mounted() {
       this.$nextTick(() => {
         this.$refs.dialog.open();
+        if (this.prodLineData.zqj.slimachWdoubleMinLength === null) {
+          // todo 是否为组件库bug？
+          this.prodLineData.zqj.slimachWdoubleMinLength = '';
+        }
+        console.log(this.prodLineData);
         const stackCount = {
           type: 'input',
           formItem: {
