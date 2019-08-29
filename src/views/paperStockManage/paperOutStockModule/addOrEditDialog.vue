@@ -444,6 +444,11 @@
       },
       scannerAdd(text) {
         if (text) {
+          let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === text)[0];
+          if (sameRow && sameRow[paperKeys.paperCode]) {
+            this.$message('纸筒已录入', 'error');
+            return;
+          }
           console.log('扫码枪新增');
           let index_r = [...this.tableData].reverse().findIndex(obj=>Object.keys(obj).length);
           let index = index_r === -1 ? 0 : this.tableData.length - index_r;
