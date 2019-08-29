@@ -186,6 +186,7 @@
               }
             });
           }
+          this.tabClick();
           this.loading = false;
         }).catch(() => {
           this.loading = false;
@@ -194,9 +195,10 @@
       edit() {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
+        let copyData = JSON.parse(JSON.stringify(this.prodLineData[this.activeTab - 1]));
+        console.log(copyData)
+        copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
         this.$nextTick(()=>{
-          let copyData = this.$method.deepClone(this.prodLineData[this.activeTab - 1]);
-          copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
           console.log(copyData);
           this.$refs.editAdd.prodLineData = copyData;
           this.$refs.editAdd.lineId = this.idMap[this.activeTab - 1];
