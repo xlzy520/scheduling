@@ -1,23 +1,25 @@
 <template>
   <div>
     <dj-dialog ref="dialog" @close="confirmClose" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
-      <p class="font-subhead">基础信息</p>
-      <dj-form ref="form"
-               :formData="formData"
-               :formOptions="formOptions"
-               :column-num="3"></dj-form>
-      <p class="font-subhead">纸筒信息</p>
-      <base-table ref="table"
-                  v-if="readyTable"
-                  :column-type-props="{index: {fixed: false}}"
-                  :data="tableData"
-                  :lazy-total="tableMaxLength"
-                  :lazy-remote="()=>getEmptyData(10)"
-                  max-height="370"
-                  :columns="tableColumns"
-                  @row-click="rowClick"
-                  :column-type="['index']">
-      </base-table>
+      <div v-loading="isTableLoading">
+        <p class="font-subhead">基础信息</p>
+        <dj-form ref="form"
+                 :formData="formData"
+                 :formOptions="formOptions"
+                 :column-num="3"></dj-form>
+        <p class="font-subhead">纸筒信息</p>
+        <base-table ref="table"
+                    v-if="readyTable"
+                    :column-type-props="{index: {fixed: false}}"
+                    :data="tableData"
+                    :lazy-total="tableMaxLength"
+                    :lazy-remote="()=>getEmptyData(10)"
+                    max-height="370"
+                    :columns="tableColumns"
+                    @row-click="rowClick"
+                    :column-type="['index']">
+        </base-table>
+      </div>
     </dj-dialog>
     <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @selectPerson="changeForkliftDriver"></select-use-person>
   </div>
@@ -347,7 +349,8 @@
         defaultTableData: {},
         defaultEffectiveTableData: {},
 
-        selectForkliftDriverFlag: false
+        selectForkliftDriverFlag: false,
+        isTableLoading: false
       };
     },
     computed: {
@@ -714,21 +717,29 @@
         this.$refs.dialog.open();
         if (param) {
           this.isEdit = true;
+          this.isTableLoading = true;
           this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
             res['supplier'] = {paperSupplierId: res[cylinderKeys.paperSupplierId], supplierName: res[cylinderKeys.paperSupplierName]};
             this.formData = Object.assign({}, this.formData, res);
             let tableData = res.tubeList || [];
             this.tableData = tableData.map(obj=>{
               let weight = obj[cylinderKeys.weight];
+              let gram = obj[paperKeys.paperGram];
               if (weight) {
                 obj[cylinderKeys.weight] = Number(weight) || '';
+              }
+              if (gram) {
+                obj[paperKeys.paperGram] = Number(gram) || '';
               }
               return obj;
             });
             return this.getEmptyData(10).then((arr)=>{
               this.tableData = this.tableData.concat(arr);
             });
-          }).finally(this.saveDefaultData);
+          }).finally(()=>{
+            this.saveDefaultData();
+            this.isTableLoading = false;
+          });
         } else {
           this.getReceiptId();
           this.$nextTick(()=>{

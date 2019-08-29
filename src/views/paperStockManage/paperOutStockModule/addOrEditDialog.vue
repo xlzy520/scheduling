@@ -1,23 +1,26 @@
 <template>
   <div>
     <dj-dialog ref="dialog" @close="confirmClose" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
-      <p class="font-subhead">基础信息</p>
-      <dj-form ref="form"
-               :formData="formData"
-               :formOptions="formOptions"
-               :column-num="3"
-               :col-rule="colRule"></dj-form>
-      <p class="font-subhead">纸筒信息</p>
-      <base-table ref="table"
-                  :data="tableData"
-                  max-height="370"
-                  :column-type-props="columnsTypeProps"
-                  :lazy-total="tableMaxLength"
-                  :lazy-remote="()=>getEmptyData(10)"
-                  @row-click="rowClick"
-                  :columns="tableColumns"
-                  :column-type="['index']">
-      </base-table>
+      <div v-loading="isTableLoading">
+        <p class="font-subhead">基础信息</p>
+        <dj-form ref="form"
+                 :formData="formData"
+                 :formOptions="formOptions"
+                 :column-num="3"
+                 :col-rule="colRule"></dj-form>
+        <p class="font-subhead">纸筒信息</p>
+        <base-table ref="table"
+                    :loading="isTableLoading"
+                    :data="tableData"
+                    max-height="370"
+                    :column-type-props="columnsTypeProps"
+                    :lazy-total="tableMaxLength"
+                    :lazy-remote="()=>getEmptyData(10)"
+                    @row-click="rowClick"
+                    :columns="tableColumns"
+                    :column-type="['index']">
+        </base-table>
+      </div>
     </dj-dialog>
     <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" title="选择责任部门/责任人" @close="selectUsePersonFlag = false" @selectPerson="changeUserPerson"></select-use-person>
     <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @selectPerson="changeForkliftDriver"></select-use-person>
@@ -176,6 +179,8 @@
         tableMaxLength: 150,
         member_arr: [],
         department_arr: [],
+
+        isTableLoading: false,
       };
     },
     computed: {
@@ -551,6 +556,7 @@
         this.$refs.dialog.open();
         if (param) {
           this.isEdit = true;
+          this.isTableLoading = true;
           this.dj_api_extend(paperWarehouseService.getPaperOutStorage, param).then(res=>{
             if (res[cylinderKeys.useDepartmentName] && res[cylinderKeys.usePersonName]) {
               res['department-person-name'] = `${res[cylinderKeys.useDepartmentName]} / ${res[cylinderKeys.usePersonName]}`;
@@ -560,6 +566,8 @@
             return this.getEmptyData(10).then(arr=>{
               this.tableData = this.tableData.concat(arr);
             }).finally(this.saveDefaultData);
+          }).finally(()=>{
+            this.isTableLoading = false;
           });
         } else {
           this.getReceiptId();

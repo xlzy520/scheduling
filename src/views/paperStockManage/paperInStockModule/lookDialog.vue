@@ -1,7 +1,7 @@
 <template>
     <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
-        <el-tab-pane label="基础信息" name="1">
+        <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
           <dj-form labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
           <p class="font-subhead">纸筒信息</p>
           <base-table ref="table"
@@ -178,7 +178,8 @@
           {label: '操作内容', prop: 'event', width: 742}
         ],
         activeTab: '1',
-        isShowMoney: true
+        isShowMoney: true,
+        isTableLoading: true,
       };
     },
     computed: {
@@ -346,10 +347,13 @@
       open(param) {
         this.$refs.dialog.open();
         this.isShowMoney = param.isShowMoney;
+        this.isTableLoading = true;
         this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
           res[cylinderKeys.totalMoney] = res[cylinderKeys.totalMoney] || 0;
           this.formData = res;
           this.tableData = res.tubeList;
+        }).finally(()=>{
+          this.isTableLoading = false;
         });
       },
       close() {

@@ -3,6 +3,7 @@
     <dj-dialog ref="dialog" @close="close" width="1160px" title="打印标签" @confirm="confirm">
       <p class="font-subhead">请确认打印信息</p>
       <base-table ref="table"
+                  :loading="isTableLoading"
                   :data="tableData"
                   height="500px"
                   :columns="tableColumns"
@@ -54,7 +55,8 @@
         ],
         tableData: [],
         selectList: [],
-        printData: []
+        printData: [],
+        isTableLoading: false
       };
     },
     created() {
@@ -75,12 +77,15 @@
       },
       open(param) {
         this.$refs.dialog.open();
+        this.isTableLoading = true;
         this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
           let list = res.tubeList || [];
           list.map(obj=>{
             obj[cylinderKeys.paperSupplierName] = res[cylinderKeys.paperSupplierName];
           });
           this.tableData = list;
+        }).finally(()=>{
+          this.isTableLoading = false;
         });
       },
       close() {

@@ -1,15 +1,17 @@
 <template>
   <dj-dialog ref="dialog" @close="confirmClose" width="1160px" title="设置单价" @confirm="confirm">
-    <p class="font-subhead">基础信息</p>
-    <dj-form ref="form" labelSuffix=":" :formData="formData" :formOptions="formOptions" :column-num="3"
-             :col-rule="colRule"></dj-form>
-    <p class="font-subhead">纸筒信息</p>
-    <base-table ref="table"
-                :data="tableData"
-                max-height="370"
-                :columns="tableColumns"
-                :column-type="['index']">
-    </base-table>
+    <div v-loading="isTableLoading">
+      <p class="font-subhead">基础信息</p>
+      <dj-form ref="form" labelSuffix=":" :formData="formData" :formOptions="formOptions" :column-num="3"
+               :col-rule="colRule"></dj-form>
+      <p class="font-subhead">纸筒信息</p>
+      <base-table ref="table"
+                  :data="tableData"
+                  max-height="370"
+                  :columns="tableColumns"
+                  :column-type="['index']">
+      </base-table>
+    </div>
   </dj-dialog>
 </template>
 <script>
@@ -193,6 +195,8 @@
             }
           },
         ],
+        isTableLoading: false,
+        defaultTableData: []
       };
     },
     created() {},
@@ -234,6 +238,7 @@
       },
       open(param) {
         this.$refs.dialog.open();
+        this.isTableLoading = true;
         this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
           this.formData = res;
           this.tableData = res.tubeList.map(obj=>{
@@ -241,6 +246,8 @@
             return obj;
           });
           this.saveDefaultData();
+        }).finally(()=>{
+          this.isTableLoading = false;
         });
       },
       saveDefaultData() {
