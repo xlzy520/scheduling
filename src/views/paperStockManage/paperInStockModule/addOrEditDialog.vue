@@ -718,12 +718,12 @@
             res['supplier'] = {paperSupplierId: res[cylinderKeys.paperSupplierId], supplierName: res[cylinderKeys.paperSupplierName]};
             this.formData = Object.assign({}, this.formData, res);
             let tableData = res.tubeList || [];
-            let _arr = tableData.map(obj=>this.$method.cloneData([paperKeys.warehouseAreaId], {}, obj));
-            this.tableData = tableData;
-            this.$nextTick(()=>{
-              this.tableData.map((obj, index)=>{
-                Object.assign(obj, _arr[index]);
-              });
+            this.tableData = tableData.map(obj=>{
+              let weight = obj[cylinderKeys.weight];
+              if (weight) {
+                obj[cylinderKeys.weight] = Number(weight) || '';
+              }
+              return obj;
             });
             return this.getEmptyData(10).then((arr)=>{
               this.tableData = this.tableData.concat(arr);
