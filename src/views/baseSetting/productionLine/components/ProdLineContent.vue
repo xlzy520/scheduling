@@ -28,7 +28,7 @@
         <dj-grid-box :data="ProdLineLabel.fxj" :column-num="3" :col-rule="colRule">
           <template slot-scope="{item}">
             <div class="bs-card-row">
-              <div class="bs-card-label">{{item.label}}：</div>
+              <div class="bs-card-label" v-if="ProdLineData.fxj[item.prop]">{{item.label}}：</div>
               <div class="bs-card-value" v-if="item.prop !== 'basketType'"> {{ProdLineData.fxj[item.prop]}}</div>
               <div class="bs-card-value" v-else> {{ProdLineData.fxj[item.prop]===1?'大吊篮':'小吊篮'}}</div>
             </div>
