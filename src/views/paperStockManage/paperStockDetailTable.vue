@@ -32,7 +32,10 @@
                 if (!['', undefined, null].includes(val)) {
                   this.dj_api_extend(this.getWarehouseArea, val);
                 }
-              }
+              },
+              'clear': ()=>{
+                this.searchConfig[3].attrs.options = [];
+              },
             }
           },
           {label: '库区：', key: 'warehouseAreaId', type: 'select', attrs: {
