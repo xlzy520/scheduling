@@ -46,7 +46,11 @@
       input(val){
         // if (this.reg && this.reg.test(val) || !this.reg) {
           let {row, index, col, reg} = this;
+          let oldValue = row[col.prop];
           this.$set(row, this.col.prop, val);
+          if (val !== oldValue) {
+            this.$emit('change', val, {row, index, col, reg});
+          }
           this.$emit('input', val, {row, index, col, reg});
         // }
       },

@@ -30,7 +30,7 @@
 <script>
   import {djForm} from 'djweb';
   const {rules} = djForm;
-  import tableInput from '../paperInStockModule/tableInput'
+  import tableInput from '../paperInStockModule/tableInput.vue'
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import selectUsePerson from './selectUsePerson';
   import {Scanner} from "../../../utils";
@@ -108,7 +108,7 @@
             },
             component: tableInput,
             listeners: {
-              input: (val, {index, row}) => {
+              change: (val, {index, row}) => {
                 let obj = this.$method.cloneData([cylinderKeys.cylinderNo], {}, row);
                 this.$set(this.tableData, index, obj);
               }
@@ -182,6 +182,8 @@
         department_arr: [],
 
         isTableLoading: false,
+        defaultFormData: {},
+        defaultTableData: [],
       };
     },
     computed: {
