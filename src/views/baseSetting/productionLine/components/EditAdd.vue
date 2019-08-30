@@ -236,16 +236,7 @@
               },
               listeners: {
                 change: (val) => {
-                  if (val === 1) {
-                    this.$set(this.formOptions.zqj[2].formItem, 'rules', [
-                      formRules.number5
-                    ]);
-                  } else {
-                    this.$set(this.formOptions.zqj[2].formItem, 'rules', [
-                      djForm.rules.required('请输入双机压订单'),
-                      formRules.number5
-                    ]);
-                  }
+                  this.initSlimachNumbers(val);
                 }
               }
             },
@@ -496,6 +487,47 @@
         const isEqual = this.equalsObj(this.cache, params);
         return isEqual;
       },
+      /**
+       * 初始化双机压订单
+       */
+      initSlimachNumbers() {
+        const val = this.prodLineData.zqj.slimachNumbers;
+        if (val === 1) {
+          this.$refs.form2.clearValidate();
+          this.$set(this.formOptions.zqj[2].formItem, 'rules', [
+            formRules.number5
+          ]);
+        } else {
+          this.$set(this.formOptions.zqj[2].formItem, 'rules', [
+            djForm.rules.required('请输入双机压订单'),
+            formRules.number5
+          ]);
+        }
+      },
+      // 初始化堆叠数
+      initStackCount() {
+        const stackCount = {
+          type: 'input',
+          formItem: {
+            prop: 'stackCount',
+            label: '堆叠数',
+            rules: [
+              djForm.rules.required('请输入最小叠单米数'),
+              formRules.number,
+              formRules.number5
+            ],
+            attrs: {
+              suffixIcon: "m"
+            }
+          },
+        };
+        // 小吊篮时需要输入堆叠数
+        if (this.prodLineData.fxj.basketType === 2) {
+          this.formOptions.fxj.splice(4, 0, stackCount);
+        } else {
+          this.formOptions.fxj.splice(4, 1);
+        }
+      },
       close() {
         if (!this.isModify()) {
           this.$confirm('生产线信息未保存，确认是否关闭？', '', {
@@ -556,34 +588,14 @@
           // todo 是否为组件库bug？
           this.prodLineData.zqj.slimachWdoubleMinLength = '';
         }
-        console.log(this.prodLineData);
-        const stackCount = {
-          type: 'input',
-          formItem: {
-            prop: 'stackCount',
-            label: '堆叠数',
-            rules: [
-              djForm.rules.required('请输入最小叠单米数'),
-              formRules.number,
-              formRules.number5
-            ],
-            attrs: {
-              suffixIcon: "m"
-            }
-          },
-        };
-        // 小吊篮时需要输入堆叠数
-        if (this.prodLineData.fxj.basketType === 2) {
-          this.formOptions.fxj.splice(4, 0, stackCount);
-        } else {
-          this.formOptions.fxj.splice(4, 1);
-        }
+        this.initStackCount();
+        this.initSlimachNumbers();
         let deepCloneData = this.$method.deepClone(this.prodLineData);
         let flatData = this.getFlatObject(deepCloneData);
         let keys = Object.keys(flatData);
         for (let i = 0; i < keys.length; i++) {
           if (typeof flatData[keys[i]] === 'number' && flatData[keys[i]] > 0) {
-            // console.log(flatData[keys[i]]);
+            // 把数字转为字符串再对比
             flatData[keys[i]] = String(flatData[keys[i]]);
           }
         }
