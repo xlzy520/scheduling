@@ -3,7 +3,8 @@ import ELEMENT from 'element-ui';
 // 引入公司组件、方法库
 import djweb, {httpPolicy, listenerPolicy, methods} from 'djweb';
 import page from './components/page';
-// import 'djweb/package/baseCss/index.less';
+import classifyForm from './components/classifyForm';
+// import 'djweb/lib/djweb.common.css';
 import filters from './filters';
 import { regs, enumMap} from './utils';
 import './assets/css/index.less';
@@ -15,6 +16,7 @@ Vue.use(djweb);
 Vue.use(ELEMENT);
 Vue.use(filters);
 Vue.use(page);
+Vue.use(classifyForm);
 
 Vue.prototype.$method = {...methods, ..._methods};
 Vue.prototype.$reg = regs;
