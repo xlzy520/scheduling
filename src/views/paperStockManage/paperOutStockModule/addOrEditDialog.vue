@@ -2,6 +2,7 @@
   <div>
     <dj-dialog ref="dialog" @close="confirmClose" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
       <div v-loading="isTableLoading">
+        <!--<el-button @click="scannerAdd('sadasdsadasd')"></el-button>-->
         <p class="font-subhead">基础信息</p>
         <dj-form ref="form"
                  :formData="formData"
@@ -455,7 +456,9 @@
             return;
           }
           console.log('扫码枪新增');
-          let index_r = [...this.tableData].reverse().findIndex(obj=>Object.keys(obj).length);
+          let index_r = [...this.tableData].reverse().findIndex(obj=>{
+            return Object.keys(obj).some(key=>!['', undefined, null].includes(obj[key]));
+          });
           let index = index_r === -1 ? 0 : this.tableData.length - index_r;
           if (index > this.tableMaxLength - 1) {
             this.$message('数据超出最大长度', 'error');
