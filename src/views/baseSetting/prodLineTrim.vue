@@ -366,11 +366,19 @@
   }
 
   @{deep} .el-col-8 {
-    width: 30%;
+    width: 380px;
   }
   @{deep} .dj-form{
     .el-col-0{
+      position: relative;
+      right: 26px;
       display: block;
+      .el-icon-delete{
+        &:before{
+          line-height: 36px;
+          font-size: 20px;
+        }
+      }
       .el-form-item__content{
         cursor: pointer;
         margin-left: 12px!important;
@@ -380,8 +388,9 @@
   .plts-dialog {
     width: 1164px;
     height: 497px;
+    margin-top: 4px;
     &-aside{
-      margin-left: 90px;
+      margin-left: 130px;
     }
     &.edit{
       width: 400px;

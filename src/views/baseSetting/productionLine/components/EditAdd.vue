@@ -1,5 +1,6 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增生产线': '编辑生产线'">
+  <dj-dialog ref="dialog" @close="close" @confirm="confirm" width="1160px"
+             :title="dialogTypeIsAdd?'新增生产线': '编辑生产线'">
     <div class="production-line-dialog" v-loading="loading">
       <h4>基础参数</h4>
       <dj-form ref="form1" :form-data="prodLineData.jccs" :form-options="formOptions.jccs" :column-num="3"></dj-form>
@@ -595,20 +596,16 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .production-line-dialog {
-    width: 80vw;
-
+    padding: 0 18px 0 10px;
     h4 {
-      padding: 10px 0;
+      padding: 4px 0 16px 0;
     }
   }
-
   @{deep} .optional {
-    width: 100%;
+    width: 1120px;
     min-height: 120px;
     margin-bottom: 20px;
-    padding-right: 20px;
     box-sizing: border-box;
-
     &-area {
       width: 100%;
       min-height: 80px;
@@ -617,23 +614,25 @@
       justify-content: flex-start;
       border: 1px solid #DCDFE6;
       border-radius: 4px;
+      padding-left: 12px;
+      padding-bottom: 8px;
+      padding-top: 12px;
       box-sizing: border-box;
 
       &-item {
-        width: 55px;
         text-align: center;
-        font-size: 16px;
+        font-size: 12px;
+        width: 55px;
         height: 24px;
         line-height: 24px;
-        padding: 6px 14px;
-        margin-left: 16px;
-        margin-top: 12px;
+        margin-right: 16px;
+        margin-bottom: 12px;
         color: #606266;
-        background: #EBEEF5;
+        background: #F0F2F5;
         border-radius: 3px;
-        cursor: pointer;
         user-select: none;
-
+        cursor: pointer;
+        box-sizing: border-box;
         &.selected {
           color: #fff;
           background: #3654EA;

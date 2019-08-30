@@ -130,10 +130,11 @@
   .tab-content {
     width: 100%;
     display: flex;
+    position: relative;
+    top: -36px;
     .bs-card-row {
       display: flex;
-      line-height: 1.5;
-      padding: 5px 0;
+      line-height: 20px;
       .bs-card-label {
         text-align: left;
       }
@@ -146,7 +147,7 @@
     }
 
     .left-content {
-      width: 60%;
+      width: 1083px;
       .el-col-24{
         .jccs{
           .bs-card-value {
@@ -170,8 +171,8 @@
       }
     }
     .right-content {
-      width: 40%;
-      margin-left: 30px;
+      flex-grow: 1;
+      margin-left: 80px;
     }
   }
 </style>

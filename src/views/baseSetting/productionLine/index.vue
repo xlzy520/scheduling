@@ -216,24 +216,31 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .production-line{
-    padding: 15px;
-    @{deep} .el-tabs__nav-wrap{
-      width: 70%;
-      .el-tabs__nav.is-stretch{
-        min-width: 80%;
+    padding: 24px 32px 0;
+    @{deep}.el-tabs{
+      margin-top: 12px;
+      .el-tabs__header{
+        margin: 0 0 16px;
       }
-      .el-tabs__item{
-        font-size: 16px;
-        max-width: 180px;
-      }
+      .el-tabs__nav-wrap{
+        width: 70%;
+        .el-tabs__nav.is-stretch{
+          min-width: 80%;
+        }
+        .el-tabs__item{
+          font-size: 16px;
+          max-width: 180px;
+        }
 
+      }
     }
     .tab-right-btns{
-      width: 300px;
-      display: flex;
-      justify-content: space-around;
       float: right;
-      transform: translateY(-40px);
+      transform: translateY(-54px);
+      .el-button{
+        padding: 10px 41px;
+        margin-right: 8px;
+      }
     }
   }
 </style>

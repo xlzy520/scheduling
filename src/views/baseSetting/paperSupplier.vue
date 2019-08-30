@@ -17,11 +17,11 @@
       </dj-table>
     </page-pane>
 
-    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
+    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" width="780px"
                :title="dialogTypeIsAdd?'新增原纸供应商': '编辑原纸供应商'">
       <div class="paper-supplier-dialog" v-loading="dialogLoading">
         <dj-form ref="form" :form-data="formData" labelWidth="120px"
-                 :form-options="formOptions" :column-num="2"></dj-form>
+                 :form-options="formOptions" :column-num="2" :col-rule="colRule" ></dj-form>
       </div>
     </dj-dialog>
   </single-page>
@@ -49,7 +49,7 @@
       return {
         searchConfig: [
           {label: '供应商编号', key: 'supplierNumber', type: 'input'},
-          {label: '供应商名称', key: 'supplierName', type: 'input'},
+          {label: '供应商', key: 'supplierName', type: 'input'},
         ],
         tableData: [],
         tableColumns: [
@@ -153,6 +153,13 @@
       }
     },
     methods: {
+      colRule(item) {
+        if (item.formItem.prop === 'address') {
+          return 24;
+        } else {
+          return 12;
+        }
+      },
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
@@ -232,9 +239,13 @@
   @deep: ~'>>>';
 
   .paper-supplier-dialog {
-    width: 780px;
     @{deep} .dj-form .el-form-item{
       .el-form-item__content{
+        width: auto;
+      }
+    }
+    @{deep} .el-col-24{
+      .dj-input-content{
         width: auto;
       }
     }

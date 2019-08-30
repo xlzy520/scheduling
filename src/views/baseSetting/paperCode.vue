@@ -108,13 +108,16 @@
             type: 'input',
             formItem: {
               prop: 'paperGram',
-              label: '克重',
+              label: '克重(g)',
               rules: [
                 djForm.rules.required('请输入克重'),
                 formRules.number,
                 formRules.number5
                 ],
-            }
+            },
+            attrs: {
+              placeholder: '请输入该原纸品种对应最大克重'
+            },
           },
         ],
         pageTotal: 0,

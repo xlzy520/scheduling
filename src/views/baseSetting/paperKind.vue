@@ -18,7 +18,7 @@
     </page-pane>
 
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
-               :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
+               width="780px" :title="dialogTypeIsAdd?'新增原纸品种': '编辑原纸品种'">
       <div class="paper-kind-dialog" v-loading="dialogLoading">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="2"></dj-form>
       </div>
@@ -167,7 +167,7 @@
             type: 'input',
             formItem: {
               prop: 'paperGram',
-              label: '克重',
+              label: '克重(g)',
               rules: [
                 djForm.rules.required('请输入克重'),
                 formRules.number
@@ -175,6 +175,7 @@
             },
             attrs: {
               disabled: true,
+              placeholder: '请输入该原纸品种对应最大克重'
             },
           },
           {
@@ -188,6 +189,9 @@
                 formRules.number5
               ],
             },
+            attrs: {
+              suffixIcon: "mm"
+            }
           },
           {
             type: 'select',
@@ -393,6 +397,6 @@
   }
 
   .paper-kind-dialog {
-    width: 780px;
+
   }
 </style>

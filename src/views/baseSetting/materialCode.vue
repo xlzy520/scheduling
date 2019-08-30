@@ -16,7 +16,7 @@
         </div>
       </dj-table>
     </page-pane>
-    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
+    <dj-dialog width="832px" v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
       <div class="material-code-dialog" v-loading="dialogLoading">
         <div class="optional">
@@ -204,9 +204,7 @@
         this.$refs.table.changePage(1);
       },
       confirm() {
-        console.log(0);
         this.$refs.form.validate(()=>{
-          console.log(1);
           this.dialogLoading = true;
           let message;
           let api;
@@ -264,7 +262,6 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .material-code-dialog {
-    width: 836px;
     @{deep} .dj-form .el-form-item{
       .el-form-item__label{
         float: unset;
