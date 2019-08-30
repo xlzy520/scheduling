@@ -227,7 +227,7 @@
               );
             },
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.FIGURE_REGEXP, disabled: checkDisabled(props.row), maxlength: 3}
+              return {...props, reg: this.$reg.NONZERO_REGEXP, disabled: checkDisabled(props.row), maxlength: 3}
             },
             component: tableInput,
             listeners: {

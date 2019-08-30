@@ -16,7 +16,7 @@ const regexp = {
   //库位长宽高
   LENGTH_REGEXP: /^\d{0,2}(\.|(\.\d))?$/,
   //非零正整数
-  NONZERO_REGEXP: /^[1-9]\d*$/,
+  NONZERO_REGEXP: /^([1-9]\d*)?$/,
   //数字+字母
   NUMBER_LETTER_REGEXP: /^[0-9a-zA-Z]*$/,
   //整数+小数
