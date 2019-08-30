@@ -344,6 +344,7 @@
         tableMaxLength: tableMaxLength,
         supplier_arr: [],
         member_arr: [],
+        warehouseArea_map: {},
 
         defaultFormData: {},
         defaultTableData: {},
@@ -661,9 +662,17 @@
         });
       },
       getWarehouseArea(id) {
-        return paperWarehouseService.getAreaAllList({warehouseId: id}).then((res) => {
-          return res.list || [];
-        });
+        if (!this.warehouseArea_map[id]) {
+          this.warehouseArea_map[id] = paperWarehouseService.getAreaAllList({warehouseId: id}).then((res) => {
+            delete this.warehouseArea_map[id];
+            return res.list || [];
+          });
+        }
+        return this.warehouseArea_map[id];
+        // return paperWarehouseService.getAreaAllList({warehouseId: id}).then((res) => {
+        //   this.warehouseArea_map[id] =
+        //   return res.list || [];
+        // });
       },
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
