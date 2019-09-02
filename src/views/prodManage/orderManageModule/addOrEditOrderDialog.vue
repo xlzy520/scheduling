@@ -90,7 +90,7 @@
             }
           },
           {
-            type: 'djCascader',
+            type: 'elCascader',
             formItem: {
               prop: 'fluteTypeAndLayers',
               label: '瓦楞楞型',
@@ -157,7 +157,7 @@
           {
             type: 'custom',
             formItem: {
-              prop: orderKeys.longitudinalPressure,
+              prop: 'longitudinalPressure',
               label: '纵压公式',
               rules: [{validator: checkValue}, { validator: (rule, value, callback) => {
                 let materialSize = this.formData[orderKeys.materialSize];
@@ -192,7 +192,7 @@
         });
       },
       colRule(item) {
-        if (item.formItem.prop === orderKeys.longitudinalPressure) {
+        if (item.formItem.prop === 'longitudinalPressure') {
           return 24;
         } else {
           return 12;
@@ -211,7 +211,7 @@
             layers: this.formData.fluteTypeAndLayers[0],
             materialLength: this.formData[orderKeys.materialSize][0],
             materialWidth: this.formData[orderKeys.materialSize][1],
-            vformula: this.formData[orderKeys.longitudinalPressure] && this.formData[orderKeys.longitudinalPressure].join('+')
+            vformula: this.formData['longitudinalPressure'] && this.formData['longitudinalPressure'].join('+')
             // grouponProductName: this.formData['grouponProduct'][orderKeys.materialCode],
             // grouponProductCode: this.formData['grouponProduct']['id']
           };
@@ -232,7 +232,7 @@
       getOrderDetail(orderId) {
         this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: orderId}).then(res=>{
           let _res = this.$method.cloneData(this.key_arr, {}, res);
-          _res[orderKeys.longitudinalPressure] = res[orderKeys.longitudinalPressure] && res[orderKeys.longitudinalPressure].split('+');
+          _res['longitudinalPressure'] = res[orderKeys.longitudinalPressure] && res[orderKeys.longitudinalPressure].split('+');
           _res[orderKeys.materialSize] = [res[orderKeys.materialLength], res[orderKeys.materialWidth]];
           _res['fluteTypeAndLayers'] = [res[orderKeys.layer] + '', res[orderKeys.fluteType]];
           _res[orderKeys.deliveryTime] = dayjs(res[orderKeys.deliveryTime]).format('YYYY-MM-DD');
