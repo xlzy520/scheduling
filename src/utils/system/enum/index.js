@@ -138,6 +138,10 @@ export default {
       label: '生产补单',
       value: 2
     },
+    'merge': {
+      label: '合并订单',
+      value: 3
+    },
     'preparingMaterials': {
       label: '备料订单',
       value: 4
@@ -250,13 +254,24 @@ export default {
   mergeStatus: new MapObject({
     'wait': {
       label: '待合并',
-      value: '1',
+      value: '0',
     },
     'already': {
       label: '已合并',
-      value: '2',
+      value: '1',
     }
   }),
+  stackUpTip: new MapObject({
+    'yes': {
+      label: '叠单',
+      value: 1,
+    },
+    'no': {
+      label: '不叠单',
+      value: 0,
+    }
+  }),
+  orderCutNumber: [1, 2, 3, 4, 5, 6, 7],
   fluteTypeLayer,
   fluteType
 };

@@ -18,6 +18,7 @@
                     @selection-change="selectionChange"
                     :columns="tableColumns"
                     :column-type="columnType[mergeValue]"
+                    :column-type-props="columnTypeProps"
                     @update-data="getList">
             <div slot="btn">
               <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleOperate('merge')">合并</el-button>
@@ -58,6 +59,7 @@
             key: orderKeys.orderTip,
             label: '订单标记',
             attrs: {
+              default: '',
               options: this.$enum.orderTip._arr
             }
           },
@@ -108,7 +110,7 @@
           },
           {
             type: 'input',
-            key: orderKeys.materialCode,
+            key: 'produceMaterial',
             label: '用料代码',
           },
           {
@@ -123,6 +125,28 @@
           'already' : ['selection', 'tree'],
           'undefined' : ['tree'],
         },
+        columnTypeProps: {
+          selection: {
+            selectable(row) {
+              return !row.isChild;
+            }
+          },
+          tree: {
+            treeKey: orderKeys.productionNo,
+            childNumKey: 'childNum',
+            levelKey: 'table_level',
+            childKey: 'childList',
+            // remotePromise: (row) => {
+            //   return plannedMergerService.getOrderById(this.$method.cloneData([orderKeys.productionNo], {}, row)).then(({list})=>{
+            //     list.shift();
+            //     list.map(obj=>{
+            //       obj.isChild = true;
+            //     });
+            //     return list;
+            //   });
+            // }
+          }
+        },
         tableColumns: [
           {
             prop: 'operate',
@@ -132,15 +156,17 @@
             render: (h, {props: {row}}) => {
               let arr = [];
               let obj = this.$enum.mergeStatus._swap[this.activeIndex] || {};
-              if (obj.value === 'wait') {
+              if (obj.value === 'wait' && !row.isChild) {
                 arr.push((<a on-click={()=>{this.openDialog('editDialog', row)}}>编辑</a>));
                 arr.push((<span></span>));
               }
-              if (obj.value === 'already') {
+              if (obj.value === 'already' && !row.isChild && !(row.childNum > 1)) {
                 arr.push((<a on-click={()=>{this.openDialog('editLinePressDialog', row)}}>编辑压线方式</a>));
                 arr.push((<span></span>));
               }
-              arr.push((<a on-click={()=>{this.openDialog('lookDialog', row)}}>查看</a>));
+              if (!row.isChild) {
+                arr.push((<a on-click={()=>{this.openDialog('lookDialog', row)}}>查看</a>));
+              }
               return (
                 <div class="td-btn-group">
                   {arr}
@@ -151,7 +177,7 @@
           {
             prop: orderKeys.orderTip,
             label: '订单标记',
-            width: 112,
+            // width: 112,
             render: (h, {props:{row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
@@ -172,7 +198,7 @@
             width: 97
           },
           {
-            prop: orderKeys.materialCode,
+            prop: 'produceMaterial',
             label: '用料代码',
             width: 97
           },
@@ -199,7 +225,7 @@
           {
             prop: orderKeys.productSize,
             label: '产品规格',
-            width: 210
+            width: 170
           },
           {
             prop: orderKeys.materialSize,
@@ -247,6 +273,10 @@
             prop: orderKeys.mergeStatus,
             label: '合并状态',
             width: 97,
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.mergeStatus._swap[cur] || {};
+              return obj.label || '';
+            }
           }
         ],
         total: 0,
@@ -266,9 +296,7 @@
         return obj.value;
       }
     },
-    created() {
-      this.tableData = [{}];
-    },
+    created() {},
     mounted() {
       this.$refs.search.search({});
     },
@@ -317,7 +345,7 @@
             type: 'warning',
             showClose: false,
           }).then(() => {
-            this.dj_api_extend(obj.api, this.selectList).then(()=>{
+            this.dj_api_extend(obj.api, {orderList: this.selectList.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
               this.$message(obj.msg);
               this.refresh();
             });
@@ -330,8 +358,7 @@
           ...this.searchData,
           ...page,
         };
-        post[orderKeys.mergeStatus] = this.activeIndex === 'all' ? '' : this.activeIndex;
-        console.log(post);
+        post['isCombined'] = this.activeIndex === 'all' ? '2' : this.activeIndex;
         this.isTableLoading = true;
         this.dj_api_extend(plannedMergerService.list, post).then(res=>{
           this.total = res.total || 0;

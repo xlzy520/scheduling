@@ -2,12 +2,13 @@
   <dj-dialog ref="dialog" @close="close" title="查看" width="780px">
     <el-tabs v-model="activeTab" @tab-click="handleClick">
       <el-tab-pane label="订单信息" name="1">
-        <dj-form :formData="formData" :formOptions="formOptions_header" :column-num="2"></dj-form>
-        <p class="font-default">订单信息</p>
-        <dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_order" :column-num="2"></dj-form>
-        <p class="line"></p>
-        <p class="font-default">产品信息</p>
-        <dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_product" :column-num="2"></dj-form>
+        <classify-form :config="config" :formData="formData" :column-num="2"></classify-form>
+        <!--<dj-form :formData="formData" :formOptions="formOptions_header" :column-num="2"></dj-form>-->
+        <!--<p class="font-default">订单信息</p>-->
+        <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_order" :column-num="2"></dj-form>-->
+        <!--<p class="line"></p>-->
+        <!--<p class="font-default">产品信息</p>-->
+        <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_product" :column-num="2"></dj-form>-->
       </el-tab-pane>
       <el-tab-pane label="编辑记录" name="2">
         <base-table :data="recordData" :columns="recordColumns"></base-table>
@@ -32,35 +33,8 @@
         ],
         activeTab: '1',
         formData: {},
+        order_arr: [],
         orderKeys,
-        formOptions_header: [
-          {
-            type: 'select',
-            formItem: {
-              prop: orderKeys.orderId,
-              label: '订单编号'
-            },
-            attrs: {
-              options: []
-            },
-            listeners: {
-              input: () => {
-                this.changeFormData();
-              }
-            }
-          },
-          {
-            type: 'custom',
-            formItem: {
-              prop: orderKeys.mergeStatus,
-              label: '合并状态:'
-            },
-            render: (h)=>{
-              let obj = this.$enum.mergeStatus._swap[this.formData[orderKeys.mergeStatus]] || {};
-              return (<span class="status">{obj.label || ''}</span>);
-            }
-          },
-        ],
         formOptions_product: [
           {
             formItem: {
@@ -70,7 +44,7 @@
           },
           {
             formItem: {
-              prop: orderKeys.materialCode,
+              prop: 'produceMaterial',
               label: '用料代码'
             }
           },
@@ -156,11 +130,62 @@
       };
     },
     computed: {
+      config() {
+        return [
+          {
+            formOptions: this.formOptions_header
+          },
+          {
+            hasLine: true,
+            title: '订单信息',
+            formOptions: this.formOptions_order
+          },
+          {
+            title: '产品信息',
+            formOptions: this.formOptions_product
+          },
+        ];
+      },
+      formOptions_header() {
+        return [
+          {
+            type: 'select',
+            formItem: {
+              prop: orderKeys.productionNo,
+              label: '生产编号'
+            },
+            attrs: {
+              keyMap: {
+                value: orderKeys.productionNo,
+                label: orderKeys.productionNo,
+              },
+              clearable: false,
+              options: this.order_arr
+            },
+            listeners: {
+              change: (val) => {
+                this.changeFormData(val);
+              }
+            }
+          },
+          {
+            type: 'custom',
+            formItem: {
+              prop: orderKeys.mergeStatus,
+              label: '合并状态:'
+            },
+            render: (h)=>{
+              let obj = this.$enum.mergeStatus._swap[this.formData[orderKeys.mergeStatus]] || {};
+              return (<span class="status">{obj.label || ''}</span>);
+            }
+          },
+        ]
+      },
       formOptions_order() {
         let total_arr = [
           {
             formItem: {
-              prop: 'customerMsg',
+              prop: orderKeys.customerName,
               label: '客户信息'
             },
           },
@@ -182,6 +207,7 @@
               prop: orderKeys.orderTip,
               label: '订单标记'
             },
+            isText: true,
             render: (h)=>{
               let obj = this.$enum.orderTip._swap[this.formData[orderKeys.orderTip]] || {};
               return (<span>{obj.label || ''}</span>);
@@ -199,8 +225,8 @@
     created() {
     },
     methods: {
-      changeFormData() {
-
+      changeFormData(val) {
+        this.formData = {...(this.order_arr.filter(obj=>obj[orderKeys.productionNo] === val)[0] || {})};
       },
       open(order) {
         this.$refs.dialog.open();
@@ -211,14 +237,15 @@
         this.$emit('close');
       },
       getOrderDetail(prodId) {
-        this.dj_api_extend(plannedMergerService.getOrderById, {id: prodId}).then(res=>{
-          let _res = res || {};
-          let materialLength = res[orderKeys.materialLength];
-          let materialWidth = res[orderKeys.materialWidth];
-          if (materialLength && materialWidth) {
-            _res[orderKeys.materialSize] = `${materialLength}*${materialWidth}`;
-          }
-          this.formData = _res;
+        this.dj_api_extend(plannedMergerService.getOrderById, {produceOrderNumber: prodId}).then(({main, list})=>{
+          // let _res = main || {};
+          // let materialLength = main[orderKeys.materialLength];
+          // let materialWidth = main[orderKeys.materialWidth];
+          // if (materialLength && materialWidth) {
+          //   _res[orderKeys.materialSize] = `${materialLength}*${materialWidth}`;
+          // }
+          this.order_arr = list;
+          this.formData = {...main};
         });
       },
       handleClick() {

@@ -1,8 +1,11 @@
 <template>
   <dj-dialog ref="dialog" @close="confirmClose" width="780px" title="调整压线方式" @confirm="confirm">
-    <dj-form ref="form" :formData="formData" :formOptions="formOptions"></dj-form>
-    <p class="font-subhead">原订单信息</p>
-    <dj-form labelSuffix=":" :formData="formData" :formOptions="textOptions" :column-num="2"></dj-form>
+    <div v-loading="isLoading">
+      <classify-form ref="form" :config="config" :formData="formData" :column-num="2" :col-rule="colRule"></classify-form>
+      <!--<dj-form ref="form" :formData="formData" :formOptions="formOptions"></dj-form>-->
+      <!--<p class="font-subhead">原订单信息</p>-->
+      <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="textOptions" :column-num="2"></dj-form>-->
+    </div>
   </dj-dialog>
 </template>
 <script>
@@ -19,6 +22,9 @@
       callback();
     }
   };
+  function getOriginKey(key) {
+    return 'original' + key.substring(0,1).toUpperCase() + key.substring(1);
+  }
   export default {
     name: 'editLinePressDialog',
     data: function () {
@@ -77,50 +83,65 @@
         textOptions: [
           {
             formItem: {
-              prop: orderKeys.orderId,
-              label: '订单编号'
+              prop: 'originalProduceOrderNumber',
+              label: '生产编号'
             }
           },
           {
             formItem: {
-              prop: orderKeys.materialSize,
+              prop: 'originalMaterialSize',
               label: '下料规格'
             }
           },
           {
             formItem: {
-              prop: orderKeys.linePressingMethod,
+              prop: 'originalStaveType',
               label: '压线方式'
             }
           },
           {
             formItem: {
-              prop: orderKeys.productAmount,
-              label: '生产数量'
-            }
-          },
-          {
-            formItem: {
-              prop: orderKeys.longitudinalPressure,
+              prop: 'originalVFormula',
               label: '纵压公式'
             }
           },
         ],
         formData: {},
-        defaultFormData: {}
+        defaultFormData: {},
+        isLoading: false,
       };
+    },
+    computed: {
+      config() {
+        return [
+          {
+            formOptions: this.formOptions
+          },
+          {
+            title: '原订单信息',
+            formOptions: this.textOptions
+          },
+        ];
+      }
     },
     created() {
     },
     methods: {
+      colRule(item) {
+        if ([orderKeys.longitudinalPressure, orderKeys.linePressingMethod].includes(item.formItem.prop)) {
+          return 24;
+        }
+        return 12;
+      },
       confirm() {
-        console.log(this.formData);
         this.$refs.form.validate(()=>{
           if (!this.changeCheck()) {
             this.$message('页面信息没有变化', 'error');
             return;
           }
-          let post = this.$method.cloneData([orderKeys.linePressingMethod, 'id'], {}, this.formData);
+          let post = {
+            ...this.formData,
+          };
           post[orderKeys.longitudinalPressure] = this.formData[orderKeys.longitudinalPressure] && this.formData[orderKeys.longitudinalPressure].join('+');
           this.dj_api_extend(plannedMergerService.editLinePress, post).then(()=>{
             this.$emit('success');
@@ -131,15 +152,24 @@
       },
       open(param) {
         this.$refs.dialog.open();
-        this.dj_api_extend(plannedMergerService.getOrderById, {id: param.id}).then(res => {
-          let _res = res || {};
-          let materialLength = res[orderKeys.materialLength];
-          let materialWidth = res[orderKeys.materialWidth];
-          if (materialLength && materialWidth) {
-            _res[orderKeys.materialSize] = `${materialLength}*${materialWidth}`;
-          }
-          this.formData = _res;
-        }).finally(this.saveDefaultData);
+        let post = this.$method.cloneData([orderKeys.productionNo], {}, param);
+        this.isLoading = true;
+        Promise.all([this.getOrderById(post), this.getOriginalPressLine(post)]).then(result=>{
+          this.formData = {...result[1], ...result[0]};
+        }).finally(()=>{
+          this.isLoading = false;
+          this.saveDefaultData();
+        });
+      },
+      getOrderById(post) {
+        return this.dj_api_extend(plannedMergerService.getOrderById, post).then(({ main }) => {
+          let longitudinalPressure = main[orderKeys.longitudinalPressure];
+          main[orderKeys.longitudinalPressure] = longitudinalPressure ? longitudinalPressure.split('+') : [];
+          return main;
+        });
+      },
+      getOriginalPressLine(params) {
+        return this.dj_api_extend(plannedMergerService.getOriginalPressLine, params);
       },
       saveDefaultData() {
         this.defaultFormData = this.$method.deepClone(this.formData);
@@ -151,7 +181,13 @@
           }
           return arr;
         }, []);
-        return !(formKeys.every(key => this.formData[key] === this.defaultFormData[key] || (['', undefined, null].includes(this.formData[key]) && ['', undefined, null].includes((this.defaultFormData || {})[key]))));
+        return !(formKeys.every(key => {
+          if (key === orderKeys.longitudinalPressure) {
+            return this.defaultFormData[key].join('+') === this.formData[key].join('+');
+          } else {
+            return this.formData[key] === this.defaultFormData[key] || (['', undefined, null].includes(this.formData[key]) && ['', undefined, null].includes((this.defaultFormData || {})[key]))
+          }
+        }));
       },
       confirmClose() {
         if (this.changeCheck()) {

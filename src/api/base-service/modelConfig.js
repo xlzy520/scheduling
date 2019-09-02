@@ -20,5 +20,6 @@ module.exports = [
   {name: 'productionMinority', url: '/few'},
   {name: 'prodTask', url: '/prodTask'},
   {name: 'report', url: '/report'},
-  {name: 'plannedMerger', url: '/plannedMerger'},
+  {name: 'plannedMerger', url: '/merge'},
+  {name: 'planArrange', url: '/planArrange'},
 ];

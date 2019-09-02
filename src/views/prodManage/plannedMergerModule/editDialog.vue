@@ -1,6 +1,6 @@
 <template>
   <dj-dialog ref="dialog" @close="confirmClose" width="400px" title="编辑" @confirm="confirm">
-    <dj-form ref="form" :formData="formData" :formOptions="formOptions"></dj-form>
+    <dj-form v-loading="isLoading" ref="form" :formData="formData" :formOptions="formOptions"></dj-form>
   </dj-dialog>
 </template>
 <script>
@@ -8,7 +8,9 @@
   import {orderKeys} from '../../../utils/system/constant/dataKeys';
   import materialSizeInput from '../../../components/materialSizeInput';
   import plannedMergerService from "../../../api/service/plannedMerger";
-
+  function getOriginKey(key) {
+    return 'original' + key.substring(0,1).toUpperCase() + key.substring(1);
+  }
   const {rules} = djForm;
   export default {
     name: 'editDialog',
@@ -18,13 +20,13 @@
           {
             type: 'input',
             formItem: {
-              prop: orderKeys.productAmount,
-              label: '生产数量',
+              prop: orderKeys.orderAmount,
+              label: '订单数量',
               rules: [
                 {pattern: /^\d+$/, message: '请输入正整数'},
                 {
                   validator: (rule, value, callback) => {
-                    if (!(value && Number(value) < 999999 && Number(value) > Number(this.formData['oldProductAmount']))) {
+                    if (!(value && Number(value) <= 999999 && Number(value) >= Number(this.formData[this.$method.getOriginKey(orderKeys.orderAmount)]))) {
                       callback(new Error('请输入范围原订单数量~999999'));
                     } else {
                       callback();
@@ -36,8 +38,8 @@
           },
           {
             formItem: {
-              prop: 'oldProductAmount',
-              label: '原生产数量:',
+              prop: this.$method.getOriginKey(orderKeys.orderAmount),
+              label: '原订单数量:',
             },
           },
           {
@@ -58,7 +60,7 @@
                 },
                 {
                   validator: (rule, value, callback) => {
-                    if (!(value && value[0] && value[1] && Number(value[0]) < 9999 && Number(value[0]) > Number(this.formData[orderKeys.materialLength]) && Number(value[1]) < 9999 && Number(value[1]) > Number(this.formData[orderKeys.materialWidth]))) {
+                    if (!(value && value[0] && value[1] && Number(value[0]) <= 9999 && Number(value[0]) >= Number(this.formData[this.$method.getOriginKey(orderKeys.materialLength)]) && Number(value[1]) <= 9999 && Number(value[1]) >= Number(this.formData[this.$method.getOriginKey(orderKeys.materialWidth)]))) {
                       callback(new Error('请输入范围原订单规格~9999'));
                     } else {
                       callback();
@@ -71,13 +73,14 @@
           },
           {
             formItem: {
-              prop: 'oldMaterialSize',
+              prop: this.$method.getOriginKey(orderKeys.materialSize),
               label: '原下料规格:'
             },
           },
         ],
         formData: {},
-        defaultFormData: {}
+        defaultFormData: {},
+        isLoading: false
       };
     },
     created() {
@@ -93,7 +96,13 @@
           }
           return arr;
         }, []);
-        return !(formKeys.every(key => this.formData[key] === this.defaultFormData[key] || (['', undefined, null].includes(this.formData[key]) && ['', undefined, null].includes((this.defaultFormData || {})[key]))));
+        return !(formKeys.every(key => {
+          if (key === orderKeys.materialSize) {
+            return (['', undefined, null].includes(this.formData[key]) && ['', undefined, null].includes((this.defaultFormData || {})[key])) || this.defaultFormData[key].join('*') === this.formData[key].join('*');
+          } else {
+            return this.formData[key] === this.defaultFormData[key] || (['', undefined, null].includes(this.formData[key]) && ['', undefined, null].includes((this.defaultFormData || {})[key]));
+          }
+        }));
       },
       confirmClose() {
         if (this.changeCheck()) {
@@ -114,7 +123,8 @@
             return;
           }
           let post = {
-            ...this.formData
+            ...(this.$method.cloneData([orderKeys.productionNo, orderKeys.orderAmount], {}, this.formData)),
+            // ...this.formData
           };
           let materialSize = this.formData[orderKeys.materialSize] || [];
           post[orderKeys.materialLength] = materialSize[0];
@@ -126,13 +136,28 @@
           })
         });
       },
+      getOrderById(post) {
+        return this.dj_api_extend(plannedMergerService.getOrderById, post).then(({ main }) => {
+          main[orderKeys.materialSize] = this.$method.getMaterialSize(main, true);
+          return main;
+        });
+      },
+      getModifyOrder(params) {
+        return this.dj_api_extend(plannedMergerService.getModifyOrder, params);
+      },
       open(param) {
         this.$refs.dialog.open();
-        this.dj_api_extend(plannedMergerService.getOrderById, {id: param.id}).then(res => {
-          let _res = res || {};
-          _res[orderKeys.materialSize] = [res[orderKeys.materialLength], res[orderKeys.materialWidth]];
-          this.formData = _res;
-        }).finally(this.saveDefaultData);
+        let post = this.$method.cloneData([orderKeys.productionNo], {}, param);
+        this.isLoading = true;
+        Promise.all([this.getOrderById(post), this.getModifyOrder(post)]).then(result=>{
+          this.formData = {...result[1], ...result[0]};
+        }).finally(()=>{
+          this.isLoading = false;
+          this.saveDefaultData();
+        });
+        // this.dj_api_extend(plannedMergerService.getOrderById, {produceOrderNumber: param[orderKeys.productionNo]}).then(({main}) => {
+        //   this.formData = main;
+        // }).finally(this.saveDefaultData);
       },
       close() {
         this.$refs.dialog.close();

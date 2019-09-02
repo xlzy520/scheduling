@@ -20,6 +20,9 @@ export default {
   contactWay: 'phone', //联系方式
   address: 'address', //地址
   productSize: 'productSize', //产品规格
+  productLength: 'productLength', //产品规格-长
+  productWidth: 'productWidth', //产品规格-宽
+  productHeight: 'productHeight', //产品规格-高
   linePressingMethod: 'staveType', //压线方式
   longitudinalPressure: 'vformula', //纵压公式
   transversePressure: 'hformula', //横压公式
@@ -28,12 +31,18 @@ export default {
   orderTip: 'grouponOrderFlag', //订单标签
   packageAmount: 'processeAmount', //打包数量
   consignee: 'consignee', //收货人
-  mergeStatus: 'mergeStatus', //合并状态
-  mergeTime: 'mergeTime', //合并时间
-  productAmount: 'productAmount', //生产数量
-  optimalSize: 'optimalSize', //最优门幅
-  cutNumber: 'cutNumber', //切数
-  orderMetres: 'orderMetres', //订单米数
-  trim: 'trim', //修边
-  trimRate: 'trimRate', //修边率
+  mergeStatus: 'combinedType', //合并状态
+  mergeId: 'combineId', //合并状态
+  mergeTime: 'createTime', //合并时间
+  productAmount: 'produceAmount', //生产数量
+  optimalSize: 'calPaperSize', //最优门幅
+  cutNumber: 'cut', //切数
+  cutterNumber: 'cutterNumber', //刀数
+  orderMetres: 'paperLength', //订单米数
+  trim: 'wasteWidth', //修边
+  trimRate: 'wasterRate', //修边率
+  cartonRemarks: 'cartonRemarks', //纸箱备注
+  associatedOrders: 'associatedOrders', //关联单号
+  stackUp: 'stackUp', //叠单
+  sortIndex: 'sortIndex', //订单排序
 };
