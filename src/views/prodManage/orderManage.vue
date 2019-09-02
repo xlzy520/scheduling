@@ -332,6 +332,11 @@
     methods: {
       getSearchData(query) {
         this.searchData = query;
+        this.searchData = {
+          ...query,
+          startArriveTime: query[orderKeys.deliveryTime][0],
+          endArriveTime: dayjs(query[orderKeys.deliveryTime][1]).add(1, 'day').format('YYYY-MM-DD'),
+        };
         this.$refs.table.changePage(1);
       },
       refresh() {
@@ -342,8 +347,8 @@
         let post = {
           ...page,
           ...this.searchData,
-          startArriveTime: this.searchData[orderKeys.deliveryTime][0],
-          endArriveTime: this.searchData[orderKeys.deliveryTime][1],
+          // startArriveTime: this.searchData[orderKeys.deliveryTime][0],
+          // endArriveTime: this.searchData[orderKeys.deliveryTime][1],
           materialLength: this.searchData[orderKeys.materialSize][0],
           materialWidth: this.searchData[orderKeys.materialSize][1],
           tileModel: tileModel.length ? tileModel : null
