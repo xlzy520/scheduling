@@ -120,11 +120,6 @@
             attrs: {
               maxlength: 20,
             },
-            listeners: {
-              'input': (val) => {
-                this.formData.platformMaterialCode = val.toUpperCase();
-              },
-            },
           },
         ],
         optionalPaper: [],
