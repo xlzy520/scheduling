@@ -25,6 +25,7 @@
         <dj-form :form-data="formData" :form-options="orderFormOptions" :column-num="3"></dj-form>
       </div>
     </dj-dialog>
+    <order-tag ref="printTag" :data="checkedList"></order-tag>
   </single-page>
 </template>
 
@@ -33,7 +34,7 @@
   import branchTaskService from '../../api/service/branchTask';
   import {djForm} from 'djweb';
   import formRules from "../baseSetting/formRules";
-
+  import orderTag from '../../components/printTag/orderTag';
   const branchStatusOptions = [
     {label: '待处理', value: '0'},
     {label: '处理中', value: '1'},
@@ -270,7 +271,7 @@
           {formItem: {prop: 'hformula', label: '横压公式：'}},
           {formItem: {prop: 'vformula', label: '纵压公式：'}},
         ],
-        visible: false
+        visible: false,
       };
     },
     methods: {
@@ -311,11 +312,10 @@
       printTag() {
         const {length} = this.checkedList;
         if (length === 0) {
-          this.$message('订单未选择，请重新操作', 'info');
+          this.$message('订单未选择，请重新操作', 'error');
           return false;
-        } else {
-
         }
+        this.$refs.printTag.print();
       },
       removeOrder() {
         if (this.checkedList.length === 0) {
@@ -384,6 +384,7 @@
     mounted() {
       this.$refs.search.search();
     },
+    components: {orderTag}
   };
 </script>
 
