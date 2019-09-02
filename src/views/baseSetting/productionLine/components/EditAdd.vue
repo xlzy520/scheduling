@@ -463,6 +463,9 @@
                   params.lineNum = this.lineNum;
                   params.isEffected = 0;
                 }
+                //分线机宽度、生产车速保留两位小数
+                params.lineSpeed = Number(params.lineSpeed).toFixed(2).toString();
+                params.partlineMachineWidth = Number(params.partlineMachineWidth).toFixed(2).toString();
                 const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
                 service(params).then(() => {
                   this.loading = false;
