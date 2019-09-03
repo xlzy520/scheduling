@@ -153,6 +153,7 @@
           ],
           piece: [
             djForm.rules.required('请输入片数'),
+            formRules.number
           ]
         },
 

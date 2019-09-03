@@ -1,5 +1,5 @@
 <template>
-  <single-page class="table-page rule-customize" v-loading="loading">
+  <single-page class="table-page rule-customize">
     <page-pane>
       <dj-table
         ref="table"
@@ -8,7 +8,7 @@
         :total="pageTotal"
         height="100%"
         @update-data="getTableData"
-        v-loading="tableLoading"
+        v-loading="loading"
       >
         <div slot="btn">
           <el-button type="primary" @click="addStackOrPack('stack')">新增叠单规则</el-button>
@@ -41,7 +41,6 @@
         loading: false,
         dialogType: '',
         dialogTypeIsAdd: false,
-        tableLoading: false,
         tableData: [],
         tableColumns: [
           {label: '名称', prop: 'name'},
@@ -236,12 +235,12 @@
         this.dialogType = '';
       },
       getTableData(data) {
-        this.tableLoading = true;
+        this.loading = true;
         this.dj_api_extend(ruleCustomizeService.list, data).then((res) => {
           this.tableData = res.list;
           this.pageTotal = res.total;
         }).finally(()=>{
-          this.tableLoading = false;
+          this.loading = false;
         });
       },
     },
