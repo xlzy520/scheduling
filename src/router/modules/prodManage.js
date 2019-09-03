@@ -34,7 +34,7 @@ export default {
         title: '生产任务',
       },
       //组件路径
-      component: 'views/prodManage/prodTask',
+      component: 'views/prodManage/prodTask/index',
     },
     {
       path: 'branchTask',
