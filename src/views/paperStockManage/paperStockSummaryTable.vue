@@ -37,7 +37,7 @@
             }
             },
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
+          {label: '门幅：', key: 'paperSize', type: 'input',},
           {label: '原纸供应商：', key: 'supplierName', type: 'input'},
         ],
         tableColumns: [

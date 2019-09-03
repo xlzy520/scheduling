@@ -31,7 +31,7 @@
       return {
         searchConfig: [
           {label: '收货人：', key: 'acceptMan', type: 'input'},
-          {label: '联系方式：', key: 'phone', type: 'input', attrs: {type: 'number'}},
+          {label: '联系方式：', key: 'phone', type: 'input',},
           {label: '用料代码：', key: 'code', type: 'input'},
           {label: '楞型：', key: 'lengxing', type: 'input'},
         ],
@@ -326,7 +326,7 @@
           pageNo: 1,
           pageSize: 20,
         },
-        pageTotal: 100,
+        pageTotal: 0,
         dialogTypeIsAdd: null,
         dialogVisible: false
       };

@@ -19,7 +19,7 @@
       return {
         searchConfig: [
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
+          {label: '门幅：', key: 'paperSize', type: 'input',},
           {label: '仓库：', type: 'select', key: 'warehouseId', attrs: {
               keyMap: {
                 label: 'name',

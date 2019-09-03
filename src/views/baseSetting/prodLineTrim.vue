@@ -124,7 +124,7 @@
               }
             }},
           {label: '层数', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
-          {label: '修边', key: 'wasteSize', type: 'input', attrs: {type: 'number'}},
+          {label: '修边', key: 'wasteSize', type: 'input',},
         ],
         tableData: [],
         tableColumns: Object.freeze([

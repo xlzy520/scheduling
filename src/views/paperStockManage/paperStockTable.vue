@@ -17,7 +17,7 @@
       return {
         searchConfig: [
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'paperSize', type: 'input', attrs: {type: 'number'}},
+          {label: '门幅：', key: 'paperSize', type: 'input',},
           {label: '库存件数：', key: 'counts', type: 'select', attrs: {options: [
                 {label: '全部', value: '0'},
                 {label: '0~5', value: '5'},
