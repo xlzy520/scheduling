@@ -79,7 +79,11 @@
         this.loading = true;
         if (data && data.timeRange) {
           data.startTime = dayjs(data.timeRange[0]).format('YYYY-MM-DD') + ' 00:00:00';
-          data.endTime = dayjs(data.timeRange[1]).format('YYYY-MM-DD') + ' ' + dayjs().format('HH:mm:ss');
+          if (dayjs(data.timeRange[1]).isSame(dayjs(), 'day')) {
+            data.endTime = dayjs(data.timeRange[1]).format('YYYY-MM-DD') + ' ' + dayjs().format('HH:mm:ss');
+          } else {
+            data.endTime = dayjs(data.timeRange[1]).format('YYYY-MM-DD') + ' 23:59:59';
+          }
         }
         this.searchData = data;
         paperTableService[this.serviceUrl]({
