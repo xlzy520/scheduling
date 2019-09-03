@@ -123,7 +123,7 @@
           },
         ],
         optionalPaper: [],
-        pageTotal: 100,
+        pageTotal: 0,
         dialogTypeIsAdd: null,
         dialogVisible: false,
         searchData: {}
