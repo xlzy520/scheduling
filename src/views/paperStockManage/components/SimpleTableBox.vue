@@ -13,7 +13,7 @@
       >
         <div slot="btn">
           <div class="ext-content">
-            <el-button type="primary" @click="exportRecord">导出记录</el-button>
+            <el-button type="primary" @click="exportRecord" :loading="exportLoading">导出记录</el-button>
             <div class="ext-data">
               <div v-if="totalCount">总件数： {{totalCount}}</div>
               <div v-if="totalWeight">总重量： {{totalWeight}}</div>
@@ -29,7 +29,7 @@
 <script>
   import paperTableService from '@/api/service/paperTable';
   import dayjs from 'dayjs';
-  import axios from 'axios';
+  import reportService from '@/api/service/report';
   import PagePane from "../../../components/page/pagePane";
   export default {
     name: 'SimpleTableBox',
@@ -61,24 +61,18 @@
         searchData: {},
         totalCount: '',
         totalWeight: '',
-        loading: false
+        loading: false,
+        exportLoading: false
       };
     },
     methods: {
       exportRecord() {
-        // this.$method.fileDownload('/djsupplier/report/printSummary.do')
-        axios.post(`/djsupplier/report/${this.download.url}.do`, {...this.searchData, ...this.pageOptions}, {
-          responseType: 'blob'
-        }).then(res=>{
-          const dataUrl = URL.createObjectURL(res.data);
+        this.exportLoading = true;
+        reportService.exportFile(this.download.url, {...this.searchData, ...this.pageOptions}).then(res=>{
           const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH:mm:ss') + '.xlsx';
-          const eleLink = document.createElement('a');
-          eleLink.download = filename;
-          eleLink.style.display = 'none';
-          eleLink.href = dataUrl;
-          document.body.appendChild(eleLink);
-          eleLink.click();
-          document.body.removeChild(eleLink);
+          this.$method.fileDownload(res, filename);
+        }).finally(()=>{
+          this.exportLoading = false;
         });
       },
       getTableData(data) {
