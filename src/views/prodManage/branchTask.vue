@@ -1,10 +1,11 @@
 <template>
-  <single-page class="table-page branch-task" v-loading="loading">
+  <single-page class="table-page branch-task">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table
         ref="table"
         :data="tableData"
+        :loading="loading"
         :columns="tableColumns"
         :column-type="['selection', 'index']"
         @selection-change="selectionChange"
@@ -64,7 +65,7 @@
         searchConfig: [
           {
             label: '生成时间', key: 'timeRange', type: 'date', attrs: {
-              default: [dayjs(new Date()).subtract(7, 'day').format('YYYY-MM-DD'), dayjs(new Date()).format('YYYY-MM-DD')],
+              default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
               beforeChange: (val) => {
                 let _val = val;
                 if (val[0] && val[1]) {
@@ -74,6 +75,8 @@
                     _val = [val[0], day92.toDate()];
                   }
                 }
+                _val[0] += ' 00:00:00';
+                _val[1] += ' 23:59:59';
                 return _val;
               },
               type: 'daterange',
@@ -88,7 +91,7 @@
                     }
                   },
                   {
-                    text: '近七天',
+                    text: '近7天',
                     onClick(picker) {
                       const end = new Date();
                       const start = new Date();
@@ -144,10 +147,10 @@
                 return (
                   <div class="xialiaoguige">
                     <dj-input type='number' value={this.start} onInput={val => input(0, val)}
-                              placeholder="切长cm" maxLength="10"/>
+                              placeholder="切长cm" maxlength="10"/>
                     <span class="text">*</span>
                     <dj-input type='number' value={this.end} onInput={val => input(1, val)}
-                              placeholder="切宽cm" maxLength="10"/>
+                              placeholder="切宽cm" maxlength="10"/>
                   </div>
                 );
               }
@@ -190,7 +193,7 @@
           {label: '产品名称', prop: 'grouponProductName', width: 160},
           {label: '生成时间', prop: 'createTime', width: 180},
           {label: '操作人', prop: 'operator', width: 120},
-          {label: '操作时间', prop: 'updateTime', width: 160},
+          {label: '操作时间', prop: 'updateTime', width: 180},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
@@ -253,21 +256,21 @@
               ],
             },
             attrs: {
-              maxLength: 10,
+              maxlength: 10,
             },
           },
         ],
         orderFormOptions: [
           {formItem: {prop: 'grouponOrderNumber', label: '订单编号：'}},
           {formItem: {prop: 'pieceAmount', label: '订单数量：'}},
-          {formItem: {prop: 'arrivetime', label: '订单交期：'}},
+          {formItem: {prop: 'arriveTime', label: '订单交期：'}},
           {formItem: {prop: 'grouponProductName', label: '产品名称：'}},
           {formItem: {prop: 'customerName', label: '客户名称：'}},
           {formItem: {prop: 'prodGuige', label: '产品规格：'}},
           {formItem: {prop: 'materialCode', label: '用料代码：'}},
-          {formItem: {prop: 'tilemodel', label: '瓦楞楞型：'}},
+          {formItem: {prop: 'tileModel', label: '瓦楞楞型：'}},
           {formItem: {prop: 'xialiaoguige', label: '下料规格：'}},
-          {formItem: {prop: 'stavetype', label: '压线方式：'}},
+          {formItem: {prop: 'staveType', label: '压线方式：'}},
           {formItem: {prop: 'hformula', label: '横压公式：'}},
           {formItem: {prop: 'vformula', label: '纵压公式：'}},
         ],

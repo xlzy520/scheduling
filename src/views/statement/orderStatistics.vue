@@ -31,6 +31,7 @@
           {
             label: '分发日期', key: 'timeRange', type: 'date', attrs: {
               default: [dayjs(new Date()).subtract(45, 'day').format('YYYY-MM-DD'), dayjs(new Date()).format('YYYY-MM-DD')],
+              // todo 45 只是为了更好拿数据 需要改动
               beforeChange: (val) => {
                 let _val = val;
                 if (val[0] && val[1]) {
@@ -55,7 +56,7 @@
                     }
                   },
                   {
-                    text: '近七天',
+                    text: '近7天',
                     onClick(picker) {
                       const end = new Date();
                       const start = new Date();
