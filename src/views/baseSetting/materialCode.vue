@@ -83,7 +83,7 @@
         ]),
         formData: {
           materialCode: [],
-          platformMaterialCode: '',
+          platformMaterialCode: null,
         },
         formOptions: [
           {
