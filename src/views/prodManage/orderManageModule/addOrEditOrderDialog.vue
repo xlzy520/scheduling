@@ -75,19 +75,19 @@
             }
           },
           {
-            type: 'select',
+            type: 'input',
             formItem: {
               prop: orderKeys.materialName,
               label: '材料名称',
-              rules: [rules.required('请选择材料名称')]
+              rules: [rules.required('请输入材料名称')]
             },
-            attrs: {
-              keyMap: {
-                label: orderKeys.platformMaterialName,
-                value: orderKeys.platformMaterialName
-              },
-              options: this.materialCodeList
-            }
+            // attrs: {
+            //   keyMap: {
+            //     label: orderKeys.platformMaterialName,
+            //     value: orderKeys.platformMaterialName
+            //   },
+            //   options: this.materialCodeList
+            // }
           },
           {
             type: 'elCascader',

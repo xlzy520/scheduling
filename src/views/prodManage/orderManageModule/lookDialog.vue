@@ -77,7 +77,7 @@
           ],
           true: [
             {
-              prop: 'orderTip',
+              prop: orderKeys.orderTip,
               label: '订单标记',
               formatter: (cur) => {
                 let obj = this.$enum.orderTip._swap[cur] || {};
@@ -139,7 +139,7 @@
           true: [
             {
               prop: orderKeys.materialName,
-              label: '用料代码',
+              label: '材料名称',
             },
             {
               prop: orderKeys.orderAmount,
