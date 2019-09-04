@@ -1,6 +1,8 @@
 import {paperWarehouse} from '../base-service/service';
 import {warehouse} from '../base-service/service';
-
+import methods from "../../utils/methods";
+import { cylinderKeys } from "../../utils/system/constant/dataKeys";
+const { cloneData } = methods;
 export default {
   getPaperWarehouse(data) {
     if (data) {
@@ -37,10 +39,10 @@ export default {
     return paperWarehouse('/getPaperTube.do', data, 'get');
   },
   getPaperOutStorage(data) {
-    return paperWarehouse('/getPaperOutStorage.do', data, 'get');
+    return paperWarehouse('/getPaperOutStorage.do', cloneData([cylinderKeys.receiptNumber, 'cancelToken'], {}, data), 'get');
   },
   getPaperInStorage(data) {
-    return paperWarehouse('/getPaperInStorage.do', data, 'get');
+    return paperWarehouse('/getPaperInStorage.do', cloneData([cylinderKeys.receiptNumber, 'cancelToken'], {}, data), 'get');
   },
   listInStorage(data) {
     return paperWarehouse('/getPaperInStorageList.do', data);
