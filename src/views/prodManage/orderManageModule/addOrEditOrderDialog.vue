@@ -232,7 +232,7 @@
       getOrderDetail(orderId) {
         this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: orderId}).then(res=>{
           let _res = this.$method.cloneData(this.key_arr, {}, res);
-          _res['longitudinalPressure'] = res[orderKeys.longitudinalPressure] && res[orderKeys.longitudinalPressure].split('+');
+          _res['longitudinalPressure'] = res[orderKeys.longitudinalPressure] && res[orderKeys.longitudinalPressure].split('+') || [];
           _res[orderKeys.materialSize] = [res[orderKeys.materialLength], res[orderKeys.materialWidth]];
           _res['fluteTypeAndLayers'] = [res[orderKeys.layer] + '', res[orderKeys.fluteType]];
           _res[orderKeys.deliveryTime] = dayjs(res[orderKeys.deliveryTime]).format('YYYY-MM-DD');
