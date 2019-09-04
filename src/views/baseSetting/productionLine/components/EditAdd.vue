@@ -453,7 +453,7 @@
                 showClose: false,
               }).then(() => {
                 this.loading = true;
-                const params = Object.keys(this.prodLineData).reduce((sum, val) => {
+                let params = Object.keys(this.prodLineData).reduce((sum, val) => {
                   sum = Object.assign(sum, this.prodLineData[val]);
                   return sum;
                 }, {});
@@ -466,6 +466,10 @@
                 //分线机宽度、生产车速保留两位小数
                 params.lineSpeed = Number(params.lineSpeed).toFixed(2).toString();
                 params.partlineMachineWidth = Number(params.partlineMachineWidth).toFixed(2).toString();
+                if (params.basketType === 1) {
+                  delete params.stackCount;
+                }
+                params = this.$method.handleFormDataStartOrEndByZero(params, [''], false);
                 const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
                 service(params).then(() => {
                   this.loading = false;
@@ -496,10 +500,12 @@
       initSlimachNumbers() {
         const val = this.prodLineData.zqj.slimachNumbers;
         if (val === 1) {
-          this.$refs.form2.clearValidate();
-          this.$set(this.formOptions.zqj[2].formItem, 'rules', [
-            formRules.number5
-          ]);
+          this.$nextTick(() => {
+            this.$refs.form2.clearValidate();
+            this.$set(this.formOptions.zqj[2].formItem, 'rules', [
+              formRules.number5
+            ]);
+          });
         } else {
           this.$set(this.formOptions.zqj[2].formItem, 'rules', [
             djForm.rules.required('请输入双机压订单'),
