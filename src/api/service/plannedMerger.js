@@ -69,7 +69,7 @@ export default{
     });
   },
   getModifyOrder(params) {
-    return plannedMerger('/getModifyOrder.do', params).then(res=>{
+    return plannedMerger('/getModifyOrder.do', params).then((res = {})=>{
       res[getOriginKey(orderKeys.materialSize)] = getMaterialSize(res);
       res[getOriginKey(orderKeys.materialLength)] = res[orderKeys.materialLength];
       res[getOriginKey(orderKeys.materialWidth)] = res[orderKeys.materialWidth];

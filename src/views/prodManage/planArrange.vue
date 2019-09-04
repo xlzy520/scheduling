@@ -24,7 +24,7 @@
                     @update-data="getList">
             <div slot="btn">
               <div>
-                <el-button type="primary" @click="openDialog('editPaperSizeDialog')">更换生产线</el-button>
+                <el-button type="primary" @click="openDialog('changeProdLineDialog', selectList, true)">更换生产线</el-button>
                 <el-button type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
                 <el-button type="primary" @click="sort">排序</el-button>
                 <el-button type="primary" @click="calcPaperSize">计算门幅</el-button>
@@ -43,6 +43,7 @@
     <change-sort-dialog ref="changeSortDialog" v-if="changeSortDialogFlag" @close="changeSortDialogFlag = false" @success="refresh"></change-sort-dialog>
     <look-dialog ref="lookDialog" v-if="lookDialogFlag" @close="lookDialogFlag = false" @success="refresh"></look-dialog>
     <edit-dialog ref="editDialog" v-if="editDialogFlag" @close="editDialogFlag = false" @success="refresh"></edit-dialog>
+    <change-prod-line-dialog ref="changeProdLineDialog" v-if="changeProdLineDialogFlag" @close="changeProdLineDialogFlag = false" @success="refresh"></change-prod-line-dialog>
   </single-page>
 </template>
 <script>
@@ -56,6 +57,7 @@
   import lookDialog from "./planArrangeModule/lookDialog";
   import editDialog from "./planArrangeModule/editDialog";
   import paperButton from "./planArrangeModule/paperButton";
+  import changeProdLineDialog from "./planArrangeModule/changeProdLineDialog";
   export default {
     name: 'planArrange',
     data: function () {
@@ -268,11 +270,12 @@
         changeSortDialogFlag: false,
         lookDialogFlag: false,
         editDialogFlag: false,
+        changeProdLineDialogFlag: false,
         isTableLoading: false
       };
     },
     created() {
-      this.tableData = [{}];
+      // this.tableData = [{}, {}];
       this.getAllLine().then(()=>{
         this.$nextTick(()=>{
           this.$refs.search && this.$refs.search.search({});
@@ -392,7 +395,7 @@
         this.$refs.table.updateData();
       },
     },
-    components: {editPaperSizeDialog, changeSortDialog, lookDialog, editDialog, paperButton}
+    components: {editPaperSizeDialog, changeSortDialog, lookDialog, editDialog, paperButton, changeProdLineDialog}
   };
 </script>
 <style lang="less" scoped>

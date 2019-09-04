@@ -39,4 +39,7 @@ export default{
   changeEffect(data) {
     return planArrange('/changeEffect.do', data)
   },
+  integratedMaterial(data) {
+    return planArrange('/integratedMaterial.do', data)
+  },
 };
