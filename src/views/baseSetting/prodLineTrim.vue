@@ -124,7 +124,7 @@
               }
             }},
           {label: '层数', key: 'layer', type: 'select', attrs: {options: cengshuOption}},
-          {label: '修边', key: 'wasteSize', type: 'input',},
+          {label: '修边', key: 'wasteSize', type: 'input'},
         ],
         tableData: [],
         tableColumns: Object.freeze([
@@ -199,7 +199,7 @@
       add() {
         this.dialogTypeIsAdd = true;
         this.dialogVisible = true;
-        this.formOptions=[this.baseOption];
+        this.formOptions = [this.baseOption];
         this.$nextTick(()=>{
           this.$refs.dialog.open();
         });
@@ -310,10 +310,13 @@
                 return false;
               }
             }
+            const post = this.formData.map(v=>{
+              return this.$method.handleFormDataStartOrEndByZero(v, ['wasteSize'], true);
+            });
             const request = this.dialogTypeIsAdd
-            ? prodLineTrimService.add(this.formData)
+            ? prodLineTrimService.add(post)
             : prodLineTrimService.modifyWasterLineByid({
-                ...this.formData[0],
+                ...post[0],
               });
             this.dialogLoading = true;
             request.then((res) => {

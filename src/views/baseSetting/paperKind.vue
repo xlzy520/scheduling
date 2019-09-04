@@ -364,6 +364,7 @@
             api = paperKindService.edit;
             post.id = this.formData.id;
           }
+          post = this.$method.handleFormDataStartOrEndByZero(post, ['paperSize'], true);
           this.dj_api_extend(api, post).then((res) => {
             this.close();
             this.$refs.table.updateData();

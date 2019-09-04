@@ -176,10 +176,12 @@
               }));
               return pre.concat(...cache);
             }, []);
-            const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
-            packRequest({
-              ...this.$refs.dialog.stackFormData,
-              detailModels: detailModels
+            const stackRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
+            const stackFormData = this.$method.handleFormDataStartOrEndByZero(
+              this.$refs.dialog.stackFormData, ['name', 'produceLineId'], false);
+            stackRequest({
+              ...stackFormData,
+              detailModels: detailModels.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['wasteSize'], true))
             }).then(() => {
               this.$refs.dialog.loading = false;
               this.submitSuccess();
@@ -197,7 +199,7 @@
           const layer = allLayers.find(c=>!layers.includes(c));
           if (layer > 0) {
             this.$message(`层数${layer}未选择`, 'warning');
-            flag = false
+            flag = false;
           }
           if (flag) {
             this.$refs.dialog.loading = true;
@@ -219,9 +221,11 @@
 
             }, []);
             const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
+            const packFormData = this.$method.handleFormDataStartOrEndByZero(
+              this.$refs.dialog.packFormData, ['name'], false);
             packRequest({
-              ...this.$refs.dialog.packFormData,
-              packRuleDetails: packRuleDetails
+              ...packFormData,
+              packRuleDetails: packRuleDetails.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['packpiece', 'endUnitarea'], true))
             }).then((res) => {
               this.$refs.dialog.loading = false;
               this.submitSuccess();
