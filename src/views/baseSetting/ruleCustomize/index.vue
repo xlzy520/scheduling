@@ -8,7 +8,7 @@
         :total="pageTotal"
         height="100%"
         @update-data="getTableData"
-        v-loading="loading"
+        :loading="loading"
       >
         <div slot="btn">
           <el-button type="primary" @click="addStackOrPack('stack')">新增叠单规则</el-button>
