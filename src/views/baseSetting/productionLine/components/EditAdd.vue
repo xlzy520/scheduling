@@ -53,7 +53,7 @@
             slimachWheelRows: 1,
             slimachWheelCount: '',
             slimachWheelSamesideSpace: '',
-            slimachWdoubleMinLength: '',
+            slimachWdoubleMinLength: null,
             slimachKnifeCount: '',
             slimachKnifeSpace: '',
             slimachKnifeChangetime: '',
@@ -469,6 +469,9 @@
                 if (params.basketType === 1) {
                   delete params.stackCount;
                 }
+                if (params.slimachNumbers === 1 && params.slimachWdoubleMinLength === '') {
+                  delete params.slimachWdoubleMinLength;
+                }
                 params = this.$method.handleFormDataStartOrEndByZero(params, [''], false);
                 const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
                 service(params).then(() => {
@@ -593,10 +596,6 @@
     mounted() {
       this.$nextTick(() => {
         this.$refs.dialog.open();
-        if (this.prodLineData.zqj.slimachWdoubleMinLength === null) {
-          // todo 是否为组件库bug？
-          this.prodLineData.zqj.slimachWdoubleMinLength = '';
-        }
         this.initStackCount();
         this.initSlimachNumbers();
         let deepCloneData = this.$method.deepClone(this.prodLineData);

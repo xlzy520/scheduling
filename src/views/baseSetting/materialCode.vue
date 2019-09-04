@@ -238,7 +238,7 @@
         this.$refs.form.resetFields();
         this.formData = {
           materialCode: [],
-          platformMaterialCode: '',
+          platformMaterialCode: null,
         };
       },
       getAllPaperCode() {

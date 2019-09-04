@@ -48,3 +48,27 @@ export const handleTime = function (obj, keys, bool) {
 export function getOriginKey(key) {
   return 'original' + key.substring(0,1).toUpperCase() + key.substring(1);
 }
+
+/**
+ * 移除以不限制0开头的0和以.0或.00结尾的数
+ * @param formData  表单数据
+ * @param props 字段名
+ * @param contain 选择包含的字段，或者不包含的字段
+ */
+export function handleFormDataStartOrEndByZero(formData, props = [], contain = true) {
+  const entriesFormData = Object.entries(formData);
+  entriesFormData.map(v=>{
+    if (props.includes(v[0]) === contain) {
+      if (typeof v[1] === 'string') {
+        v[1] = v[1].replace(/^[0]*|(\.[0]{1,2})$/g, '');
+      }
+    }
+  });
+  return fromEntries(entriesFormData);
+}
+function fromEntries (iterable) {
+  return [...iterable].reduce((obj, [key, val]) => {
+    obj[key] = val;
+    return obj;
+  }, {});
+}
