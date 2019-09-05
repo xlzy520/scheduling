@@ -14,7 +14,7 @@ export default {
   },
   vformula_range: {
     validator(rule, value, callback) {
-      if (value && !value.every(val => !val || regexp.getFloatReg(2, true).test(val))) {
+      if (value && !value.every(val => !val || (regexp.getFloatReg(2, true).test(val) && Number(val) < 10000))) {
         callback(new Error('请输入范围0.01~9999.99的两位小数'));
       } else {
         callback();
@@ -24,7 +24,7 @@ export default {
   }, //纵压校验
   materialSize_range: {
     validator(rule, value, callback) {
-      if (value && !value.every(val => !val || regexp.getFloatReg(1, true).test(val))) {
+      if (value && !value.every(val => !val || (regexp.getFloatReg(1, true).test(val) && Number(val) < 10000))) {
         callback(new Error('请输入范围0.1~9999.9的一位小数'));
       } else {
         callback();
