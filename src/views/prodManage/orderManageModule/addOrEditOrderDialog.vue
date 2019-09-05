@@ -56,8 +56,7 @@
               label: '客户名称'
             },
             attrs: {
-              // todo 以后需要后端获取客户名称
-              default: '写死的客户名称',
+              default: this.$store.getters.oname,
               disabled: true,
             }
           },
@@ -205,8 +204,7 @@
           let post = {
             ...this.formData,
             ...(this.formData.customer || {}),
-            // todo customerId需要后端获取，现在写死
-            customerId: '1111111111',
+            customerId: this.$store.getters.ucompany,
             tileModel: this.formData.fluteTypeAndLayers[1],
             layers: this.formData.fluteTypeAndLayers[0],
             materialLength: this.formData[orderKeys.materialSize][0],
