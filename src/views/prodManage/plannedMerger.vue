@@ -21,7 +21,7 @@
                     :column-type-props="columnTypeProps"
                     @update-data="getList">
             <div slot="btn">
-              <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleOperate('merge')">合并</el-button>
+              <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleMerge">合并</el-button>
               <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleOperate('moveToBranch')">移至分线</el-button>
               <el-button v-if="['wait', 'already'].includes(mergeValue)" type="primary" @click="handleOperate('moveToSort')">移至排单</el-button>
               <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleOperate('remove')">移除订单</el-button>
@@ -216,7 +216,14 @@
           {
             prop: orderKeys.orderAmount,
             label: '订单数量',
-            width: 97
+            width: 97,
+            render: (h, {props: {row, col}}) => {
+              return (
+                <span class={{'edited': !row['judgePieceAmountUpdate']}}>
+                  {row[col.prop]}
+                </span>
+              );
+            }
           },
           {
             prop: orderKeys.productAmount,
@@ -232,10 +239,20 @@
             prop: orderKeys.materialSize,
             label: '下料规格(cm)',
             width: 120,
-            formatter(row) {
+            // formatter(row) {
+            //   let materialLength = row[orderKeys.materialLength] || '';
+            //   let materialWidth = row[orderKeys.materialWidth] || '';
+            //   return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
+            // },
+            render: (h, {props: {row, col}}) => {
               let materialLength = row[orderKeys.materialLength] || '';
               let materialWidth = row[orderKeys.materialWidth] || '';
-              return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
+              let materialSize = materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
+              return (
+                <span class={{'illegal': row['judgeSpecification'], 'edited': !row['judgeSpecificationUpdate']}}>
+                  {materialSize}
+                </span>
+              );
             }
           },
           {
@@ -251,6 +268,13 @@
             prop: orderKeys.orderMetres,
             label: '订单米数',
             width: 97,
+            render: (h, {props: {row, col}}) => {
+              return (
+                <span class={{'illegal': row['judgePaperLength']}}>
+                  {row[col.prop]}
+                </span>
+              );
+            }
           },
           {
             prop: orderKeys.trim,
@@ -264,11 +288,25 @@
             prop: orderKeys.linePressingMethod,
             label: '压线方式',
             width: 97,
+            render: (h, {props: {row, col}}) => {
+              return (
+                <span class={{'edited': !row['judgeStaveType']}}>
+                  {row[col.prop]}
+                </span>
+              );
+            }
           },
           {
             prop: orderKeys.longitudinalPressure,
             label: '纵压公式',
             width: 120,
+            render: (h, {props: {row, col}}) => {
+              return (
+                <span class={{'illegal': row['judgePressLine'], 'edited': !row['judgePressLineUpdate']}}>
+                  {row[col.prop]}
+                </span>
+              );
+            }
           },
           {
             prop: orderKeys.mergeStatus,
@@ -308,6 +346,44 @@
       selectionChange(selectList) {
         this.selectList = selectList;
       },
+      handleMerge() {
+        if (!this.selectList.length) {
+          this.$message('请选择订单', 'error');
+          return;
+        }
+        let post = {
+          orderList: this.selectList.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))
+        };
+        this.dj_api_extend(plannedMergerService.judgeRule, post).then((res = {})=>{
+          let list = res.list || [];
+          if (!list.length) {
+            this.mergeOrder(post.orderList);
+          } else {
+            let isSize = list.includes('1');
+            let isLength = list.includes('2');
+            let tip = '';
+            if (isSize && isLength) {
+              tip = '所选订单合并后规格产生较大浪费，且单数超过8单，是否仍要继续合并？'
+            } else if (isSize) {
+              tip = '所选订单合并后规格产生较大浪费，是否仍要继续合并？'
+            } else {
+              tip = '所选合并单数超过8单，是否仍要继续合并？'
+            }
+            this.$confirm(tip, '', {
+              type: 'warning',
+              showClose: false,
+            }).then(() => {
+              this.mergeOrder(post.orderList);
+            });
+          }
+        });
+      },
+      mergeOrder(list) {
+        this.dj_api_extend(plannedMergerService.mergeOrder, {orderList: list.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
+          this.$message('合并成功');
+          this.refresh();
+        });
+      },
       handleOperate(type = 'merge') {
         if (!this.selectList.length) {
           this.$message('请选择订单', 'error');
@@ -326,17 +402,20 @@
           },
           moveToSort: {
             api: plannedMergerService.moveToSort,
-            tip: '确认将所选订单移至计划排单？',
+            tip: this.handleTip(type, this.selectList),
+            // tip: '确认将所选订单移至计划排单？',
             msg: '移至排单成功'
           },
           moveToBranch: {
             api: plannedMergerService.moveToBranch,
-            tip: '确认将所选订单移至分线任务？',
+            tip: this.handleTip(type, this.selectList),
+            // tip: '确认将所选订单移至分线任务？',
             msg: '移至分线成功'
           },
           remove: {
             api: plannedMergerService.removeOrder,
-            tip: '确认移除所选订单？',
+            tip: this.handleTip(type, this.selectList),
+            // tip: '确认移除所选订单？',
             msg: '移除订单成功'
           },
         };
@@ -353,6 +432,20 @@
           });
         }
       },
+      handleTip(type, list) {
+        let map = {
+          moveToSort: '移至排单',
+          moveToBranch: '移至分线',
+          remove: '移除订单',
+        };
+        let name = map[type];
+        let isEdited = list.some(obj=>['judgeSpecificationUpdate', 'judgePieceAmountUpdate', 'judgeStaveType', 'judgePressLineUpdate'].some(key=>!obj[key]));
+        if (isEdited) {
+          return `订单已被修改，确认是否还原该订单数据并${name}?`
+        } else {
+          return type === 'remove' ? '确认移除所选订单?' : `确认将所选订单${name}?`;
+        }
+      },
       getList(page) {
         this.selectList = [];
         let post = {
@@ -361,6 +454,7 @@
         };
         post['isCombined'] = this.activeIndex === 'all' ? '2' : this.activeIndex;
         this.isTableLoading = true;
+        this.tableData = [];
         this.dj_api_extend(plannedMergerService.list, post).then(res=>{
           this.total = res.total || 0;
           this.tableData = res.list || [];
@@ -405,6 +499,12 @@
       /deep/ .delay {
         color: #F89816;
       }
+      /deep/ .illegal {
+        color: #FF0000;
+      }
+      /*/deep/ .edited {*/
+        /*color: #303133;*/
+      /*}*/
     }
     .el-tabs {
       margin: 0 18px;

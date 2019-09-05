@@ -82,5 +82,8 @@ export default{
   },
   editLinePress(params) {
     return plannedMerger('/adjustPressLine.do', params);
+  },
+  judgeRule(params) {
+    return plannedMerger('/judgeMergeOrder.do', params);
   }
 };
