@@ -15,17 +15,25 @@ const regexp = {
   WEIGHT_REGEXP: /^\d{0,5}(\.|(\.\d{0,2}))?$/,
   //库位长宽高
   LENGTH_REGEXP: /^\d{0,2}(\.|(\.\d))?$/,
-  //非零正整数
-  NONZERO_REGEXP: /^([1-9]\d*)?$/,
+  //正整数
+  NONZERO_REGEXP: /^\d*[1-9]+\d*$/,
   //数字+字母
   NUMBER_LETTER_REGEXP: /^[0-9a-zA-Z]*$/,
   //整数+小数
-  FIGURE_REGEXP: /^(\d+(\.\d*)?)?$/,
+  FIGURE_REGEXP: /^((\d*[1-9]+\d*(\.\d*)?)|0+\.(\d*}[1-9]+\d*))?$/,
   //中文+字母+数字
   NORMAL_TEXT_REGEXP: /^[\u4e00-\u9fa5a-zA-Z0-9]*$/,
   //获得特定最大浮点位数正则
-  getFloatReg(num) {
-    return new RegExp(`^(\\d+(\\.\\d{0,${num}})?)?$`);
+  getFloatReg(num, bool) {
+    if (bool) {
+      let arr = [];
+      for (let i = 0; i < num; i++) {
+        arr.push(`(0+\\.(${i === 0 ? '' : `\\d{0,${i}}`}[1-9]${num - i - 1 === 0 ? '' : `\\d{0,${num - i - 1}}`}))`);
+      }
+      return new RegExp(`^((\\d*[1-9]+\\d*(\\.\\d{0,${num}})?)|${arr.join('|')})?$`);
+    } else {
+      return new RegExp(`^(\\d+(\\.\\d{0,${num}})?)?$`);
+    }
   }
 };
 export default regexp;

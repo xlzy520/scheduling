@@ -3,6 +3,7 @@ import ELEMENT from 'element-ui';
 // 引入公司组件、方法库
 import djweb, {httpPolicy, listenerPolicy, methods} from 'djweb';
 import page from './components/page';
+import formRules from './utils/system/constant/formRules';
 import classifyForm from './components/classifyForm';
 // import 'djweb/lib/djweb.common.css';
 import filters from './filters';
@@ -21,6 +22,7 @@ Vue.use(classifyForm);
 Vue.prototype.$method = {...methods, ..._methods};
 Vue.prototype.$reg = regs;
 Vue.prototype.$enum = enumMap;
+Vue.prototype.$rule = formRules;
 Vue.prototype.$message = (text, type)=>{
    ELEMENT.Message({
     'showClose': true, //是否显示关闭按钮
