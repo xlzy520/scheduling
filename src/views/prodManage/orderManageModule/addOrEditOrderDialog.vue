@@ -11,7 +11,7 @@
   import dayjs from 'dayjs';
   import {djForm} from 'djweb';
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
-
+  import formRules from '../../baseSetting/formRules';
   const {rules} = djForm;
   const checkValue = function (rule, value, callback) {
     if (value && !value.every(val=>!val || /^\d{0,4}(\.\d{0,2})?$/.test(val))) {
@@ -79,7 +79,7 @@
             formItem: {
               prop: orderKeys.materialName,
               label: '材料名称',
-              rules: [rules.required('请输入材料名称')]
+              rules: [rules.required('请输入材料名称'), formRules.word_number]
             },
             // attrs: {
             //   keyMap: {
