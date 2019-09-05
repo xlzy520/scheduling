@@ -181,7 +181,7 @@
               this.$refs.dialog.stackFormData, ['name', 'produceLineId'], false);
             stackRequest({
               ...stackFormData,
-              detailModels: detailModels.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['wasteSize'], true))
+              detailModels: detailModels.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['piece'], true))
             }).then(() => {
               this.$refs.dialog.loading = false;
               this.submitSuccess();
