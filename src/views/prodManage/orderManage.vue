@@ -204,7 +204,8 @@
             label: '下料规格',
             type: 'custom',
             attrs: {
-              default: []
+              default: [],
+              reg: this.$reg.getFloatReg(1)
             },
             component: materialSizeInput
           }
