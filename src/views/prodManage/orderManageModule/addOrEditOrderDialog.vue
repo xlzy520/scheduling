@@ -101,7 +101,7 @@
             formItem: {
               prop: orderKeys.orderAmount,
               label: '订单数量',
-              rules: [rules.required('订单数量不可为空'), this.$rule.number]
+              rules: [rules.required('请输入订单数量'), this.$rule.orderAmount_range]
             },
             attrs: {
               placeholder: '请输入订单数量（片）',

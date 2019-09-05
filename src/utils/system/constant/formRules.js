@@ -32,4 +32,14 @@ export default {
     },
     // trigger: 'change'
   }, //纵压校验
+  orderAmount_range: {
+    validator(rule, value, callback) {
+      if (value && (!regexp.NONZERO_REGEXP.test(value) || Number(value) > 100000)) {
+        callback(new Error('请输入范围0~99999的正整数'));
+      } else {
+        callback();
+      }
+    },
+    // trigger: 'change'
+  }, //订单数量校验
 };
