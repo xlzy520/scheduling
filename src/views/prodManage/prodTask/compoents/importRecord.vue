@@ -35,49 +35,22 @@ export default {
         {
           // 默认近三天
           label: '汇入日期', key: 'timeRange', type: 'date', attrs: {
-            default: [dayjs(new Date()).subtract(3, 'day').format('YYYY-MM-DD'), dayjs(new Date()).format('YYYY-MM-DD')],
+            default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+            type: 'daterange',
+            clearable: false,
             beforeChange: (val) => {
-              let _val = val;
+              let _val = val ? [...val] : [];
               if (val[0] && val[1]) {
-                let day92 = dayjs(val[0]).add(92, 'day');
-                if (day92.isBefore(dayjs(val[1]))) {
+                let towMonth = dayjs(val[0]).add(92, 'day');
+                if (towMonth.isBefore(dayjs(val[1]))) {
                   this.$message('时间不能超过92天', 'error');
-                  _val = [val[0], day92.toDate()];
+                  _val = [val[0], dayjs(towMonth).toDate()];
                 }
+                _val[0] = dayjs(_val[0]).format('YYYY-MM-DD');
+                _val[1] = dayjs(_val[1]).format('YYYY-MM-DD');
               }
               return _val;
-            },
-            type: 'daterange',
-            pickerOptions: {
-              shortcuts: [
-                {
-                  text: '近7天',
-                  onClick(picker) {
-                    const end = new Date();
-                    const start = new Date();
-                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                    picker.$emit('pick', [start, end]);
-                  }
-                },
-                {
-                  text: '近30天',
-                  onClick(picker) {
-                    const end = new Date();
-                    const start = new Date();
-                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                    picker.$emit('pick', [start, end]);
-                  }
-                },
-                {
-                  text: '近三个月',
-                  onClick(picker) {
-                    const end = new Date();
-                    picker.$emit('pick', [dayjs().subtract(92, 'day').toDate(), end]);
-                  }
-                }
-              ]
-            },
-            valueFormat: "yyyy-MM-dd"
+            }
           }
         },
         {
@@ -115,6 +88,21 @@ export default {
         {label: 'B车芯纸', prop: 'cutWidth'},
         {label: 'B车面纸', prop: 'wasteSize'},
         {label: 'C车芯纸', prop: 'stavetype'},
+        {label: 'C车面纸', prop: 'stavetype'},
+        {label: '门幅', prop: 'stavetype'},
+        {label: '订单米数', prop: 'stavetype'},
+        {label: '订单数量', prop: 'stavetype'},
+        {label: '生产数量', prop: 'stavetype'},
+        {label: '下料规格', prop: 'stavetype'},
+        {label: '压线方式', prop: 'stavetype'},
+        {label: '压线1', prop: 'stavetype'},
+        {label: '压线2', prop: 'stavetype'},
+        {label: '压线3', prop: 'stavetype'},
+        {label: '修边', prop: 'stavetype'},
+        {label: '切数', prop: 'stavetype'},
+        {label: '刀数', prop: 'stavetype'},
+        {label: '客户名称', prop: 'stavetype'},
+        {label: '打包数量', prop: 'stavetype'},
       ],
       pageTotal: 0,
     };
