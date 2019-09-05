@@ -13,29 +13,6 @@
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
   import formRules from '../../baseSetting/formRules';
   const {rules} = djForm;
-  const checkValue = function (rule, value, callback) {
-    if (value && !value.every(val=>!val || /^\d{0,4}(\.\d{0,2})?$/.test(val))) {
-      callback(new Error('限0~9999两位小数'));
-    } else {
-      callback();
-    }
-  };
-  const materialSizeRules = [
-    {
-      validator: (rule, value, callback) => {
-        if (!(value && value[0])) {
-          callback(new Error('切长不能为空'));
-        } else if (!value[1]) {
-          callback(new Error('切宽不能为空'));
-        } else {
-          callback();
-        }
-      }
-    },
-    {
-      validator: checkValue
-    }
-  ];
   export default {
     name: 'addOrderDialog',
     data: function () {
@@ -110,7 +87,7 @@
             formItem: {
               prop: orderKeys.materialSize,
               label: '下料规格',
-              rules: [rules.required('请输入下料规格'), ...materialSizeRules]
+              rules: [rules.required('请输入下料规格'), this.$rule.materialSize_not_empty, this.$rule.materialSize_range]
             },
             attrs: {
               default: []
@@ -122,11 +99,11 @@
             formItem: {
               prop: orderKeys.orderAmount,
               label: '订单数量',
-              rules: [rules.required('订单数量不可为空')]
+              rules: [rules.required('订单数量不可为空'), this.$rule.number]
             },
             attrs: {
               placeholder: '请输入订单数量（片）',
-              reg: /^\d{0,5}$/
+              // reg: /^\d{0,5}$/
             }
           },
           {
@@ -158,7 +135,7 @@
             formItem: {
               prop: 'longitudinalPressure',
               label: '纵压公式',
-              rules: [{validator: checkValue}, { validator: (rule, value, callback) => {
+              rules: [this.$rule.materialSize_range, { validator: (rule, value, callback) => {
                 let materialSize = this.formData[orderKeys.materialSize];
                   if (value && value.length && value.reduce((sum, cur)=>{
                       sum += Number(cur || 0);
@@ -209,7 +186,7 @@
             layers: this.formData.fluteTypeAndLayers[0],
             materialLength: this.formData[orderKeys.materialSize][0],
             materialWidth: this.formData[orderKeys.materialSize][1],
-            vformula: this.formData['longitudinalPressure'] && this.formData['longitudinalPressure'].join('+')
+            vformula: this.formData['longitudinalPressure'] && this.formData['longitudinalPressure'].filter(val=>!['', null, undefined].includes(val)).join('+')
             // grouponProductName: this.formData['grouponProduct'][orderKeys.materialCode],
             // grouponProductCode: this.formData['grouponProduct']['id']
           };

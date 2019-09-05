@@ -8,10 +8,6 @@
   import {orderKeys} from '../../../utils/system/constant/dataKeys';
   import materialSizeInput from '../../../components/materialSizeInput';
   import plannedMergerService from "../../../api/service/plannedMerger";
-  function getOriginKey(key) {
-    return 'original' + key.substring(0,1).toUpperCase() + key.substring(1);
-  }
-  const {rules} = djForm;
   export default {
     name: 'editDialog',
     data: function () {

@@ -13,18 +13,6 @@
   import plannedMergerService from '../../../api/service/plannedMerger';
   import longitudinalPressureInput from '../../../components/longitudinalPressureInput';
   import {orderKeys} from "../../../utils/system/constant/dataKeys";
-
-  const {rules} = djForm;
-  const checkValue = function (rule, value, callback) {
-    if (value && !value.every(val => !val || /^\d{0,4}(\.\d{0,2})?$/.test(val))) {
-      callback(new Error('限0~9999两位小数'));
-    } else {
-      callback();
-    }
-  };
-  function getOriginKey(key) {
-    return 'original' + key.substring(0,1).toUpperCase() + key.substring(1);
-  }
   export default {
     name: 'editLinePressDialog',
     data: function () {
@@ -61,15 +49,21 @@
               prop: orderKeys.longitudinalPressure,
               label: '纵压公式',
               rules: [
-                {validator: checkValue},
+                this.$rule.vformula_range,
+                // {validator: checkValue},
                 {
                   validator: (rule, value, callback) => {
                     let materialWidth = this.formData[orderKeys.materialWidth];
-                    if (value && value.reduce((sum, cur) => {
+                    if (value && value.length) {
+                      let sum = value.reduce((sum, cur) => {
                         sum += Number(cur || 0);
                         return sum;
-                      }, 0) !== Number(materialWidth)) {
-                      callback(new Error('请输入正确的压线公式'));
+                      }, 0);
+                      if (Number(materialWidth) !== sum && sum !==0) {
+                        callback(new Error('请检查纵压公式'));
+                      } else {
+                        callback();
+                      }
                     } else {
                       callback();
                     }
@@ -142,7 +136,7 @@
           let post = {
             ...this.formData,
           };
-          post[orderKeys.longitudinalPressure] = this.formData[orderKeys.longitudinalPressure] && this.formData[orderKeys.longitudinalPressure].join('+');
+          post[orderKeys.longitudinalPressure] = this.formData[orderKeys.longitudinalPressure] && this.formData[orderKeys.longitudinalPressure].filter(val=>!['', null, undefined].includes(val)).join('+');
           this.dj_api_extend(plannedMergerService.editLinePress, post).then(()=>{
             this.$emit('success');
             this.$message('调整压线成功');
