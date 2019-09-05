@@ -181,7 +181,7 @@
             label: '订单类型',
             type: 'select',
             attrs: {
-              options: this.$enum.orderType._arr,
+              options: this.$enum.orderType._arr.filter(obj=>obj.value !== this.$enum.orderType.merge.value),
               default: this.$enum.orderType.all.value
             }
           },
