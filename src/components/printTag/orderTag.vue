@@ -3,7 +3,7 @@
     <template v-if="isPrinting" v-for="(item, index) in data">
       <print-page v-for="i in getPrintNum(item)">
         <div class="wrap">
-          <p class="font-subhead notice-text">{{titleMap[judgeOrderType(item)]}}<span v-if="judgeOrderType(item) === 'group'" class="font-default address">{{item[orderKeys.address]}}</span></p>
+          <p class="font-subhead notice-text">{{getTitle(item)+'标签'}}<span v-if="judgeOrderType(item) === 'group'" class="font-default address">{{item[orderKeys.address]}}</span></p>
           <el-row>
             <el-col :span="13">
               <div v-for="col in getColLeft(item)" class="item-box clearfix">
@@ -164,12 +164,12 @@
     data: function () {
       return {
         orderKeys,
-        titleMap: {
-          group: '团购订单标签',
-          carton: '纸箱订单标签',
-          merge: '合并标签',
-          store: '备料订单标签',
-        },
+        // titleMap: {
+        //   group: '团购订单标签',
+        //   carton: '纸箱订单标签',
+        //   merge: '合并标签',
+        //   store: '备料订单标签',
+        // },
         isPrinting: false,
         col_left_map: this.getColLeftMap(),
         col_right_map: this.getColRightMap(),
@@ -178,6 +178,10 @@
     created() {
     },
     methods: {
+      getTitle(item) {
+        let obj = this.$enum.orderType._swap[item[orderKeys.orderType]] || {};
+        return obj.label || '';
+      },
       end() {
         this.isPrinting = false;
         this.$emit('end');
@@ -196,7 +200,7 @@
         let arr = all_col_left;
         let hiddenType = {
           group: [orderKeys.associatedOrders, orderKeys.cartonRemarks, orderKeys.productAmount, orderKeys.deliveryTime],
-          carton: [orderKeys.productSize, orderKeys.productAmount, orderKeys.deliveryTime],
+          carton: [orderKeys.productSize, orderKeys.orderId, orderKeys.productAmount, orderKeys.deliveryTime],
           merge: [orderKeys.orderId, orderKeys.cartonRemarks, orderKeys.productAmount, orderKeys.deliveryTime],
           store: [orderKeys.associatedOrders, orderKeys.orderId, orderKeys.productName, orderKeys.productSize,orderKeys.linePressingMethod, orderKeys.longitudinalPressure, orderKeys.transversePressure, orderKeys.cartonRemarks],
         };
