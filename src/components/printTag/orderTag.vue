@@ -228,6 +228,7 @@
       print() {
         let map = {};
         this.data.forEach((obj, index)=>{
+          obj[orderKeys.associatedOrders] = obj[orderKeys.orderId];
           let arr = [obj[orderKeys.productionNo], obj[orderKeys.orderId]];
           QRCode.toDataURL(arr.join('+'), QROption, (err, url) => {
             if (err) {
