@@ -4,6 +4,7 @@
     <page-pane>
       <dj-table :data="tableData"
                 ref="table"
+                :loading="isTableLoading"
                 :columns="tableColumns"
                 :column-type="['selection']"
                 :total="total"
@@ -232,7 +233,7 @@
           {
             prop: orderKeys.orderTip,
             label: '订单标记',
-            width: 112,
+            width: 100,
             render: (h, {props:{row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
@@ -245,12 +246,13 @@
           {
             prop: orderKeys.productionNo,
             label: '生产编号',
+            width: 150
           },
           {
             prop: orderKeys.orderId,
             label: '订单编号',
             formatter(a, b, cur) {
-              return cur || '——'
+              return cur || '—'
             }
           },
           {
@@ -261,7 +263,7 @@
             prop: orderKeys.productName,
             label: '产品名称',
             formatter(a, b, cur) {
-              return cur || '——'
+              return cur || '—'
             }
           },
           {
@@ -313,6 +315,7 @@
         total: 0,
         searchData: {},
         checkedList: [],
+        isTableLoading: false,
 
         //查看弹框相关属性
         lookDialogFlag: false,
@@ -354,9 +357,13 @@
           materialWidth: this.searchData[orderKeys.materialSize][1],
           tileModel: tileModel.length ? tileModel : null
         };
+        this.isTableLoading = true;
+        this.tableData = [];
         this.dj_api_extend(orderManageService.list, post).then(res=>{
           this.tableData = res.list || [];
           this.total = res.total;
+        }).finally(()=>{
+          this.isTableLoading = false;
         });
       },
       selectionChange(checkedList) {

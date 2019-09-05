@@ -1,6 +1,7 @@
 <template>
   <dj-dialog ref="dialog" @close="confirmClose" width="400px" title="编辑" @confirm="confirm">
     <dj-form v-loading="isLoading" ref="form" :formData="formData" :formOptions="formOptions"></dj-form>
+    <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
 </template>
 <script>
@@ -112,10 +113,11 @@
           this.close();
         }
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(() => {
           if (!this.changeCheck()) {
             this.$message('页面信息没有变化', 'error');
+            cb();
             return;
           }
           let post = {
@@ -129,8 +131,8 @@
             this.$emit('success');
             this.$message('编辑成功');
             this.close();
-          })
-        });
+          }).finally(cb);
+        }, cb);
       },
       getOrderById(post) {
         return this.dj_api_extend(plannedMergerService.getOrderById, post).then(({ main }) => {

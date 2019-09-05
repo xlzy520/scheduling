@@ -6,6 +6,7 @@
       <!--<p class="font-subhead">原订单信息</p>-->
       <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="textOptions" :column-num="2"></dj-form>-->
     </div>
+    <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
 </template>
 <script>
@@ -127,10 +128,11 @@
         }
         return 12;
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           if (!this.changeCheck()) {
             this.$message('页面信息没有变化', 'error');
+            cb();
             return;
           }
           let post = {
@@ -141,8 +143,8 @@
             this.$emit('success');
             this.$message('调整压线成功');
             this.close();
-          });
-        });
+          }).finally(cb);
+        }, cb);
       },
       open(param) {
         this.$refs.dialog.open();

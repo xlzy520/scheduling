@@ -1,6 +1,7 @@
 <template>
     <dj-dialog ref="dialog" @close="close" width="770px" :title="`${isEdit ? '修改' : '新增'}备料订单`" @confirm="confirm">
-      <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
+      <dj-form v-loading="isLoading" ref="form" :formData="formData" :formOptions="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
+      <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
     </dj-dialog>
 </template>
 <script>
@@ -20,6 +21,7 @@
         formData: {},
         order: {},
         isEdit: false,
+        isLoading: false,
         materialCodeList: []
       };
     },
@@ -174,7 +176,7 @@
           return 12;
         }
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           let message;
           let api;
@@ -201,10 +203,11 @@
             this.$message(message);
             this.$emit('success');
             this.close();
-          });
-        });
+          }).finally(cb);
+        }, cb);
       },
       getOrderDetail(orderId) {
+        this.isLoading = true;
         this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: orderId}).then(res=>{
           let _res = this.$method.cloneData(this.key_arr, {}, res);
           _res['longitudinalPressure'] = res[orderKeys.longitudinalPressure] && res[orderKeys.longitudinalPressure].split('+') || [];
@@ -212,6 +215,8 @@
           _res['fluteTypeAndLayers'] = [res[orderKeys.layer] + '', res[orderKeys.fluteType]];
           _res[orderKeys.deliveryTime] = dayjs(res[orderKeys.deliveryTime]).format('YYYY-MM-DD');
           this.formData = _res;
+        }).finally(()=>{
+          this.isLoading = false;
         });
       },
       open(order) {

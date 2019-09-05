@@ -21,11 +21,11 @@
                     :column-type-props="columnTypeProps"
                     @update-data="getList">
             <div slot="btn">
-              <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleMerge">合并</el-button>
-              <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleOperate('moveToBranch')">移至分线</el-button>
-              <el-button v-if="['wait', 'already'].includes(mergeValue)" type="primary" @click="handleOperate('moveToSort')">移至排单</el-button>
-              <el-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleOperate('remove')">移除订单</el-button>
-              <el-button v-if="['already'].includes(mergeValue)" type="primary" @click="handleOperate('cancel')">取消合并</el-button>
+              <dj-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleMerge">合并</dj-button>
+              <dj-button v-if="['wait'].includes(mergeValue)" type="primary" @click="(cb)=>handleOperate('moveToBranch', cb)">移至分线</dj-button>
+              <dj-button v-if="['wait', 'already'].includes(mergeValue)" type="primary" @click="(cb)=>handleOperate('moveToSort', cb)">移至排单</dj-button>
+              <dj-button v-if="['wait'].includes(mergeValue)" type="primary" @click="(cb)=>handleOperate('remove', cb)">移除订单</dj-button>
+              <dj-button v-if="['already'].includes(mergeValue)" type="primary" @click="(cb)=>handleOperate('cancel', cb)">取消合并</dj-button>
             </div>
           </dj-table>
         </page-pane>
@@ -238,7 +238,7 @@
           {
             prop: orderKeys.materialSize,
             label: '下料规格(cm)',
-            width: 120,
+            width: 150,
             // formatter(row) {
             //   let materialLength = row[orderKeys.materialLength] || '';
             //   let materialWidth = row[orderKeys.materialWidth] || '';
@@ -249,7 +249,7 @@
               let materialWidth = row[orderKeys.materialWidth] || '';
               let materialSize = materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
               return (
-                <span class={{'illegal': row['judgeSpecification'], 'edited': !row['judgeSpecificationUpdate']}}>
+                <span class={{'illegal': !row['judgeSpecification'], 'edited': !row['judgeSpecificationUpdate']}}>
                   {materialSize}
                 </span>
               );
@@ -270,7 +270,7 @@
             width: 97,
             render: (h, {props: {row, col}}) => {
               return (
-                <span class={{'illegal': row['judgePaperLength']}}>
+                <span class={{'illegal': !row['judgePaperLength']}}>
                   {row[col.prop]}
                 </span>
               );
@@ -302,7 +302,7 @@
             width: 120,
             render: (h, {props: {row, col}}) => {
               return (
-                <span class={{'illegal': row['judgePressLine'], 'edited': !row['judgePressLineUpdate']}}>
+                <span class={{'illegal': !row['judgePressLine'], 'edited': !row['judgePressLineUpdate']}}>
                   {row[col.prop]}
                 </span>
               );
@@ -346,9 +346,10 @@
       selectionChange(selectList) {
         this.selectList = selectList;
       },
-      handleMerge() {
+      handleMerge(cb) {
         if (!this.selectList.length) {
           this.$message('请选择订单', 'error');
+          cb();
           return;
         }
         let post = {
@@ -357,7 +358,7 @@
         this.dj_api_extend(plannedMergerService.judgeRule, post).then((res = {})=>{
           let list = res.list || [];
           if (!list.length) {
-            this.mergeOrder(post.orderList);
+            return this.mergeOrder(post.orderList);
           } else {
             let isSize = list.includes('1');
             let isLength = list.includes('2');
@@ -369,24 +370,25 @@
             } else {
               tip = '所选合并单数超过8单，是否仍要继续合并？'
             }
-            this.$confirm(tip, '', {
+            return this.$confirm(tip, '', {
               type: 'warning',
               showClose: false,
             }).then(() => {
-              this.mergeOrder(post.orderList);
+              return this.mergeOrder(post.orderList);
             });
           }
-        });
+        }).finally(cb);
       },
       mergeOrder(list) {
-        this.dj_api_extend(plannedMergerService.mergeOrder, {orderList: list.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
+        return this.dj_api_extend(plannedMergerService.mergeOrder, {orderList: list.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
           this.$message('合并成功');
-          this.refresh();
-        });
+          // this.refresh();
+        }).finally(this.refresh);
       },
-      handleOperate(type = 'merge') {
+      handleOperate(type = 'merge', cb) {
         if (!this.selectList.length) {
           this.$message('请选择订单', 'error');
+          cb();
           return;
         }
         let map = {
@@ -425,11 +427,13 @@
             type: 'warning',
             showClose: false,
           }).then(() => {
-            this.dj_api_extend(obj.api, {orderList: this.selectList.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
+            return this.dj_api_extend(obj.api, {orderList: this.selectList.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
               this.$message(obj.msg);
               this.refresh();
             });
-          });
+          }).finally(cb);
+        } else {
+          cb();
         }
       },
       handleTip(type, list) {
@@ -501,6 +505,9 @@
       }
       /deep/ .illegal {
         color: #FF0000;
+      }
+      /deep/ .el-checkbox.is-disabled {
+        display: none;
       }
       /*/deep/ .edited {*/
         /*color: #303133;*/

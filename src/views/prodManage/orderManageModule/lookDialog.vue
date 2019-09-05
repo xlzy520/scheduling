@@ -1,6 +1,6 @@
 <template>
     <dj-dialog ref="dialog" @close="close" title="查看" width="593px">
-      <el-tabs v-model="activeTab" @tab-click="handleClick">
+      <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
           <el-row>
             <el-col :span="17"><span class="bold">生产编号: {{order[orderKeys.productionNo]}}</span></el-col>
@@ -171,6 +171,7 @@
           ]
         },
         isStore: true, // 是否是备料订单
+        isLoading: false, // 是否是备料订单
         orderKeys,
       };
     },
@@ -187,9 +188,12 @@
         this.$emit('close');
       },
       getOrderDetail(prodId) {
+        this.isLoading = true;
         this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: prodId}).then(res=>{
           this.order = res;
-          console.log(this.order);
+          // console.log(this.order);
+        }).finally(()=>{
+          this.isLoading = false;
         });
       },
       handleClick() {
