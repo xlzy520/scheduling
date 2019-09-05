@@ -20,7 +20,7 @@
             attrs: {
               clearable: false,
               type: 'daterange',
-              default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+              default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD HH:mm:ss')],
               beforeChange: (val) => {
                 let _val = val ? [...val] : [];
                 if (val[0] && val[1]) {
@@ -29,11 +29,15 @@
                     this.$message('时间不能超过92天', 'error');
                     _val = [val[0], dayjs(towMonth).toDate()];
                   }
-                  val[0] = dayjs(val[0]).format('YYYY-MM-DD');
-                  val[1] = dayjs(val[1]).format('YYYY-MM-DD');
+                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
+                  if (dayjs(_val[1]).isSame(dayjs(), 'day')) {
+                    _val[1] = _val[1] + dayjs().format(' HH:mm:ss');
+                  } else {
+                    _val[1] = _val[1] + ' 23:59:59';
+                  }
                 }
                 return _val;
-              },
+              }
             }
             },
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
