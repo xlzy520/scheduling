@@ -160,7 +160,7 @@
               label: '纵压公式',
               rules: [{validator: checkValue}, { validator: (rule, value, callback) => {
                 let materialSize = this.formData[orderKeys.materialSize];
-                  if (value && value.reduce((sum, cur)=>{
+                  if (value && value.length && value.reduce((sum, cur)=>{
                       sum += Number(cur || 0);
                     return sum;
                   }, 0) !== Number(materialSize && materialSize[1])) {
