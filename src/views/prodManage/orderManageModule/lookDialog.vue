@@ -76,14 +76,14 @@
             },
           ],
           true: [
-            {
-              prop: orderKeys.orderTip,
-              label: '订单标记',
-              formatter: (cur) => {
-                let obj = this.$enum.orderTip._swap[cur] || {};
-                return obj.label || ''
-              }
-            },
+            // {
+            //   prop: orderKeys.orderTip,
+            //   label: '订单标记',
+            //   formatter: (cur) => {
+            //     let obj = this.$enum.orderTip._swap[cur] || {};
+            //     return obj.label || ''
+            //   }
+            // },
             {
               prop: orderKeys.deliveryTime,
               label: '订单交期',
