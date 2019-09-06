@@ -266,6 +266,7 @@
   };
 </script>
 <style lang="less" scoped>
+  @lineHeight: 19px;
   .wrap {
     width: 85%;
     height: 90%;
@@ -278,10 +279,12 @@
       label {
         width: 70px;
         text-align: right;
+        line-height: @lineHeight;
       }
       span {
         display: block;
         margin-left: 70px;
+        line-height: @lineHeight;
       }
     }
     .col-box {
