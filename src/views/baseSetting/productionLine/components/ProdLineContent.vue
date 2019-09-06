@@ -25,7 +25,7 @@
     </div>
     <div class="right-content">
       <card title="分线机/横切机/吊篮">
-        <dj-grid-box :data="ProdLineLabel.fxj" :column-num="3" :col-rule="colRule">
+        <dj-grid-box :data="ProdLineLabel.fxj" :column-num="fxjColumnNum" :col-rule="()=>fxjColRule">
           <template slot-scope="{item}">
             <div class="bs-card-row">
               <div class="bs-card-label" v-if="ProdLineData.fxj[item.prop]">{{item.label}}：</div>
@@ -77,6 +77,8 @@
       return {
         zqjColumnNum: 4,
         zqjColRule: 6,
+        fxjColumnNum: 3,
+        fxjColRule: 8,
       };
     },
     methods: {
@@ -103,25 +105,25 @@
         }
         return 8;
       },
-      zqjGetColumnNum() {
-        const width = window.innerWidth;
-        this.zqjColumnNum = width < 1400 ? 3 : 4;
-      },
-      zqjGetColRule() {
-        const width = window.innerWidth;
-        this.zqjColRule = width < 1400 ? 8 : 6;
-      },
       viewRecordDetail(id) {
 
       },
+      layout() {
+        const width = window.innerWidth;
+        this.zqjColRule = width < 1400 ? 8 : 6;
+        this.zqjColumnNum = width < 1400 ? 3 : 4;
+        this.fxjColRule = width < 1400 ? 12 : 8;
+        this.fxjColumnNum = width < 1400 ? 2 : 3;
+      }
     },
     created() {
-      this.zqjGetColRule();
-      this.zqjGetColumnNum();
+     this.layout();
       window.addEventListener('resize', ()=>{
-        this.zqjGetColRule();
-        this.zqjGetColumnNum();
+        this.layout();
       });
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize');
     }
   };
 </script>
@@ -166,6 +168,18 @@
           .bs-card-value{
             word-break: break-all;
             width: 95%;
+          }
+        }
+      }
+    }
+    @media screen and (max-width: 1367px) {
+      .left-content {
+        width: 800px;
+        .el-col-24{
+          .jccs{
+            .bs-card-value {
+              width: 75%;
+            }
           }
         }
       }
