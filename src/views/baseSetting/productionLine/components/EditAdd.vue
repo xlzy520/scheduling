@@ -472,7 +472,7 @@
                 if (params.slimachNumbers === 1 && params.slimachWdoubleMinLength === '') {
                   delete params.slimachWdoubleMinLength;
                 }
-                params = this.$method.handleFormDataStartOrEndByZero(params, [''], false);
+                params = this.$method.handleFormDataStartOrEndByZero(params, ['id'], false);
                 const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
                 service(params).then(() => {
                   this.loading = false;
