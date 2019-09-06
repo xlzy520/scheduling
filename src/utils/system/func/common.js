@@ -1,5 +1,7 @@
 import {orderKeys} from '../constant/dataKeys';
 import _enum  from '../enum';
+import {methods} from "djweb";
+const { checkType } = methods;
 import dayjs  from 'dayjs';
 export const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
   arr.forEach(key=>{
@@ -23,6 +25,15 @@ export const getProductSize = function (obj) {
   let width = obj[orderKeys.productWidth] || '';
   let height = obj[orderKeys.productHeight] || '';
   return length || width || height ? `${length}*${width}*${height}` : '';
+};
+
+export const getVFormula = function (obj = {}, key) {
+  let val = obj[key];
+  if (Array.isArray(val)) {
+    return val.filter(val=>!['', null, undefined].includes(val)).map(val=>Number(val)).join('+');
+  } else if (checkType(val, 'String')) {
+    return val.split('+');
+  }
 };
 
 export const getOrderTip = function (obj, bool) {

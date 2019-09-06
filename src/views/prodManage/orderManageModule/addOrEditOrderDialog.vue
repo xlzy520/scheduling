@@ -186,12 +186,14 @@
             customerId: this.$store.getters.ucompany,
             tileModel: this.formData.fluteTypeAndLayers[1],
             layers: this.formData.fluteTypeAndLayers[0],
-            materialLength: this.formData[orderKeys.materialSize][0],
-            materialWidth: this.formData[orderKeys.materialSize][1],
-            vformula: this.formData['longitudinalPressure'] && this.formData['longitudinalPressure'].filter(val=>!['', null, undefined].includes(val)).join('+')
+            materialLength: Number(this.formData[orderKeys.materialSize][0]),
+            materialWidth: Number(this.formData[orderKeys.materialSize][1]),
+            // vformula: this.formData['longitudinalPressure'] && this.formData['longitudinalPressure'].filter(val=>!['', null, undefined].includes(val)).join('+')
+            vformula: this.$method.getVFormula(this.formData, 'longitudinalPressure')
             // grouponProductName: this.formData['grouponProduct'][orderKeys.materialCode],
             // grouponProductCode: this.formData['grouponProduct']['id']
           };
+          post[orderKeys.orderAmount] = Number(this.formData[orderKeys.orderAmount]);
           if (!this.isEdit) {
             message = '新增成功';
             api = orderManageService.add;
