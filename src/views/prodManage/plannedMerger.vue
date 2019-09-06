@@ -178,7 +178,7 @@
           {
             prop: orderKeys.orderTip,
             label: '订单标记',
-            // width: 112,
+            width: 110,
             render: (h, {props:{row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';

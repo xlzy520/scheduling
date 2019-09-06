@@ -75,10 +75,10 @@
                   <span>{obj.label || ''}</span>
                 );
               },
-              formatter: (cur) => {
-                let obj = this.$enum.orderTip._swap[cur] || {};
-                return obj.label || ''
-              }
+              // formatter: (cur) => {
+              //   let obj = this.$enum.orderTip._swap[cur] || {};
+              //   return obj.label || ''
+              // }
             },
             {
               formItem: {
@@ -98,9 +98,9 @@
                   <span>{dayjs(this.order[orderKeys.deliveryTime]).format('YYYY-MM-DD')}</span>
                 );
               },
-              formatter(cur) {
-                return dayjs(cur).format('YYYY-MM-DD');
-              }
+              // formatter(cur) {
+              //   return dayjs(cur).format('YYYY-MM-DD');
+              // }
             },
           ],
           true: [
@@ -124,9 +124,9 @@
                   <span>{dayjs(this.order[orderKeys.deliveryTime]).format('YYYY-MM-DD')}</span>
                 );
               },
-              formatter(cur) {
-                return dayjs(cur).format('YYYY-MM-DD');
-              }
+              // formatter(cur) {
+              //   return dayjs(cur).format('YYYY-MM-DD');
+              // }
             },
           ]
         },
@@ -186,9 +186,9 @@
                   <span>{length && width ? `${length}*${width}` : ''}</span>
                 );
               },
-              formatter: () => {
-                return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
-              }
+              // formatter: () => {
+              //   return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
+              // }
             },
             {
               formItem: {
@@ -236,9 +236,9 @@
                   <span>{length && width ? `${length}*${width}` : ''}</span>
                 );
               },
-              formatter: () => {
-                return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
-              }
+              // formatter: () => {
+              //   return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
+              // }
             },
             {
               type: 'custom',
