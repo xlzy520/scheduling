@@ -81,6 +81,7 @@
                 lazy: false,
                 children: 'fluteType'
               },
+              placeholder: '请选择瓦楞楞型',
               options: this.$enum.fluteTypeLayer
             }
           },
@@ -94,7 +95,12 @@
             attrs: {
               default: []
             },
-            component: materialSizeInput
+            component: materialSizeInput,
+            listeners: {
+              input: () => {
+                this.$refs.form.$children[0].validateField(['longitudinalPressure']);
+              }
+            }
           },
           {
             type: 'input',
@@ -217,6 +223,9 @@
           _res['fluteTypeAndLayers'] = [res[orderKeys.layer] + '', res[orderKeys.fluteType]];
           _res[orderKeys.deliveryTime] = dayjs(res[orderKeys.deliveryTime]).format('YYYY-MM-DD');
           this.formData = _res;
+          this.$nextTick(()=>{
+            this.$refs.form.validate();
+          });
         }).finally(()=>{
           this.isLoading = false;
         });

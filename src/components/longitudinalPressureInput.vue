@@ -1,6 +1,6 @@
 <template>
   <dj-input-group>
-    <dj-input v-for="num in 7" :value="value[num - 1]" @input="(val)=>input(val, num - 1)"></dj-input>
+    <dj-input placeholder="" v-for="num in 7" :value="value[num - 1]" @input="(val)=>input(val, num - 1)"></dj-input>
   </dj-input-group>
 </template>
 <script>
