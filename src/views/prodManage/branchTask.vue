@@ -123,7 +123,6 @@
           {label: '用料代码', prop: 'materialCode'},
           {label: '瓦楞楞型', prop: 'tileModel'},
           {label: '订单数量', prop: 'pieceAmount'},
-          {label: '生产数量', prop: 'produceAmount'},
           {label: '处理数量', prop: 'processeAmount'},
           {label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
             formatter: row=>row.materialLength + '*' + row.materialWidth},

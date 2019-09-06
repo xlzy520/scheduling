@@ -10,4 +10,7 @@ export default {
   processe(data) {
     return branchTask('/processe.do', data);
   },
+  getDivideMsg(data) {
+    return branchTask('/getDivideMsg.do', data);
+  },
 };
