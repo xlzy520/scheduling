@@ -12,7 +12,9 @@
           <el-radio-button :label="0">禁用</el-radio-button>
         </el-radio-group>
       </div>
-      <prod-line-content :prod-line-data="prodLineData[Number(activeTab)-1]" :prod-line-label="prodLineLabel"></prod-line-content>
+      <prod-line-content :line-id="idMap[Number(activeTab)-1]" ref="content"
+                         :prod-line-data="prodLineData[Number(activeTab)-1]"
+                         :prod-line-label="prodLineLabel"></prod-line-content>
       <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close" @getData="getData"></edit-add>
     </div>
   </single-page>
@@ -24,7 +26,33 @@
   import ProdLineContent from './components/ProdLineContent';
   import EditAdd from './components/EditAdd';
   import SinglePage from "../../../components/page/singlePage";
-
+const initProdLineData = {
+  jccs: {
+    commonTilemodel: [],
+    lineSpeed: '',
+    changeorderMinLength: '',
+    firstorderWasteWith: '',
+    lastorderMinLength: '',
+    linePaperSizeModels: '',
+  },
+  zqj: {
+    slimachNumbers: '',
+    slimachWheelRows: '',
+    slimachWheelCount: '',
+    slimachWheelSamesideSpace: '',
+    slimachWdoubleMinLength: '',
+    slimachKnifeCount: '',
+    slimachKnifeSpace: '',
+    slimachKnifeChangetime: '',
+  },
+  fxj: {
+    partlineMachineWidth: '',
+    minCutLength: '',
+    basketType: '',
+    basketLength: '',
+    stackCount: ''
+  }
+};
   export default {
     name: 'productionLine',
     components: {SinglePage, EditAdd, ProdLineContent},
@@ -34,38 +62,12 @@
         statusLoading: false,
 
         idMap: [],
-        activeTab: '',
+        activeTab: '1',
         tabsColumn: [],
         lineStatus: '1',
 
         prodLineData: [
-          {
-            jccs: {
-              commonTilemodel: [],
-              lineSpeed: '',
-              changeorderMinLength: '',
-              firstorderWasteWith: '',
-              lastorderMinLength: '',
-              linePaperSizeModels: '',
-            },
-            zqj: {
-              slimachNumbers: '',
-              slimachWheelRows: '',
-              slimachWheelCount: '',
-              slimachWheelSamesideSpace: '',
-              slimachWdoubleMinLength: '',
-              slimachKnifeCount: '',
-              slimachKnifeSpace: '',
-              slimachKnifeChangetime: '',
-            },
-            fxj: {
-              partlineMachineWidth: '',
-              minCutLength: '',
-              basketType: '',
-              basketLength: '',
-              stackCount: ''
-            }
-          },
+          initProdLineData
         ],
         prodLineLabel: Object.freeze({
           jccs: [
@@ -106,6 +108,9 @@
       },
       tabClick() {
         this.lineStatus = this.tabsColumn[this.activeTab - 1].isEffected;
+        console.log(this.activeTab);
+        console.log(this.idMap[Number(this.activeTab) - 1]);
+        this.$refs.content.getOperationRecord();
       },
       changeLineStatus(val) {
         let post = {
@@ -137,40 +142,15 @@
           this.prodLineData = [];
           this.tabsColumn = [];
           if (data.length > 0) {
+            this.activeTab = activeTab || data[0].lineNum;
             data.map((v, index)=>{
-              this.activeTab = activeTab || data[0].lineNum;
               this.tabsColumn.push({
                 label: v.lineNum + '号线',
                 value: v.lineNum,
                 id: v.id,
                 isEffected: v.isEffected
               });
-              this.prodLineData.push({
-                jccs: {
-                  lineSpeed: '',
-                  commonTilemodel: [],
-                  changeorderMinLength: '',
-                  firstorderWasteWith: '',
-                  lastorderMinLength: '',
-                  linePaperSizeModels: '',
-                },
-                zqj: {
-                  slimachNumbers: '',
-                  slimachWheelRows: '',
-                  slimachWheelCount: '',
-                  slimachWheelSamesideSpace: '',
-                  slimachWdoubleMinLength: '',
-                  slimachKnifeCount: '',
-                  slimachKnifeSpace: '',
-                  slimachKnifeChangetime: '',
-                },
-                fxj: {
-                  partlineMachineWidth: '',
-                  minCutLength: '',
-                  basketType: '',
-                  basketLength: '',
-                  stackCount: ''
-                }});
+              this.prodLineData.push(this.$method.deepClone(initProdLineData));
                 for (const item of Object.keys(this.prodLineLabel)) {
                 const module = this.prodLineLabel[item];
                 for (let i = 0; i < module.length; i++) {

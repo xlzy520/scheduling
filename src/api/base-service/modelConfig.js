@@ -22,4 +22,5 @@ module.exports = [
   {name: 'report', url: '/report'},
   {name: 'plannedMerger', url: '/merge'},
   {name: 'planArrange', url: '/planArrange'},
+  {name: 'record', url: '/record'},
 ];
