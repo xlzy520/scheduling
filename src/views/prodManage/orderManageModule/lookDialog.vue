@@ -2,19 +2,20 @@
     <dj-dialog ref="dialog" @close="close" title="查看" width="593px">
       <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
-          <el-row>
-            <el-col :span="17"><span class="bold">生产编号: {{order[orderKeys.productionNo]}}</span></el-col>
-            <el-col :span="7"><span class="bold">生产状态: <span class="status">{{$enum.productStatus._swap[order[orderKeys.productStatus]] && $enum.productStatus._swap[order[orderKeys.productStatus]].label}}</span></span></el-col>
-            <el-col :span="24"><span class="bold">订单消息</span></el-col>
-            <template v-for="(item, index) in orderOptions[isStore]">
-              <el-col :span="index%2 ? 10 : 14"><span class="">{{item.label}}: {{item.formatter ? item.formatter(order[item.prop]) : order[item.prop]}}</span></el-col>
-            </template>
-            <el-col :span="24"><p class="line"></p></el-col>
-            <el-col :span="24"><span class="bold">产品信息</span></el-col>
-            <template v-for="(item, index) in messageOptions[isStore]">
-              <el-col :span="index%2 ? 10 : 14"><span class="">{{item.label}}: {{item.formatter ? item.formatter(order[item.prop]) : order[item.prop]}}</span></el-col>
-            </template>
-          </el-row>
+          <classify-form ref="form" :config="config" :formData="order" :column-num="2"></classify-form>
+          <!--<el-row>-->
+            <!--<el-col :span="17"><span class="bold">生产编号: {{order[orderKeys.productionNo]}}</span></el-col>-->
+            <!--<el-col :span="7"><span class="bold">生产状态: <span class="status">{{$enum.productStatus._swap[order[orderKeys.productStatus]] && $enum.productStatus._swap[order[orderKeys.productStatus]].label}}</span></span></el-col>-->
+            <!--<el-col :span="24"><span class="bold">订单消息</span></el-col>-->
+            <!--<template v-for="(item, index) in orderOptions[isStore]">-->
+              <!--<el-col :span="index%2 ? 10 : 14"><span class="">{{item.formItem.label}}: {{item.formatter ? item.formatter(order[item.formItem.prop]) : order[item.formItem.prop]}}</span></el-col>-->
+            <!--</template>-->
+            <!--<el-col :span="24"><p class="line"></p></el-col>-->
+            <!--<el-col :span="24"><span class="bold">产品信息</span></el-col>-->
+            <!--<template v-for="(item, index) in messageOptions[isStore]">-->
+              <!--<el-col :span="index%2 ? 10 : (messageOptions[isStore].length === index + 1 ? 24 : 14)"><span class="">{{item.formItem.label}}: {{item.formatter ? item.formatter(order[item.formItem.prop]) : order[item.formItem.prop]}}</span></el-col>-->
+            <!--</template>-->
+          <!--</el-row>-->
         </el-tab-pane>
         <el-tab-pane label="操作记录" name="2">
           <base-table :data="recordData" :columns="recordColumns"></base-table>
@@ -44,32 +45,59 @@
         orderOptions: {
           false: [
             {
-              prop: orderKeys.customerName,
-              label: '客户名称',
+              formItem: {
+                prop: orderKeys.customerName,
+                label: '客户名称',
+              }
             },
             {
-              prop: orderKeys.contacts,
-              label: '联系人',
+              formItem: {
+                prop: orderKeys.contacts,
+                label: '联系人',
+              }
             },
             {
-              prop: orderKeys.contactWay,
-              label: '联系方式',
+              formItem: {
+                prop: orderKeys.contactWay,
+                label: '联系方式',
+              }
             },
             {
-              prop: orderKeys.orderTip,
-              label: '订单标记',
+              type: 'custom',
+              isText: true,
+              formItem: {
+                prop: orderKeys.orderTip,
+                label: '订单标记',
+              },
+              render: (h) => {
+                let obj = this.$enum.orderTip._swap[this.order[orderKeys.orderTip]] || {};
+                return (
+                  <span>{obj.label || ''}</span>
+                );
+              },
               formatter: (cur) => {
                 let obj = this.$enum.orderTip._swap[cur] || {};
                 return obj.label || ''
               }
             },
             {
-              prop: orderKeys.address,
-              label: '地址',
+              formItem: {
+                prop: orderKeys.address,
+                label: '地址',
+              },
             },
             {
-              prop: orderKeys.deliveryTime,
-              label: '订单交期',
+              type: 'custom',
+              isText: true,
+              formItem: {
+                prop: orderKeys.deliveryTime,
+                label: '订单交期',
+              },
+              render: (h) => {
+                return (
+                  <span>{dayjs(this.order[orderKeys.deliveryTime]).format('YYYY-MM-DD')}</span>
+                );
+              },
               formatter(cur) {
                 return dayjs(cur).format('YYYY-MM-DD');
               }
@@ -85,8 +113,17 @@
             //   }
             // },
             {
-              prop: orderKeys.deliveryTime,
-              label: '订单交期',
+              type: 'custom',
+              isText: true,
+              formItem: {
+                prop: orderKeys.deliveryTime,
+                label: '订单交期',
+              },
+              render: (h) => {
+                return (
+                  <span>{dayjs(this.order[orderKeys.deliveryTime]).format('YYYY-MM-DD')}</span>
+                );
+              },
               formatter(cur) {
                 return dayjs(cur).format('YYYY-MM-DD');
               }
@@ -96,77 +133,145 @@
         messageOptions: {
           false:  [
             {
-              prop: orderKeys.productName,
-              label: '产品名称',
+              formItem: {
+                prop: orderKeys.productName,
+                label: '产品名称',
+              }
             },
             {
-              prop: orderKeys.orderAmount,
-              label: '订单数量',
+              formItem: {
+                prop: orderKeys.orderAmount,
+                label: '订单数量',
+              }
             },
             {
-              prop: orderKeys.materialName,
-              label: '材料名称',
+              formItem: {
+                prop: orderKeys.materialName,
+                label: '材料名称',
+              },
             },
             {
-              prop: orderKeys.fluteType,
-              label: '瓦楞楞型',
+              type: 'custom',
+              isText: true,
+              formItem: {
+                prop: orderKeys.fluteType,
+                label: '瓦楞楞型',
+              },
+              render: (h) => {
+                let fluteType = this.order[orderKeys.fluteType] || '';
+                let layer = this.order[orderKeys.layer] || '';
+                return (
+                  <span>{`${layer}${fluteType}`}</span>
+                );
+              },
             },
             // todo 暂时没有，等待后端更新
             {
-              prop: orderKeys.productSize,
-              label: '产品规格',
+              formItem: {
+                prop: orderKeys.productSize,
+                label: '产品规格',
+              }
             },
             {
-              prop: orderKeys.materialSize,
-              label: '下料规格',
+              type: 'custom',
+              isText: true,
+              formItem: {
+                prop: orderKeys.materialSize,
+                label: '下料规格',
+              },
+              render: (h) => {
+                let length = this.order[orderKeys.materialLength];
+                let width = this.order[orderKeys.materialWidth];
+                return (
+                  <span>{length && width ? `${length}*${width}` : ''}</span>
+                );
+              },
               formatter: () => {
                 return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
               }
             },
             {
-              prop: orderKeys.linePressingMethod,
-              label: '压线方式',
+              formItem: {
+                prop: orderKeys.linePressingMethod,
+                label: '压线方式',
+              }
             },
             {
-              prop: orderKeys.longitudinalPressure,
-              label: '纵压公式',
+              formItem: {
+                prop: orderKeys.longitudinalPressure,
+                label: '纵压公式',
+              }
             },
             {
-              prop: orderKeys.transversePressure,
-              label: '横压公式',
+              formItem: {
+                prop: orderKeys.transversePressure,
+                label: '横压公式',
+              }
             },
           ],
           true: [
             {
-              prop: orderKeys.materialName,
-              label: '材料名称',
+              formItem: {
+                prop: orderKeys.materialName,
+                label: '材料名称',
+              }
             },
             {
-              prop: orderKeys.orderAmount,
-              label: '订单数量',
+              formItem: {
+                prop: orderKeys.orderAmount,
+                label: '订单数量',
+              }
             },
             {
-              prop: orderKeys.materialSize,
-              label: '下料规格',
+              type: 'custom',
+              isText: true,
+              formItem: {
+                prop: orderKeys.materialSize,
+                label: '下料规格',
+              },
+              render: (h) => {
+                let length = this.order[orderKeys.materialLength];
+                let width = this.order[orderKeys.materialWidth];
+                return (
+                  <span>{length && width ? `${length}*${width}` : ''}</span>
+                );
+              },
               formatter: () => {
                 return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
               }
             },
             {
-              prop: orderKeys.fluteType,
-              label: '瓦楞楞型',
+              type: 'custom',
+              isText: true,
+              formItem: {
+                prop: orderKeys.fluteType,
+                label: '瓦楞楞型',
+              },
+              render: (h) => {
+                let fluteType = this.order[orderKeys.fluteType] || '';
+                let layer = this.order[orderKeys.layer] || '';
+                return (
+                  <span>{`${layer}${fluteType}`}</span>
+                );
+              },
             },
             {
-              prop: orderKeys.linePressingMethod,
-              label: '压线方式',
+              formItem: {
+                prop: orderKeys.linePressingMethod,
+                label: '压线方式',
+              }
             },
             {
-              prop: orderKeys.longitudinalPressure,
-              label: '纵压公式',
+              formItem: {
+                prop: orderKeys.longitudinalPressure,
+                label: '纵压公式',
+              }
             },
             {
-              prop: orderKeys.transversePressure,
-              label: '横压公式',
+              formItem: {
+                prop: orderKeys.transversePressure,
+                label: '横压公式',
+              }
             },
           ]
         },
@@ -174,6 +279,45 @@
         isLoading: false, // 是否是备料订单
         orderKeys,
       };
+    },
+    computed: {
+      config() {
+        return [
+          {
+            formOptions: [
+              {
+                formItem: {
+                  prop: orderKeys.productionNo,
+                  label: '生产编号'
+                }
+              },
+              {
+                type: 'custom',
+                isText: true,
+                formItem: {
+                  prop: orderKeys.productStatus,
+                  label: '生产状态'
+                },
+                render: (h)=>{
+                  let obj = this.$enum.productStatus._swap[this.order[orderKeys.productStatus]] || {};
+                  return (
+                    <span class="status">{obj.label || ''}</span>
+                  );
+                }
+              },
+            ]
+          },
+          {
+            title: '订单信息',
+            hasLine: true,
+            formOptions: this.orderOptions[this.isStore]
+          },
+          {
+            title: '产品信息',
+            formOptions: this.messageOptions[this.isStore]
+          }
+        ]
+      }
     },
     created() {
     },
@@ -206,19 +350,27 @@
   };
 </script>
 <style lang="less" scoped>
-  .bold {
-    font-weight: bold;
+  .classifyForm {
+    /deep/ .dj-form:nth-of-type(1) {
+      font-weight: bold;
+      .status {
+        color: #3654ea;
+      }
+    }
   }
-  .status {
-    color: #3654ea;
-  }
-  .el-row {
-    margin-top: 10px;
-  }
-  .el-col {
-    margin-bottom: 30px;
-  }
-  .line {
-    border-top: 1px solid #ebeef5;
-  }
+  /*.bold {*/
+    /*font-weight: bold;*/
+  /*}*/
+  /*.status {*/
+    /*color: #3654ea;*/
+  /*}*/
+  /*.el-row {*/
+    /*margin-top: 10px;*/
+  /*}*/
+  /*.el-col {*/
+    /*margin-bottom: 30px;*/
+  /*}*/
+  /*.line {*/
+    /*border-top: 1px solid #ebeef5;*/
+  /*}*/
 </style>
