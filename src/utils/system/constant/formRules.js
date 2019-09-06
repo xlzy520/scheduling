@@ -40,6 +40,6 @@ export default {
         callback();
       }
     },
-    // trigger: 'change'
+    trigger: 'change'
   }, //订单数量校验
 };
