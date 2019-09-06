@@ -98,7 +98,9 @@
             component: materialSizeInput,
             listeners: {
               input: () => {
-                this.$refs.form.$children[0].validateField(['longitudinalPressure']);
+                try {
+                  this.$refs.form.$children[0].validateField(['longitudinalPressure']);
+                } catch (e) {}
               }
             }
           },
