@@ -1,19 +1,21 @@
 <template>
-  <div class="production-line" v-loading="loading">
-    <el-button type="primary" @click="addProdLine">新增</el-button>
-    <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
-      <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
-    </el-tabs>
-    <div class="tab-right-btns">
-      <el-button type="primary" @click="edit">修改</el-button>
-      <el-radio-group :value="lineStatus" @change="changeLineStatus" v-loading="statusLoading">
-        <el-radio-button :label="1">启用</el-radio-button>
-        <el-radio-button :label="0">禁用</el-radio-button>
-      </el-radio-group>
+  <single-page>
+    <div class="production-line" v-loading="loading">
+      <el-button type="primary" @click="addProdLine">新增</el-button>
+      <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
+        <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
+      </el-tabs>
+      <div class="tab-right-btns">
+        <el-button type="primary" @click="edit">修改</el-button>
+        <el-radio-group :value="lineStatus" @change="changeLineStatus" v-loading="statusLoading">
+          <el-radio-button :label="1">启用</el-radio-button>
+          <el-radio-button :label="0">禁用</el-radio-button>
+        </el-radio-group>
+      </div>
+      <prod-line-content :prod-line-data="prodLineData[Number(activeTab)-1]" :prod-line-label="prodLineLabel"></prod-line-content>
+      <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close" @getData="getData"></edit-add>
     </div>
-    <prod-line-content :prod-line-data="prodLineData[Number(activeTab)-1]" :prod-line-label="prodLineLabel"></prod-line-content>
-    <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close" @getData="getData"></edit-add>
-  </div>
+  </single-page>
 </template>
 
 <script>
@@ -21,10 +23,11 @@
 
   import ProdLineContent from './components/ProdLineContent';
   import EditAdd from './components/EditAdd';
+  import SinglePage from "../../../components/page/singlePage";
 
   export default {
     name: 'productionLine',
-    components: {EditAdd, ProdLineContent},
+    components: {SinglePage, EditAdd, ProdLineContent},
     data() {
       return {
         loading: false,

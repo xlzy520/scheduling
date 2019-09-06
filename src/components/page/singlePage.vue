@@ -15,5 +15,6 @@
     flex-direction: column;
     position: absolute;
     width: 100%;
+    overflow: auto;
   }
 </style>
