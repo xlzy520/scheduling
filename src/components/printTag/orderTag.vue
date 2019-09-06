@@ -18,7 +18,7 @@
                   <span>{{col.formatter ? col.formatter(item, index, item[col.prop]) : item[col.prop]}}</span>
                 </div>
               </div>
-              <img v-if="judgeOrderType(item) !== 'merge' " :src="item.qrurl">
+              <img v-if="judgeOrderType(item) !== 'store' " :src="item.qrurl">
             </el-col>
           </el-row>
           <div class="left-column"></div>
