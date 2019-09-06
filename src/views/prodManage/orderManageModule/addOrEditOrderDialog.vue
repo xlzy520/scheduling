@@ -137,7 +137,7 @@
             formItem: {
               prop: 'longitudinalPressure',
               label: '纵压公式',
-              rules: [this.$rule.materialSize_range, { validator: (rule, value, callback) => {
+              rules: [this.$rule.vformula_range, { validator: (rule, value, callback) => {
                 let materialSize = this.formData[orderKeys.materialSize];
                   if (value && value.length && value.reduce((sum, cur)=>{
                       sum += Number(cur || 0);
