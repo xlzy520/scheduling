@@ -59,13 +59,14 @@
               label: '材料名称',
               rules: [rules.required('请输入材料名称'), formRules.word_number]
             },
-            // attrs: {
-            //   keyMap: {
-            //     label: orderKeys.platformMaterialName,
-            //     value: orderKeys.platformMaterialName
-            //   },
-            //   options: this.materialCodeList
-            // }
+            attrs: {
+              maxlength: 20,
+              // keyMap: {
+              //   label: orderKeys.platformMaterialName,
+              //   value: orderKeys.platformMaterialName
+              // },
+              // options: this.materialCodeList
+            }
           },
           {
             type: 'elCascader',
