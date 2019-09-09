@@ -147,11 +147,12 @@
               prop: 'longitudinalPressure',
               label: '纵压公式',
               rules: [this.$rule.vformula_range, { validator: (rule, value, callback) => {
-                let materialSize = this.formData[orderKeys.materialSize];
-                  if (value && value.length && value.reduce((sum, cur)=>{
-                      sum += Number(cur || 0);
+                  let materialSize = this.formData[orderKeys.materialSize];
+                  let sum = value.reduce((sum, cur) => {
+                    sum += Number(cur || 0);
                     return sum;
-                  }, 0) !== Number(materialSize && materialSize[1])) {
+                  }, 0);
+                  if (value && value.length && sum !== Number(materialSize && materialSize[1]) && sum !==0) {
                     callback(new Error('请输入正确的压线公式'));
                   } else {
                     callback();
