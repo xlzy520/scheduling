@@ -1,25 +1,24 @@
 <template>
   <dj-dialog ref="dialog" @close="close" width="780px" title="更换生产线" @confirm="confirm">
     <div v-loading="isLoading">
-      <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="2"></dj-form>
-      <order-transfer v-model="checkedData" :data="allData" :titles="['选择生产订单', '待更换生产订单']">
-        <div class="transfer-footer" slot="left-footer" slot-scope="{list, keyMap}">
-          <span>选中订单米数：{{calcMeters(list, keyMap)}}米</span>
-        </div>
-        <div class="transfer-footer" slot="right-footer" slot-scope="{list, keyMap}">
-          <span>待更换订单米数：{{calcMeters(list, keyMap)}}米</span>
-        </div>
-      </order-transfer>
+      <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
+      <!--<order-transfer v-model="checkedData" :data="allData" :titles="['选择生产订单', '待更换生产订单']">-->
+        <!--<div class="transfer-footer" slot="left-footer" slot-scope="{list, keyMap}">-->
+          <!--<span>选中订单米数：{{calcMeters(list, keyMap)}}米</span>-->
+        <!--</div>-->
+        <!--<div class="transfer-footer" slot="right-footer" slot-scope="{list, keyMap}">-->
+          <!--<span>待更换订单米数：{{calcMeters(list, keyMap)}}米</span>-->
+        <!--</div>-->
+      <!--</order-transfer>-->
     </div>
     <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
 </template>
 <script>
-  import {djForm} from 'djweb';
   import productionLineService from '../../../api/service/productionLine';
   import planArrangeService from '../../../api/service/planArrange';
   import orderTransfer from './common/orderTransfer';
-  const {rules} = djForm;
+  import prodTransfer from './common/prodTransfer';
   export default {
     name: 'changeProdLineDialog',
     data: function () {
@@ -58,6 +57,29 @@
               },
               options: this.prodLine_arr
             }
+          },
+          {
+            type: 'custom',
+            formItem: {
+              prop: 'orderList',
+              // label: '生产线',
+              rules: [
+                {
+                  validator: (rule, value, callback) => {
+                    if (!value || !value.length) {
+                      callback(new Error('请选择订单'));
+                    } else {
+                      callback();
+                    }
+                  },
+                  // trigger: 'input'
+                }
+              ]
+            },
+            attrs: {
+              data: this.allData
+            },
+            component: prodTransfer
           },
         ];
       }
@@ -118,6 +140,12 @@
       this.getAllLine();
     },
     methods: {
+      colRule(item) {
+        if (item.formItem.prop === 'orderList') {
+          return 24;
+        }
+        return 12;
+      },
       // renderContent(h, option) {
       //   console.log(option);
       //   return (
@@ -137,8 +165,8 @@
       },
       change() {},
       getAllLine() {
-        this.dj_api_extend(productionLineService.list, {pageNo: 1, pageSize: 9999999}).then(res => {
-          this.prodLine_arr = (res.list || []).map(obj => {
+        this.dj_api_extend(productionLineService.list).then(res => {
+          this.prodLine_arr = (res.list || []).filter(obj=>obj.isEffected).map(obj => {
             obj.label = obj['lineNum'] + '号线';
             return obj;
           });
@@ -173,15 +201,12 @@
   };
 </script>
 <style lang="less" scoped>
-  .el-transfer {
-    margin-left: 70px;
-    /deep/ .el-transfer-panel {
-      width: 282px;
+  .dj-form /deep/ .el-row {
+    .el-form-item.is-error .el-transfer-panel {
+      border-color: red;
     }
-  }
-  .transfer-footer {
-    text-align: center;
-    line-height: 41px;
-    color: #303133;
+    .el-col:nth-last-of-type(1) .el-form-item__content{
+      margin-left: 60px !important;
+    }
   }
 </style>

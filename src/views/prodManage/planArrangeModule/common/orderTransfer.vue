@@ -14,6 +14,7 @@
 </template>
 <script>
   import transferPanel from './transfer-panel';
+  import Emitter from 'element-ui/src/mixins/emitter';
   function filterData(arr = [], filterValue_arr, keyMap) {
     let result = [];
     arr.forEach(obj=>{
@@ -81,6 +82,7 @@
   };
   export default {
     name: 'orderTransfer',
+    mixins: [Emitter],
     props: {
       data: {
         type: Array,
@@ -118,7 +120,7 @@
       leftData() {
         // let data = this.$method.deepClone(this.data);
         // return filterData(this.data, this.leftList, this._keyMap);
-        return filterData(this.data, this.leftList, this._keyMap);;
+        return filterData(this.data, this.leftList, this._keyMap);
       },
       rightData() {
         // let data = this.$method.deepClone(this.data);
@@ -152,6 +154,7 @@
         }
       },
       change() {
+        this.dispatch('ElFormItem', 'el.form.change', [...this.rightData]);
         this.$emit('input', [...this.rightData]);
       }
     },
