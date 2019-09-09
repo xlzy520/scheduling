@@ -371,7 +371,7 @@
       },
       openImportDialog(bool) {
         if (!bool && !this.checkedList.length) {
-          this.$message('请选择需要导入的订单', 'error');
+          this.$message('请选择订单', 'error');
           return;
         }
         this.importDialogFlag = true;
