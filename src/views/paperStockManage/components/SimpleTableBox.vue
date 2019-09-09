@@ -30,6 +30,7 @@
   import paperTableService from '@/api/service/paperTable';
   import reportService from '@/api/service/report';
   import PagePane from "../../../components/page/pagePane";
+  import dayjs from 'dayjs'
   export default {
     name: 'SimpleTableBox',
     components: {PagePane},
@@ -77,8 +78,14 @@
       getTableData(data) {
         this.loading = true;
         if (data && data.timeRange) {
-          data.startTime = data.timeRange[0];
-          data.endTime = data.timeRange[1]
+          const _val = data.timeRange;
+          data.startTime = _val[0];
+          if (dayjs(_val[1]).isSame(dayjs(), 'day')) {
+            _val[1] = dayjs().format('YYYY-MM-DD HH:mm:ss');
+          } else {
+            _val[1] = _val[1] + ' 23:59:59';
+          }
+          data.endTime = _val[1];
         }
         this.searchData = data;
         paperTableService[this.serviceUrl]({

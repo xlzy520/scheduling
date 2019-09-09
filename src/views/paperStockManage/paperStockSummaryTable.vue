@@ -30,11 +30,6 @@
                     _val = [val[0], dayjs(towMonth).toDate()];
                   }
                   _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
-                  if (dayjs(_val[1]).isSame(dayjs(), 'day')) {
-                    _val[1] = _val[1] + dayjs().format(' HH:mm:ss');
-                  } else {
-                    _val[1] = _val[1] + ' 23:59:59';
-                  }
                 }
                 return _val;
               }
