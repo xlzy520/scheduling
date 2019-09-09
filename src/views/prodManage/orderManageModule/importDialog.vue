@@ -99,9 +99,9 @@
         });
       },
       getAllLine() {
-        this.dj_api_extend(productionLineService.list, {pageNo: 1, pageSize: 9999999}).then(res=>{
-          this.prodLine_arr = (res.list || []).map(obj=>{
-            obj.label = obj['lineNum'] + '号生产线';
+        this.dj_api_extend(productionLineService.list).then(res=>{
+          this.prodLine_arr = (res.list || []).filter(obj=>obj.isEffected).map(obj=>{
+            obj.label = obj['lineNum'] + '号线';
             return obj;
           });
         });
