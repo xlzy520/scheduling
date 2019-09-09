@@ -37,7 +37,7 @@ let fluteTypeLayer = [
       {label: 'BEE瓦'},
       {label: 'CAC瓦'},
       {label: 'CEB瓦'},
-      {label: 'EBA'},
+      {label: 'EBA瓦'},
       {label: 'EBC瓦'}
     ]
   }
