@@ -463,16 +463,18 @@
                   params.lineNum = this.lineNum;
                   params.isEffected = 0;
                 }
-                //分线机宽度、生产车速保留两位小数
-                params.lineSpeed = Number(params.lineSpeed).toFixed(2).toString();
-                params.partlineMachineWidth = Number(params.partlineMachineWidth).toFixed(2).toString();
                 if (params.basketType === 1) {
                   delete params.stackCount;
                 }
                 if (params.slimachNumbers === 1 && params.slimachWdoubleMinLength === '') {
                   delete params.slimachWdoubleMinLength;
                 }
+                // 移除开头的0和结尾的.00
                 params = this.$method.handleFormDataStartOrEndByZero(params, ['id'], false);
+                //分线机宽度、生产车速、吊篮长度保留两位小数
+                params.lineSpeed = Number(params.lineSpeed).toFixed(2);
+                params.partlineMachineWidth = Number(params.partlineMachineWidth).toFixed(2);
+                params.basketLength = Number(params.basketLength).toFixed(2);
                 const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
                 service(params).then(() => {
                   this.loading = false;
