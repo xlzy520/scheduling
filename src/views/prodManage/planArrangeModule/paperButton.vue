@@ -8,6 +8,7 @@
           <span class="fl">原纸库存</span>
           <a class="fr operate" @click="retract">收起</a>
         </div>
+        <p class="line"></p>
         <div class="paper-button-content">
           <el-collapse ref="collapse" accordion @change="getPaperStorage">
             <el-collapse-item v-for="item in paperSize_arr" :name="item[paperKeys.paperSize]">
@@ -105,8 +106,7 @@
   }
   .title {
     font-size: 16px;
-    margin-top: 6px;
-    margin-bottom: 15px;
+    margin: 6px 8px 15px 8px;
   }
   .operate {
     color: #3654ea;
@@ -114,19 +114,30 @@
   }
   .disabled-button {
     position: absolute;
-    right: 36px;
+    right: 4px;
   }
   .paper-button-content {
     max-height: 350px;
     overflow: auto;
+    margin: 0 20px;
   }
-  .el-collapse /deep/ .el-collapse-item__header {
-    position: relative;
-    /deep/ .el-collapse-item__arrow {
-      position: absolute;
+  .el-collapse {
+    border-top: none;
+    /deep/ .el-collapse-item__header {
+      position: relative;
+      /deep/ .el-collapse-item__arrow {
+        position: absolute;
+      }
     }
   }
   .paper-size-text {
     margin-left: 37px;
+  }
+  .line {
+    border-top: 1px solid rgb(235, 238, 245);;
+    position: relative;
+    left: 0;
+    width: 650px;
+    transform: translateX(-12px);
   }
 </style>
