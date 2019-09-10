@@ -21,7 +21,7 @@
                              :options="qieshuOptions"></dj-select>
                 </el-form-item>
                 <el-form-item label="片数" prop="piece" class="piece">
-                  <dj-input v-model="child.piece"></dj-input>
+                  <dj-input v-model="child.piece" maxlength="10"></dj-input>
                 </el-form-item>
                 <div class="button-col">
                   <i class="el-icon-delete" @click.prevent="removeCondition(index,childIndex)"></i>
