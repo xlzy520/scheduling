@@ -6,7 +6,7 @@
         <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
       </el-tabs>
       <div class="tab-right-btns">
-        <el-button type="primary" @click="edit">修改</el-button>
+        <el-button type="primary" @click="edit">编辑</el-button>
         <el-radio-group :value="lineStatus" @change="changeLineStatus" v-loading="statusLoading">
           <el-radio-button :label="1">启用</el-radio-button>
           <el-radio-button :label="0">禁用</el-radio-button>
