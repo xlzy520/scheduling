@@ -42,4 +42,14 @@ export default {
     },
     trigger: 'change'
   }, //订单数量校验
+  orderSort_range: {
+    validator(rule, value, callback) {
+      if (value && (!/^\d*$/.test(value) || Number(value) > 10000 || Number(value) <= 0)) {
+        callback(new Error('请输入范围1~9999的正整数'));
+      } else {
+        callback();
+      }
+    },
+    trigger: 'change'
+  }, //订单数量校验
 };

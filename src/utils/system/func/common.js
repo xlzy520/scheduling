@@ -3,6 +3,7 @@ import _enum  from '../enum';
 import {methods} from "djweb";
 const { checkType } = methods;
 import dayjs  from 'dayjs';
+import {MessageBox}  from 'element-ui';
 export const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
   arr.forEach(key=>{
     obj1[key] = obj2[key];
@@ -83,3 +84,43 @@ export function fromEntries (iterable) {
     return obj;
   }, {});
 }
+
+//弹出提示框
+export const tipBox = (txt, fn1) => {
+  return new Promise(((resolve, reject) => {
+    MessageBox.confirm(txt, '提示', {
+      confirmButtonText: '确 认',
+      cancelButtonText: '取 消',
+      type: 'warning',
+      showClose: false,
+      beforeClose: (action, instance, done) => {
+        if (action === 'confirm') {
+          if (fn1 && fn1.constructor === Function) {
+            // let oldConfirmButtonText = instance.confirmButtonText;
+            instance.confirmButtonLoading = true;
+            // instance.confirmButtonText = '执行中...';
+            let result = fn1();
+            if (result && typeof result.then === 'function') {
+              result.then(() => {
+                done();
+                resolve();
+              }).catch(e => {
+                reject(e);
+              }).finally(()=>{
+                instance.confirmButtonLoading = false;
+                // instance.confirmButtonText = oldConfirmButtonText;
+              });
+            } else {
+              done();
+              instance.confirmButtonLoading = false;
+            }
+          } else {
+            done();
+          }
+        } else {
+          done();
+        }
+      }
+    });
+  }));
+};

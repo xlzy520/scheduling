@@ -32,7 +32,8 @@
                       cb();
                     }
                   }
-                }
+                },
+                this.$rule.orderSort_range
               ]
             }
           }

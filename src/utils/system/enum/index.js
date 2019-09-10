@@ -271,6 +271,16 @@ export default {
       value: 0,
     }
   }),
+  basketType: new MapObject({
+    'big': {
+      label: '大吊篮',
+      value: 1,
+    },
+    'small': {
+      label: '小吊篮',
+      value: 2,
+    }
+  }),
   orderCutNumber: [1, 2, 3, 4, 5, 6, 7],
   fluteTypeLayer,
   fluteType

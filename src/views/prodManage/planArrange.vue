@@ -24,14 +24,14 @@
                     @update-data="getList">
             <div slot="btn">
               <div>
-                <el-button type="primary" @click="openDialog('changeProdLineDialog', selectList, true)">更换生产线</el-button>
-                <el-button type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
+                <el-button v-if="selectList.length" type="primary" @click="openDialog('changeProdLineDialog', selectList, true)">更换生产线</el-button>
+                <el-button v-if="selectList.length" type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
                 <el-button type="primary" @click="sort">排序</el-button>
-                <el-button type="primary" @click="calcPaperSize">计算门幅</el-button>
-                <el-button type="primary" @click="stackUp">叠单</el-button>
-                <el-button type="primary" @click="handleOperate('importProd')">汇入生产</el-button>
-                <el-button @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
-                <el-button @click="handleOperate('remove')">移除订单</el-button>
+                <el-button v-if="selectList.length" type="primary" @click="calcPaperSize">计算门幅</el-button>
+                <el-button v-if="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</el-button>
+                <el-button v-if="selectList.length" type="primary" @click="handleOperate('importProd')">汇入生产</el-button>
+                <el-button v-if="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
+                <el-button v-if="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
               </div>
               <p class="font-total">总米数：{{totalMeter}}</p>
             </div>
@@ -63,6 +63,7 @@
     data: function () {
       return {
         prodLine_arr: [],
+        prodLine_arr_map: [],
         searchConfig: [
           {
             type: 'input',
@@ -213,7 +214,7 @@
           {
             prop: orderKeys.materialSize,
             label: '下料规格(cm)',
-            width: 120,
+            width: 130,
             formatter(row) {
               let materialLength = row[orderKeys.materialLength] || '';
               let materialWidth = row[orderKeys.materialWidth] || '';
@@ -276,7 +277,6 @@
       };
     },
     created() {
-      // this.tableData = [{}, {}];
       this.getAllLine().then(()=>{
         this.$nextTick(()=>{
           this.$refs.search && this.$refs.search.search({});
@@ -293,12 +293,15 @@
     mounted() {},
     methods: {
       getAllLine() {
-        return this.dj_api_extend(productionLineService.list, {pageNo: 1, pageSize: 9999999}).then(res=>{
-          this.prodLine_arr = (res.list || []).map(obj=>{
+        return this.dj_api_extend(productionLineService.list).then(res=>{
+          let map = {};
+          this.prodLine_arr = (res.list || []).filter(obj=>obj.isEffected).map(obj=>{
             obj.label = obj['lineNum'] + '号线';
             obj.value = obj['id'];
+            map[obj['id']] = obj;
             return obj;
           });
+          this.prodLine_arr_map = map;
           this.lineId = (this.prodLine_arr[0] || {}).value;
         });
       },
@@ -318,6 +321,7 @@
           this.total = res.total || 0;
           this.tableData = res.list || [];
         }).finally(()=>{
+          // this.tableData = [{}, {}];
           this.isTableLoading = false;
         });
       },
@@ -339,6 +343,10 @@
           this.$message('请选择订单', 'error');
           return;
         }
+        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
+          this.$message('请先进行排序叠单', 'error');
+          return;
+        }
         let map = {
           importProd: {
             api: planArrangeService.importProd,
@@ -353,15 +361,46 @@
         };
         let obj = map[type];
         if (obj) {
-          this.$confirm(obj.tip, '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
-            this.dj_api_extend(obj.api, this.selectList).then(()=>{
+          this.$method.tipBox(obj.tip, ()=>{
+            return this.dj_api_extend(obj.api, this.selectList).then(()=>{
               this.$message(obj.msg);
               this.refresh();
             });
           });
+
+          // this.$confirm(obj.tip, '提示', {
+          //   confirmButtonText: '确 认',
+          //   cancelButtonText: '取 消',
+          //   type: 'warning',
+          //   showClose: false,
+          //   beforeClose: (action, instance, done) => {
+          //     console.log(action);
+          //     if (action === 'confirm') {
+          //       instance.confirmButtonLoading = true;
+          //       this.dj_api_extend(obj.api, this.selectList).then(()=>{
+          //         this.$message(obj.msg);
+          //         this.refresh();
+          //         done();
+          //       }).catch(e=>{
+          //
+          //       }).finally(()=>{
+          //         instance.confirmButtonLoading = false;
+          //       });
+          //     } else {
+          //       done();
+          //     }
+          //   }
+          // }).then(()=>{});
+
+          // this.$confirm(obj.tip, '', {
+          //   type: 'warning',
+          //   showClose: false,
+          // }).then(() => {
+          //   this.dj_api_extend(obj.api, this.selectList).then(()=>{
+          //     this.$message(obj.msg);
+          //     this.refresh();
+          //   });
+          // });
         }
       },
       openDialog(name, row, bool) {
@@ -421,7 +460,7 @@
     /*}*/
     .font-total {
       font-size: 16px;
-      margin: 16px 0;
+      margin-top: 16px;
     }
   }
 </style>
