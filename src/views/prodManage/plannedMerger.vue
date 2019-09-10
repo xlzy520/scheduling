@@ -513,8 +513,8 @@
         /*color: #303133;*/
       /*}*/
     }
-    .el-tabs {
-      margin: 0 18px;
-    }
+    /*.el-tabs {*/
+      /*margin: 0 32px;*/
+    /*}*/
   }
 </style>

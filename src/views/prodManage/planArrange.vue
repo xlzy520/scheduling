@@ -416,9 +416,9 @@
         color: #F89816;
       }
     }
-    .el-tabs {
-      margin: 0 18px;
-    }
+    /*.el-tabs {*/
+      /*margin: 0 32px;*/
+    /*}*/
     .font-total {
       font-size: 16px;
       margin: 16px 0;
