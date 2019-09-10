@@ -1,19 +1,17 @@
 <template>
-  <single-page class="orderStatistics">
+  <single-page class="orderStatistics" v-loading="loading">
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table ref="table"
                 :data="tableData"
-                :loading="loading"
                 height="100%"
-                :defaultPageSize="pageSize"
                 :total="pageTotal"
                 :columns="tableColumns"
                 :column-type="['index']"
                 @update-data="getList">
         <div slot="btn">
           <div class="ext-data">
-            <div class="ext-data-item">订单数：{{extData.orderAmount}}</div>
+            <div class="ext-data-item">订单数: {{extData.orderAmount}}</div>
             <div class="ext-data-item">产品数量(片)：{{extData.productAmount}}</div>
             <div class="ext-data-item">产品面积(㎡)：{{extData.productArea}}</div>
           </div>
@@ -32,22 +30,51 @@
         searchConfig: [
           {
             label: '分发日期', key: 'timeRange', type: 'date', attrs: {
-              type: 'daterange',
-              clearable: false,
-              default: [dayjs().subtract(45, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+              default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
-                let _val = val ? [...val] : [];
+                let _val = val;
                 if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(92, 'day');
-                  if (towMonth.isBefore(dayjs(val[1]))) {
+                  let day92 = dayjs(val[0]).add(92, 'day');
+                  if (day92.isBefore(dayjs(val[1]))) {
                     this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], dayjs(towMonth).toDate()];
+                    _val = [val[0], day92.toDate()];
                   }
-                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD');
-                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD');
                 }
                 return _val;
-              }
+              },
+              type: 'daterange',
+              clearable: false,
+              pickerOptions: {
+                shortcuts: [
+                  {
+                    text: '今天',
+                    onClick(picker) {
+                      const end = new Date();
+                      const start = new Date();
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '近7天',
+                    onClick(picker) {
+                      const end = new Date();
+                      const start = new Date();
+                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '近30天',
+                    onClick(picker) {
+                      const end = new Date();
+                      const start = new Date();
+                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                      picker.$emit('pick', [start, end]);
+                    }
+                  }
+                ]
+              },
+              valueFormat: "yyyy-MM-dd"
             }
           },
           {label: '材料名称', key: 'materialName', type: 'input'},
@@ -103,7 +130,6 @@
           productAmount: '',
           productArea: ''
         },
-        pageSize: 30,
         pageTotal: 0,
         loading: false
       };
@@ -118,6 +144,7 @@
         if (a[prop] && b[prop]) {
           return a[prop] - b[prop];
         }
+        console.log(a, b, prop);
       },
       getList(page) {
         this.loading = true;
@@ -145,26 +172,15 @@
   };
 </script>
 <style lang="less" scoped>
-  @deep: ~'>>>';
-  @{deep} .dj-table-container{
-    .over-table .left-item {
-      position: relative;
-      bottom: -15px;
-      margin-bottom: 0;
-    }
-  }
-
   .ext-data{
     font-size:16px;
-    font-weight:600;
+    font-family:PingFang SC Medium,sans-serif;
+    font-weight:500;
     color:rgba(48,49,51,1);
     line-height:22px;
     display: flex;
     &-item{
-      height: 22px;
-      line-height: 22px;
-      font-family:PingFang SC Medium,sans-serif;
-      margin-right: 96px;
+      margin-right: 20px;
     }
   }
 </style>
