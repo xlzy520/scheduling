@@ -1,22 +1,31 @@
 import {planArrange} from '../base-service/service';
+// import methods from "../../utils/methods";
+// import { orderKeys } from "../../utils/system/constant/dataKeys";
+// const { getMaterialSize, getProductSize, getOrderTip, handleTime, getOriginKey } = methods;
 export default{
   list(data) {
-    return planArrange('/list.do', data)
+    return planArrange('/selectArrangeOrder.do', data)
   },
   changeProdLine(data) {
-    return planArrange('/changeProdLine.do', data)
+    return planArrange('/changeLine.do', data)
   },
   calcPaperSize(data) {
-    return planArrange('/calcPaperSize.do', data)
+    return planArrange('/calPaperSize.do', data)
+  },
+  getTotalMeters(data) {
+    return planArrange('/selectLength.do', data)
+  },
+  getOptimalSize(data) {
+    return planArrange('/selectPaperSize.do', data)
   },
   editPaperSize(data) {
-    return planArrange('/editPaperSize.do', data)
+    return planArrange('/modifyPaperSize.do', data)
   },
   sort(data) {
-    return planArrange('/sort.do', data)
+    return planArrange('/sortOrder.do', data)
   },
   stackUp(data) {
-    return planArrange('/stackUp.do', data)
+    return planArrange('/stack.do', data)
   },
   importProd(data) {
     return planArrange('/importProd.do', data)
@@ -25,21 +34,21 @@ export default{
     return planArrange('/changeSort.do', data)
   },
   removeOrder(data) {
-    return planArrange('/removeOrder.do', data)
+    return planArrange('/remove.do', data)
   },
   getOrder(data) {
-    return planArrange('/getOrder.do', data)
+    return planArrange('/selectAllInfo.do', data)
   },
   editOrder(data) {
-    return planArrange('/editOrder.do', data)
+    return planArrange('/updateEditOrder.do', data)
   },
   getPaperSizeList(data) {
-    return planArrange('/getPaperSizeList.do', data)
+    return planArrange('/expectLength.do', data)
   },
-  changeEffect(data) {
-    return planArrange('/changeEffect.do', data)
-  },
+  // changeEffect(data) {
+  //   return planArrange('/changeEffect.do', data)
+  // },
   integratedMaterial(data) {
-    return planArrange('/integratedMaterial.do', data)
+    return planArrange('/selectMaterialLength.do', data)
   },
 };

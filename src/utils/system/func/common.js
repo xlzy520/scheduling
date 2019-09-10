@@ -11,7 +11,7 @@ export const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
   return obj1;
 };
 
-export const getMaterialSize = function (obj, bool) {
+export const getMaterialSize = function (obj = {}, bool) {
   let length = obj[orderKeys.materialLength] || '';
   let width = obj[orderKeys.materialWidth] || '';
   if (bool) {
@@ -21,7 +21,7 @@ export const getMaterialSize = function (obj, bool) {
   }
 };
 
-export const getProductSize = function (obj) {
+export const getProductSize = function (obj = {}) {
   let length = obj[orderKeys.productLength] || '';
   let width = obj[orderKeys.productWidth] || '';
   let height = obj[orderKeys.productHeight] || '';
@@ -37,7 +37,7 @@ export const getVFormula = function (obj = {}, key) {
   }
 };
 
-export const getOrderTip = function (obj, bool) {
+export const getOrderTip = function (obj = {}, bool) {
   let orderTip = _enum.orderTip._swap[obj[orderKeys.orderTip]] || {};
   return (bool ? orderTip.omit : orderTip.label) || '';
 };
@@ -57,8 +57,12 @@ export const handleTime = function (obj, keys, bool) {
     obj[keys] = time(obj[keys]);
   }
 };
-export function getOriginKey(key) {
-  return 'original' + key.substring(0,1).toUpperCase() + key.substring(1);
+export function getOriginKey(key, suffix = 'original') {
+  return suffix + key.substring(0,1).toUpperCase() + key.substring(1);
+}
+
+export function getOrderList(arr) {
+  return arr && arr.map(obj=>obj[orderKeys.productionNo]);
 }
 
 /**
@@ -105,6 +109,7 @@ export const tipBox = (txt, fn1) => {
                 done();
                 resolve();
               }).catch(e => {
+                done();
                 reject(e);
               }).finally(()=>{
                 instance.confirmButtonLoading = false;
@@ -123,4 +128,72 @@ export const tipBox = (txt, fn1) => {
       }
     });
   }));
+};
+
+/**
+ * 精度计算，避免精度丢失
+ * @param {number} number_a 第一个计算值
+ * @param {number} number_b 第二个计算值
+ * @param {number} computedType 计算类型，+加-减*乘/除
+ * @return {number} 计算结果
+ */
+export function accuracyCompute (number_a, number_b, computedType) {
+  var result,
+    decNum_a = getDecNum(number_a),
+    decNum_b = getDecNum(number_b),
+    decNum_sum = decNum_a + decNum_b,
+    decNum_min = Math.min(decNum_a, decNum_b),
+    decNum_max = Math.max(decNum_a, decNum_b);
+  decNum_sum += decNum_max - decNum_min;
+  decNum_sum = Math.pow(10, decNum_sum);
+  decNum_max = Math.pow(10, decNum_max);
+  number_a = changeToInt(number_a);
+  number_b = changeToInt(number_b);
+  if (decNum_a > decNum_b) {
+    number_b *= Math.pow(10, decNum_a - decNum_b);
+  } else {
+    number_a *= Math.pow(10, decNum_b - decNum_a);
+  }
+  switch (computedType) {
+    case '+':
+      result = (number_a + number_b) / decNum_max;
+      break;
+    case '-':
+      result = (number_a - number_b) / decNum_max;
+      break;
+    case '*':
+      result = (number_a * number_b) / decNum_sum;
+      break;
+    case '/':
+      result = number_a / number_b;
+      break;
+  }
+  return result;
+  /**
+   * 获取数字的小数位数
+   * @param {number} number 目标数字
+   * @return {number} 目标数字的小数位数
+   */
+  function getDecNum(number) {
+    var DecNum = 0;
+    var stringNum = number.toString();
+    if (stringNum.indexOf(".") !== -1) {
+      DecNum = stringNum.split(".")[1].length;
+    }
+    return DecNum;
+  }
+  /**
+   * 将数字转换成整数（去掉小数点）
+   * @param {number} number 目标数字
+   * @return {number} 目标数字的整数形式
+   */
+  function changeToInt(number) {
+    if (number === '') {
+      return '';
+    } else {
+      var string = number.toString().replace(".", "");
+      // ie8下parseInt方法会对字符串'08'、'09'转换错误，需设置第二个参数为10
+      return parseInt(string, 10);
+    }
+  }
 };

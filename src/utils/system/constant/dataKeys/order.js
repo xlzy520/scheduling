@@ -37,12 +37,14 @@ export default {
   productAmount: 'produceAmount', //生产数量
   optimalSize: 'calPaperSize', //最优门幅
   cutNumber: 'cut', //切数
-  cutterNumber: 'cutterNumber', //刀数
+  cutterNumber: 'paperCount', //刀数
   orderMetres: 'paperLength', //订单米数
   trim: 'wasteWidth', //修边
   trimRate: 'wasterRate', //修边率
   cartonRemarks: 'cartonRemarks', //纸箱备注
   associatedOrders: 'associatedOrders', //关联单号
-  stackUp: 'stackUp', //叠单
-  sortIndex: 'sortIndex', //订单排序
+  stackUp: 'isStack', //叠单
+  sortIndex: 'sort', //订单排序
+  produceMaterial: 'produceMaterial', //生产用料、用料代码
+  produceMaterialId: 'produceMaterialId', //生产用料、用料代码Id
 };

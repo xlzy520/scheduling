@@ -1,14 +1,30 @@
 <template>
-  <div class="order-transfer el-transfer">
+  <div class="tree-transfer el-transfer">
     <transfer-panel ref="panel_left" :keyMap="_keyMap" :data="leftData" :title="titles[0]" @change="handleLeftSelection">
-      <slot name="left-footer" :list="leftData" :keyMap="_keyMap"></slot>
+      <template v-if="$scopedSlots['left-footer']" slot="footer">
+        <slot name="left-footer" :list="leftData" :checkList="getCheckList(false)" :keyMap="_keyMap"></slot>
+      </template>
+      <template v-if="$scopedSlots.parent"  slot="parent" slot-scope="props">
+        <slot v-bind="props" name="parent"></slot>
+      </template>
+      <template v-if="$scopedSlots.children"  slot="children" slot-scope="props">
+        <slot v-bind="props" name="children"></slot>
+      </template>
     </transfer-panel>
     <div class="el-transfer__buttons">
       <p><i class="el-icon-arrow-left" @click="toLeft"></i></p>
       <p><i class="el-icon-arrow-right" @click="toRight"></i></p>
     </div>
     <transfer-panel ref="panel_right" :keyMap="_keyMap" :data="rightData" :title="titles[1]" @change="handleRightSelection">
-      <slot name="right-footer" :list="rightData" :keyMap="_keyMap"></slot>
+      <template v-if="$scopedSlots['right-footer']" slot="footer">
+        <slot name="right-footer" :list="rightData" :checkList="getCheckList(true)" :keyMap="_keyMap"></slot>
+      </template>
+      <template v-if="$scopedSlots.parent"  slot="parent" slot-scope="props">
+        <slot v-bind="props" name="parent"></slot>
+      </template>
+      <template v-if="$scopedSlots.children"  slot="children" slot-scope="props">
+        <slot v-bind="props" name="children"></slot>
+      </template>
     </transfer-panel>
   </div>
 </template>
@@ -28,28 +44,6 @@
     });
     return result
   }
-  // function filterData(arr = [], filterValue_arr, keyMap) {
-  //   let matchList = [];
-  //   let restList = [];
-  //   let isAll = true;
-  //   arr.forEach(obj=>{
-  //     let _obj = {...obj};
-  //     if (filterValue_arr.includes(obj[keyMap.value])) {
-  //       matchList.push(_obj);
-  //       if (Array.isArray(_obj[keyMap.childKey]) && _obj[keyMap.childKey].length) {
-  //         let res = filterData(_obj[keyMap.childKey], filterValue_arr, keyMap);
-  //         if (res.isAll) {
-  //
-  //         }
-  //         _obj[keyMap.childKey] = filterData(_obj[keyMap.childKey], filterValue_arr, keyMap);
-  //       }
-  //     }
-  //   });
-  //   if (arr.length > matchList.length) {
-  //     isAll = false;
-  //   }
-  //   return {matchList, isAll}
-  // }
   function removeRepeat(arr) {
     return Array.from(new Set(arr));
   }
@@ -81,7 +75,7 @@
     childKey: 'children'
   };
   export default {
-    name: 'orderTransfer',
+    name: 'treeTransfer',
     mixins: [Emitter],
     props: {
       data: {
@@ -131,6 +125,17 @@
     created() {
     },
     methods: {
+      getCheckList(bool) {
+        let keyList = bool ? this.rightCheckList : this.leftCheckList;
+        return keyList.reduce((arr, key)=>{
+          let obj = this.dataMap[key];
+          let children = obj[this._keyMap.childKey];
+          if (!(Array.isArray(children) && children.length)) {
+            arr.push(obj);
+          }
+          return arr;
+        }, []);
+      },
       handleLeftSelection(selection) {
         this.leftCheckList = selection;
       },

@@ -1,15 +1,13 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" width="1160px" title="查看" @confirm="confirm">
-    <div class="dialog-content">
-      <el-tabs v-model="activeTab" @tab-click="handleClick">
-        <el-tab-pane v-loading="isTableLoading" label="订单信息" name="1">
-          <classify-form ref="form" hasLine :formData="formData" :config="config" :column-num="3"></classify-form>
-        </el-tab-pane>
-        <el-tab-pane label="编辑记录" name="2">
-          <base-table :data="recordData" :columns="recordColumns"></base-table>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
+  <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
+    <el-tabs v-model="activeTab" @tab-click="handleClick">
+      <el-tab-pane v-loading="isTableLoading" label="订单信息" name="1">
+        <classify-form ref="form" hasLine :formData="formData" :config="config" :column-num="3"></classify-form>
+      </el-tab-pane>
+      <el-tab-pane label="编辑记录" name="2">
+        <base-table :data="recordData" :columns="recordColumns"></base-table>
+      </el-tab-pane>
+    </el-tabs>
     <div slot="footer"></div>
   </dj-dialog>
 </template>
@@ -17,7 +15,7 @@
   import {orderKeys} from "../../../utils/system/constant/dataKeys";
   import planArrangeService from '../../../api/service/planArrange';
   import record from "../../../api/service/record";
-
+  import dayjs from 'dayjs';
   export default {
     name: 'lookDialog',
     data: function () {
@@ -34,9 +32,12 @@
               },
               {
                 formItem: {
-                  prop: orderKeys.deliveryTime,
+                  prop: 're-deliveryTime',
                   label: '订单交期'
                 },
+                computed: ()=>{
+                  return dayjs(this.formData[orderKeys.deliveryTime]).format('YYYY-MM-DD');
+                }
               },
               {
                 formItem: {
@@ -52,9 +53,13 @@
               },
               {
                 formItem: {
-                  prop: 'tag',
+                  prop: 're-orderTip',
                   label: '订单标记'
                 },
+                computed: ()=>{
+                  let obj = this.$enum.orderTip._swap[this.formData[orderKeys.orderTip]] || {};
+                  return obj.label || '';
+                }
               },
             ]
           },
@@ -75,15 +80,20 @@
               },
               {
                 formItem: {
-                  prop: orderKeys.materialCode,
+                  prop: orderKeys.produceMaterial,
                   label: '用料代码'
                 },
               },
               {
                 formItem: {
-                  prop: orderKeys.fluteType,
+                  prop: 're-fluteType',
                   label: '瓦楞楞型'
                 },
+                computed: () => {
+                  let layer = this.formData[orderKeys.layer] || '';
+                  let fluteType = this.formData[orderKeys.fluteType] || '';
+                  return layer + fluteType;
+                }
               },
               {
                 formItem: {
@@ -116,13 +126,13 @@
             formOptions: [
               {
                 formItem: {
-                  prop: orderKeys.optimalSize,
+                  prop: 'paperSize',
                   label: '最优门幅'
                 },
               },
               {
                 formItem: {
-                  prop: 'singleCutterNumber',
+                  prop: orderKeys.cutNumber,
                   label: '单台纵切刀数'
                 },
               },
@@ -134,7 +144,7 @@
               },
               {
                 formItem: {
-                  prop: orderKeys.productAmount,
+                  prop: 'produceNum',
                   label: '生产数量'
                 },
               },
@@ -146,7 +156,7 @@
               },
               {
                 formItem: {
-                  prop: 'finalCutWidth',
+                  prop: orderKeys.materialWidth,
                   label: '切宽'
                 },
               },
@@ -181,61 +191,61 @@
             formOptions: [
               {
                 formItem: {
-                  prop: orderKeys.optimalSize,
+                  prop: this.$method.getOriginKey('paperSize', 'old'),
                   label: '最优门幅'
                 },
               },
               {
                 formItem: {
-                  prop: 'singleCutterNumber',
+                  prop: this.$method.getOriginKey(orderKeys.cutNumber, 'old'),
                   label: '单台纵切刀数'
                 },
               },
               {
                 formItem: {
-                  prop: orderKeys.cutterNumber,
+                  prop: this.$method.getOriginKey(orderKeys.cutterNumber, 'old'),
                   label: '刀数'
                 },
               },
               {
                 formItem: {
-                  prop: orderKeys.productAmount,
+                  prop: this.$method.getOriginKey('produceNum', 'old'),
                   label: '生产数量'
                 },
               },
               {
                 formItem: {
-                  prop: orderKeys.longitudinalPressure,
+                  prop: this.$method.getOriginKey(orderKeys.longitudinalPressure, 'old'),
                   label: '纵压公式'
                 },
               },
               {
                 formItem: {
-                  prop: 'finalCutWidth',
+                  prop: this.$method.getOriginKey(orderKeys.materialWidth, 'old'),
                   label: '切宽'
                 },
               },
               {
                 formItem: {
-                  prop: orderKeys.orderMetres,
+                  prop: this.$method.getOriginKey(orderKeys.orderMetres, 'old'),
                   label: '订单米数'
                 }
               },
               {
                 formItem: {
-                  prop: orderKeys.trim,
+                  prop: this.$method.getOriginKey(orderKeys.trim, 'old'),
                   label: '修边(mm)'
                 },
               },
               {
                 formItem: {
-                  prop: orderKeys.trimRate,
+                  prop: this.$method.getOriginKey(orderKeys.trimRate, 'old'),
                   label: '利用率(%)'
                 },
               },
               {
                 formItem: {
-                  prop: orderKeys.stackUp,
+                  prop: this.$method.getOriginKey(orderKeys.stackUp, 'old'),
                   label: '叠单标志'
                 },
               },
@@ -272,16 +282,16 @@
         }
       },
       getOrderMsg(params) {
-        this.dj_api_extend(planArrangeService.getOrder, params).then(res=>{
+        this.dj_api_extend(planArrangeService.getOrder, params).then((res = {})=>{
           res['tip'] = this.$method.getOrderTip(res, true);
           res[orderKeys.materialSize] = this.$method.getMaterialSize(res);
           res[orderKeys.productSize] = this.$method.getProductSize(res);
           this.formData = res || {};
         });
       },
-      open(param) {
+      open(param = {}) {
         this.$refs.dialog.open();
-        this.getOrderMsg(param);
+        this.getOrderMsg(param.data);
       },
       close() {
         this.$refs.dialog.close();
@@ -290,8 +300,3 @@
     },
   };
 </script>
-<style lang="less" scoped>
-  .dialog-content{
-    height: 760px;//882
-  }
-</style>

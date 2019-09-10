@@ -8,11 +8,7 @@
       :key="data[_keyMap.value]"
       @change="allCheck">
       <i v-if="hasChildren" :class="['el-icon-arrow-right', isExpend ? 'is-expend' : '']" @click.stop.prevent="isExpend = !isExpend"></i>
-      <span>门幅{{data[paperKeys.paperSize]}}</span>
-      <span class="fr">共{{children.reduce((sum, obj)=>{
-        sum += obj['meters'];
-        return sum;
-        }, 0)}}m</span>
+      <slot name="parent" :data="data"></slot>
     </el-checkbox>
     <el-checkbox
       v-if="hasChildren && isExpend"
@@ -23,13 +19,11 @@
       @change="handleChildCheck"
       v-for="item in children">
       <i :class="['el-icon-arrow-right', 'is-leaf']"></i>
-      <span>材质{{item[orderKeys.materialCode]}}</span>
-      <span class="fr">{{item['meters']}}m</span>
+      <slot name="children" :data="item"></slot>
     </el-checkbox>
   </div>
 </template>
 <script>
-  import { orderKeys, paperKeys } from "../../../../utils/system/constant/dataKeys";
   function removeRepeat(arr) {
     return Array.from(new Set(arr));
   }
@@ -84,23 +78,12 @@
       childValue_arr() {
         return this.data[this._keyMap.childKey].map(obj=>obj[this._keyMap.value]);
       },
-      // isAllCheck() {
-      //   let checkChildValue_arr = this.childValue_arr.filter(val=>this.checkList.includes(val));
-      //   return checkChildValue_arr.length === this.childValue_arr.length;
-      // },
       hasCheck() {
-        // let checkChildValue_arr = this.childValue_arr.some(val=>this.checkList.includes(val));
         return this.childValue_arr.some(val=>this.checkList.includes(val));
       },
-      // checkNumber() {
-      //   // let checkChildValue_arr = this.childValue_arr.some(val=>this.checkList.includes(val));
-      //   return this.childValue_arr.filter(val=>this.checkList.includes(val)).length;
-      // },
     },
     data: function () {
       return {
-        orderKeys,
-        paperKeys,
         isExpend: false
       };
     },
@@ -113,12 +96,7 @@
             if (!this.checkList.includes(this.data[this._keyMap.value])) {
               this.checkboxGroup.$emit('input', [...this.checkList, this.data[this._keyMap.value]]);
             }
-            // if (this.isAllCheck) {
-            //   // this.$emit('input', [...this.checkList, this.data[this._keyMap.value]]);
-            //   this.checkboxGroup.$emit('input', [...this.checkList, this.data[this._keyMap.value]]);
-            // }
           } else {
-            // this.$emit('input', this.checkList.filter(val=>val !== this.data[this._keyMap.value]));
             if (!this.hasCheck) {
               this.checkboxGroup.$emit('input', this.checkList.filter(val=>val !== this.data[this._keyMap.value]));
             }
@@ -128,12 +106,9 @@
       allCheck(bool) {
         this.$nextTick(()=>{
           if (this.hasChildren) {
-            // console.log(this.checkboxGroup.$parent);
             if (this.isIndeterminate || !this.isIndeterminate && bool) {
-              // this.$emit('input',  [...this.checkList, ...this.childValue_arr]);
               this.checkboxGroup.$emit('input', removeRepeat([...this.checkList, ...this.childValue_arr, this.data[this._keyMap.value]]));
             } else {
-              // this.$emit('input', this.checkList.filter(val=>!this.childValue_arr.includes(val)));
               this.checkboxGroup.$emit('input', removeRepeat(this.checkList.filter(val=>![...this.childValue_arr, this.data[this._keyMap.value]].includes(val))));
             }
           }

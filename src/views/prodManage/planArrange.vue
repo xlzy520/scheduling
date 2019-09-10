@@ -1,43 +1,49 @@
 <template>
   <single-page class="planArrange">
-    <paper-button></paper-button>
-    <el-tabs v-model="lineId" @tab-click="refresh">
-      <el-tab-pane v-for="item in prodLine_arr"
-                   :key="item.value"
-                   :label="item.label"
-                   :name="item.value"></el-tab-pane>
-    </el-tabs>
-    <div v-if="prodLine_arr.length" class="content">
-      <single-page>
-        <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-        <page-pane>
-          <dj-table ref="table"
-                    :data="tableData"
-                    height="100%"
-                    scroll-load
-                    :page-size-list="[1000,2000,3000]"
-                    :total="total"
-                    :loading="isTableLoading"
-                    @selection-change="selectionChange"
-                    :columns="tableColumns"
-                    :column-type="columnType"
-                    @update-data="getList">
-            <div slot="btn">
-              <div>
-                <el-button v-if="selectList.length" type="primary" @click="openDialog('changeProdLineDialog', selectList, true)">更换生产线</el-button>
-                <el-button v-if="selectList.length" type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
-                <el-button type="primary" @click="sort">排序</el-button>
-                <el-button v-if="selectList.length" type="primary" @click="calcPaperSize">计算门幅</el-button>
-                <el-button v-if="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</el-button>
-                <el-button v-if="selectList.length" type="primary" @click="handleOperate('importProd')">汇入生产</el-button>
-                <el-button v-if="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
-                <el-button v-if="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
+    <single-page v-if="prodLine_arr.length">
+      <paper-button v-model="banPaperSize_arr"></paper-button>
+      <el-tabs v-model="lineId" @tab-click="refresh">
+        <el-tab-pane v-for="item in prodLine_arr"
+                     :key="item.value"
+                     :label="item.label"
+                     :name="item.value"></el-tab-pane>
+      </el-tabs>
+      <div class="content">
+        <single-page>
+          <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
+          <page-pane>
+            <dj-table ref="table"
+                      :data="tableData"
+                      height="100%"
+                      scroll-load
+                      :page-size-list="[1000,2000,3000]"
+                      :defaultPageSize="1000"
+                      :total="total"
+                      :loading="isTableLoading"
+                      @selection-change="selectionChange"
+                      :columns="tableColumns"
+                      :column-type="columnType"
+                      @update-data="getList">
+              <div slot="btn">
+                <div>
+                  <el-button v-if="selectList.length" type="primary" @click="openDialog('changeProdLineDialog', selectList, true)">更换生产线</el-button>
+                  <el-button v-if="selectList.length" type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
+                  <dj-button type="primary" @click="sort">排序</dj-button>
+                  <dj-button v-if="selectList.length" type="primary" @click="calcPaperSize">计算门幅</dj-button>
+                  <dj-button v-if="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
+                  <el-button v-if="selectList.length" type="primary" @click="handleOperate('importProd')">汇入生产</el-button>
+                  <el-button v-if="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
+                  <el-button v-if="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
+                </div>
+                <p class="font-total">总米数：{{totalMeter}}</p>
               </div>
-              <p class="font-total">总米数：{{totalMeter}}</p>
-            </div>
-          </dj-table>
-        </page-pane>
-      </single-page>
+            </dj-table>
+          </page-pane>
+        </single-page>
+      </div>
+    </single-page>
+    <div v-else class="empty-text">
+      暂无生产线
     </div>
     <edit-paper-size-dialog ref="editPaperSizeDialog" v-if="editPaperSizeDialogFlag" @close="editPaperSizeDialogFlag = false" @success="refresh"></edit-paper-size-dialog>
     <change-sort-dialog ref="changeSortDialog" v-if="changeSortDialogFlag" @close="changeSortDialogFlag = false" @success="refresh"></change-sort-dialog>
@@ -108,7 +114,7 @@
           },
           {
             type: 'input',
-            key: orderKeys.materialCode,
+            key: orderKeys.produceMaterial,
             label: '用料代码',
           },
           {
@@ -197,7 +203,7 @@
             width: 97
           },
           {
-            prop: orderKeys.materialCode,
+            prop: orderKeys.produceMaterial,
             label: '用料代码',
             width: 97
           },
@@ -206,9 +212,9 @@
             label: '瓦楞楞型',
             width: 97,
             formatter(row, index, cur) {
-              // let layer = row[orderKeys.layer] || '';
+              let layer = row[orderKeys.layer] || '';
               let fluteType = cur || '';
-              return fluteType;
+              return layer + fluteType;
             }
           },
           {
@@ -267,6 +273,7 @@
         searchData: {},
         lineId: undefined,
         selectList: [],
+        banPaperSize_arr: [],
 
         editPaperSizeDialogFlag: false,
         changeSortDialogFlag: false,
@@ -308,6 +315,11 @@
       selectionChange(selectList) {
         this.selectList = selectList;
       },
+      getTotalMeters() {
+        this.dj_api_extend(planArrangeService.getTotalMeters, {lineId: this.lineId}).then(res=>{
+          this.totalMeter = res || 0;
+        });
+      },
       getList(page) {
         this.selectList = [];
         let post = {
@@ -315,8 +327,8 @@
           ...page,
         };
         post['lineId'] = this.lineId;
-        console.log(post);
         this.isTableLoading = true;
+        this.getTotalMeters();
         this.dj_api_extend(planArrangeService.list, post).then(res=>{
           this.total = res.total || 0;
           this.tableData = res.list || [];
@@ -329,11 +341,10 @@
         let tileModel = query[orderKeys.fluteType].filter(str=>str !== 'all');
         let materialSize = query[orderKeys.materialSize] || [];
         let paperSizeRange = query['paperSizeRange'] || [];
-        query['paperSizeStart'] = paperSizeRange[0];
-        query['paperSizeEnd'] = paperSizeRange[1];
+        query['startPaperSize'] = paperSizeRange[0];
+        query['endPaperSize'] = paperSizeRange[1];
         query[orderKeys.materialWidth] = materialSize[1];
         query[orderKeys.materialLength] = materialSize[0];
-        query[orderKeys.materialWidth] = materialSize[1];
         query[orderKeys.fluteType] = tileModel.length ? tileModel : null;
         this.searchData = query;
         this.$refs.table.changePage(1);
@@ -362,7 +373,7 @@
         let obj = map[type];
         if (obj) {
           this.$method.tipBox(obj.tip, ()=>{
-            return this.dj_api_extend(obj.api, this.selectList).then(()=>{
+            return this.dj_api_extend(obj.api, {orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId}).then(()=>{
               this.$message(obj.msg);
               this.refresh();
             });
@@ -410,26 +421,26 @@
         }
         this[name + 'Flag'] = true;
         this.$nextTick(() => {
-          this.$refs[name].open(row);
+          this.$refs[name].open({data: row, lineId: this.lineId});
         });
       },
-      sort() {
-        this.dj_api_extend(planArrangeService.sort).then(()=>{
+      sort(cb) {
+        this.dj_api_extend(planArrangeService.sort, {lineId: this.lineId}).then(()=>{
           this.$message('排序成功');
           this.refresh();
-        });
+        }).finally(cb);
       },
-      stackUp() {
-        this.dj_api_extend(planArrangeService.stackUp).then(()=>{
+      stackUp(cb) {
+        this.dj_api_extend(planArrangeService.stackUp, {lineId: this.lineId}).then(()=>{
           this.$message('叠单成功');
           this.refresh();
-        });
+        }).finally(cb);
       },
-      calcPaperSize() {
-        this.dj_api_extend(planArrangeService.calcPaperSize).then(()=>{
+      calcPaperSize(cb) {
+        this.dj_api_extend(planArrangeService.calcPaperSize, {banList: this.banPaperSize_arr, orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId}).then(()=>{
           this.$message('计算门幅成功');
           this.refresh();
-        });
+        }).finally(cb);
       },
       refresh() {
         this.$refs.table.updateData();
@@ -440,9 +451,11 @@
 </script>
 <style lang="less" scoped>
   .planArrange {
-    padding-top: 10px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
+    /*height: calc(~'100% - 10px');*/
+    /*box-sizing: border-box;*/
     .content {
       flex: 1 1;
       position: relative;
@@ -461,6 +474,12 @@
     .font-total {
       font-size: 16px;
       margin-top: 16px;
+    }
+    .empty-text {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 </style>

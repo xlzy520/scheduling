@@ -21,6 +21,6 @@ module.exports = [
   {name: 'prodTask', url: '/produceTask'},
   {name: 'report', url: '/report'},
   {name: 'plannedMerger', url: '/merge'},
-  {name: 'planArrange', url: '/planArrange'},
+  {name: 'planArrange', url: '/arrange'},
   {name: 'record', url: '/record'},
 ];

@@ -9,14 +9,14 @@
           <a class="fr operate" @click="retract">收起</a>
         </div>
         <p class="line"></p>
-        <div class="paper-button-content">
-          <el-collapse ref="collapse" accordion @change="getPaperStorage">
+        <div v-loading="isLoading" class="paper-button-content">
+          <el-collapse ref="collapse" accordion @change="">
             <el-collapse-item v-for="item in paperSize_arr" :name="item[paperKeys.paperSize]">
               <template slot="title">
-                <a class="operate disabled-button" @click.stop="changeEffect(item)">{{item['effected'] ? '禁用' : '启用'}}</a>
+                <a class="operate disabled-button" @click.stop="changeEffect(item)">{{judgeEffect(item) ? '禁用' : '启用'}}</a>
                 <span class="paper-size-text">{{item[paperKeys.paperSize]}}</span>
               </template>
-              <base-table :loading="isLoading_map[item[paperKeys.paperSize]] || false" :data="paperTableData_map[item[paperKeys.paperSize]]" :columns="tableColumns"></base-table>
+              <base-table :data="item.tableData" :columns="tableColumns"></base-table>
             </el-collapse-item>
           </el-collapse>
         </div>
@@ -30,62 +30,93 @@
 
   export default {
     name: 'paperButton',
+    props: {
+      value: {
+        type: Array,
+        default: ()=>[]
+      }
+    },
+    computed: {
+      value_map() {
+        return this.value.reduce((map, str)=>{
+          map[str] = true;
+          return map;
+        }, {});
+      }
+    },
     data: function () {
       return {
         paperKeys,
         paperSize_arr: [],
-        paperTableData_map: {},
-        tableColumns: [],
-        isLoading_map: {}
+        tableColumns: [
+          {
+            prop: paperKeys.paperCode,
+            label: '原纸代码'
+          },
+          {
+            prop: 'totalLength',
+            label: '库存米数'
+          },
+          {
+            prop: 'expectLength',
+            label: '预计米数'
+          },
+          {
+            prop: 'totalCount',
+            label: '库存件数'
+          },
+        ],
+        isLoading: false,
       };
     },
     created() {
       this.getPaperSizeList();
     },
     methods: {
+      judgeEffect(item) {
+        return !this.value_map[item[paperKeys.paperSize]]
+      },
       changeEffect(item) {
-        let post = {
-          ...item
-        };
-        this.dj_api_extend(planArrangeService.changeEffect, post).then(res=>{
-          this.$message(`该门幅已被${item['effected'] ? '禁用' : '启用'}`);
-          item['effected'] = !item['effected'];
-        });
+        if (this.judgeEffect(item)) {
+          this.$emit('input', [...this.value].concat([item[paperKeys.paperSize]]));
+        } else {
+          this.$emit('input', this.value.filter(str=>str !== item[paperKeys.paperSize]));
+        }
+        this.$message(`该门幅已被${!this.judgeEffect(item) ? '禁用' : '启用'}`);
+        // this.dj_api_extend(planArrangeService.changeEffect, post).then(res=>{
+        //   this.$message(`该门幅已被${this.judgeEffect(item) ? '禁用' : '启用'}`);
+        // });
       },
       getPaperSizeList() {
-        this.dj_api_extend(planArrangeService.getPaperSizeList).then(res=>{
-          this.paperSize_arr = res.list || [];
+        this.isLoading = true;
+        this.dj_api_extend(planArrangeService.getPaperSizeList).then((res = {})=>{
+          this.paperSize_arr = Object.keys(res).map(key=>{
+            let obj = {};
+            obj[paperKeys.paperSize] = key;
+            obj['tableData'] = res[key];
+            return obj;
+          });
+          // this.paperSize_arr = res || [];
         }).finally(()=>{
-          this.paperSize_arr = [
-            {
-              paperSize: '1800',
-              effected: true
-            },
-            {
-              paperSize: '1900',
-              effected: false
-            },
-            {
-              paperSize: '2000',
-              effected: false
-            },
-            {
-              paperSize: '2100',
-              effected: true
-            }
-          ];
-        });
-      },
-      getPaperStorage(paperSize) {
-        // let paperSize = item[paperKeys.paperSize];
-        if (this.paperTableData_map[paperSize] || !paperSize) {
-          return;
-        }
-        this.$set(this.isLoading_map, paperSize, true);
-        planArrangeService.getPaperSizeList({paperSize}).then(res=>{
-          this.paperTableData_map[paperSize] = res.list || [];
-        }).finally(()=>{
-          this.$set(this.isLoading_map, paperSize, false);
+          this.isLoading = false;
+          // this.paperSize_arr = [
+          //   {
+          //     paperSize: '1800',
+          //     effected: true
+          //   },
+          //   {
+          //     paperSize: '1900',
+          //     effected: false
+          //   },
+          //   {
+          //     paperSize: '2000',
+          //     effected: false
+          //   },
+          //   {
+          //     paperSize: '2100',
+          //     effected: true
+          //   }
+          // ];
         });
       },
       retract() {
@@ -98,7 +129,7 @@
   .paper-button {
     position: absolute;
     right: 32px;
-    top: 11px;
+    top: 1px;
     z-index: 100;
     .el-button {
       padding: 10px 27px;
@@ -117,12 +148,13 @@
     right: 4px;
   }
   .paper-button-content {
+    min-height: 60px;
     max-height: 350px;
     overflow: auto;
     margin: 0 20px;
   }
   .el-collapse {
-    border-top: none;
+    border: none;
     /deep/ .el-collapse-item__header {
       position: relative;
       /deep/ .el-collapse-item__arrow {

@@ -1,6 +1,7 @@
 <template>
   <dj-dialog ref="dialog" @close="close" title="调整排序" width="400px" @confirm="confirm">
     <dj-form ref="form" :formData="formData" :formOptions="formOptions"></dj-form>
+    <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
 </template>
 <script>
@@ -13,6 +14,7 @@
       return {
         formData: {},
         orders: [],
+        lineId: undefined
       };
     },
     computed: {
@@ -21,7 +23,7 @@
           {
             type: 'input',
             formItem: {
-              prop: 'sort',
+              prop: 'newPosition',
               label: '订单排序',
               rules: [
                 {
@@ -45,6 +47,7 @@
         this.$refs.form.validate(()=>{
           let post = {
             ...this.formData,
+            lineId: this.lineId,
             orderList: this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null
           };
           this.dj_api_extend(planArrangeService.changeSort, post).then(()=>{
@@ -54,11 +57,12 @@
           }).finally(()=>{
             cb && cb();
           });
-        });
+        }, cb);
       },
-      open(orders) {
+      open(params) {
         this.$refs.dialog.open();
-        this.orders = orders || [];
+        this.orders = params.data || [];
+        this.lineId = params.lineId || [];
       },
       close() {
         this.$refs.dialog.close();
