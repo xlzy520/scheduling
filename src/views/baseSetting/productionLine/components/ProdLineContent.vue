@@ -54,10 +54,10 @@
         </card>
       </div>
     </div>
-    <dj-dialog v-if="visible" ref="dialog" @close="close" title="查看详情" width="780px" :has-footer="false">
-      <div class="dialog">
+    <dj-dialog v-if="visible" ref="dialog" @close="close" title="查看详情" width="400px" :has-footer="false">
+      <div class="dialog" style="height: 355px">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"
-                 :column-num="2" labelWidth="132px"></dj-form>
+                 :column-num="1" labelWidth="132px"></dj-form>
       </div>
     </dj-dialog>
   </div>
