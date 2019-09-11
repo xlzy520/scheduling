@@ -94,7 +94,7 @@
         tableData: [],
         tableColumns: [
           {
-            label: '操作', prop: 'operation',
+            label: '操作', prop: 'operation',fixed: 'right',
             render: (h, {props: {row}}) => {
               return (
                 <div class="operation">
@@ -124,7 +124,7 @@
           {label: '瓦楞楞型', prop: 'tileModel'},
           {label: '订单数量', prop: 'pieceAmount'},
           {label: '处理数量', prop: 'processeAmount'},
-          {label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
+          {label: '下料规格(cm)', prop: 'xialiaoguige', width: 130,
             formatter: row=>row.materialLength + '*' + row.materialWidth},
           {label: '产品规格', prop: 'prodGuige', width: 210, formatter: row=>{
               return row.productLength + '*' + row.productWidth + '*' + row.productHeight;

@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" title="导入计划" width="480px" @confirm="confirm">
+  <dj-dialog ref="dialog" @close="close" title="导入计划" width="400px" @confirm="confirm">
     <dj-form v-show="!importing" ref="form" :formData="formData" :formOptions="formOptions"></dj-form>
     <div v-show="importing" class="progress-wrap">
       <auto-progress ref="progress" :trickleSpeed="1000"></auto-progress>

@@ -1,5 +1,5 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" title="查看" width="593px">
+    <dj-dialog ref="dialog" @close="close" title="查看" width="780px" :has-footer="false">
       <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
           <classify-form ref="form" :config="config" :formData="order" :column-num="2"></classify-form>
@@ -21,9 +21,6 @@
           <base-table :data="recordData" :columns="recordColumns"></base-table>
         </el-tab-pane>
       </el-tabs>
-      <div slot="footer">
-        <el-button @click="close">关闭</el-button>
-      </div>
     </dj-dialog>
 </template>
 <script>
