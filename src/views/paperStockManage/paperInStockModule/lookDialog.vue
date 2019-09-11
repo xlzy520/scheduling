@@ -24,6 +24,7 @@
   import {djForm} from 'djweb';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import paperWarehouseService from '../../../api/service/paperWarehouse';
+  import record from "../../../api/service/record";
   const {rules} = djForm;
   export default {
     name: 'lookDialog',
@@ -173,13 +174,14 @@
         // ],
         recordData: [],
         recordColumns: [
-          {label: '操作时间', prop: 'time', width: 226},
+          {label: '操作时间', prop: 'operateTime', width: 226},
           {label: '操作人', prop: 'operator', width: 136},
-          {label: '操作内容', prop: 'event', width: 742}
+          {label: '操作内容', prop: 'operateDetail', width: 742}
         ],
         activeTab: '1',
         isShowMoney: true,
         isTableLoading: true,
+        id: ''
       };
     },
     computed: {
@@ -249,9 +251,9 @@
         ];
         let hidden_arr = [];
         if (!this.isShowMoney) {
-          hidden_arr = [cylinderKeys.totalMoney]
+          hidden_arr = [cylinderKeys.totalMoney];
         }
-        return total_arr.filter(obj=>!hidden_arr.includes(obj.formItem.prop))
+        return total_arr.filter(obj=>!hidden_arr.includes(obj.formItem.prop));
       },
       tableColumns() {
         let total_arr = [
@@ -333,9 +335,9 @@
         ];
         let hidden_arr = [];
         if (!this.isShowMoney) {
-          hidden_arr = [cylinderKeys.unitPrice, cylinderKeys.money]
+          hidden_arr = [cylinderKeys.unitPrice, cylinderKeys.money];
         }
-        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop))
+        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
     },
     created() {
@@ -345,6 +347,7 @@
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       open(param) {
+        this.id = param.id;
         this.$refs.dialog.open();
         this.isShowMoney = param.isShowMoney;
         this.isTableLoading = true;
@@ -356,14 +359,23 @@
           this.isTableLoading = false;
         });
       },
+      getRecord() {
+        this.isTableLoading = true;
+        this.dj_api_extend(record.list, {
+          sourceId: this.id
+        }).then((res) => {
+          this.recordData = res.list || [];
+        }).finally(() => {
+          this.isTableLoading = false;
+        });
+      },
       close() {
         this.$refs.dialog.close();
         this.$emit('close');
       },
       handleClick() {
         if (this.activeTab === '2' && !this.recordData.length) {
-          // todo 对接获取操作记录接口
-          console.log('getRecord');
+          this.getRecord();
         }
       }
     }
