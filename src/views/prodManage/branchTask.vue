@@ -94,13 +94,11 @@
         tableData: [],
         tableColumns: [
           {
-            label: '操作', prop: 'operation',fixed: 'right',
+            label: '操作', prop: 'operation', fixed: 'right', width: '70',
             render: (h, {props: {row}}) => {
               return (
-                <div class="operation">
-                  <a class={row.divideState === '已处理' ? 'divideState-completed' : ''}
-                     onClick={() => this.handle(row)}>处理</a>
-                </div>
+                <a class={row.divideState === '已处理' ? 'divideState-completed' : ''}
+                   onClick={() => this.handle(row)}>处理</a>
               );
             },
           },
@@ -117,23 +115,23 @@
             const textMap = ['待处理', '处理中', '已处理'];
             return textMap[row.divideState];
             }},
-          {label: '合并编号', prop: 'combineId', width: 160},
-          {label: '订单编号', prop: 'grouponOrderNumber', width: 220},
-          {label: '生产编号', prop: 'produceOrderNumber', width: 130},
+          {label: '合并编号', prop: 'combineId'},
+          {label: '订单编号', prop: 'grouponOrderNumber'},
+          {label: '生产编号', prop: 'produceOrderNumber'},
           {label: '用料代码', prop: 'materialCode'},
           {label: '瓦楞楞型', prop: 'tileModel'},
           {label: '订单数量', prop: 'pieceAmount'},
           {label: '处理数量', prop: 'processeAmount'},
           {label: '下料规格(cm)', prop: 'xialiaoguige', width: 130,
             formatter: row=>row.materialLength + '*' + row.materialWidth},
-          {label: '产品规格', prop: 'prodGuige', width: 210, formatter: row=>{
+          {label: '产品规格', prop: 'prodGuige', width: 160, formatter: row=>{
               return row.productLength + '*' + row.productWidth + '*' + row.productHeight;
             }},
           {label: '压线方式', prop: 'staveType'},
-          {label: '纵压公式', prop: 'vformula', width: 120},
-          {label: '横压公式', prop: 'hformula', width: 160},
+          {label: '纵压公式', prop: 'vformula', width: 160},
+          {label: '横压公式', prop: 'hformula'},
           {label: '订单交期', prop: 'arriveTime', width: 180},
-          {label: '客户名称', prop: 'customerName', width: 160},
+          {label: '客户名称', prop: 'customerName', width: 180},
           {label: '产品名称', prop: 'grouponProductName', width: 160},
           {label: '生成时间', prop: 'createTime', width: 180},
           {label: '处理人', prop: 'operator', width: 120},
