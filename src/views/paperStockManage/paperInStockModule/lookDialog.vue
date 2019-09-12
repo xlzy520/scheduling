@@ -1,22 +1,30 @@
 <template>
     <dj-dialog ref="dialog" @close="close" width="872px" title="查看">
-      <div class="dialog-content">
-        <el-tabs v-model="activeTab" @tab-click="handleClick">
-          <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
-            <dj-form labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
-            <p class="font-subhead">纸筒信息</p>
-            <base-table ref="table"
-                        :data="tableData"
-                        height="370"
-                        :columns="tableColumns"
-                        :column-type="['index']">
-            </base-table>
-          </el-tab-pane>
-          <el-tab-pane label="操作记录" name="2">
-            <base-table :data="recordData" :columns="recordColumns"></base-table>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+      <el-tabs v-model="activeTab" @tab-click="handleClick">
+        <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
+          <dj-form labelPosition="left" labelWidth="" labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
+          <!--<p class="font-subhead">纸筒信息</p>-->
+          <p class="font-subhead">
+            纸筒信息
+            <span class="sub-title">
+              <span>总重量：{{formData[cylinderKeys.totalWeight]}}kg</span>
+              <span>总件数：{{formData[cylinderKeys.totalAmount]}}件</span>
+              <span>总金额：{{formData[cylinderKeys.totalMoney]}}元</span>
+            </span>
+          </p>
+          <base-table ref="table"
+                      :data="tableData"
+                      border
+                      height="370"
+                      :columns-type-props="columnsTypeProps"
+                      :columns="tableColumns"
+                      :column-type="['index']">
+          </base-table>
+        </el-tab-pane>
+        <el-tab-pane label="操作记录" name="2">
+          <base-table :data="recordData" :columns="recordColumns"></base-table>
+        </el-tab-pane>
+      </el-tabs>
       <div slot="footer">
         <el-button @click="close">关闭</el-button>
       </div>
@@ -181,10 +189,17 @@
           {label: '操作人', prop: 'operator', width: 136},
           {label: '操作内容', prop: 'operateDetail', width: 742}
         ],
+        columnsTypeProps: {
+          index: {
+            width: 64,
+            fixed: false
+          }
+        },
         activeTab: '1',
         isShowMoney: true,
         isTableLoading: true,
-        id: ''
+        id: '',
+        cylinderKeys
       };
     },
     mixins: [dialogFixed],
@@ -228,24 +243,24 @@
               label: '叉车员'
             }
           },
-          {
-            formItem: {
-              prop: cylinderKeys.totalWeight,
-              label: '总重量'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.totalAmount,
-              label: '总件数'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.totalMoney,
-              label: '总金额'
-            }
-          },
+          // {
+          //   formItem: {
+          //     prop: cylinderKeys.totalWeight,
+          //     label: '总重量'
+          //   }
+          // },
+          // {
+          //   formItem: {
+          //     prop: cylinderKeys.totalAmount,
+          //     label: '总件数'
+          //   }
+          // },
+          // {
+          //   formItem: {
+          //     prop: cylinderKeys.totalMoney,
+          //     label: '总金额'
+          //   }
+          // },
           {
             formItem: {
               prop: cylinderKeys.remark,
@@ -264,42 +279,52 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 150
+            width: 117
           },
           {
             prop: paperKeys.paperNumber,
             label: '原纸编号',
-            width: 139,
+            width: 117,
           },
           {
             prop: paperKeys.paperGram,
             label: '克重(g)',
-            width: 139,
+            width: 85,
           },
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
-            width: 139,
+            width: 104,
           },
           {
-            prop: cylinderKeys.length,
-            label: '长度(m)',
-            width: 101,
+            prop: paperKeys.warehouseName,
+            label: '仓库',
+            width: 112,
           },
           {
-            prop: cylinderKeys.area,
-            label: '面积(㎡)',
-            width: 103,
+            prop: paperKeys.warehouseAreaName,
+            label: '库区',
+            width: 112,
+          },
+          {
+            prop: cylinderKeys.unitPrice,
+            label: '单价',
+            width: 88
+          },
+          {
+            prop: cylinderKeys.money,
+            label: '金额',
+            width: 88
           },
           {
             prop: paperKeys.paperCode,
             label: '原纸代码',
-            width: 129,
+            width: 127,
           },
           {
             prop: paperKeys.paperType,
             label: '原纸类型',
-            width: 90,
+            width: 89,
             formatter: (row, index, cur) => {
               let obj = this.$enum.paperType._swap[cur] || {};
               return obj.label || '';
@@ -308,30 +333,22 @@
           {
             prop: paperKeys.paperSize,
             label: '门幅(mm)',
-            width: 97,
+            width: 95,
           },
           {
-            prop: paperKeys.warehouseName,
-            label: '仓库',
-            width: 139,
+            prop: cylinderKeys.length,
+            label: '长度(m)',
+            width: 83,
           },
           {
-            prop: paperKeys.warehouseAreaName,
-            label: '库区',
-            width: 121,
-          },
-          {
-            prop: cylinderKeys.unitPrice,
-            label: '单价'
-          },
-          {
-            prop: cylinderKeys.money,
-            label: '金额',
-            width: 105
+            prop: cylinderKeys.area,
+            label: '面积(㎡)',
+            width: 89,
           },
           {
             prop: paperKeys.paperStatus,
             label: '原纸状态',
+            width: 88,
             formatter(row, index, cur) {
               return cur ? '已出库' : '已入库';
             }
@@ -387,13 +404,52 @@
   };
 </script>
 <style lang="less" scoped>
-  /*.dialog-content{*/
-    /*height: 594px;//706*/
-  /*}*/
   .dj-form {
     margin-bottom: 13px;
     /deep/ .el-form-item {
       margin-bottom: 0;
+    }
+  }
+  .sub-title {
+    font-size: 13px;
+    margin-left: 36px;
+    span {
+      margin-right: 24px;
+    }
+  }
+  .dj-form {
+    margin-top: 9px;
+    margin-bottom: 4px;
+    margin-left: 30px;
+    /deep/ .el-form-item {
+      margin-top: 0;
+      margin-bottom: 16px;
+      > label, > div {
+        line-height: 22px;
+      }
+    }
+    /deep/ .el-row:nth-last-of-type(1) {
+      .dj-input-content {
+        width: 100%;
+      }
+    }
+  }
+  .el-tabs__content .el-tab-pane:nth-of-type(1) {
+    .base-table {
+      /deep/ .td-btn-group .dj-common-red-delete {
+        color: red;
+        cursor: pointer;
+      }
+      /deep/ .icon-require {
+        color: red;
+        vertical-align: middle;
+      }
+      /deep/ .el-table__header-wrapper th, /deep/ .el-table__fixed-header-wrapper th {
+        padding: 8px 0;
+      }
+      /deep/ .el-table__row td, /deep/ .el-table__fixed-footer-wrapper td, /deep/ .el-table__footer-wrapper td {
+        padding: 7px;
+      }
     }
   }
 </style>

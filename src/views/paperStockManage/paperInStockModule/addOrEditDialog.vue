@@ -1,16 +1,24 @@
 <template>
   <div>
-    <dj-dialog ref="dialog" @close="confirmClose" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+    <dj-dialog ref="dialog" @close="confirmClose" width="1086px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
       <div v-loading="isTableLoading">
         <p class="font-subhead">基础信息</p>
         <dj-form ref="form"
                  :formData="formData"
                  :formOptions="formOptions"
+                 :col-rule="colRule"
                  :column-num="3"></dj-form>
-        <p class="font-subhead">纸筒信息</p>
+        <p class="font-subhead">
+          纸筒信息
+          <span class="sub-title">
+            <span>总重量：{{totalWeight}}kg</span>
+          <span>总件数：{{effectiveTableData.length}}件</span>
+          </span>
+        </p>
         <base-table ref="table"
                     v-if="readyTable"
-                    :column-type-props="{index: {fixed: false}}"
+                    border
+                    :column-type-props="{index: {fixed: false,width: 64}}"
                     :data="tableData"
                     :lazy-total="tableMaxLength"
                     :lazy-remote="()=>getEmptyData(10)"
@@ -135,7 +143,7 @@
           {
             prop: 'operate',
             label: '操作',
-            width: 57,
+            width: 60,
             render: (h, {props: {index, row}}) => {
               const disabled = () => {
                 return this.tableData.length === 1;
@@ -149,7 +157,7 @@
               };
               return (
                 <div class="td-btn-group">
-                  <a class={{'dj-common-red-delete': true, disabled: checkDisabled(row)}} on-click={()=>!checkDisabled(row)&&remove()}></a>
+                  <i class={{'dj-common-red-delete': true, disabled: checkDisabled(row)}} on-click={()=>!checkDisabled(row)&&remove()}></i>
                 </div>
               );
             }
@@ -157,12 +165,13 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 150
+            width: 117
           },
           {
             prop: paperKeys.paperNumber,
             label: '原纸编号',
-            width: 139,
+            width: 117,
+            className: 'is-change',
             renderHeader() {
               return (
                 <span><i class="icon-require">*</i>原纸编号</span>
@@ -220,7 +229,8 @@
           {
             prop: paperKeys.paperGram,
             label: '克重(g)',
-            width: 139,
+            width: 85,
+            className: 'is-change',
             renderHeader() {
               return (
                 <span><i class="icon-require">*</i>克重(g)</span>
@@ -239,7 +249,8 @@
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
-            width: 139,
+            width: 104,
+            className: 'is-change',
             renderHeader() {
               return (
                 <span><i class="icon-require">*</i>重量(kg)</span>
@@ -256,9 +267,53 @@
             }
           },
           {
+            prop: paperKeys.warehouseId,
+            label: '仓库',
+            width: 112,
+            className: 'is-change',
+            propsHandler: (props) => {
+              return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}, disabled: checkDisabled(props.row)}
+            },
+            component: TABLE_SELECT
+          },
+          {
+            prop: paperKeys.warehouseAreaId,
+            label: '库区',
+            width: 112,
+            className: 'is-change',
+            propsHandler: (props) => {
+              return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}, disabled: checkDisabled(props.row)}
+            },
+            component: TABLE_SELECT2,
+            listeners: {
+              input: (props) => {
+                this.tableData.splice(props.index, 1, props.row);
+              }
+            }
+          },
+          {
+            prop: paperKeys.paperCode,
+            label: '原纸代码',
+            width: 127,
+          },
+          {
+            prop: paperKeys.paperType,
+            label: '原纸类型',
+            width: 89,
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.paperType._swap[cur] || {};
+              return obj.label || '';
+            }
+          },
+          {
+            prop: paperKeys.paperSize,
+            label: '门幅(mm)',
+            width: 95,
+          },
+          {
             prop: cylinderKeys.length,
             label: '长度(m)',
-            width: 105,
+            width: 83,
             formatter(row, index, cur) {
               if (cur) {
                 cur = Number(cur).toFixed(2);
@@ -271,7 +326,7 @@
           {
             prop: cylinderKeys.area,
             label: '面积(㎡)',
-            width: 105,
+            width: 89,
             formatter(row, index, cur) {
               if (cur) {
                 cur = Number(cur).toFixed(2);
@@ -282,50 +337,9 @@
             }
           },
           {
-            prop: paperKeys.paperCode,
-            label: '原纸代码',
-            width: 129,
-          },
-          {
-            prop: paperKeys.paperType,
-            label: '原纸类型',
-            width: 105,
-            formatter: (row, index, cur) => {
-              let obj = this.$enum.paperType._swap[cur] || {};
-              return obj.label || '';
-            }
-          },
-          {
-            prop: paperKeys.paperSize,
-            label: '门幅(mm)',
-            width: 97,
-          },
-          {
-            prop: paperKeys.warehouseId,
-            label: '仓库',
-            width: 139,
-            propsHandler: (props) => {
-              return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}, disabled: checkDisabled(props.row)}
-            },
-            component: TABLE_SELECT
-          },
-          {
-            prop: paperKeys.warehouseAreaId,
-            label: '库区',
-            width: 121,
-            propsHandler: (props) => {
-              return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}, disabled: checkDisabled(props.row)}
-            },
-            component: TABLE_SELECT2,
-            listeners: {
-              input: (props) => {
-                this.tableData.splice(props.index, 1, props.row);
-              }
-            }
-          },
-          {
             prop: paperKeys.paperStatus,
             label: '原纸状态',
+            width: 88,
             formatter: (row, index, cur) => {
               switch (cur) {
                 case true:
@@ -355,6 +369,14 @@
       };
     },
     computed: {
+      totalWeight() {
+        return this.effectiveTableData.reduce((sum, obj) => {
+          let weight = Number(obj[cylinderKeys.weight]) || 0;
+          // sum += weight;
+          // return sum;
+          return this.$method.accuracyCompute(sum, weight, '+');
+        }, 0).toFixed(3);
+      },
       formOptions() {
         return [
           {
@@ -404,7 +426,7 @@
             formItem: {
               prop: cylinderKeys.storageType,
               label: '入库类型',
-              rules: [rules.required('请选择入库类型')]
+              rules: [rules.required(' ')]
             },
             attrs: {
               keyMap: {
@@ -465,36 +487,36 @@
           //     apiArray: [()=>this.dj_api_extend(paperWarehouseService.getDepartment), this.getRole, this.getMember],
           //   }
           // },
-          {
-            type: 'input',
-            formItem: {
-              prop: cylinderKeys.totalWeight,
-              label: '总重量'
-            },
-            attrs: {
-              disabled: true
-            },
-            computed: () => {
-              return this.effectiveTableData.reduce((sum, obj) => {
-                let weight = Number(obj[cylinderKeys.weight]) || 0;
-                sum += weight;
-                return sum;
-              }, 0).toFixed(3);
-            }
-          },
-          {
-            type: 'input',
-            formItem: {
-              prop: cylinderKeys.totalAmount,
-              label: '总件数'
-            },
-            attrs: {
-              disabled: true
-            },
-            computed: () => {
-              return this.effectiveTableData.length;
-            }
-          },
+          // {
+          //   type: 'input',
+          //   formItem: {
+          //     prop: cylinderKeys.totalWeight,
+          //     label: '总重量'
+          //   },
+          //   attrs: {
+          //     disabled: true
+          //   },
+          //   computed: () => {
+          //     return this.effectiveTableData.reduce((sum, obj) => {
+          //       let weight = Number(obj[cylinderKeys.weight]) || 0;
+          //       sum += weight;
+          //       return sum;
+          //     }, 0).toFixed(3);
+          //   }
+          // },
+          // {
+          //   type: 'input',
+          //   formItem: {
+          //     prop: cylinderKeys.totalAmount,
+          //     label: '总件数'
+          //   },
+          //   attrs: {
+          //     disabled: true
+          //   },
+          //   computed: () => {
+          //     return this.effectiveTableData.length;
+          //   }
+          // },
           {
             type: 'input',
             formItem: {
@@ -502,8 +524,9 @@
               label: '备注信息'
             },
             attrs: {
-              type: 'textarea',
-              height: 100,
+              // width: '100%',
+              // type: 'textarea',
+              // height: 100,
               maxlength: 50,
             }
           },
@@ -519,7 +542,7 @@
       }
     },
     created() {
-      this.getEmptyData(10).then(res=>{
+      this.getEmptyData(20).then(res=>{
         this.tableData.push(...res);
       });
       this.getAllWarehouse();
@@ -828,15 +851,61 @@
   };
 </script>
 <style lang="less" scoped>
-  .base-table /deep/ .td-btn-group .dj-common-red-delete {
-    color: red;
-    cursor: pointer;
-  }
-  /deep/ .icon-require {
-    color: red;
-    vertical-align: middle;
-  }
   /deep/ .loading-wrap {
     display: none;
+  }
+  .sub-title {
+    font-size: 13px;
+    margin-left: 36px;
+    span {
+      margin-right: 24px;
+    }
+  }
+  .dj-form {
+    margin-bottom: 11px;
+    position: relative;
+    width: 1060px;
+    left: -14px;
+    /deep/ .el-row .el-col {
+      padding: 0;
+    }
+    /deep/ .el-form-item {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    /deep/ .el-row:nth-last-of-type(1) {
+      .dj-input-content {
+        width: 100%;
+      }
+    }
+  }
+  .base-table {
+    /*/deep/ .td-btn-group .dj-common-red-delete {*/
+      /*color: red;*/
+      /*cursor: pointer;*/
+    /*}*/
+    /*/deep/ .icon-require {*/
+      /*color: red;*/
+      /*vertical-align: middle;*/
+    /*}*/
+    /deep/ .el-table__header-wrapper th, /deep/ .el-table__fixed-header-wrapper th {
+      padding: 8px 0;
+    }
+    /deep/ .el-table__row td, /deep/ .el-table__fixed-footer-wrapper td, /deep/ .el-table__footer-wrapper td {
+      padding: 0;
+      &.is-change {
+        background-color: rgba(248,152,22,0.1);
+        .el-autocomplete {
+          width: 100%;
+        }
+        .el-input__inner {
+          border: none;
+          background-color: transparent;
+          line-height: 33px;
+          height: 33px;
+          padding-left: 0;
+        }
+      }
+    }
   }
 </style>

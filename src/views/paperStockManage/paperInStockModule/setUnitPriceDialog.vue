@@ -2,12 +2,21 @@
   <dj-dialog ref="dialog" @close="confirmClose" width="1160px" title="设置单价" @confirm="confirm">
     <div v-loading="isTableLoading">
       <p class="font-subhead">基础信息</p>
-      <dj-form ref="form" labelSuffix=":" :formData="formData" :formOptions="formOptions" :column-num="3"
+      <dj-form labelPosition="left" labelWidth="" ref="form" labelSuffix=":" :formData="formData" :formOptions="formOptions" :column-num="3"
                :col-rule="colRule"></dj-form>
-      <p class="font-subhead">纸筒信息</p>
+      <p class="font-subhead">
+        纸筒信息
+        <span class="sub-title">
+          <span>总重量：{{formData[cylinderKeys.totalWeight]}}kg</span>
+          <span>总件数：{{formData[cylinderKeys.totalAmount]}}件</span>
+          <span>总金额：{{totalMoney}}元</span>
+        </span>
+      </p>
       <base-table ref="table"
+                  border
                   :data="tableData"
                   max-height="370"
+                  :columns-type-props="columnsTypeProps"
                   :columns="tableColumns"
                   :column-type="['index']">
       </base-table>
@@ -25,6 +34,7 @@
     name: 'setUnitPriceDialog',
     data: function () {
       return {
+        cylinderKeys,
         formOptions: [
           {
             formItem: {
@@ -46,8 +56,9 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.deliveryBillId,
-              label: '送货单号'
+              prop: cylinderKeys.storageType,
+              label: '入库类型',
+              rules: [rules.required('')]
             }
           },
           {
@@ -59,35 +70,34 @@
           },
           {
             formItem: {
-              prop: cylinderKeys.storageType,
-              label: '入库类型',
-              rules: [rules.required('')]
+              prop: cylinderKeys.deliveryBillId,
+              label: '送货单号'
             }
           },
-          {
-            formItem: {
-              prop: cylinderKeys.totalWeight,
-              label: '总重量'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.totalAmount,
-              label: '总件数'
-            }
-          },
-          {
-            formItem: {
-              prop: cylinderKeys.totalMoney,
-              label: '总金额'
-            },
-            computed: () => {
-              return this.tableData.reduce((sum, obj) => {
-                sum += Number(obj[cylinderKeys.money]) || 0;
-                return sum;
-              }, 0).toFixed(2);
-            }
-          },
+          // {
+          //   formItem: {
+          //     prop: cylinderKeys.totalWeight,
+          //     label: '总重量'
+          //   }
+          // },
+          // {
+          //   formItem: {
+          //     prop: cylinderKeys.totalAmount,
+          //     label: '总件数'
+          //   }
+          // },
+          // {
+          //   formItem: {
+          //     prop: cylinderKeys.totalMoney,
+          //     label: '总金额'
+          //   },
+          //   computed: () => {
+          //     return this.tableData.reduce((sum, obj) => {
+          //       sum += Number(obj[cylinderKeys.money]) || 0;
+          //       return sum;
+          //     }, 0).toFixed(2);
+          //   }
+          // },
           {
             formItem: {
               prop: cylinderKeys.remark,
@@ -119,35 +129,6 @@
             width: 139,
           },
           {
-            prop: cylinderKeys.length,
-            label: '长度(m)',
-            width: 101,
-          },
-          {
-            prop: cylinderKeys.area,
-            label: '面积(㎡)',
-            width: 103,
-          },
-          {
-            prop: paperKeys.paperCode,
-            label: '原纸代码',
-            width: 129,
-          },
-          {
-            prop: paperKeys.paperType,
-            label: '原纸类型',
-            width: 90,
-            formatter: (row, index, cur) => {
-              let obj = this.$enum.paperType._swap[cur] || {};
-              return obj.label || '';
-            }
-          },
-          {
-            prop: paperKeys.paperSize,
-            label: '门幅(mm)',
-            width: 97,
-          },
-          {
             prop: paperKeys.warehouseName,
             label: '仓库',
             width: 139,
@@ -161,6 +142,7 @@
             prop: cylinderKeys.unitPrice,
             label: '单价',
             width: 96,
+            className: 'is-change',
             propsHandler: (props) => {
               return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}}
             },
@@ -188,6 +170,35 @@
             }
           },
           {
+            prop: paperKeys.paperCode,
+            label: '原纸代码',
+            width: 129,
+          },
+          {
+            prop: paperKeys.paperType,
+            label: '原纸类型',
+            width: 90,
+            formatter: (row, index, cur) => {
+              let obj = this.$enum.paperType._swap[cur] || {};
+              return obj.label || '';
+            }
+          },
+          {
+            prop: paperKeys.paperSize,
+            label: '门幅(mm)',
+            width: 97,
+          },
+          {
+            prop: cylinderKeys.length,
+            label: '长度(m)',
+            width: 101,
+          },
+          {
+            prop: cylinderKeys.area,
+            label: '面积(㎡)',
+            width: 103,
+          },
+          {
             prop: paperKeys.paperStatus,
             label: '原纸状态',
             formatter(row, index, cur) {
@@ -195,9 +206,22 @@
             }
           },
         ],
+        columnsTypeProps: {
+          index: {
+            width: 64,
+            fixed: false
+          }
+        },
         isTableLoading: false,
         defaultTableData: []
       };
+    },
+    computed: {
+      totalMoney() {
+        return this.tableData.reduce((sum, obj) => {
+          return this.$method.accuracyCompute(sum, Number(obj[cylinderKeys.money]) || 0, '+');
+        }, 0).toFixed(2);
+      },
     },
     created() {},
     methods: {
@@ -283,13 +307,67 @@
   };
 </script>
 <style lang="less" scoped>
-  .dj-form {
-    margin-bottom: 13px;
-    /deep/ .el-form-item {
-      margin-bottom: 0;
+  /*.dj-form {*/
+    /*margin-bottom: 13px;*/
+    /*/deep/ .el-form-item {*/
+      /*margin-bottom: 0;*/
+    /*}*/
+  /*}*/
+  .base-table /deep/ .is-error .el-input__inner {
+    color: red;
+  }
+
+  .sub-title {
+    font-size: 13px;
+    margin-left: 36px;
+    span {
+      margin-right: 24px;
     }
   }
-  .base-table /deep/ .is-error .el-input__inner {
-    border-color: red;
+  .dj-form {
+    margin-bottom: 4px;
+    margin-left: 30px;
+    margin-right: 129px;
+    /deep/ .el-form-item {
+      margin-top: 0;
+      margin-bottom: 16px;
+      > label, > div {
+        line-height: 22px;
+      }
+    }
+    /deep/ .el-row:nth-last-of-type(1) {
+      .dj-input-content {
+        width: 100%;
+      }
+    }
+  }
+  .base-table {
+    /deep/ .td-btn-group .dj-common-red-delete {
+      color: red;
+      cursor: pointer;
+    }
+    /deep/ .icon-require {
+      color: red;
+      vertical-align: middle;
+    }
+    /deep/ .el-table__header-wrapper th, /deep/ .el-table__fixed-header-wrapper th {
+      padding: 8px 0;
+    }
+    /deep/ .el-table__row td, /deep/ .el-table__fixed-footer-wrapper td, /deep/ .el-table__footer-wrapper td {
+      padding: 0;
+      &.is-change {
+        background-color: rgba(248,152,22,0.1);
+        .el-autocomplete {
+          width: 100%;
+        }
+        .el-input__inner {
+          border: none;
+          background-color: transparent;
+          line-height: 33px;
+          height: 33px;
+          padding-left: 0;
+        }
+      }
+    }
   }
 </style>

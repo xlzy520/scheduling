@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dj-dialog ref="dialog" @close="confirmClose" width="1160px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+    <dj-dialog ref="dialog" @close="confirmClose" width="1086px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
       <div v-loading="isTableLoading">
         <!--<el-button @click="scannerAdd('sadasdsadasd')"></el-button>-->
         <p class="font-subhead">基础信息</p>
@@ -9,11 +9,18 @@
                  :formOptions="formOptions"
                  :column-num="3"
                  :col-rule="colRule"></dj-form>
-        <p class="font-subhead">纸筒信息</p>
+        <p class="font-subhead">
+          纸筒信息
+          <span class="sub-title">
+            <span>总重量：{{totalWeight}}kg</span>
+          <span>总件数：{{effectiveTableData.length}}件</span>
+          </span>
+        </p>
         <base-table ref="table"
                     :loading="isTableLoading"
                     :data="tableData"
                     max-height="370"
+                    border
                     :column-type-props="columnsTypeProps"
                     :lazy-total="tableMaxLength"
                     :lazy-remote="()=>getEmptyData(10)"
@@ -48,7 +55,7 @@
           {
             prop: 'operate',
             label: '操作',
-            width: 57,
+            width: 60,
             render: (h, {props: {index}}) => {
               const disabled = () => {
                 return this.tableData.length === 1;
@@ -61,14 +68,17 @@
                 }
               };
               return (
-                <i class="dj-common-red-delete" on-click={remove}></i>
+                <div class="td-btn-group">
+                  <i class="dj-common-red-delete" on-click={remove}></i>
+                </div>
               );
             }
           },
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 150,
+            width: 117,
+            className: 'is-change',
             renderHeader() {
               return (
                 <span><i class="icon-require">*</i>纸筒编号</span>
@@ -76,23 +86,27 @@
             },
             propsHandler: (props) => {
               const beforeEnter = (val, cb) => {
-                let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val && props.row !== obj)[0];
-                if (sameRow && sameRow[paperKeys.paperCode]) {
-                  this.$message('纸筒已录入', 'error');
-                  this.$set(this.tableData, props.index, {});
-                  // props.row[cylinderKeys.cylinderNo] = '';
-                } else {
-                  this.getTubeByNumber(val).then(obj=>{
-                    // if (obj[paperKeys.paperStatus]) {
-                    //   this.$message('该纸筒编号已出库', 'error');
-                    //   this.$set(this.tableData, props.index, {});
-                    // } else {
-                      this.$set(this.tableData, props.index, {...obj, isError: false});
-                    // }
-                  }).catch(()=>{
+                if (val) {
+                  let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val && props.row !== obj)[0];
+                  if (sameRow && sameRow[paperKeys.paperCode]) {
+                    this.$message('纸筒已录入', 'error');
                     this.$set(this.tableData, props.index, {});
-                    // this.tableData.splice(index, 1, {});
-                  });
+                    // props.row[cylinderKeys.cylinderNo] = '';
+                  } else {
+                    this.getTubeByNumber(val).then(obj=>{
+                      // if (obj[paperKeys.paperStatus]) {
+                      //   this.$message('该纸筒编号已出库', 'error');
+                      //   this.$set(this.tableData, props.index, {});
+                      // } else {
+                      this.$set(this.tableData, props.index, {...obj, isError: false});
+                      // }
+                    }).catch(()=>{
+                      this.$set(this.tableData, props.index, {});
+                      // this.tableData.splice(index, 1, {});
+                    });
+                    cb();
+                  }
+                } else {
                   cb();
                 }
                 // if (props.index === this.tableData.length - 1) {
@@ -117,12 +131,12 @@
           {
             prop: paperKeys.paperCode,
             label: '原纸代码',
-            width: 129,
+            width: 127,
           },
           {
             prop: paperKeys.paperType,
             label: '原纸类型',
-            width: 90,
+            width: 89,
             formatter: (row, index, cur) => {
               let obj = this.$enum.paperType._swap[cur] || {};
               return obj.label || '';
@@ -131,46 +145,47 @@
           {
             prop: paperKeys.paperSize,
             label: '门幅(mm)',
-            width: 97,
+            width: 94,
           },
           {
             prop: paperKeys.paperGram,
             label: '克重(g)',
-            width: 139,
+            width: 85,
           },
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
-            width: 139,
-          },
-          {
-            prop: cylinderKeys.length,
-            label: '长度(m)',
-            width: 98,
-          },
-          {
-            prop: cylinderKeys.area,
-            label: '面积(㎡)',
-            width: 91,
+            width: 104,
           },
           {
             prop: paperKeys.warehouseName,
             label: '仓库',
-            width: 139,
+            width: 112,
           },
           {
             prop: paperKeys.warehouseAreaName,
             label: '库区',
-            width: 121,
+            width: 112,
+          },
+          {
+            prop: cylinderKeys.length,
+            label: '长度(m)',
+            width: 82,
+          },
+          {
+            prop: cylinderKeys.area,
+            label: '面积(㎡)',
+            width: 89,
           },
           {
             prop: cylinderKeys.paperSupplierName,
             label: '原纸供应商',
-            width: 156,
+            width: 172,
           },
         ],
         columnsTypeProps: {
           index: {
+            width: 64,
             fixed: false
           }
         },
@@ -187,6 +202,14 @@
       };
     },
     computed: {
+      totalWeight() {
+        return this.effectiveTableData.reduce((sum, obj) => {
+          let weight = Number(obj[cylinderKeys.weight]) || 0;
+          // sum += weight;
+          // return sum;
+          return this.$method.accuracyCompute(sum, weight, '+');
+        }, 0).toFixed(3);
+      },
       formOptions() {
         return [
           {
@@ -262,7 +285,7 @@
             formItem: {
               prop: cylinderKeys.outStockType,
               label: '出库类型',
-              rules: [rules.required('请选择出库类型')]
+              rules: [rules.required(' ')]
             },
             attrs: {
               disabled: this.isEdit,
@@ -308,36 +331,36 @@
               );
             }
           },
-          {
-            type: 'input',
-            formItem: {
-              prop: cylinderKeys.totalWeight,
-              label: '总重量'
-            },
-            attrs: {
-              disabled: true
-            },
-            computed: () => {
-              return this.effectiveTableData.reduce((sum, obj) => {
-                let weight = Number(obj[cylinderKeys.weight]) || 0;
-                sum += weight;
-                return sum;
-              }, 0).toFixed(3);
-            }
-          },
-          {
-            type: 'input',
-            formItem: {
-              prop: cylinderKeys.totalAmount,
-              label: '总件数'
-            },
-            attrs: {
-              disabled: true
-            },
-            computed: () => {
-              return this.effectiveTableData.length;
-            }
-          },
+          // {
+          //   type: 'input',
+          //   formItem: {
+          //     prop: cylinderKeys.totalWeight,
+          //     label: '总重量'
+          //   },
+          //   attrs: {
+          //     disabled: true
+          //   },
+          //   computed: () => {
+          //     return this.effectiveTableData.reduce((sum, obj) => {
+          //       let weight = Number(obj[cylinderKeys.weight]) || 0;
+          //       sum += weight;
+          //       return sum;
+          //     }, 0).toFixed(3);
+          //   }
+          // },
+          // {
+          //   type: 'input',
+          //   formItem: {
+          //     prop: cylinderKeys.totalAmount,
+          //     label: '总件数'
+          //   },
+          //   attrs: {
+          //     disabled: true
+          //   },
+          //   computed: () => {
+          //     return this.effectiveTableData.length;
+          //   }
+          // },
           {
             type: 'input',
             formItem: {
@@ -345,8 +368,8 @@
               label: '备注信息'
             },
             attrs: {
-              type: 'textarea',
-              height: 100,
+              // type: 'textarea',
+              // height: 100,
               // reg: /.*/,
               maxlength: 50,
             },
@@ -376,7 +399,7 @@
     created() {
       this.scanner = new Scanner();
       this.scanner.listener(this.scannerAdd);
-      this.getEmptyData(10).then(res=>{
+      this.getEmptyData(20).then(res=>{
         this.tableData.push(...res);
       });
       this.addListener(window, 'keyup', this.shortcut);
@@ -495,7 +518,7 @@
         });
       },
       colRule(item) {
-        return 8;
+        return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       confirm() {
         this.$refs.form.validate(()=>{
@@ -656,18 +679,64 @@
   };
 </script>
 <style lang="less" scoped>
-  /deep/ .dj-common-red-delete {
-    color: red;
-    cursor: pointer;
-  }
   .base-table /deep/ .is-error .el-input__inner {
-    border-color: red;
+    color: red;
   }
   .base-table /deep/ .loading-wrap {
     display: none;
   }
-  /deep/ .icon-require {
-    color: red;
-    vertical-align: middle;
+  .sub-title {
+    font-size: 13px;
+    margin-left: 36px;
+    span {
+      margin-right: 24px;
+    }
+  }
+  .dj-form {
+    position: relative;
+    width: 1060px;
+    left: -14px;
+    margin-bottom: 11px;
+    /deep/ .el-row .el-col {
+      padding: 0;
+    }
+    /deep/ .el-form-item {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    /deep/ .el-row:nth-last-of-type(1) {
+      .dj-input-content {
+        width: 100%;
+      }
+    }
+  }
+  .base-table {
+    /*/deep/ .td-btn-group .dj-common-red-delete {*/
+      /*color: red;*/
+      /*cursor: pointer;*/
+    /*}*/
+    /*/deep/ .icon-require {*/
+      /*color: red;*/
+      /*vertical-align: middle;*/
+    /*}*/
+    /deep/ .el-table__header-wrapper th, /deep/ .el-table__fixed-header-wrapper th {
+      padding: 8px 0;
+    }
+    /deep/ .el-table__row td, /deep/ .el-table__fixed-footer-wrapper td, /deep/ .el-table__footer-wrapper td {
+      padding: 0;
+      &.is-change {
+        background-color: rgba(248,152,22,0.1);
+        .el-autocomplete {
+          width: 100%;
+        }
+        .el-input__inner {
+          border: none;
+          background-color: transparent;
+          line-height: 33px;
+          height: 33px;
+          padding-left: 0;
+        }
+      }
+    }
   }
 </style>

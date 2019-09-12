@@ -1,27 +1,28 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" title="查看" width="780px" :has-footer="false">
-      <div class="dialog-content">
-        <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
-          <el-tab-pane label="订单信息" name="1">
-            <classify-form ref="form" :config="config" :formData="order" :column-num="2"></classify-form>
-            <!--<el-row>-->
+    <dj-dialog ref="dialog" @close="close" title="查看" width="780px">
+      <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
+        <el-tab-pane label="订单信息" name="1">
+          <classify-form ref="form" :config="config" :formData="order" :column-num="2"></classify-form>
+          <!--<el-row>-->
             <!--<el-col :span="17"><span class="bold">生产编号: {{order[orderKeys.productionNo]}}</span></el-col>-->
             <!--<el-col :span="7"><span class="bold">生产状态: <span class="status">{{$enum.productStatus._swap[order[orderKeys.productStatus]] && $enum.productStatus._swap[order[orderKeys.productStatus]].label}}</span></span></el-col>-->
             <!--<el-col :span="24"><span class="bold">订单消息</span></el-col>-->
             <!--<template v-for="(item, index) in orderOptions[isStore]">-->
-            <!--<el-col :span="index%2 ? 10 : 14"><span class="">{{item.formItem.label}}: {{item.formatter ? item.formatter(order[item.formItem.prop]) : order[item.formItem.prop]}}</span></el-col>-->
+              <!--<el-col :span="index%2 ? 10 : 14"><span class="">{{item.formItem.label}}: {{item.formatter ? item.formatter(order[item.formItem.prop]) : order[item.formItem.prop]}}</span></el-col>-->
             <!--</template>-->
             <!--<el-col :span="24"><p class="line"></p></el-col>-->
             <!--<el-col :span="24"><span class="bold">产品信息</span></el-col>-->
             <!--<template v-for="(item, index) in messageOptions[isStore]">-->
-            <!--<el-col :span="index%2 ? 10 : (messageOptions[isStore].length === index + 1 ? 24 : 14)"><span class="">{{item.formItem.label}}: {{item.formatter ? item.formatter(order[item.formItem.prop]) : order[item.formItem.prop]}}</span></el-col>-->
+              <!--<el-col :span="index%2 ? 10 : (messageOptions[isStore].length === index + 1 ? 24 : 14)"><span class="">{{item.formItem.label}}: {{item.formatter ? item.formatter(order[item.formItem.prop]) : order[item.formItem.prop]}}</span></el-col>-->
             <!--</template>-->
-            <!--</el-row>-->
-          </el-tab-pane>
-          <el-tab-pane label="操作记录" name="2">
-            <base-table :data="recordData" :columns="recordColumns"></base-table>
-          </el-tab-pane>
-        </el-tabs>
+          <!--</el-row>-->
+        </el-tab-pane>
+        <el-tab-pane label="操作记录" name="2">
+          <base-table :data="recordData" :columns="recordColumns"></base-table>
+        </el-tab-pane>
+      </el-tabs>
+      <div slot="footer">
+        <!--<el-button @click="close">关闭</el-button>-->
       </div>
     </dj-dialog>
 </template>
@@ -96,8 +97,9 @@
                 label: '订单交期',
               },
               render: (h) => {
+                let time = this.order[orderKeys.deliveryTime];
                 return (
-                  <span>{dayjs(this.order[orderKeys.deliveryTime]).format('YYYY-MM-DD')}</span>
+                  <span>{time ? dayjs(time).format('YYYY-MM-DD') : ''}</span>
                 );
               },
               // formatter(cur) {
@@ -122,8 +124,9 @@
                 label: '订单交期',
               },
               render: (h) => {
+                let time = this.order[orderKeys.deliveryTime];
                 return (
-                  <span>{dayjs(this.order[orderKeys.deliveryTime]).format('YYYY-MM-DD')}</span>
+                  <span>{time ? dayjs(time).format('YYYY-MM-DD') : ''}</span>
                 );
               },
               // formatter(cur) {
@@ -362,9 +365,6 @@
   };
 </script>
 <style lang="less" scoped>
-  /*.dialog-content{*/
-    /*height: 632px//744*/
-  /*}*/
   .classifyForm {
     /deep/ .dj-form:nth-of-type(1) {
       font-weight: bold;

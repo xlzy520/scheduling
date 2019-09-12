@@ -66,7 +66,7 @@ export default {
     return paperWarehouse('/getDepartment.do', data, 'get').then(res=>{
       return (res.list || []).map(obj=>{
         return {
-          label: obj.name,
+          label: obj.oname,
           value: obj.id
         };
       })
@@ -76,7 +76,7 @@ export default {
     return paperWarehouse('/getRole.do', data, 'get').then(res=>{
       return (res.list || []).map(obj=>{
         return {
-          label: obj.name,
+          label: obj.rname,
           value: obj.id
         };
       })
@@ -86,7 +86,7 @@ export default {
     return paperWarehouse('/getMember.do', data, 'get').then(res=>{
       return (res.list || []).map(obj=>{
         return {
-          label: obj.name,
+          label: obj.uname,
           value: obj.id
         };
       })
