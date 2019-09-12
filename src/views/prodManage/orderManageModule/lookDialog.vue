@@ -330,7 +330,7 @@
       },
       getOrderDetail(prodId) {
         this.isLoading = true;
-        this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: prodId}).then(res=>{
+        this.dj_api_extend(orderManageService.getOrderById, {produceOrderNumber: prodId}).then(res=>{
           this.order = res;
           // console.log(this.order);
         }).finally(()=>{

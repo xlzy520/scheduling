@@ -224,7 +224,7 @@
       },
       getOrderDetail(orderId) {
         this.isLoading = true;
-        this.dj_api_extend(orderManageService.getOrderById, {producOrderNumber: orderId}).then(res=>{
+        this.dj_api_extend(orderManageService.getOrderById, {produceOrderNumber: orderId}).then(res=>{
           let _res = this.$method.cloneData(this.key_arr, {}, res);
           _res['longitudinalPressure'] = res[orderKeys.longitudinalPressure] && res[orderKeys.longitudinalPressure].split('+') || [];
           _res[orderKeys.materialSize] = [res[orderKeys.materialLength], res[orderKeys.materialWidth]];
