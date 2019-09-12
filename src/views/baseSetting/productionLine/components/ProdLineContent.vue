@@ -207,9 +207,6 @@
       .bs-card-label {
         text-align: left;
       }
-      .bs-card-value {
-
-      }
     }
     .left-content {
       width: 1083px;
@@ -248,11 +245,10 @@
       }
     }
     .right-content {
-      width: 677px;
+      width: 400px;
       flex-grow: 1;
       margin-left: 80px;
       .record{
-        width: 677px;
         height: 400px;
         overflow: auto;
         .record-item{
@@ -269,10 +265,11 @@
           }
         }
       }
-      @media screen and (max-width: 1367px) {
-        .record{
-          width: auto;
-        }
+
+    }
+    @media screen and (max-width: 1600px) {
+      .right-content{
+        width: 600px;
       }
     }
   }
