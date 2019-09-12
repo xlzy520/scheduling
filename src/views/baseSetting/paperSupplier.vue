@@ -35,11 +35,11 @@
   import PagePane from "../../components/page/pagePane";
   const { rules } = djForm;
   const initFormData = {
-    supplierNumber: '',
-    supplierName: '',
-    address: '',
-    socialCreditCode: '',
-    legalRepresentative: ''
+    supplierNumber: null,
+    supplierName: null,
+    address: null,
+    socialCreditCode: null,
+    legalRepresentative: null
   };
   export default {
     name: 'paperSupplier',
