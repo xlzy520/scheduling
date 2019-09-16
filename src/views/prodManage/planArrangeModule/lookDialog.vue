@@ -1,7 +1,7 @@
 <template>
   <dj-dialog ref="dialog" @close="close" width="1160px" title="查看" @confirm="confirm">
     <el-tabs v-model="activeTab" @tab-click="handleClick">
-      <el-tab-pane label="订单信息" name="1">
+      <el-tab-pane v-loading="isTableLoading" label="订单信息" name="1">
         <classify-form ref="form" hasLine :formData="formData" :config="config" :column-num="3"></classify-form>
       </el-tab-pane>
       <el-tab-pane label="编辑记录" name="2">
@@ -13,7 +13,9 @@
 </template>
 <script>
   import {orderKeys} from "../../../utils/system/constant/dataKeys";
-  import planArrangeService from '../../../api/service/planArrange'
+  import planArrangeService from '../../../api/service/planArrange';
+  import record from "../../../api/service/record";
+
   export default {
     name: 'lookDialog',
     data: function () {
@@ -242,19 +244,29 @@
         activeTab: '1',
         recordData: [],
         recordColumns: [
-          {label: '操作时间', prop: 'time', width: 100},
+          {label: '操作时间', prop: 'operateTime', width: 100},
           {label: '操作人', prop: 'operator', width: 80},
-          {label: '操作内容', prop: 'event', width: 200}
+          {label: '操作内容', prop: 'operateDetail', width: 200}
         ],
+        isTableLoading: false
       };
     },
     created() {
     },
     methods: {
+      getRecord() {
+        this.isTableLoading = true;
+        this.dj_api_extend(record.list, {
+          sourceId: this.id
+        }).then((res) => {
+          this.recordData = res.list || [];
+        }).finally(() => {
+          this.isTableLoading = false;
+        });
+      },
       handleClick() {
         if (this.activeTab === '2' && !this.recordData.length) {
-          // todo 对接获取操作记录接口
-          console.log('getRecord');
+          this.getRecord();
         }
       },
       getOrderMsg(params) {

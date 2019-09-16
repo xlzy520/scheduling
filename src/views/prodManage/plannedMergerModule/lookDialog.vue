@@ -20,6 +20,7 @@
 <script>
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
   import plannedMergerService from '../../../api/service/plannedMerger';
+  import record from "../../../api/service/record";
   import dayjs from 'dayjs';
   export default {
     name: 'lookDialog',
@@ -27,9 +28,9 @@
       return {
         recordData: [],
         recordColumns: [
-          {label: '操作时间', prop: 'time', width: 100},
+          {label: '操作时间', prop: 'operateTime', width: 100},
           {label: '操作人', prop: 'operator', width: 80},
-          {label: '操作内容', prop: 'event', width: 200}
+          {label: '操作内容', prop: 'operateDetail', width: 200}
         ],
         activeTab: '1',
         formData: {},
@@ -252,10 +253,19 @@
           this.isLoading = false;
         });
       },
+      getRecord() {
+        this.isLoading = true;
+        this.dj_api_extend(record.list, {
+          sourceId: this.id
+        }).then((res) => {
+          this.recordData = res.list || [];
+        }).finally(() => {
+          this.isLoading = false;
+        });
+      },
       handleClick() {
         if (this.activeTab === '2' && !this.recordData.length) {
-          // todo 对接获取操作记录接口
-          console.log('getRecord');
+         this.getRecord();
         }
       }
     }

@@ -28,6 +28,7 @@
 <script>
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
   import orderManageService from '../../../api/service/orderManage';
+  import record from "../../../api/service/record";
   import dayjs from 'dayjs';
   export default {
     name: 'lookDialog',
@@ -35,9 +36,9 @@
       return {
         recordData: [],
         recordColumns: [
-          {label: '操作时间', prop: 'time', width: 100},
+          {label: '操作时间', prop: 'operateTime', width: 100},
           {label: '操作人', prop: 'operator', width: 80},
-          {label: '操作内容', prop: 'event', width: 200}
+          {label: '操作内容', prop: 'operateDetail', width: 200}
         ],
         activeTab: '1',
         order: {},
@@ -130,7 +131,7 @@
           ]
         },
         messageOptions: {
-          false:  [
+          false: [
             {
               formItem: {
                 prop: orderKeys.productName,
@@ -315,7 +316,7 @@
             title: '产品信息',
             formOptions: this.messageOptions[this.isStore]
           }
-        ]
+        ];
       }
     },
     created() {
@@ -339,10 +340,19 @@
           this.isLoading = false;
         });
       },
+      getRecord() {
+        this.isLoading = true;
+        this.dj_api_extend(record.list, {
+          sourceId: this.id
+        }).then((res) => {
+          this.recordData = res.list || [];
+        }).finally(() => {
+          this.isLoading = false;
+        });
+      },
       handleClick() {
         if (this.activeTab === '2' && !this.recordData.length) {
-          // todo 对接获取操作记录接口
-          console.log('getRecord');
+         this.getRecord();
         }
       }
     }
@@ -350,7 +360,7 @@
 </script>
 <style lang="less" scoped>
   .dialog-content{
-    height: 632px
+    height: 632px//744
   }
   .classifyForm {
     /deep/ .dj-form:nth-of-type(1) {
