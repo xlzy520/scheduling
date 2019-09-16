@@ -30,7 +30,7 @@
     data() {
       return {
         searchConfig: [
-          {label: '收货人：', key: 'acceptMan', type: 'input'},
+          {label: '联系人：', key: 'acceptMan', type: 'input'},
           {label: '联系方式：', key: 'phone', type: 'input',},
           {label: '用料代码：', key: 'code', type: 'input'},
           {label: '楞型：', key: 'lengxing', type: 'input'},
@@ -38,7 +38,7 @@
         tableData: [],
         tableColumns: Object.freeze([
           {label: '客户名称', prop: 'name'},
-          {label: '收货人', prop: 'acceptMan'},
+          {label: '联系人', prop: 'acceptMan'},
           {label: '联系方式', prop: 'phone'},
           {label: '用料代码', prop: 'code'},
           {label: '瓦楞楞型', prop: 'lengxing', formatter: row=> row.layer + row.lengxing},

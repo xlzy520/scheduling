@@ -133,7 +133,7 @@
               {
                 formItem: {
                   prop: orderKeys.cutNumber,
-                  label: '单台纵切刀数'
+                  label: '切数'
                 },
               },
               {
@@ -175,7 +175,7 @@
               {
                 formItem: {
                   prop: orderKeys.trimRate,
-                  label: '利用率(%)'
+                  label: '修边率(%)'
                 },
               },
               {
@@ -198,7 +198,7 @@
               {
                 formItem: {
                   prop: this.$method.getOriginKey(orderKeys.cutNumber, 'old'),
-                  label: '单台纵切刀数'
+                  label: '切数'
                 },
               },
               {
@@ -240,7 +240,7 @@
               {
                 formItem: {
                   prop: this.$method.getOriginKey(orderKeys.trimRate, 'old'),
-                  label: '利用率(%)'
+                  label: '修边率(%)'
                 },
               },
               {

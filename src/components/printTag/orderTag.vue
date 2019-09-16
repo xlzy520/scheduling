@@ -158,7 +158,7 @@
         },
         {
           prop: this.orderKeys.consignee,
-          label: '收货人'
+          label: '联系人'
         },
         {
           prop: this.orderKeys.deliveryTime,

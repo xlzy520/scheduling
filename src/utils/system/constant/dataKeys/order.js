@@ -30,7 +30,7 @@ export default {
   platformMaterialName: 'platformMaterialCode', //平台材料名称
   orderTip: 'grouponOrderFlag', //订单标签
   packageAmount: 'processeAmount', //打包数量
-  consignee: 'consignee', //收货人
+  consignee: 'consignee', //联系人
   mergeStatus: 'combinedType', //合并状态
   mergeId: 'combineId', //合并状态
   mergeTime: 'createTime', //合并时间
