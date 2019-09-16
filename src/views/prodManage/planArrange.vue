@@ -16,6 +16,7 @@
                       :data="tableData"
                       height="100%"
                       scroll-load
+                      :reserve-num="1"
                       :page-size-list="[1000,2000,3000]"
                       :defaultPageSize="1000"
                       :total="total"
@@ -454,7 +455,7 @@
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    /*height: calc(~'100% - 10px');*/
+    height: calc(~'100% - 10px');
     /*box-sizing: border-box;*/
     .content {
       flex: 1 1;
