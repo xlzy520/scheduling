@@ -209,7 +209,7 @@
               paperCodeId: obj.id,
               id: obj._id
             })),
-            platformMaterialCode: this.formData.platformMaterialCode,
+            platformMaterialCode: this.formData.platformMaterialCode || undefined,
           };
           if (this.dialogTypeIsAdd) {
             message = '新增成功';
@@ -219,7 +219,6 @@
             api = materialCodeService.edit;
             post.id = this.formData.id;
           }
-          post = this.$method.handleFormDataStartOrEndByZero(post, ['platformMaterialCode'], true);
           this.dj_api_extend(api, post).then((res) => {
             this.close();
             this.$refs.table.updateData();
