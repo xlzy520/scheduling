@@ -1,13 +1,15 @@
 <template>
   <dj-dialog ref="dialog" @close="close" width="1160px" title="查看" @confirm="confirm">
-    <el-tabs v-model="activeTab" @tab-click="handleClick">
-      <el-tab-pane v-loading="isTableLoading" label="订单信息" name="1">
-        <classify-form ref="form" hasLine :formData="formData" :config="config" :column-num="3"></classify-form>
-      </el-tab-pane>
-      <el-tab-pane label="编辑记录" name="2">
-        <base-table :data="recordData" :columns="recordColumns"></base-table>
-      </el-tab-pane>
-    </el-tabs>
+    <div class="dialog-content">
+      <el-tabs v-model="activeTab" @tab-click="handleClick">
+        <el-tab-pane v-loading="isTableLoading" label="订单信息" name="1">
+          <classify-form ref="form" hasLine :formData="formData" :config="config" :column-num="3"></classify-form>
+        </el-tab-pane>
+        <el-tab-pane label="编辑记录" name="2">
+          <base-table :data="recordData" :columns="recordColumns"></base-table>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
     <div slot="footer"></div>
   </dj-dialog>
 </template>
@@ -288,3 +290,8 @@
     },
   };
 </script>
+<style lang="less" scoped>
+  .dialog-content{
+    height: 760px;//882
+  }
+</style>

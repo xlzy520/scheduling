@@ -1,20 +1,22 @@
 <template>
   <dj-dialog ref="dialog" @close="close" title="查看" width="780px">
-    <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
-      <el-tab-pane label="订单信息" name="1">
-        <classify-form :config="config" :formData="formData" :column-num="2"></classify-form>
-        <!--<dj-form :formData="formData" :formOptions="formOptions_header" :column-num="2"></dj-form>-->
-        <!--<p class="font-default">订单信息</p>-->
-        <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_order" :column-num="2"></dj-form>-->
-        <!--<p class="line"></p>-->
-        <!--<p class="font-default">产品信息</p>-->
-        <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_product" :column-num="2"></dj-form>-->
-      </el-tab-pane>
-      <el-tab-pane label="编辑记录" name="2">
-        <base-table :data="recordData" :columns="recordColumns"></base-table>
-      </el-tab-pane>
-    </el-tabs>
-    <div slot="footer"></div>
+    <div class="dialog-content">
+      <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
+        <el-tab-pane label="订单信息" name="1">
+          <classify-form :config="config" :formData="formData" :column-num="2"></classify-form>
+          <!--<dj-form :formData="formData" :formOptions="formOptions_header" :column-num="2"></dj-form>-->
+          <!--<p class="font-default">订单信息</p>-->
+          <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_order" :column-num="2"></dj-form>-->
+          <!--<p class="line"></p>-->
+          <!--<p class="font-default">产品信息</p>-->
+          <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_product" :column-num="2"></dj-form>-->
+        </el-tab-pane>
+        <el-tab-pane label="编辑记录" name="2">
+          <base-table :data="recordData" :columns="recordColumns"></base-table>
+        </el-tab-pane>
+      </el-tabs>
+      <div slot="footer"></div>
+    </div>
   </dj-dialog>
 </template>
 <script>
@@ -272,6 +274,9 @@
   };
 </script>
 <style lang="less" scoped>
+  .dialog-content{
+    height: 537px; //685
+  }
   /deep/ .status {
     color: #3654ea;
   }

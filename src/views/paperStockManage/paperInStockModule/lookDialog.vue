@@ -1,20 +1,22 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
-      <el-tabs v-model="activeTab" @tab-click="handleClick">
-        <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
-          <dj-form labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
-          <p class="font-subhead">纸筒信息</p>
-          <base-table ref="table"
-                      :data="tableData"
-                      max-height="370"
-                      :columns="tableColumns"
-                      :column-type="['index']">
-          </base-table>
-        </el-tab-pane>
-        <el-tab-pane label="操作记录" name="2">
-          <base-table :data="recordData" :columns="recordColumns"></base-table>
-        </el-tab-pane>
-      </el-tabs>
+    <dj-dialog ref="dialog" @close="close" width="872px" title="查看">
+      <div class="dialog-content">
+        <el-tabs v-model="activeTab" @tab-click="handleClick">
+          <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
+            <dj-form labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
+            <p class="font-subhead">纸筒信息</p>
+            <base-table ref="table"
+                        :data="tableData"
+                        max-height="370"
+                        :columns="tableColumns"
+                        :column-type="['index']">
+            </base-table>
+          </el-tab-pane>
+          <el-tab-pane label="操作记录" name="2">
+            <base-table :data="recordData" :columns="recordColumns"></base-table>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
       <div slot="footer">
         <el-button @click="close">关闭</el-button>
       </div>
@@ -382,6 +384,9 @@
   };
 </script>
 <style lang="less" scoped>
+  .dialog-content{
+    height: 594px;//706
+  }
   .dj-form {
     margin-bottom: 13px;
     /deep/ .el-form-item {
