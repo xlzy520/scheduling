@@ -258,7 +258,28 @@
         this.$refs.printTag.print();
       },
       removeOrder() {
-        if (this.checkedList.length === 0) {
+        const { length } = this.checkedList
+        if (length === 0) {
+          const h = this.$createElement;
+          this.$msgbox({
+            title: '',
+            customClass: 'branch-task',
+            type: 'warning',
+            showClose: false,
+            message: h('div', {class: 'branch-task-msg'}, [
+              h('p', {class: 'msg-header'}, `确定移除${length}条订单？`),
+              h('div', {class: 'msg-content'}, [
+                h('p', {class: 'msg-content-label'}, `合并编号：`),
+                h('div', {class: 'msg-content-detail'}, [
+                  h('span', {class: 'msg-content-item'}, `V2019091601`),
+                  h('span', {class: 'msg-content-item'}, `V2019091601`),
+                  h('span', {class: 'msg-content-item'}, `V2019091601`),
+                  h('span', {class: 'msg-content-item'}, `V2019091601`),
+                  h('span', {class: 'msg-content-item'}, `V2019091601`),
+                  h('span', {class: 'msg-content-item'}, `V2019091601`),
+                ]),
+              ]),
+            ])});
           this.$message('请选择订单', 'error');
           return false;
         } else {
@@ -267,23 +288,19 @@
             type: 'warning',
             showClose: false,
           }).then(() => {
-            const canRemove = this.checkedList.some(v => !['已处理', '处理中'].includes(v.divideState));
-            if (canRemove) {
-              this.loading = true;
-              const idList = this.checkedList.map(v=>{
-                return {
-                  id: v.id
-                };
-              });
-              this.dj_api_extend(branchTaskService.removeOrder, idList).then(res => {
-                this.$message('移除成功', 'success');
-                this.$refs.search.search();
-              }).catch(() => {
-                this.loading = false;
-              });
-            } else {
-              this.$message(' 分线状态发生变化，无法进行操作', 'warning');
-            }
+            this.loading = true;
+            const idList = this.checkedList.map(v=>{
+              return {
+                id: v.id
+              };
+            });
+            this.dj_api_extend(branchTaskService.removeOrder, idList).then(res => {
+              this.$message('移除成功', 'success');
+            }).catch(() => {
+              this.loading = false;
+            }).finally(() => {
+              this.$refs.search.search();
+            });
           });
 
         }
@@ -386,5 +403,43 @@
       text-align: right;
     }
   }
-
+  .branch-task-msg{}
+  .msg-header{
+    font-size:16px;
+    font-weight:500;
+    color:rgba(48,49,51,1);
+    line-height:22px;
+    margin-bottom: 20px;
+  }
+  .msg-content{
+    line-height:22px;
+    color:rgba(96,98,102,1);
+    font-size:14px;
+    font-weight:400;
+    &-label{
+      width: 80px;
+      margin-bottom: 16px;
+    }
+    &-detail{
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    &-item{
+      margin-right: 16px;
+      margin-bottom: 8px;
+    }
+  }
+</style>
+<style lang="less">
+  .branch-task{
+    width: 442px;
+    &.el-message-box{
+      .el-message-box__content{
+        .el-message-box__status{
+          top: 20px;
+        }
+      }
+    }
+  }
 </style>
