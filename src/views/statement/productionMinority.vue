@@ -30,7 +30,7 @@
             label: '订单类型',
             key: orderKeys.orderType,
             attrs: {
-              options: this.$enum.orderType._arr,
+              options: this.$enum.orderType._arr.filter(obj=>![this.$enum.orderType['abnormal'].value, this.$enum.orderType['merge'].value, this.$enum.orderType['preparingMaterials'].value].includes(obj.value)),
               deafult: ''
             }
           }
