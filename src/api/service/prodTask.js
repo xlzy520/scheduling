@@ -10,4 +10,7 @@ export default {
   findByProduceOrderNumber(data) {
     return prodTask('/findByProduceOrderNumber.do', data, 'get');
   },
+  toProduceManager(data) {
+    return prodTask('/toProduceManager.do', data);
+  },
 };

@@ -32,7 +32,7 @@
                   <dj-button type="primary" @click="sort">排序</dj-button>
                   <dj-button v-if="selectList.length" type="primary" @click="calcPaperSize">计算门幅</dj-button>
                   <dj-button v-if="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
-                  <el-button v-if="selectList.length" type="primary" @click="handleOperate('importProd')">汇入生产</el-button>
+                  <el-button type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
                   <el-button v-if="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
                   <el-button v-if="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
                 </div>
@@ -57,6 +57,7 @@
   import {orderKeys, paperKeys} from "../../utils/system/constant/dataKeys";
   import planArrangeService from "../../api/service/planArrange";
   import productionLineService from "../../api/service/productionLine";
+  import prodTaskService from "../../api/service/prodTask";
   import materialSizeInput from "../../components/materialSizeInput";
   import paperSizeRange from "../../components/paperSizeRange";
   import editPaperSizeDialog from "./planArrangeModule/editPaperSizeDialog";
@@ -152,6 +153,7 @@
           },
         ],
         tableData: [],
+        tableData_index_map: {},
         columnType: ['selection'],
         tableColumns: [
           {
@@ -196,7 +198,7 @@
           {
             prop: orderKeys.productionNo,
             label: '生产编号',
-            width: 150
+            width: 170
           },
           {
             prop: orderKeys.customerName,
@@ -266,7 +268,8 @@
           },
           {
             prop: orderKeys.stackUp,
-            label: '叠单'
+            label: '叠单',
+            width: 60
           }
         ],
         total: 0,
@@ -314,7 +317,11 @@
         });
       },
       selectionChange(selectList) {
-        this.selectList = selectList;
+        this.selectList = selectList.sort((a, b)=>{
+          let a_index = this.tableData_index_map[a[orderKeys.productionNo]];
+          let b_index = this.tableData_index_map[b[orderKeys.productionNo]];
+          return a_index - b_index;
+        });
       },
       getTotalMeters() {
         this.dj_api_extend(planArrangeService.getTotalMeters, {lineId: this.lineId}).then(res=>{
@@ -333,6 +340,10 @@
         this.dj_api_extend(planArrangeService.list, post).then(res=>{
           this.total = res.total || 0;
           this.tableData = res.list || [];
+          this.tableData_index_map = this.tableData.reduce((map, obj, index)=>{
+            map[obj[orderKeys.productionNo]] = index;
+            return map;
+          }, {});
         }).finally(()=>{
           // this.tableData = [{}, {}];
           this.isTableLoading = false;
@@ -350,8 +361,8 @@
         this.searchData = query;
         this.$refs.table.changePage(1);
       },
-      handleOperate(type) {
-        if (!this.selectList.length) {
+      handleOperate(type, bool) {
+        if (!this.selectList.length && !bool) {
           this.$message('请选择订单', 'error');
           return;
         }
@@ -361,20 +372,22 @@
         }
         let map = {
           importProd: {
-            api: planArrangeService.importProd,
+            api: prodTaskService.toProduceManager,
+            post: {lineId: this.lineId},
             tip: '确认汇入所选订单？',
             msg: '汇入订单成功'
           },
           remove: {
             api: planArrangeService.removeOrder,
             tip: '确认移除所选订单？',
-            msg: '移除成功'
+            msg: '移除成功',
+            post: {orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId},
           },
         };
         let obj = map[type];
         if (obj) {
           this.$method.tipBox(obj.tip, ()=>{
-            return this.dj_api_extend(obj.api, {orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId}).then(()=>{
+            return this.dj_api_extend(obj.api, obj.post).then(()=>{
               this.$message(obj.msg);
               this.refresh();
             });
