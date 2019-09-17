@@ -18,7 +18,7 @@ module.exports = [
   {name: 'orderManage', url: '/producePlan'},
   {name: 'orderStatistics', url: '/orderStatistics'},
   {name: 'productionMinority', url: '/few'},
-  {name: 'prodTask', url: '/prodTask'},
+  {name: 'prodTask', url: '/produceTask'},
   {name: 'report', url: '/report'},
   {name: 'plannedMerger', url: '/merge'},
   {name: 'planArrange', url: '/planArrange'},

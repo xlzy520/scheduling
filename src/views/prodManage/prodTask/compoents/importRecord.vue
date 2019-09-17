@@ -1,8 +1,8 @@
 <template>
   <dj-dialog title="汇入记录" ref="dialog" @close="close" :hasFooter="false">
     <div class="content">
-      <single-page v-loading="loading">
-        <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
+      <single-page>
+        <dj-search ref="search" :config="searchConfig" @search="search" v-if="searchVisible"></dj-search>
         <page-pane>
           <dj-table
             ref="table"
@@ -11,6 +11,7 @@
             :column-type="['index']"
             :total="pageTotal"
             height="100%"
+            :loading="loading"
             @update-data="getTableData"
           >
             <div slot="btn">
@@ -56,9 +57,10 @@ export default {
         {
           label: '生产线',
           type: 'select',
-          key: 'id',
+          key: 'lineId',
           attrs: {
             options: [],
+            default: this.default,
             keyMap: {
               value: 'id',
               label: 'label'
@@ -67,7 +69,7 @@ export default {
           listeners: {
             'visible-change': (val)=>{
               if (val) {
-                this.getAllLine();
+                // this.getAllLine();
               }
             }
           }
@@ -78,86 +80,80 @@ export default {
       searchData: {},
       tableData: [],
       tableColumns: [
-        {label: '生产编号', prop: 'produceOrderNumber', width: 200},
-        {label: '汇入日期', prop: 'importDate', width: 180},
-        {label: '操作人', prop: 'man'},
-        {label: '生产线', prop: 'line'},
-        {label: '楞型', prop: 'tilemodel'},
-        {label: '用料代码', prop: 'code'},
-        {label: '贴合面纸', prop: 'cut'},
-        {label: 'B车芯纸', prop: 'cutWidth'},
-        {label: 'B车面纸', prop: 'wasteSize'},
-        {label: 'C车芯纸', prop: 'stavetype'},
-        {label: 'C车面纸', prop: 'stavetype'},
-        {label: '门幅', prop: 'stavetype'},
-        {label: '订单米数', prop: 'stavetype'},
-        {label: '订单数量', prop: 'stavetype'},
-        {label: '生产数量', prop: 'stavetype'},
-        {label: '下料规格', prop: 'stavetype'},
-        {label: '压线方式', prop: 'stavetype'},
-        {label: '压线1', prop: 'stavetype'},
-        {label: '压线2', prop: 'stavetype'},
-        {label: '压线3', prop: 'stavetype'},
-        {label: '修边', prop: 'stavetype'},
-        {label: '切数', prop: 'stavetype'},
-        {label: '刀数', prop: 'stavetype'},
-        {label: '客户名称', prop: 'stavetype'},
-        {label: '打包数量', prop: 'stavetype'},
+        {label: '生产编号', prop: 'grouponOrderNumber', width: 200},
+        {label: '汇入日期', prop: 'affluxTime', width: 180},
+        {label: '操作人', prop: 'operator'},
+        {label: '生产线', prop: 'line', formatter: row=> row.lineNum + '号线'},
+        {label: '楞型', prop: 'tileModel'},
+        {label: '用料代码', prop: 'materialCode'},
+        {label: '贴合面纸', prop: 'topSheet'},
+        {label: '1车芯纸', prop: 'corePaper1'},
+        {label: '1车面纸', prop: 'facePaper1'},
+        {label: '2车芯纸', prop: 'corePaper2'},
+        {label: '2车面纸', prop: 'facePaper2'},
+        {label: '3车芯纸', prop: 'corePaper3'},
+        {label: '3车面纸', prop: 'facePaper3'},
+        {label: '门幅', prop: 'paperSize'},
+        {label: '订单米数', prop: 'orderMeter'},
+        {label: '订单数量', prop: 'orderAmount'},
+        {label: '生产数量', prop: 'produceAmount'},
+        {label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
+          formatter: row=>row.materialLength + '*' + row.materialWidth},
+        {label: '压线方式', prop: 'staveType'},
+        {label: '压线1', prop: 'stavetype1'},
+        {label: '压线2', prop: 'stavetype2'},
+        {label: '压线3', prop: 'stavetype3'},
+        {label: '修边', prop: 'trimming'},
+        {label: '切数', prop: 'cutCount'},
+        {label: '刀数', prop: 'knifeCount'},
+        {label: '客户名称', prop: 'customerName'},
+        {label: '打包数量', prop: 'packCount'},
       ],
       pageTotal: 0,
+      searchVisible: false
     };
   },
   methods: {
     getAllLine() {
-      this.dj_api_extend(productionLine.showAllLine, {pageNo: 1, pageSize: 9999999}).then(res=>{
+      return this.dj_api_extend(productionLine.showAllLine, {pageNo: 1, pageSize: 9999999}).then(res=>{
         this.searchConfig[1].attrs.options = (res.list || []).map(obj=>{
           obj.label = obj['lineNum'] + '号线';
           return obj;
         });
+        if (res.list.length > 0) {
+          this.searchConfig[1].attrs.default = res.list[0].id;
+        }
       });
     },
     search(query) {
-      const {timeRange, line} = query;
+      const {timeRange, lineId} = query;
       let params = {
-        ...line,
-        startTime: timeRange[0],
-        endTime: timeRange[1],
+        'search[lineId]': lineId,
+        'search[affluxTimeStart]': timeRange[0],
+        'search[affluxTimeEnd]': timeRange[1],
       };
       this.searchData = params;
       this.$refs.table.changePage(1);
     },
     getTableData(data) {
-      // this.loading = true;
-      let mock = {};
-      this.tableColumns.map(v=>v.prop).map((prop, index)=>{
-        if (index === 0) {
-          mock[prop] = 'CGRN201905142345423';
-        } else if (index === 1) {
-          mock[prop] = '2019-07-18 15:21:32';
-        } else {
-          mock[prop] = 'A434C';
-        }
-      });
-      this.tableData = new Array(6).fill(mock);
-      console.log(this.tableData);
-      // this.dj_api_extend(prodTaskService.importRecord, {
-      //   ...data,
-      //   ...this.searchData
-      // }).then(res => {
-      //   const {list, total} = res.data.data;
-      //   this.tableData = list;
-      //   this.pageTotal = total;
-      // }).finally(() => {
-      //   this.loading = false;
-      // });
-    },
-    exportRecord () {
       this.loading = true;
-      this.dj_api_extend(prodTaskService.exportRecord, this.searchData).then(res=>{
-        this.$method.fileDownload(res, `汇入记录 ${dayjs().format('YYYYMMDD')}.xlsx`);
-      }).finally(()=>{
+      this.dj_api_extend(prodTaskService.list, {
+        ...data,
+        ...this.searchData
+      }).then(res => {
+        const {list, total} = res;
+        this.tableData = list;
+        this.pageTotal = total;
+      }).finally(() => {
         this.loading = false;
       });
+    },
+    exportRecord () {
+      let paramsStr = `search[materialLengthStart]=${this.searchData}`;
+      for (const item in this.searchData) {
+        paramsStr += item + '=' + this.searchData[item] + '&';
+      }
+      this.$method.fileDownload('/djsupplier/produceTask/exportExcel.do?' + paramsStr);
     },
     close () {
       this.formData = {};
@@ -165,10 +161,12 @@ export default {
     },
     open() {
       this.$refs.dialog.open();
-      console.log(this.$refs);
       this.$nextTick(() => {
-        this.$refs.search.search()
-      })
+        this.searchVisible = true;
+        this.getAllLine().then(()=>{
+          this.$refs.search.search();
+        });
+      });
 
     },
   },

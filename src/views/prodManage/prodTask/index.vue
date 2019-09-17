@@ -1,10 +1,10 @@
 <template>
   <single-page class="table-page prod-task">
     <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
-      <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
+      <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.lineNum+'号线'" :name="tab.id"></el-tab-pane>
     </el-tabs>
     <div class="content">
-      <single-page v-loading="loading">
+      <single-page>
         <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
         <page-pane>
           <dj-table
@@ -15,6 +15,7 @@
             @selection-change="selectionChange"
             :total="pageTotal"
             height="100%"
+            :loading="loading"
             @update-data="getTableData"
           >
             <div slot="btn">
@@ -31,6 +32,7 @@
         <import-record ref="view" v-if="visibleType==='record'" @close="close"></import-record>
       </single-page>
     </div>
+    <order-tag ref="printTag" :data="checkedList"></order-tag>
 </single-page>
 
 </template>
@@ -38,69 +40,43 @@
 <script>
   import dayjs from 'dayjs';
   import prodTaskService from '../../../api/service/prodTask';
-  import axios from 'axios';
+  import productionLineService from '../../../api/service/productionLine';
   import AdjustSort from "./compoents/adjustSort";
   import ProdTaskView from "./compoents/prodTaskView";
   import ImportRecord from "./compoents/importRecord";
+  import orderTag from '../../../components/printTag/orderTag';
 
   export default {
     name: 'ProdTask',
-    components: {ImportRecord, ProdTaskView, AdjustSort},
+    components: {ImportRecord, ProdTaskView, AdjustSort, orderTag},
     data() {
       return {
-        activeTab: '1',
-        tabsColumn: [],
+        activeTab: '',
+        tabs: [],
 
         searchConfig: [
           {
             // 默认近三天
             label: '汇入日期', key: 'timeRange', type: 'date', attrs: {
-              default: [dayjs(new Date()).subtract(3, 'day').format('YYYY-MM-DD'), dayjs(new Date()).format('YYYY-MM-DD')],
+              type: 'daterange',
+              clearable: false,
+              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
               beforeChange: (val) => {
-                let _val = val;
+                let _val = val ? [...val] : [];
                 if (val[0] && val[1]) {
-                  let day92 = dayjs(val[0]).add(92, 'day');
-                  if (day92.isBefore(dayjs(val[1]))) {
+                  let towMonth = dayjs(val[0]).add(92, 'day');
+                  if (towMonth.isBefore(dayjs(val[1]))) {
                     this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], day92.toDate()];
+                    _val = [val[0], dayjs(towMonth).toDate()];
                   }
+                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
+                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD 23:59:59');
                 }
                 return _val;
-              },
-              type: 'daterange',
-              pickerOptions: {
-                shortcuts: [
-                  {
-                    text: '近7天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                      picker.$emit('pick', [start, end]);
-                    }
-                  },
-                  {
-                    text: '近30天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                      picker.$emit('pick', [start, end]);
-                    }
-                  },
-                  {
-                    text: '近三个月',
-                    onClick(picker) {
-                      const end = new Date();
-                      picker.$emit('pick', [dayjs().subtract(92, 'day').toDate(), end]);
-                    }
-                  }
-                ]
-              },
-              valueFormat: "yyyy-MM-dd"
+              }
             }
           },
-          {label: '生产编号', key: 'produceNumber', type: 'input', attrs: {reg: /\w+/g}},
+          {label: '生产编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /\w+/g}},
           {
             label: '下料规格', key: 'guige', type: 'custom',
             component: {
@@ -143,9 +119,8 @@
           },
           {label: '用料代码', key: 'materialCode', type: 'input'},
           {label: '客户名称', key: 'customerName', type: 'input'},
-          {label: '订单编号', key: 'OrderNumber', type: 'input', attrs: {reg: /\w+/g}},
           {
-            label: '门幅范围', key: 'menfu', type: 'custom',
+            label: '门幅范围', key: 'paperSize', type: 'custom',
             component: {
               data() {
                 return {
@@ -189,20 +164,19 @@
         tableColumns: [
           {label: '生产编号', prop: 'produceOrderNumber', width: 120},
           {label: '客户名称', prop: 'customerName', width: 160},
-          {label: '产品名称', prop: 'grouponProductName', width: 160},
+          {label: '产品名称', prop: 'productName', width: 160},
           {label: '用料代码', prop: 'materialCode'},
-          {label: '瓦楞楞型', prop: 'tilemodel'},
+          {label: '瓦楞楞型', prop: 'tileModel'},
           {label: '门幅宽度', prop: 'paperSize'},
-          {label: '订单米数', prop: 'orderHeight'},
+          {label: '订单米数', prop: 'orderMeter'},
           {label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
             formatter: row=>row.materialLength + '*' + row.materialWidth},
-          {label: '切数', prop: 'cut', width: 120},
-          {label: '切宽', prop: 'cutWidth', width: 120},
-          {label: '修边', prop: 'wasteSize'},
-          {label: '压线方式', prop: 'stavetype'},
-          {label: '压线公式', prop: 'formula', width: 120},
-          {label: '叠单', prop: 'stack'},
-          {label: '打印次数', prop: 'printNum'},
+          {label: '切数', prop: 'cutCount', width: 120},
+          {label: '切宽', prop: 'materialWidth', width: 120},
+          {label: '修边', prop: 'trimming'},
+          {label: '压线方式', prop: 'staveType'},
+          {label: '压线公式', prop: 'vformula', width: 120},
+          {label: '叠单', prop: 'stackFlag'},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
@@ -222,7 +196,7 @@
       };
     },
     methods: {
-      tabClick(val) {
+      tabClick() {
         this.$refs.search.search();
       },
       adjustSort () {
@@ -231,11 +205,21 @@
           this.$refs.view.open();
         });
       },
-      printQRCode () {
-
+      printQRCode() {
+        const {length} = this.checkedList;
+        if (length === 0) {
+          this.$message('请选择订单', 'error');
+          return false;
+        }
+        this.$refs.printTag.print();
       },
       printAll () {
-
+        const {length} = this.checkedList;
+        if (length === 0) {
+          this.$message('请选择订单', 'error');
+          return false;
+        }
+        this.$refs.printTag.print();
       },
       ViewImportRecord () {
         this.visibleType = 'record';
@@ -255,7 +239,7 @@
       },
       removeOrder() {
         if (this.checkedList.length === 0) {
-          this.$message('请选择订单', 'info');
+          this.$message('请选择订单', 'error');
           return false;
         } else {
           this.$confirm('请先将所选订单从生管系统移除，再从生产任务页面移除订单', '', {
@@ -263,17 +247,15 @@
             showClose: false,
           }).then(() => {
             this.loading = true;
-            const idList = this.checkedList.map(v=>{
-              return {
-                id: v.id
-              };
-            });
-            this.dj_api_extend(prodTaskService.removeOrder, idList).then(res => {
+            const idList = this.checkedList.map(v=> v.id);
+            this.dj_api_extend(prodTaskService.removeOrder, {
+              produceOrderNumbers: idList
+            }).then(res => {
               this.$message('移除成功', 'success');
-              this.$refs.search.search();
-              // 刷新页面是否记录当前生产线
             }).catch(() => {
               this.loading = false;
+            }).finally(() => {
+              this.$refs.search.search();
             });
           });
 
@@ -283,31 +265,40 @@
         this.checkedList = checkedList;
       },
       search(query) {
-        const {timeRange, guige, ...restQuery} = query;
+        const {timeRange, guige, paperSize, ...restQuery} = query;
         let params = {
-          lineId: this.activeTab,
           ...restQuery,
-          startTime: timeRange[0],
-          endTime: timeRange[1],
+          'search[affluxTimeStart]': timeRange[0],
+          'search[affluxTimeEnd]': timeRange[1],
+          'search[isDeleted]': true,
         };
+        if (this.activeTab) {
+          params['search[lineId]'] = this.activeTab;
+        }
         if (guige !== undefined) {
-          let guigeparams = {
-            materialLength: guige[0],
-            materialWidth: guige[1],
+          let guigeParams = {
+            'search[materialLengthStart]': guige[0],
+            'search[materialWidthEnd]': guige[1],
           };
-          Object.assign(params, guigeparams);
+          Object.assign(params, guigeParams);
+        }
+        if (paperSize !== undefined) {
+          let paperSizeParams = {
+            'search[paperSizeStart]': paperSize[0],
+            'search[paperSizeEnd]': paperSize[1],
+          };
+          Object.assign(params, paperSizeParams);
         }
         this.searchData = params;
         this.$refs.table.changePage(1);
       },
       getTableData(data) {
         this.loading = true;
-        // this.dj_api_extend(prodTaskService.list, {
-        axios.post('http://192.168.23.4:3000/mock/5d131431c07efa4fd83ae7ae/djsupplier/prodTask/list.do', {
+        this.dj_api_extend(prodTaskService.list, {
           ...data,
           ...this.searchData
         }).then(res => {
-          const {list, total} = res.data.data;
+          const {list, total} = res;
           this.tableData = list;
           this.pageTotal = total;
         }).finally(() => {
@@ -315,14 +306,17 @@
         });
       },
       getLineData() {
-        axios.post('http://192.168.23.4:3000/mock/5d131431c07efa4fd83ae7ae/djsupplier/prodTask/line-list', {}).then(res => {
-          this.tabsColumn = res.data.data.list;
+        this.dj_api_extend(productionLineService.showAllLine).then(res => {
+          this.tabs = res.list;
+          if (res && res.list[0]) {
+            this.activeTab = res.list[0].id;
+            this.tabClick();
+          }
         });
       }
     },
     mounted() {
       this.getLineData();
-      this.$refs.search.search();
     },
   };
 </script>
