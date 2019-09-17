@@ -13,7 +13,7 @@
         <div slot="btn">
           <el-button type="primary" @click="openDialog('addOrEditDialog')">新增</el-button>
           <el-button :loading="isExporting" type="primary" @click="fileDownload">导出记录</el-button>
-          <el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>
+          <!--<el-button @click="isShowMoney = !isShowMoney">{{isShowMoney ? '隐藏' : '显示'}}金额</el-button>-->
         </div>
       </dj-table>
     </page-pane>
@@ -84,21 +84,123 @@
           },
         ],
         tableData: [],
-        tableColumns: [
+        // tableColumns: [
+        //   {
+        //     prop: 'operate',
+        //     label: '操作',
+        //     width: 270,
+        //     render: (h, {props: {row}}) => {
+        //       return (
+        //         <span class="td-btn-group">
+        //           <a on-click={()=>this.openDialog('lookDialog', {...row, isShowMoney: this.isShowMoney})}>查看</a>
+        //           <span></span>
+        //           <a on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
+        //           <span></span>
+        //           <a on-click={()=>this.openDialog('printTagDialog', row)}>打印标签</a>
+        //           <span></span>
+        //           <a on-click={()=>this.openDialog('setUnitPriceDialog', row)}>设置单价</a>
+        //         </span>
+        //       );
+        //     }
+        //   },
+        //   {
+        //     prop: cylinderKeys.documentNo,
+        //     label: '单据编号',
+        //     width: 155
+        //   },
+        //   {
+        //     prop: cylinderKeys.storageTime,
+        //     label: '入库时间',
+        //     width: 202,
+        //     formatter(row, index, cur) {
+        //       return dayjs(new Date(cur)).format('YYYY-MM-DD HH:mm:ss');
+        //     }
+        //   },
+        //   {
+        //     prop: cylinderKeys.paperSupplierName,
+        //     label: '原纸供应商',
+        //     width: 193
+        //   },
+        //   {
+        //     prop: cylinderKeys.deliveryBillId,
+        //     label: '送货单号',
+        //     width: 172
+        //   },
+        //   {
+        //     prop: cylinderKeys.deliveryNumber,
+        //     label: '送货车号',
+        //     width: 119
+        //   },
+        //   {
+        //     prop: cylinderKeys.forkliftDriverName,
+        //     label: '叉车员',
+        //     width: 119
+        //   },
+        //   {
+        //     prop: cylinderKeys.storageType,
+        //     label: '入库类型',
+        //     width: 109
+        //   },
+        //   {
+        //     prop: cylinderKeys.totalWeight,
+        //     label: '总重量(Kg)',
+        //     width: 122
+        //   },
+        //   {
+        //     prop: cylinderKeys.totalAmount,
+        //     label: '总件数',
+        //     width: 95
+        //   },
+        //   {
+        //     prop: cylinderKeys.totalMoney,
+        //     label: '总金额',
+        //     formatter: (row, index, cur) => {
+        //       if (this.isShowMoney) {
+        //         return cur;
+        //       } else {
+        //         return '****'
+        //       }
+        //     }
+        //   },
+        //   {
+        //     prop: cylinderKeys.remark,
+        //     label: '备注信息',
+        //     width: 203
+        //   },
+        // ],
+        searchData: {},
+        total: 0,
+        // isShowMoney: true,
+        addOrEditDialogFlag: false,
+        lookDialogFlag: false,
+        setUnitPriceDialogFlag: false,
+        printTagDialogFlag: false,
+        isTableLoad: false,
+        isExporting: false
+      };
+    },
+    created() {
+    },
+    computed: {
+      isShowMoney() {
+        return this.$store.getters.amountPermission;
+      },
+      tableColumns() {
+        let total_arr = [
           {
             prop: 'operate',
             label: '操作',
-            width: 270,
+            width: this.isShowMoney ? 270 : 201,
             render: (h, {props: {row}}) => {
+              let arr = [<span></span>, <a on-click={()=>this.openDialog('setUnitPriceDialog', row)}>设置单价</a>];
               return (
                 <span class="td-btn-group">
-                  <a on-click={()=>this.openDialog('lookDialog', {...row, isShowMoney: this.isShowMoney})}>查看</a>
+                  <a on-click={()=>this.openDialog('lookDialog', row)}>查看</a>
                   <span></span>
                   <a on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
                   <span></span>
                   <a on-click={()=>this.openDialog('printTagDialog', row)}>打印标签</a>
-                  <span></span>
-                  <a on-click={()=>this.openDialog('setUnitPriceDialog', row)}>设置单价</a>
+                  {this.isShowMoney ? arr : ''}
                 </span>
               );
             }
@@ -167,19 +269,13 @@
             label: '备注信息',
             width: 203
           },
-        ],
-        searchData: {},
-        total: 0,
-        isShowMoney: true,
-        addOrEditDialogFlag: false,
-        lookDialogFlag: false,
-        setUnitPriceDialogFlag: false,
-        printTagDialogFlag: false,
-        isTableLoad: false,
-        isExporting: false
-      };
-    },
-    created() {
+        ];
+        let hidden_arr = [];
+        if (!this.isShowMoney) {
+          hidden_arr = [cylinderKeys.totalMoney]
+        }
+        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop))
+      }
     },
     mounted() {
       this.$refs.search.search();

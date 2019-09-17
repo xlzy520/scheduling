@@ -18,6 +18,10 @@ div:not(.under-table) > .base-table {
     font-size: 20px;
     color: red;
     cursor: pointer;
+    &.disabled {
+      color: #909399;
+      cursor: not-allowed;
+    }
   }
   .icon-require {
     color: red;

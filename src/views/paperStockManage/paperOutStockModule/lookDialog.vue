@@ -9,7 +9,7 @@
             <span class="sub-title">
               <span>总重量：{{formData[cylinderKeys.totalWeight]}}kg</span>
               <span>总件数：{{formData[cylinderKeys.totalAmount]}}件</span>
-              <span>总金额：{{formData[cylinderKeys.totalMoney]}}元</span>
+              <span v-if="isShowMoney">总金额：{{formData[cylinderKeys.totalMoney]}}元</span>
             </span>
           </p>
           <base-table ref="table"
@@ -185,13 +185,16 @@
           {label: '操作内容', prop: 'operateDetail', width: 742}
         ],
         activeTab: '1',
-        isShowMoney: false,
+        // isShowMoney: false,
         isTableLoading: false,
         id: '',
         cylinderKeys
       };
     },
     computed: {
+      isShowMoney() {
+        return this.$store.getters.amountPermission;
+      },
       formOptions() {
         let total_arr = [
           {
@@ -346,7 +349,7 @@
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       open(param) {
-        this.isShowMoney = param.isShowMoney;
+        // this.isShowMoney = param.isShowMoney;
         this.id = param.id;
         this.$refs.dialog.open();
         this.isTableLoading = true;

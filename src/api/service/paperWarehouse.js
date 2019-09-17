@@ -92,4 +92,9 @@ export default {
       })
     });
   },
+  judgeAmountAuth(data) {
+    return paperWarehouse('/judgeAmountAuth.do', data, 'get').then(res=>{
+      return Boolean(Number(res.dataAccessId));
+    });
+  },
 };
