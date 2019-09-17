@@ -20,6 +20,7 @@
                       :page-size-list="[1000,2000,3000]"
                       :defaultPageSize="1000"
                       :total="total"
+                      :column-type-props="columnsTypeProps"
                       :loading="isTableLoading"
                       @selection-change="selectionChange"
                       :columns="tableColumns"
@@ -154,13 +155,19 @@
         ],
         tableData: [],
         tableData_index_map: {},
+        columnsTypeProps: {
+          selection: {
+            width: 50,
+            // fixed: false
+          }
+        },
         columnType: ['selection'],
         tableColumns: [
           {
             prop: 'operate',
             label: '操作',
             fixed: 'right',
-            width: 180,
+            width: 89,
             render: (h, {props: {row}}) => {
               // let arr = [];
               // let obj = this.$enum.mergeStatus._swap[this.lineId] || {};
@@ -180,12 +187,13 @@
           },
           {
             prop: 'order',
-            label: '排序'
+            label: '排序',
+            width: 85,
           },
           {
             prop: orderKeys.orderTip,
             label: '订单标记',
-            width: 112,
+            width: 114,
             render: (h, {props: {row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
@@ -198,22 +206,22 @@
           {
             prop: orderKeys.productionNo,
             label: '生产编号',
-            width: 170
+            width: 117
           },
           {
             prop: orderKeys.customerName,
             label: '客户名称',
-            width: 97
+            width: 115
           },
           {
             prop: orderKeys.produceMaterial,
             label: '用料代码',
-            width: 97
+            width: 114
           },
           {
             prop: orderKeys.fluteType,
             label: '瓦楞楞型',
-            width: 97,
+            width: 114,
             formatter(row, index, cur) {
               let layer = row[orderKeys.layer] || '';
               let fluteType = cur || '';
@@ -223,7 +231,7 @@
           {
             prop: orderKeys.materialSize,
             label: '下料规格(cm)',
-            width: 130,
+            width: 144,
             formatter(row) {
               let materialLength = row[orderKeys.materialLength] || '';
               let materialWidth = row[orderKeys.materialWidth] || '';
@@ -233,43 +241,47 @@
           {
             prop: orderKeys.orderAmount,
             label: '订单数量',
-            width: 97
+            width: 114
           },
           {
             prop: orderKeys.productAmount,
             label: '生产数量',
-            width: 97
+            width: 114
           },
           {
             prop: orderKeys.optimalSize,
             label: '最优门幅',
-            width: 97,
+            width: 114,
           },
           {
             prop: orderKeys.cutNumber,
             label: '切数',
+            width: 86,
           },
           {
             prop: orderKeys.cutterNumber,
             label: '刀数',
+            width: 86,
           },
           {
             prop: orderKeys.orderMetres,
             label: '订单米数',
-            width: 97,
+            width: 114,
           },
           {
             prop: orderKeys.trim,
-            label: '修边'
+            label: '修边',
+            width: 86,
           },
           {
             prop: orderKeys.trimRate,
             label: '修边率',
+            width: 100,
           },
           {
             prop: orderKeys.stackUp,
             label: '叠单',
-            width: 60
+            width: 86
           }
         ],
         total: 0,

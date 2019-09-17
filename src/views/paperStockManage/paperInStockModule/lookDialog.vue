@@ -16,7 +16,7 @@
                       :data="tableData"
                       border
                       height="370"
-                      :columns-type-props="columnsTypeProps"
+                      :column-type-props="columnsTypeProps"
                       :columns="tableColumns"
                       :column-type="['index']">
           </base-table>
