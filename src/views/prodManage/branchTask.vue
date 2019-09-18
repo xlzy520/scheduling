@@ -22,7 +22,7 @@
     <dj-dialog v-if="visible" ref="dialog" @close="close" @confirm="confirm" title="处理" v-loading="dialogLoading">
       <classify-form ref="multiForm" :config="multiFormOptions" :column-num="2" :form-data="formData"></classify-form>
     </dj-dialog>
-    <order-tag ref="printTag" :data="checkedList"></order-tag>
+    <order-tag ref="printTag" :data="checkedList" :ext-order-keys="extOrderKeys"></order-tag>
   </single-page>
 </template>
 
@@ -215,6 +215,9 @@
           }
         ],
         visible: false,
+        extOrderKeys: {
+          associatedOrders: 'grouponOrderNumber'
+        }
       };
     },
     methods: {
@@ -258,36 +261,36 @@
         this.$refs.printTag.print();
       },
       removeOrder() {
-        const { length } = this.checkedList
+        const { length } = this.checkedList;
         if (length === 0) {
+          this.$message('请选择订单', 'error');
+          return false;
+        } else {
           const h = this.$createElement;
+          const msgContentItem = (content = '')=>h('span', {class: 'msg-content-item'}, content);
+          let content = [];
+          this.checkedList.map((v, index)=>{
+            if (index < 8) {
+              content.push(msgContentItem(v.combineId));
+            } else if (index === 8) {
+              content.push(msgContentItem('...'));
+            }
+            return false;
+          });
           this.$msgbox({
             title: '',
             customClass: 'branch-task',
             type: 'warning',
             showClose: false,
+            showCancelButton: true,
             message: h('div', {class: 'branch-task-msg'}, [
               h('p', {class: 'msg-header'}, `确定移除${length}条订单？`),
               h('div', {class: 'msg-content'}, [
                 h('p', {class: 'msg-content-label'}, `合并编号：`),
-                h('div', {class: 'msg-content-detail'}, [
-                  h('span', {class: 'msg-content-item'}, `V2019091601`),
-                  h('span', {class: 'msg-content-item'}, `V2019091601`),
-                  h('span', {class: 'msg-content-item'}, `V2019091601`),
-                  h('span', {class: 'msg-content-item'}, `V2019091601`),
-                  h('span', {class: 'msg-content-item'}, `V2019091601`),
-                  h('span', {class: 'msg-content-item'}, `V2019091601`),
-                ]),
+                h('div', {class: 'msg-content-detail'}, content),
               ]),
-            ])});
-          this.$message('请选择订单', 'error');
-          return false;
-        } else {
-          // todo 确认移除所选X条订单？ 合并编号：V20190611001、V20190611002
-          this.$confirm('确定移除所选订单？', '', { //todo
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
+            ])
+          }).then(()=>{
             this.loading = true;
             const idList = this.checkedList.map(v=>{
               return {
@@ -302,7 +305,6 @@
               this.$refs.search.search();
             });
           });
-
         }
       },
       selectionChange(checkedList) {
