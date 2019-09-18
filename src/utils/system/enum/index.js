@@ -262,13 +262,17 @@ export default {
     }
   }),
   stackUpTip: new MapObject({
-    'yes': {
-      label: '叠单',
+    'first': {
+      label: '首单堆叠',
       value: 1,
+    },
+    'multiple': {
+      label: '多单堆叠',
+      value: 2,
     },
     'no': {
       label: '不叠单',
-      value: null,
+      value: 0,
     }
   }),
   basketType: new MapObject({
