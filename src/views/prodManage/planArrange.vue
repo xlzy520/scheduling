@@ -1,6 +1,6 @@
 <template>
   <single-page class="planArrange">
-    <single-page v-if="prodLine_arr.length">
+    <single-page v-loading="isLoading" v-if="prodLine_arr.length">
       <paper-button v-model="banPaperSize_arr"></paper-button>
       <el-tabs v-model="lineId" @tab-click="refresh">
         <el-tab-pane v-for="item in prodLine_arr"
@@ -44,7 +44,7 @@
         </single-page>
       </div>
     </single-page>
-    <div v-else class="empty-text">
+    <div v-loading="isLoading" v-else class="empty-text">
       暂无生产线
     </div>
     <edit-paper-size-dialog ref="editPaperSizeDialog" v-if="editPaperSizeDialogFlag" @close="editPaperSizeDialogFlag = false" @success="refresh"></edit-paper-size-dialog>
@@ -206,7 +206,7 @@
           {
             prop: orderKeys.productionNo,
             label: '生产编号',
-            width: 117
+            width: 130
           },
           {
             prop: orderKeys.customerName,
@@ -290,6 +290,7 @@
         lineId: undefined,
         selectList: [],
         banPaperSize_arr: [],
+        isLoading: false,
 
         editPaperSizeDialogFlag: false,
         changeSortDialogFlag: false,
@@ -316,6 +317,7 @@
     mounted() {},
     methods: {
       getAllLine() {
+        this.isLoading = true;
         return this.dj_api_extend(productionLineService.list).then(res=>{
           let map = {};
           this.prodLine_arr = (res.list || []).filter(obj=>obj.isEffected).map(obj=>{
@@ -326,6 +328,8 @@
           });
           this.prodLine_arr_map = map;
           this.lineId = (this.prodLine_arr[0] || {}).value;
+        }).finally(()=>{
+          this.isLoading = false;
         });
       },
       selectionChange(selectList) {
@@ -378,10 +382,10 @@
           this.$message('请选择订单', 'error');
           return;
         }
-        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
-          this.$message('请先进行排序叠单', 'error');
-          return;
-        }
+        // if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
+        //   this.$message('请先进行排序叠单', 'error');
+        //   return;
+        // }
         let map = {
           importProd: {
             api: prodTaskService.toProduceManager,
