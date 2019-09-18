@@ -202,8 +202,10 @@
           this.dialogLoading = true;
           let message;
           let api;
-          let { supplierNumber, supplierName, address, socialCreditCode, legalRepresentative } = this.formData;
-          let post = { supplierNumber, supplierName, address, socialCreditCode, legalRepresentative };
+          let post = this.formData;
+          post.socialCreditCode = post.socialCreditCode || undefined;
+          post.legalRepresentative = post.legalRepresentative || undefined;
+          post.address = post.address || undefined;
           if (this.dialogTypeIsAdd) {
             message = '新增成功';
             api = paperSupplierService.add;
