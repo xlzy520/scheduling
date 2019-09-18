@@ -1,15 +1,15 @@
 <template>
   <div class="el-transfer-panel">
     <div class="el-transfer-panel__header">
-      <el-checkbox
+      <without-form-checkbox
         :value="allChecked"
         @change="handleAllCheckedChange"
         :indeterminate="isHeaderIndeterminate">
         {{ title }}
-      </el-checkbox>
+      </without-form-checkbox>
     </div>
     <div :class="['el-transfer-panel__body', $slots.footer ? 'is-with-footer' : '']">
-      <el-checkbox-group
+      <without-form-checkbox-group
         v-model="checkedList"
         v-show="data.length > 0"
         class="el-transfer-panel__list">
@@ -22,7 +22,7 @@
             <slot v-bind="props" name="children"></slot>
           </template>
         </tree-check-box>
-      </el-checkbox-group>
+      </without-form-checkbox-group>
     </div>
     <div class="el-transfer-panel__footer" v-if="$slots.footer">
       <slot name="footer"></slot>
@@ -31,7 +31,7 @@
 </template>
 <script>
   import treeCheckBox from './treeCheckBox';
-
+  import { withoutFormCheckbox, withoutFormCheckboxGroup } from '../../../elementUI/elementPackage';
   const KEY_MAP = {
     value: 'value',
     label: 'label',
@@ -98,7 +98,7 @@
         this.$emit('change', arr);
       },
     },
-    components: {treeCheckBox}
+    components: {treeCheckBox, withoutFormCheckbox, withoutFormCheckboxGroup}
   };
 </script>
 <style lang="less" scoped>

@@ -1,6 +1,6 @@
 <template>
   <div class="tree-check-box">
-    <el-checkbox
+    <without-form-checkbox
       class="el-transfer-panel__item is-parent"
       :label="data[_keyMap.value]"
       :indeterminate="isIndeterminate"
@@ -9,8 +9,8 @@
       @change="allCheck">
       <i v-if="hasChildren" :class="['el-icon-arrow-right', isExpend ? 'is-expend' : '']" @click.stop.prevent="isExpend = !isExpend"></i>
       <slot name="parent" :data="data"></slot>
-    </el-checkbox>
-    <el-checkbox
+    </without-form-checkbox>
+    <without-form-checkbox
       v-if="hasChildren && isExpend"
       class="el-transfer-panel__item"
       :label="item[_keyMap.value]"
@@ -20,10 +20,11 @@
       v-for="item in children">
       <i :class="['el-icon-arrow-right', 'is-leaf']"></i>
       <slot name="children" :data="item"></slot>
-    </el-checkbox>
+    </without-form-checkbox>
   </div>
 </template>
 <script>
+  import { withoutFormCheckbox } from '../../../elementUI/elementPackage';
   function removeRepeat(arr) {
     return Array.from(new Set(arr));
   }
@@ -35,6 +36,7 @@
   };
   export default {
     name: 'treeCheckBox',
+    components: {withoutFormCheckbox},
     props: {
       renderContent: {
         type: Object,

@@ -159,8 +159,8 @@
         }
       },
       change() {
-        this.dispatch('ElFormItem', 'el.form.change', [...this.rightData]);
         this.$emit('input', [...this.rightData]);
+        this.dispatch('ElFormItem', 'el.form.change', [...this.rightData]);
       }
     },
     components: {transferPanel}
