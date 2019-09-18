@@ -1,8 +1,8 @@
 <template>
   <tree-transfer :value="value" :data="data" :titles="['选择生产订单', '待更换生产订单']" @input="$listeners.input">
     <template slot="parent" slot-scope="{data}">
-      <span>门幅{{data[paperKeys.paperSize]}}</span>
-      <span class="fr">共
+      <span class="text-ellipsis" :title="data[paperKeys.paperSize]">门幅{{data[paperKeys.paperSize]}}</span>
+      <span>共
         {{
           data.children.reduce((sum, obj)=>{
             return $method.accuracyCompute(sum, obj[orderKeys.orderMetres], '+');
@@ -11,8 +11,8 @@
         m</span>
     </template>
     <template slot="children" slot-scope="{data}">
-      <span>材质{{data[orderKeys.produceMaterial]}}</span>
-      <span class="fr">{{data['paperLength']}}m</span>
+      <span class="text-ellipsis" :title="data[orderKeys.produceMaterial]">材质{{data[orderKeys.produceMaterial]}}</span>
+      <span>{{data[orderKeys.orderMetres]}}m</span>
     </template>
     <div class="transfer-footer" slot="left-footer" slot-scope="{list, keyMap, checkList}">
       <span>选中订单米数：{{calcMeters(checkList, keyMap)}}米</span>
@@ -60,6 +60,13 @@
     /*margin-left: 70px;*/
     /deep/ .el-transfer-panel {
       width: 282px;
+      .el-transfer-panel__item .el-checkbox__label {
+        display: flex;
+        flex-direction: row;
+        span {
+          flex: 1 1;
+        }
+      }
     }
   }
   .transfer-footer {

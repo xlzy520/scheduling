@@ -130,6 +130,7 @@
     color: #303133;
   }
   .el-icon-arrow-right {
+    line-height: 30px;
     transition: 0.2s;
     &.is-leaf {
       color: transparent;
