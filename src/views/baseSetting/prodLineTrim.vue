@@ -390,8 +390,9 @@
   }
   .plts-dialog {
     width: 1164px;
-    height: 497px;
+    height: 417px;
     margin-top: 4px;
+    overflow-y: auto;
     &-aside{
       margin-left: 130px;
     }
