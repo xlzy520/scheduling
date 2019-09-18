@@ -8,7 +8,8 @@
             <el-col :span="13">
               <div v-for="col in getColLeft(item)" class="item-box clearfix">
                 <label class="fl">{{col.label}}：</label>
-                <span>{{col.formatter ? col.formatter(item, index, item[col.prop]) : item[col.prop]}}</span>
+                <span v-if="col.label !== '关联订单'">{{col.formatter ? col.formatter(item, index, item[col.prop]) : item[col.prop]}}</span>
+                <span v-else v-for="span in splitAssociatedOrders(item[col.prop])">{{span}}</span>
               </div>
             </el-col>
             <el-col :span="11">
@@ -49,7 +50,7 @@
     'paperBoxSupplement': 'carton',
     'merge': 'merge'
   };
-  const all_col_left =  [
+  const all_col_left = [
     {
       prop: orderKeys.productionNo,
       label: '生产编号'
@@ -159,11 +160,19 @@
       data: {
         type: Array,
         default: () => []
+      },
+      extOrderKeys: {
+        type: Object,
+        default: ()=>({})
+      }
+    },
+    computed: {
+      orderKeys() {
+        return Object.assign({}, orderKeys, this.extOrderKeys);
       }
     },
     data: function () {
       return {
-        orderKeys,
         // titleMap: {
         //   group: '团购订单标签',
         //   carton: '纸箱订单标签',
@@ -178,6 +187,9 @@
     created() {
     },
     methods: {
+      splitAssociatedOrders(str = '') {
+        return str.split(',');
+      },
       getTitle(item) {
         let obj = this.$enum.orderType._swap[item[orderKeys.orderType]] || {};
         return obj.label || '';
@@ -202,7 +214,7 @@
           group: [orderKeys.associatedOrders, orderKeys.cartonRemarks, orderKeys.productAmount, orderKeys.deliveryTime],
           carton: [orderKeys.productSize, orderKeys.orderId, orderKeys.productAmount, orderKeys.deliveryTime],
           merge: [orderKeys.orderId, orderKeys.cartonRemarks, orderKeys.productAmount, orderKeys.deliveryTime],
-          store: [orderKeys.associatedOrders, orderKeys.orderId, orderKeys.productName, orderKeys.productSize,orderKeys.linePressingMethod, orderKeys.longitudinalPressure, orderKeys.transversePressure, orderKeys.cartonRemarks],
+          store: [orderKeys.associatedOrders, orderKeys.orderId, orderKeys.productName, orderKeys.productSize, orderKeys.linePressingMethod, orderKeys.longitudinalPressure, orderKeys.transversePressure, orderKeys.cartonRemarks],
         };
         return Object.keys(hiddenType).reduce((map, key)=>{
           map[key] = arr.filter(obj=>!hiddenType[key].includes(obj.prop));
@@ -228,7 +240,7 @@
       print() {
         let map = {};
         this.data.forEach((obj, index)=>{
-          obj[orderKeys.associatedOrders] = obj[orderKeys.orderId];
+          // obj[orderKeys.associatedOrders] = obj[orderKeys.orderId];
           let arr = [obj[orderKeys.productionNo], obj[orderKeys.orderId]];
           QRCode.toDataURL(arr.join('+'), QROption, (err, url) => {
             if (err) {

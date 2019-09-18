@@ -17,12 +17,14 @@
             height="100%"
             :loading="loading"
             @update-data="getTableData"
+            :defaultPageSize="100"
+            :pageSizeList="[100,200]"
           >
             <div slot="btn">
               <el-button type="primary" @click="removeOrder">移除订单</el-button>
               <el-button type="primary" @click="adjustSort">调整排序</el-button>
               <el-button type="primary" @click="printQRCode">打印二维码</el-button>
-              <el-button type="primary" @click="printAll">打印全部</el-button>
+              <el-button type="primary" @click="printAll" :loading="printLoading">打印全部</el-button>
               <el-button type="primary" @click="ViewImportRecord">查看汇入记录</el-button>
             </div>
           </dj-table>
@@ -32,7 +34,7 @@
         <import-record ref="view" v-if="visibleType==='record'" @close="close"></import-record>
       </single-page>
     </div>
-    <order-tag ref="printTag" :data="checkedList"></order-tag>
+    <order-tag ref="printTag" :data="printAllList" :ext-order-keys="extOrderKeys"></order-tag>
 </single-page>
 
 </template>
@@ -44,23 +46,99 @@
   import AdjustSort from "./compoents/adjustSort";
   import ProdTaskView from "./compoents/prodTaskView";
   import ImportRecord from "./compoents/importRecord";
+  import materialSizeInput from "../../../components/materialSizeInput";
+  import paperSizeRange from "../../../components/paperSizeRange";
   import orderTag from '../../../components/printTag/orderTag';
+  const mockData = {
+    "msg": "请求成功！",
+    "code": "10001200",
+    "data": {
+      "total": 1,
+      "list": [
+        {
+          grouponOrderNumber: 'B190916002101',//订单编号
+          consignee: '杜锡龙',
+          "processeAmount": 20,//打包数量
 
+          "rowId": "1",
+          "id": "0077e165-d912-11e9-8856-0619ea000039",
+          "operatorId": "958",
+          "operator": "东经科技",
+          "createTime": 1568702038000,
+          "updateTime": 1568707252000,
+          "taskNumber": "T0001",
+          "produceOrderNumber": "B190916002101",
+          "associatedOrders": "P1911200001,P1911200002,P1911200003",//关联单号
+          "grouponProductName": "A437J",
+          "orderFlag": 1,
+          "productLength": 50,
+          "productWidth": 50,
+          "productHeight": 59,
+          "customerId": "217f0a93-801f-11e6-a85c-00163f0045ca",
+          "customerName": "杜锡龙",
+          "hformula": "3.5+38.5+26.5+38.5+26.5",
+          "affluxTime": 1568736000000,
+          "arriveTime": 1568736000000,
+          "staveType": "普通压线",
+          "isDeleted": 0,
+          "remark": null,
+          "linkMan": "",
+          "linkAddress": "",
+          "orderType": 3,
+          "lineId": "c373e5c0-4931-4339-9b7a-3e71f472013d",
+          "lineNum": "1",
+          "slimachKnifeCount": 20,
+          "materialId": "xxx",
+          "materialCode": "A437J",
+          "layer": 5,
+          "tileModel": "BC",
+          "topSheet": "1",
+          "corePaper1": "B",
+          "facePaper1": "B",
+          "corePaper2": "B",
+          "facePaper2": "B",
+          "corePaper3": "B",
+          "facePaper3": "B",
+          "materialGram": 23,
+          "sort": 1,
+          "stackFlag": 1,
+          "packCount": 20,//打包数量
+          "pieceAmount": 500,
+          "produceAmount": 80,
+          "materialLength": 117.5,
+          "orderMeter": 20,
+          "cutCount": 30,
+          "knifeCount": 3,
+          "vformula": "25+25",
+          "sourceVformula": "25+25",
+          "paperSize": 1700,
+          "sourcePaperSize": 1600,
+          "materialWidth": 88,
+          "sourceMaterialWidth": 51,
+          "trimming": 23,
+          "sourceTrimming": 23,
+          "trimmingRate": 0.02,
+          "sourceTrimmingRate": 0.02
+        }
+      ]
+    },
+    "success": true
+  }
   export default {
     name: 'ProdTask',
-    components: {ImportRecord, ProdTaskView, AdjustSort, orderTag},
+    components: {ImportRecord, ProdTaskView, AdjustSort, orderTag, materialSizeInput, paperSizeRange},
     data() {
       return {
         activeTab: '',
         tabs: [],
-
+        printLoading: false,
         searchConfig: [
           {
             // 默认近三天
             label: '汇入日期', key: 'timeRange', type: 'date', attrs: {
               type: 'daterange',
               clearable: false,
-              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
+              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'), dayjs().add(40, 'day').format('YYYY-MM-DD 23:59:59')],
               beforeChange: (val) => {
                 let _val = val ? [...val] : [];
                 if (val[0] && val[1]) {
@@ -79,92 +157,20 @@
           {label: '生产编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /\w+/g}},
           {
             label: '下料规格', key: 'guige', type: 'custom',
-            component: {
-              data() {
-                return {
-                  start: '',
-                  end: ''
-                };
-              },
-              props: {
-                value: {
-                  type: Array,
-                  default: () => [null, null]
-                },
-              },
-              methods: {
-                update(val) {
-                  this.start = val[0];
-                  this.end = val[1];
-                }
-              },
-              render(h) {
-                const input = (index, val) => {
-                  const value = this.value;
-                  value[index] = val;
-                  this.update(value);
-                  this.$emit('input', value);
-                };
-                return (
-                  <div class="xialiaoguige">
-                    <dj-input type='number' value={this.start} onInput={val => input(0, val)}
-                              placeholder="切长cm" maxlength="10"/>
-                    <span class="text">*</span>
-                    <dj-input type='number' value={this.end} onInput={val => input(1, val)}
-                              placeholder="切宽cm" maxlength="10"/>
-                  </div>
-                );
-              }
-            }
+            component: materialSizeInput
           },
           {label: '用料代码', key: 'materialCode', type: 'input'},
           {label: '客户名称', key: 'customerName', type: 'input'},
           {
             label: '门幅范围', key: 'paperSize', type: 'custom',
-            component: {
-              data() {
-                return {
-                  start: '',
-                  end: ''
-                };
-              },
-              props: {
-                value: {
-                  type: Array,
-                  default: () => [null, null]
-                },
-              },
-              methods: {
-                update(val) {
-                  this.start = val[0];
-                  this.end = val[1];
-                }
-              },
-              render(h) {
-                const input = (index, val) => {
-                  const value = this.value;
-                  value[index] = val;
-                  this.update(value);
-                  this.$emit('input', value);
-                };
-                return (
-                  <div class="xialiaoguige">
-                    <dj-input type='number' value={this.start} onInput={val => input(0, val)}
-                              placeholder="切长cm" maxlength="10"/>
-                    <span class="text">-</span>
-                    <dj-input type='number' value={this.end} onInput={val => input(1, val)}
-                              placeholder="切宽cm" maxlength="10"/>
-                  </div>
-                );
-              }
-            }
+            component: paperSizeRange
           },
         ],
         tableData: [],
         tableColumns: [
-          {label: '生产编号', prop: 'produceOrderNumber', width: 120},
-          {label: '客户名称', prop: 'customerName', width: 160},
-          {label: '产品名称', prop: 'productName', width: 160},
+          {label: '生产编号', prop: 'produceOrderNumber', width: 160},
+          {label: '客户名称', prop: 'customerName'},
+          {label: '产品名称', prop: 'grouponProductName'},
           {label: '用料代码', prop: 'materialCode'},
           {label: '瓦楞楞型', prop: 'tileModel'},
           {label: '门幅宽度', prop: 'paperSize'},
@@ -192,7 +198,11 @@
         searchData: {},
         loading: false,
         checkedList: [],
-        visibleType: ''
+        visibleType: '',
+        printAllList: [],
+        extOrderKeys: {
+
+        }
       };
     },
     methods: {
@@ -211,15 +221,30 @@
           this.$message('请选择订单', 'error');
           return false;
         }
+        this.printAllList = mockData.data.list
         this.$refs.printTag.print();
       },
       printAll () {
-        const {length} = this.checkedList;
-        if (length === 0) {
-          this.$message('请选择订单', 'error');
-          return false;
-        }
-        this.$refs.printTag.print();
+        this.printLoading = true;
+        this.dj_api_extend(prodTaskService.list, {
+          ...this.searchData,
+          pageSize: 999999,
+        }).then(res => {
+          const {list, total} = res;
+          if (total === 0) {
+            this.$message('无可打印数据', 'error');
+            return false;
+          } else {
+            list.map(v=>{
+              // 后端名称不统一，所以需要转换一下
+              v.pieceAmount = v.orderAmount;
+            });
+            this.printAllList = list;
+            this.$refs.printTag.print();
+          }
+        }).finally(() => {
+          this.printLoading = false;
+        });
       },
       ViewImportRecord () {
         this.visibleType = 'record';
@@ -252,9 +277,8 @@
               produceOrderNumbers: idList
             }).then(res => {
               this.$message('移除成功', 'success');
-            }).catch(() => {
-              this.loading = false;
             }).finally(() => {
+              this.loading = false;
               this.$refs.search.search();
             });
           });
@@ -270,7 +294,6 @@
           ...restQuery,
           'search[affluxTimeStart]': timeRange[0],
           'search[affluxTimeEnd]': timeRange[1],
-          'search[isDeleted]': true,
         };
         if (this.activeTab) {
           params['search[lineId]'] = this.activeTab;
@@ -298,7 +321,8 @@
           ...data,
           ...this.searchData
         }).then(res => {
-          const {list, total} = res;
+          // const {list, total} = res;
+          const {list, total} = mockData.data;
           this.tableData = list;
           this.pageTotal = total;
         }).finally(() => {
