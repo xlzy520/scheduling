@@ -30,7 +30,7 @@
   import paperTableService from '@/api/service/paperTable';
   import reportService from '@/api/service/report';
   import PagePane from "../../../components/page/pagePane";
-  import dayjs from 'dayjs'
+  import dayjs from 'dayjs';
   export default {
     name: 'SimpleTableBox',
     components: {PagePane},
@@ -93,6 +93,7 @@
           ...this.pageOptions
         }).then((res) => {
           // 没有额外数据的在list里，有额外数据的在data.list里
+          res.data = res.data ? res.data : {};
           this.tableData = res.list || res.data.list || [];
           this.pageTotal = res.total || res.data.total || 0;
           this.totalCount = res.totalCount;
