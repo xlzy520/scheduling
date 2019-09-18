@@ -43,38 +43,7 @@
                 return _val;
               },
               type: 'daterange',
-              clearable: false,
-              pickerOptions: {
-                shortcuts: [
-                  {
-                    text: '今天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      picker.$emit('pick', [start, end]);
-                    }
-                  },
-                  {
-                    text: '近7天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                      picker.$emit('pick', [start, end]);
-                    }
-                  },
-                  {
-                    text: '近30天',
-                    onClick(picker) {
-                      const end = new Date();
-                      const start = new Date();
-                      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                      picker.$emit('pick', [start, end]);
-                    }
-                  }
-                ]
-              },
-              valueFormat: "yyyy-MM-dd"
+              clearable: false
             }
           },
           {label: '材料名称', key: 'materialName', type: 'input'},
