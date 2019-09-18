@@ -81,59 +81,6 @@
       }
     },
     created() {
-      console.log(this);
-      // this.allData = [
-      //   {
-      //     label: '1',
-      //     value: '1',
-      //     paperSize: 1800,
-      //     children: [
-      //       {
-      //         label: '1-1',
-      //         value: '1-1',
-      //         meters: 100,
-      //         materialCode: 'HZ1X',
-      //       },
-      //       {
-      //         label: '1-2',
-      //         value: '1-2',
-      //         meters: 200,
-      //         materialCode: 'HZ1X',
-      //       },
-      //       {
-      //         label: '1-3',
-      //         value: '1-3',
-      //         meters: 300,
-      //         materialCode: 'HZ1X',
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     label: '2',
-      //     value: '2',
-      //     paperSize: 2000,
-      //     children: [
-      //       {
-      //         label: '2-1',
-      //         value: '2-1',
-      //         meters: 50,
-      //         materialCode: 'X3',
-      //       },
-      //       {
-      //         label: '2-2',
-      //         value: '2-2',
-      //         meters: 123,
-      //         materialCode: '1X',
-      //       },
-      //       {
-      //         label: '2-3',
-      //         value: '2-3',
-      //         meters: 64,
-      //         materialCode: 'Z1',
-      //       }
-      //     ]
-      //   },
-      // ];
       this.getAllLine();
     },
     methods: {
@@ -143,12 +90,6 @@
         }
         return 12;
       },
-      // renderContent(h, option) {
-      //   console.log(option);
-      //   return (
-      //     <el-tree data={[option]}></el-tree>
-      //   );
-      // },
       calcMeters(arr = [], keyMap, sum = 0) {
         arr.forEach(obj=>{
           let children = obj[keyMap.childKey];
@@ -171,17 +112,18 @@
         });
       },
       confirm(cb) {
-        console.log(this.formData);
         this.$refs.form.validate(()=>{
           let post ={
-            ...this.formData,
+            // ...this.formData,
             oldLine: this.oldLine,
+            newLine: this.formData.newLine,
             changeList: this.formData.list && this.formData.list.reduce((arr, obj)=>{
               obj.children && obj.children.forEach(child=>{
-                arr.push({
-                  paperSize: obj.paperSize,
-                  produceMaterialId: child[orderKeys.produceMaterialId]
-                });
+                arr.push(...child['produceId']);
+                // arr.push({
+                //   paperSize: obj.paperSize,
+                //   produceMaterialId: child[orderKeys.produceMaterialId]
+                // });
               });
               return arr;
             }, [])
@@ -198,7 +140,7 @@
         this.isLoading = true;
         this.oldLine = param.lineId;
         this.orders = param.data || [];
-        this.dj_api_extend(planArrangeService.integratedMaterial, {lineId: this.oldLine, orderList: this.orders}).then((res = {})=>{
+        this.dj_api_extend(planArrangeService.integratedMaterial, {lineId: this.oldLine, orderList: this.$method.getOrderList(this.orders)}).then((res = {})=>{
           this.allData = Object.keys(res).map(key=>{
             if (Array.isArray(res[key])) {
               res[key].map(obj=>{
