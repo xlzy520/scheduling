@@ -3,7 +3,7 @@
     <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
       <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.lineNum+'号线'" :name="tab.id"></el-tab-pane>
     </el-tabs>
-    <div class="content">
+    <div class="content" v-loading="contentLoading">
       <single-page>
         <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
         <page-pane>
@@ -49,81 +49,6 @@
   import materialSizeInput from "../../../components/materialSizeInput";
   import paperSizeRange from "../../../components/paperSizeRange";
   import orderTag from '../../../components/printTag/orderTag';
-  const mockData = {
-    "msg": "请求成功！",
-    "code": "10001200",
-    "data": {
-      "total": 1,
-      "list": [
-        {
-          grouponOrderNumber: 'B190916002101',//订单编号
-          consignee: '杜锡龙',
-          "processeAmount": 20,//打包数量
-
-          "rowId": "1",
-          "id": "0077e165-d912-11e9-8856-0619ea000039",
-          "operatorId": "958",
-          "operator": "东经科技",
-          "createTime": 1568702038000,
-          "updateTime": 1568707252000,
-          "taskNumber": "T0001",
-          "produceOrderNumber": "B190916002101",
-          "associatedOrders": "P1911200001,P1911200002,P1911200003",//关联单号
-          "grouponProductName": "A437J",
-          "orderFlag": 1,
-          "productLength": 50,
-          "productWidth": 50,
-          "productHeight": 59,
-          "customerId": "217f0a93-801f-11e6-a85c-00163f0045ca",
-          "customerName": "杜锡龙",
-          "hformula": "3.5+38.5+26.5+38.5+26.5",
-          "affluxTime": 1568736000000,
-          "arriveTime": 1568736000000,
-          "staveType": "普通压线",
-          "isDeleted": 0,
-          "remark": null,
-          "linkMan": "",
-          "linkAddress": "",
-          "orderType": 3,
-          "lineId": "c373e5c0-4931-4339-9b7a-3e71f472013d",
-          "lineNum": "1",
-          "slimachKnifeCount": 20,
-          "materialId": "xxx",
-          "materialCode": "A437J",
-          "layer": 5,
-          "tileModel": "BC",
-          "topSheet": "1",
-          "corePaper1": "B",
-          "facePaper1": "B",
-          "corePaper2": "B",
-          "facePaper2": "B",
-          "corePaper3": "B",
-          "facePaper3": "B",
-          "materialGram": 23,
-          "sort": 1,
-          "stackFlag": 1,
-          "packCount": 20,//打包数量
-          "pieceAmount": 500,
-          "produceAmount": 80,
-          "materialLength": 117.5,
-          "orderMeter": 20,
-          "cutCount": 30,
-          "knifeCount": 3,
-          "vformula": "25+25",
-          "sourceVformula": "25+25",
-          "paperSize": 1700,
-          "sourcePaperSize": 1600,
-          "materialWidth": 88,
-          "sourceMaterialWidth": 51,
-          "trimming": 23,
-          "sourceTrimming": 23,
-          "trimmingRate": 0.02,
-          "sourceTrimmingRate": 0.02
-        }
-      ]
-    },
-    "success": true
-  }
   export default {
     name: 'ProdTask',
     components: {ImportRecord, ProdTaskView, AdjustSort, orderTag, materialSizeInput, paperSizeRange},
@@ -154,7 +79,7 @@
               }
             }
           },
-          {label: '生产编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /\w+/g}},
+          {label: '生产编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /^\w*$/}},
           {
             label: '下料规格', key: 'guige', type: 'custom',
             component: materialSizeInput
@@ -201,8 +126,10 @@
         visibleType: '',
         printAllList: [],
         extOrderKeys: {
-
-        }
+          consignee: 'linkMan',
+          packageAmount: 'packCount'
+        },
+        contentLoading: false
       };
     },
     methods: {
@@ -221,13 +148,16 @@
           this.$message('请选择订单', 'error');
           return false;
         }
-        this.printAllList = mockData.data.list
-        this.$refs.printTag.print();
+        this.printAllList = this.checkedList;
+        this.$nextTick(() => {
+          this.$refs.printTag.print();
+        });
       },
       printAll () {
         this.printLoading = true;
         this.dj_api_extend(prodTaskService.list, {
           ...this.searchData,
+          pageNo: 1,
           pageSize: 999999,
         }).then(res => {
           const {list, total} = res;
@@ -235,12 +165,10 @@
             this.$message('无可打印数据', 'error');
             return false;
           } else {
-            list.map(v=>{
-              // 后端名称不统一，所以需要转换一下
-              v.pieceAmount = v.orderAmount;
+            this.printAllList = list.slice(0, 20);
+            this.$nextTick(() => {
+              this.$refs.printTag.print();
             });
-            this.printAllList = list;
-            this.$refs.printTag.print();
           }
         }).finally(() => {
           this.printLoading = false;
@@ -250,12 +178,13 @@
         this.visibleType = 'record';
         this.$nextTick(() => {
           this.$refs.view.open();
+          this.$refs.view.searchConfig[1].attrs.default = this.activeTab;
         });
       },
       view(row) {
         this.visibleType = 'view';
         this.$nextTick(() => {
-          this.$refs.view.open();
+          this.$refs.view.open(row.produceOrderNumber);
           this.$refs.view.formData = row;
         });
       },
@@ -271,14 +200,16 @@
             type: 'warning',
             showClose: false,
           }).then(() => {
-            this.loading = true;
+            this.contentLoading = true;
             const idList = this.checkedList.map(v=> v.id);
             this.dj_api_extend(prodTaskService.removeOrder, {
               produceOrderNumbers: idList
             }).then(res => {
               this.$message('移除成功', 'success');
+              this.contentLoading = false;
+            }).catch(() => {
+              this.contentLoading = false;
             }).finally(() => {
-              this.loading = false;
               this.$refs.search.search();
             });
           });
@@ -289,26 +220,27 @@
         this.checkedList = checkedList;
       },
       search(query) {
-        const {timeRange, guige, paperSize, ...restQuery} = query;
+        const {timeRange, guige, paperSize, produceOrderNumber, materialCode, customerName } = query;
         let params = {
-          ...restQuery,
           'search[affluxTimeStart]': timeRange[0],
           'search[affluxTimeEnd]': timeRange[1],
+          'search[isDeleted]': 0,
+          'search[materialCode]': materialCode || undefined,
+          'search[customerName]': customerName || undefined,
+          'search[produceOrderNumber]': produceOrderNumber || undefined,
         };
-        if (this.activeTab) {
-          params['search[lineId]'] = this.activeTab;
-        }
+        params['search[lineId]'] = this.activeTab || undefined;
         if (guige !== undefined) {
           let guigeParams = {
-            'search[materialLengthStart]': guige[0],
-            'search[materialWidthEnd]': guige[1],
+            'search[materialLength]': guige[0],
+            'search[materialWidth]': guige[1],
           };
           Object.assign(params, guigeParams);
         }
         if (paperSize !== undefined) {
           let paperSizeParams = {
-            'search[paperSizeStart]': paperSize[0],
-            'search[paperSizeEnd]': paperSize[1],
+            'search[paperSizeStart]': Math.min.apply(null, paperSize),
+            'search[paperSizeEnd]': Math.max.apply(null, paperSize),
           };
           Object.assign(params, paperSizeParams);
         }
@@ -321,8 +253,7 @@
           ...data,
           ...this.searchData
         }).then(res => {
-          // const {list, total} = res;
-          const {list, total} = mockData.data;
+          const {list, total} = res;
           this.tableData = list;
           this.pageTotal = total;
         }).finally(() => {

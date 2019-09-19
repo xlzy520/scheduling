@@ -42,8 +42,8 @@
           {
             label: '产品信息',
             formBlock: [
-              {formItem: {prop: 'productName', label: '产品名称：'}},
-              {formItem: {prop: 'orderAmount', label: '订单数量：'}},
+              {formItem: {prop: 'grouponProductName', label: '产品名称：'}},
+              {formItem: {prop: 'pieceAmount', label: '订单数量：'}},
               {formItem: {prop: 'materialCode', label: '用料代码：'}},
               {formItem: {prop: 'tileModel', label: '瓦楞楞型：'}},
               {
@@ -70,7 +70,7 @@
             label: '最终生产信息',
             formBlock: [
               {formItem: {prop: 'paperSize', label: '最优门幅：'}},
-              {formItem: {prop: 'slimachKnifeCount', label: '单台纵切刀数：'}},
+              {formItem: {prop: 'cutCount', label: '切数：'}},
               {formItem: {prop: 'knifeCount', label: '刀数：'}},
               {formItem: {prop: 'produceAmount', label: '生产数量：'}},
               {formItem: {prop: 'vformula', label: '纵压公式：'}},
@@ -85,7 +85,7 @@
             label: '原生产信息',
             formBlock: [
               {formItem: {prop: 'sourcePaperSize', label: '最优门幅：'}},
-              {formItem: {prop: 'slimachKnifeCount', label: '单台纵切刀数：'}},
+              {formItem: {prop: 'cutCount', label: '切数：'}},
               {formItem: {prop: 'knifeCount', label: '刀数：'}},
               {formItem: {prop: 'produceAmount', label: '生产数量：'}},
               {formItem: {prop: 'sourceVformula', label: '纵压公式：'}},
@@ -107,7 +107,9 @@
       },
       getDetail(id) {
         this.loading = true;
-        this.dj_api_extend(prodTaskService.findByProduceOrderNumber, id).then(res => {
+        this.dj_api_extend(prodTaskService.findByProduceOrderNumber, {
+          produceOrderNumber: id
+        }).then(res => {
           this.formData = res;
         }).finally(() => {
           this.loading = false;

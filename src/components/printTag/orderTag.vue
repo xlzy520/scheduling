@@ -39,121 +39,6 @@
     height: 128,
     margin: 0
   };
-  const orderTypeMap = {
-    'groupPurchase': 'group',
-    'abnormal': 'carton',
-    'preparingMaterials': 'store',
-    'paperBoard': 'group',
-    'paperBoardSupplement': 'group',
-    'groupPurchaseSupplement': 'group',
-    'paperBox': 'carton',
-    'paperBoxSupplement': 'carton',
-    'merge': 'merge'
-  };
-  const all_col_left = [
-    {
-      prop: orderKeys.productionNo,
-      label: '生产编号'
-    },
-    {
-      prop: orderKeys.associatedOrders,
-      label: '关联订单'
-    },
-    {
-      prop: orderKeys.orderId,
-      label: '订单编号'
-    },
-    {
-      prop: orderKeys.productName,
-      label: '产品名称'
-    },
-    {
-      prop: orderKeys.materialCode,
-      label: '用料代码'
-    },
-    {
-      prop: orderKeys.fluteType,
-      label: '瓦楞楞型'
-    },
-    {
-      prop: orderKeys.materialSize,
-      label: '下料规格',
-      formatter: (row, index, cur) => {
-        let length = row[orderKeys.materialLength];
-        let width = row[orderKeys.materialWidth];
-        return length && width ? `${length}*${width}` : '';
-      }
-    },
-    {
-      prop: orderKeys.productSize,
-      label: '产品规格',
-      formatter: (row, index, cur) => {
-        let length = row[orderKeys.productLength];
-        let width = row[orderKeys.productWidth];
-        let height = row[orderKeys.productHeight];
-        return length || width || height ? `${length}*${width}*${height}` : '';
-      }
-    },
-    {
-      prop: orderKeys.linePressingMethod,
-      label: '压线方式'
-    },
-    {
-      prop: orderKeys.longitudinalPressure,
-      label: '纵压公式'
-    },
-    {
-      prop: orderKeys.transversePressure,
-      label: '横压公式'
-    },
-    {
-      prop: orderKeys.cartonRemarks,
-      label: '纸箱备注'
-    },
-    {
-      prop: orderKeys.productAmount,
-      label: '生产数量'
-    },
-    {
-      prop: orderKeys.deliveryTime,
-      label: '订单交期',
-      formatter: (row, index, cur) => {
-        return cur ? dayjs(cur).format('YYYY-MM-DD') : '';
-      }
-    },
-  ];
-  const all_col_right = [
-    {
-      prop: orderKeys.customerName,
-      label: '客户名称'
-    },
-    {
-      prop: orderKeys.consignee,
-      label: '收货人'
-    },
-    {
-      prop: orderKeys.deliveryTime,
-      label: '订单交期',
-      formatter: (row, index, cur) => {
-        return cur ? dayjs(cur).format('YYYY-MM-DD') : '';
-      }
-    },
-    {
-      prop: orderKeys.orderAmount,
-      label: '订单数量'
-    },
-    {
-      prop: orderKeys.productAmount,
-      label: '生产数量'
-    },
-    {
-      prop: orderKeys.packageAmount,
-      label: '打包数量',
-      formatter(row, index, cur) {
-        return cur ? cur + '片/包' : '';
-      }
-    }
-  ];
   export default {
     name: 'printTag',
     props: {
@@ -179,19 +64,134 @@
         //   merge: '合并标签',
         //   store: '备料订单标签',
         // },
+        orderTypeMap: {
+          'groupPurchase': 'group',
+          'abnormal': 'carton',
+          'preparingMaterials': 'store',
+          'paperBoard': 'group',
+          'paperBoardSupplement': 'group',
+          'groupPurchaseSupplement': 'group',
+          'paperBox': 'carton',
+          'paperBoxSupplement': 'carton',
+          'merge': 'merge'
+        },
         isPrinting: false,
-        col_left_map: this.getColLeftMap(),
-        col_right_map: this.getColRightMap(),
       };
     },
     created() {
+      this.all_col_left = [
+        {
+          prop: this.orderKeys.productionNo,
+          label: '生产编号'
+        },
+        {
+          prop: this.orderKeys.associatedOrders,
+          label: '关联订单'
+        },
+        {
+          prop: this.orderKeys.orderId,
+          label: '订单编号'
+        },
+        {
+          prop: this.orderKeys.productName,
+          label: '产品名称'
+        },
+        {
+          prop: this.orderKeys.materialCode,
+          label: '用料代码'
+        },
+        {
+          prop: this.orderKeys.fluteType,
+          label: '瓦楞楞型'
+        },
+        {
+          prop: this.orderKeys.materialSize,
+          label: '下料规格',
+          formatter: (row, index, cur) => {
+            let length = row[this.orderKeys.materialLength];
+            let width = row[this.orderKeys.materialWidth];
+            return length && width ? `${length}*${width}` : '';
+          }
+        },
+        {
+          prop: this.orderKeys.productSize,
+          label: '产品规格',
+          formatter: (row, index, cur) => {
+            let length = row[this.orderKeys.productLength];
+            let width = row[this.orderKeys.productWidth];
+            let height = row[this.orderKeys.productHeight];
+            return length || width || height ? `${length}*${width}*${height}` : '';
+          }
+        },
+        {
+          prop: this.orderKeys.linePressingMethod,
+          label: '压线方式'
+        },
+        {
+          prop: this.orderKeys.longitudinalPressure,
+          label: '纵压公式'
+        },
+        {
+          prop: this.orderKeys.transversePressure,
+          label: '横压公式'
+        },
+        {
+          prop: this.orderKeys.cartonRemarks,
+          label: '纸箱备注'
+        },
+        {
+          prop: this.orderKeys.productAmount,
+          label: '生产数量'
+        },
+        {
+          prop: this.orderKeys.deliveryTime,
+          label: '订单交期',
+          formatter: (row, index, cur) => {
+            return cur ? dayjs(cur).format('YYYY-MM-DD') : '';
+          }
+        },
+      ];
+      this.all_col_right = [
+        {
+          prop: this.orderKeys.customerName,
+          label: '客户名称'
+        },
+        {
+          prop: this.orderKeys.consignee,
+          label: '收货人'
+        },
+        {
+          prop: this.orderKeys.deliveryTime,
+          label: '订单交期',
+          formatter: (row, index, cur) => {
+            return cur ? dayjs(cur).format('YYYY-MM-DD') : '';
+          }
+        },
+        {
+          prop: this.orderKeys.orderAmount,
+          label: '订单数量'
+        },
+        {
+          prop: this.orderKeys.productAmount,
+          label: '生产数量'
+        },
+        {
+          prop: this.orderKeys.packageAmount,
+          label: '打包数量',
+          formatter(row, index, cur) {
+            return cur ? cur + '片/包' : '';
+          }
+        }
+      ];
+      this.col_left_map = this.getColLeftMap();
+      this.col_right_map = this.getColRightMap();
     },
     methods: {
       splitAssociatedOrders(str = '') {
         return str.split(',');
       },
       getTitle(item) {
-        let obj = this.$enum.orderType._swap[item[orderKeys.orderType]] || {};
+        let obj = this.$enum.orderType._swap[item[this.orderKeys.orderType]] || {};
         return obj.label || '';
       },
       end() {
@@ -199,8 +199,8 @@
         this.$emit('end');
       },
       judgeOrderType(item = {}) {
-        let obj = this.$enum.orderType._swap[item[orderKeys.orderType]] || {};
-        return orderTypeMap[obj.value];
+        let obj = this.$enum.orderType._swap[item[this.orderKeys.orderType]] || {};
+        return this.orderTypeMap[obj.value];
       },
       getColLeft(item) {
         return this.col_left_map[this.judgeOrderType(item)];
@@ -209,12 +209,12 @@
         return this.col_right_map[this.judgeOrderType(item)];
       },
       getColLeftMap() {
-        let arr = all_col_left;
+        let arr = this.all_col_left;
         let hiddenType = {
-          group: [orderKeys.associatedOrders, orderKeys.cartonRemarks, orderKeys.productAmount, orderKeys.deliveryTime],
-          carton: [orderKeys.productSize, orderKeys.orderId, orderKeys.productAmount, orderKeys.deliveryTime],
-          merge: [orderKeys.orderId, orderKeys.cartonRemarks, orderKeys.productAmount, orderKeys.deliveryTime],
-          store: [orderKeys.associatedOrders, orderKeys.orderId, orderKeys.productName, orderKeys.productSize, orderKeys.linePressingMethod, orderKeys.longitudinalPressure, orderKeys.transversePressure, orderKeys.cartonRemarks],
+          group: [this.orderKeys.associatedOrders, this.orderKeys.cartonRemarks, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
+          carton: [this.orderKeys.productSize, this.orderKeys.orderId, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
+          merge: [this.orderKeys.orderId, this.orderKeys.cartonRemarks, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
+          store: [this.orderKeys.associatedOrders, this.orderKeys.orderId, this.orderKeys.productName, this.orderKeys.productSize, this.orderKeys.linePressingMethod, this.orderKeys.longitudinalPressure, this.orderKeys.transversePressure, this.orderKeys.cartonRemarks],
         };
         return Object.keys(hiddenType).reduce((map, key)=>{
           map[key] = arr.filter(obj=>!hiddenType[key].includes(obj.prop));
@@ -222,11 +222,11 @@
         }, {});
       },
       getColRightMap() {
-        let arr = all_col_right;
+        let arr = this.all_col_right;
         let hiddenType = {
-          group: [orderKeys.productAmount],
-          carton: [orderKeys.packageAmount],
-          merge: [orderKeys.customerName, orderKeys.consignee, orderKeys.packageAmount],
+          group: [this.orderKeys.productAmount],
+          carton: [this.orderKeys.packageAmount],
+          merge: [this.orderKeys.customerName, this.orderKeys.consignee, this.orderKeys.packageAmount],
           store: arr.map(obj=>obj.prop),
         };
         return Object.keys(hiddenType).reduce((map, key)=>{
@@ -235,13 +235,13 @@
         }, {});
       },
       getPrintNum(row) {
-        return Math.ceil(Number(row[orderKeys.orderAmount]) / 200);
+        return Math.ceil(Number(row[this.orderKeys.orderAmount]) / 200);
       },
       print() {
         let map = {};
         this.data.forEach((obj, index)=>{
-          // obj[orderKeys.associatedOrders] = obj[orderKeys.orderId];
-          let arr = [obj[orderKeys.productionNo], obj[orderKeys.orderId]];
+          // obj[this.orderKeys.associatedOrders] = obj[this.orderKeys.orderId];
+          let arr = [obj[this.orderKeys.productionNo], obj[this.orderKeys.orderId]];
           QRCode.toDataURL(arr.join('+'), QROption, (err, url) => {
             if (err) {
               console.log(err);

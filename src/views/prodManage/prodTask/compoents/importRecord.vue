@@ -2,7 +2,7 @@
   <dj-dialog title="汇入记录" ref="dialog" @close="close" :hasFooter="false">
     <div class="content">
       <single-page>
-        <dj-search ref="search" :config="searchConfig" @search="search" v-if="searchVisible"></dj-search>
+        <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
         <page-pane>
           <dj-table
             ref="table"
@@ -28,77 +28,6 @@
   import dayjs from 'dayjs';
   import prodTaskService from '../../../../api/service/prodTask';
   import productionLine from "../../../../api/service/productionLine";
-  const mockData = {
-    "msg": "请求成功！",
-    "code": "10001200",
-    "data": {
-      "total": 1,
-      "list": [
-        {
-          "rowId": "1",
-          "id": "0077e165-d912-11e9-8856-0619ea000039",
-          "operatorId": "958",
-          "operator": "东经科技",
-          "createTime": 1568702038000,
-          "updateTime": 1568707252000,
-          "taskNumber": "T0001",
-          "produceOrderNumber": "B190916002101",
-          "associatedOrders": "P1911200001",
-          "productName": "A437J",
-          "orderFlag": 1,
-          "productLength": 50,
-          "productWidth": 50,
-          "productHeight": 59,
-          "customerId": "217f0a93-801f-11e6-a85c-00163f0045ca",
-          "customerName": "杜锡龙",
-          "hformula": "3.5+38.5+26.5+38.5+26.5",
-          "affluxTime": 1568736000000,
-          "arriveTime": 1568736000000,
-          "staveType": "普通压线",
-          "isDeleted": 0,
-          "remark": null,
-          "linkMan": "",
-          "linkAddress": "",
-          "orderType": 1,
-          "lineId": "c373e5c0-4931-4339-9b7a-3e71f472013d",
-          "lineNum": "1",
-          "slimachKnifeCount": 20,
-          "materialId": "xxx",
-          "materialCode": "A437J",
-          "layer": 5,
-          "tileModel": "BC",
-          "topSheet": "1",
-          "corePaper1": "B",
-          "facePaper1": "B",
-          "corePaper2": "B",
-          "facePaper2": "B",
-          "corePaper3": "B",
-          "facePaper3": "B",
-          "materialGram": 23,
-          "sort": 1,
-          "stackFlag": 1,
-          "packCount": 20,
-          "orderAmount": 500,
-          "produceAmount": 80,
-          "materialLength": 117.5,
-          "orderMeter": 20,
-          "cutCount": 30,
-          "knifeCount": 3,
-          "vformula": "25+25",
-          "sourceVformula": "25+25",
-          "paperSize": 1700,
-          "sourcePaperSize": 1600,
-          "materialWidth": 88,
-          "sourceMaterialWidth": 51,
-          "trimming": 23,
-          "sourceTrimming": 23,
-          "trimmingRate": 0.02,
-          "sourceTrimmingRate": 0.02
-        }
-      ]
-    },
-    "success": true
-  };
   function getRange(type, startNum, startUnit = 'day', endNum = 0, endUnit = 'day') {
     let end = new Date(dayjs().add(endNum + 1, endUnit).format('YYYY-MM-DD'));
     let start = new Date(dayjs(end).subtract(startNum + endNum, startUnit).valueOf());
@@ -116,7 +45,8 @@
           {
             // 默认近三天
             label: '汇入日期', key: 'timeRange', type: 'date', attrs: {
-              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD'), dayjs().add(40, 'day').format('YYYY-MM-DD')],
+              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'),
+                dayjs().add(40, 'day').format('YYYY-MM-DD 23:59:59')],
               type: 'daterange',
               clearable: false,
               pickerOptions: {
@@ -149,8 +79,8 @@
                     this.$message('时间不能超过92天', 'error');
                     _val = [val[0], dayjs(towMonth).toDate()];
                   }
-                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD');
-                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD');
+                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
+                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD 23:59:59');
                 }
                 return _val;
               }
@@ -200,7 +130,7 @@
           {label: '3车面纸', prop: 'facePaper3'},
           {label: '门幅', prop: 'paperSize'},
           {label: '订单米数', prop: 'orderMeter'},
-          {label: '订单数量', prop: 'orderAmount'},
+          {label: '订单数量', prop: 'pieceAmount'},
           {label: '生产数量', prop: 'produceAmount'},
           {
             label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
@@ -232,9 +162,6 @@
               obj.label = obj['lineNum'] + '号线';
               return obj;
             });
-            if (res.list.length > 0) {
-              this.searchConfig[1].attrs.default = res.list[0].id;
-            }
             resolve();
           });
         });
@@ -243,9 +170,9 @@
         const {timeRange, lineId} = query;
         let params = {
           'search[lineId]': lineId,
+          // 'search[lineId]': 'c373e5c0-4931-4339-9b7a-3e71f472013d',
           'search[affluxTimeStart]': timeRange[0],
           'search[affluxTimeEnd]': timeRange[1],
-          'search[isDeleted]': 0,
         };
         this.searchData = params;
         this.$refs.table.changePage(1);
@@ -256,14 +183,15 @@
           ...data,
           ...this.searchData
         }).then(res => {
-          // const {list, total} = res;
-          const {list, total} = mockData.data;
+          const {list, total} = res;
           // 拆解vformula，赋值压线1-7
           list.map(row=>{
-            const formulaList = row.vformula.split('+') || [];
-            formulaList.map((v, index) => {
-              row['stave' + (index + 1)] = v;
-            });
+            if (row.vformula) {
+              const formulaList = row.vformula.split('+') || [];
+              formulaList.map((v, index) => {
+                row['stave' + (index + 1)] = v;
+              });
+            }
           });
           this.tableData = list;
           this.pageTotal = total;
@@ -272,11 +200,14 @@
         });
       },
       exportRecord() {
-        let paramsStr = `search[materialLengthStart]=${this.searchData}`;
+        // let paramsStr = `search[materialLengthStart]=${this.searchData}`;
+        let paramsStr = ``;
         for (const item in this.searchData) {
           paramsStr += item + '=' + this.searchData[item] + '&';
         }
-        this.$method.fileDownload('/djsupplier/produceTask/exportExcel.do?' + paramsStr);
+        const url = '/djsupplier/produceTask/exportExcel.do?' + paramsStr;
+        console.log(url);
+        this.$method.fileDownload(url);
       },
       close() {
         this.formData = {};
@@ -284,11 +215,9 @@
       },
       open() {
         this.$refs.dialog.open();
-        this.getAllLine().then(() => {
-          this.searchVisible = true;
-          this.$nextTick(() => {
-            this.$refs.search.search();
-          });
+        this.getAllLine();
+        this.$nextTick(() => {
+          this.$refs.search.search();
         });
       },
     },
