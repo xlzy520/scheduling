@@ -24,8 +24,10 @@
   import plannedMergerService from '../../../api/service/plannedMerger';
   import record from "../../../api/service/record";
   import dayjs from 'dayjs';
+  import dialogFixed from "../../../mixins/dialogFixed";
   export default {
     name: 'lookDialog',
+    mixins: [dialogFixed],
     data: function () {
       return {
         recordData: [],
@@ -227,6 +229,7 @@
       }
     },
     created() {
+      this.fixedDialog();
     },
     methods: {
       changeFormData(val) {

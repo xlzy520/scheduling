@@ -16,8 +16,10 @@
   import planArrangeService from '../../../api/service/planArrange';
   import record from "../../../api/service/record";
   import dayjs from 'dayjs';
+  import dialogFixed from "../../../mixins/dialogFixed";
   export default {
     name: 'lookDialog',
+    mixins: [dialogFixed],
     data: function () {
       return {
         config: [
@@ -264,6 +266,7 @@
       };
     },
     created() {
+      this.fixedDialog();
     },
     methods: {
       getRecord() {
