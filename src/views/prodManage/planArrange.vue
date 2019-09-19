@@ -167,7 +167,7 @@
             prop: 'operate',
             label: '操作',
             fixed: 'right',
-            width: 89,
+            width: 105,
             render: (h, {props: {row}}) => {
               // let arr = [];
               // let obj = this.$enum.mergeStatus._swap[this.lineId] || {};

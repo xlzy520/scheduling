@@ -217,7 +217,7 @@
             prop: 'operate',
             label: '操作',
             fixed: 'right',
-            width: 89,
+            width: 105,
             render: (h, {props: {row}}) => {
               let edit;
               if (this.$enum.orderType.preparingMaterials.value === row[orderKeys.orderType] && this.$enum.productStatus.waitImport.value === row[orderKeys.productStatus]) {

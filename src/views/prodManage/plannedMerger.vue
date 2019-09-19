@@ -337,8 +337,8 @@
       },
       tableColumns() {
         let operate_width_map = {
-          'wait' : 89,
-          'already' : 145,
+          'wait' : 105,
+          'already' : 165,
           'undefined' : 84,
         };
         return [
