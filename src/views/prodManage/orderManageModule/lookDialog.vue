@@ -283,6 +283,7 @@
         isStore: true, // 是否是备料订单
         isLoading: false, // 是否是备料订单
         orderKeys,
+        id: ''
       };
     },
     computed: {
@@ -329,6 +330,7 @@
     },
     methods: {
       open(order) {
+        this.id = order.id;
         this.$refs.dialog.open();
         this.isStore = this.$enum.orderType.preparingMaterials.value === order[orderKeys.orderType];
         this.getOrderDetail(order[orderKeys.productionNo]);

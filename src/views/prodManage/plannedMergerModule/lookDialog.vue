@@ -132,7 +132,8 @@
             }
           },
         ],
-        isLoading: false
+        isLoading: false,
+        id: ''
       };
     },
     computed: {
@@ -236,6 +237,7 @@
         this.formData = {...(this.order_arr.filter(obj=>obj[orderKeys.productionNo] === val)[0] || {})};
       },
       open(order) {
+        this.id = order.id;
         this.$refs.dialog.open();
         this.getOrderDetail(order[orderKeys.productionNo]);
       },

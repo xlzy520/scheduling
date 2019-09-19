@@ -262,7 +262,8 @@
           {label: '操作人', prop: 'operator', width: 80},
           {label: '操作内容', prop: 'operateDetail', width: 200}
         ],
-        isTableLoading: false
+        isTableLoading: false,
+        id: ''
       };
     },
     created() {
@@ -293,6 +294,7 @@
         });
       },
       open(param = {}) {
+        this.id = param.data.id;
         this.$refs.dialog.open();
         this.getOrderMsg(param.data);
       },
