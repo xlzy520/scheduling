@@ -100,7 +100,7 @@
             label: '汇入时间',
             width: 200,
             formatter(row, index, cur) {
-              return dayjs(cur).format('YYYY-MM-DD HH:mm:ss');
+              return cur ? dayjs(cur).format('YYYY-MM-DD HH:mm:ss') : '';
             }
           },
           {
@@ -108,7 +108,7 @@
             label: '打包时间',
             width: 200,
             formatter(row, index, cur) {
-              return dayjs(cur).format('YYYY-MM-DD HH:mm:ss');
+              return cur ? dayjs(cur).format('YYYY-MM-DD HH:mm:ss') : '';
             }
           },
           {
