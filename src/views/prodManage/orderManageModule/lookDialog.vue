@@ -30,8 +30,10 @@
   import orderManageService from '../../../api/service/orderManage';
   import record from "../../../api/service/record";
   import dayjs from 'dayjs';
+  import dialogFixed from "../../../mixins/dialogFixed";
   export default {
     name: 'lookDialog',
+    mixins: [dialogFixed],
     data: function () {
       return {
         recordData: [],
@@ -319,7 +321,8 @@
         ];
       }
     },
-    created() {
+    mounted() {
+      this.fixedDialog();
     },
     methods: {
       open(order) {
@@ -359,9 +362,9 @@
   };
 </script>
 <style lang="less" scoped>
-  .dialog-content{
-    height: 632px//744
-  }
+  /*.dialog-content{*/
+    /*height: 632px//744*/
+  /*}*/
   .classifyForm {
     /deep/ .dj-form:nth-of-type(1) {
       font-weight: bold;

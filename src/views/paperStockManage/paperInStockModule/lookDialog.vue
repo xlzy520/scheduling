@@ -7,7 +7,7 @@
             <p class="font-subhead">纸筒信息</p>
             <base-table ref="table"
                         :data="tableData"
-                        max-height="370"
+                        height="370"
                         :columns="tableColumns"
                         :column-type="['index']">
             </base-table>
@@ -27,6 +27,7 @@
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import paperWarehouseService from '../../../api/service/paperWarehouse';
   import record from "../../../api/service/record";
+  import dialogFixed from "../../../mixins/dialogFixed";
   const {rules} = djForm;
   export default {
     name: 'lookDialog',
@@ -186,6 +187,7 @@
         id: ''
       };
     },
+    mixins: [dialogFixed],
     computed: {
       formOptions() {
         let total_arr = [
@@ -342,7 +344,8 @@
         return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
     },
-    created() {
+    mounted() {
+      this.fixedDialog();
     },
     methods: {
       colRule(item) {
@@ -384,9 +387,9 @@
   };
 </script>
 <style lang="less" scoped>
-  .dialog-content{
-    height: 594px;//706
-  }
+  /*.dialog-content{*/
+    /*height: 594px;//706*/
+  /*}*/
   .dj-form {
     margin-bottom: 13px;
     /deep/ .el-form-item {
