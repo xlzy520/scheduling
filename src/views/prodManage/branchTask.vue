@@ -267,29 +267,37 @@
           return false;
         } else {
           const h = this.$createElement;
-          const msgContentItem = (content = '')=>h('span', {class: 'msg-content-item'}, content);
-          let content = [];
-          this.checkedList.map((v, index)=>{
-            if (index < 8) {
-              content.push(msgContentItem(v.combineId));
-            } else if (index === 8) {
-              content.push(msgContentItem('...'));
-            }
-            return false;
-          });
+          //如果不存在合并编号数据
+          let message = '';
+          if (this.checkedList.every(v=>!v.combineId)) {
+            message = h('p', null, `确定移除${length}条订单？`);
+          } else {
+            const msgContentItem = (content = '')=>h('span', {class: 'msg-content-item'}, content);
+            let content = [];
+            this.checkedList.filter(v=>v.combineId).map((v, index)=>{
+              if (index < 8) {
+                content.push(msgContentItem(v.combineId));
+              } else if (index === 8) {
+                content.push(msgContentItem('...'));
+              }
+              return false;
+            });
+            message = h('div', {class: 'branch-task-msg'}, [
+              h('p', {class: 'msg-header'}, `确定移除${length}条订单？`),
+              h('div', {class: 'msg-content'}, [
+                h('p', {class: 'msg-content-label'}, `合并编号：`),
+                h('div', {class: 'msg-content-detail'}, content),
+              ]),
+            ]);
+          }
+
           this.$msgbox({
             title: '',
             customClass: 'branch-task',
             type: 'warning',
             showClose: false,
             showCancelButton: true,
-            message: h('div', {class: 'branch-task-msg'}, [
-              h('p', {class: 'msg-header'}, `确定移除${length}条订单？`),
-              h('div', {class: 'msg-content'}, [
-                h('p', {class: 'msg-content-label'}, `合并编号：`),
-                h('div', {class: 'msg-content-detail'}, content),
-              ]),
-            ])
+            message: message
           }).then(()=>{
             this.loading = true;
             const idList = this.checkedList.map(v=>{
