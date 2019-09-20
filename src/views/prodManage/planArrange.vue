@@ -401,7 +401,7 @@
         let map = {
           importProd: {
             api: prodTaskService.toProduceManager,
-            post: {orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId},
+            post: {produceOrderNumbers: this.$method.getOrderList(this.selectList), lineId: this.lineId},
             tip: '确认汇入所选订单？',
             msg: '汇入订单成功'
           },
