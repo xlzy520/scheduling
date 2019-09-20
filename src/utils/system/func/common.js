@@ -1,7 +1,7 @@
 import {orderKeys} from '../constant/dataKeys';
 import _enum  from '../enum';
 import {methods} from "djweb";
-const { checkType } = methods;
+const { checkType, fileDownload } = methods;
 import dayjs  from 'dayjs';
 import {MessageBox}  from 'element-ui';
 export const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
@@ -196,4 +196,29 @@ export function accuracyCompute (number_a, number_b, computedType) {
       return parseInt(string, 10);
     }
   }
+};
+
+
+//获取formData中可变的字段
+export const getFormDataChangeableValue = (formData, config) => {
+  return cloneData(config.reduce((arr, opt)=>{
+    function judgeChangeable(obj) {
+      if (!(!obj.type || (obj.attrs && obj.attrs.disabled))) {
+        arr.push(obj.formItem.prop);
+      }
+    }
+    if (opt.formOptions) {
+      opt.formOptions.forEach(obj=>{
+        judgeChangeable(obj);
+      });
+    } else {
+      judgeChangeable(opt);
+    }
+    return arr;
+  }, []), {}, formData);
+};
+
+//下载execl文件
+export const downloadExecl = (data, text) => {
+  return fileDownload(data, `${text} ${dayjs().format('YYYYMMDDHHmmss')}.xlsx`);
 };

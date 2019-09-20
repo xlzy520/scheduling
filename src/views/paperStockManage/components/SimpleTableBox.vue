@@ -69,8 +69,8 @@
       exportRecord() {
         this.exportLoading = true;
         reportService.exportFile(this.download.url, {...this.searchData, ...this.pageOptions}).then(res=>{
-          const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH:mm:ss') + '.xlsx';
-          this.$method.fileDownload(res, filename);
+          // const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH:mm:ss') + '.xlsx';
+          this.$method.downloadExecl(res, this.download.filename);
         }).finally(()=>{
           this.exportLoading = false;
         });

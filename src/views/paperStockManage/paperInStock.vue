@@ -287,7 +287,7 @@
       fileDownload() {
         this.isExporting = true;
         this.dj_api_extend(paperWarehouseService.exportPaperInStorage, this.searchData).then(res=>{
-          this.$method.fileDownload(res, `原纸入库表 ${dayjs().format('YYYYMMDD')}.xlsx`);
+          this.$method.downloadExecl(res, `原纸入库表`);
         }).finally(()=>{
           this.isExporting = false;
         });

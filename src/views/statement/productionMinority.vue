@@ -135,7 +135,7 @@
     methods: {
       fileDownload(cb) {
         this.dj_api_extend(productionMinorityService.exportFile, this.searchData).then(res=>{
-          this.$method.fileDownload(res, `生产少数 ${dayjs().format('YYYYMMDD')}.xlsx`);
+          this.$method.downloadExecl(res, `生产少数`);
         }).finally(cb);
       },
       getList(page) {
