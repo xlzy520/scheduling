@@ -89,9 +89,9 @@ permission({
   //   return a;
   // },
   // whiteListing: ['/404', '/500'],
-  login, //登录方法
+  // login, //登录方法
   getPermission, //获取权限方法
-  isLogin, //判断是否登录的方法
+  // isLogin, //判断是否登录的方法
   asyncRouter, //所有权限路由
   animate: { //路由跳转的动画
     start: () => {
