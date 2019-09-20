@@ -55,7 +55,7 @@
     methods: {
       getPaperSizeList() {
         this.dj_api_extend(productionLineService.list).then(res=>{
-          let lineObj = (res.list || []).filter(obj=>this.lineId = obj.id)[0] || {};
+          let lineObj = (res.list || []).filter(obj=>this.lineId === obj.id)[0] || {};
           this.paperSize_arr = lineObj.linePaperSizeModels || [];
         });
       },
