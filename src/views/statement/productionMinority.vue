@@ -5,12 +5,13 @@
       <dj-table ref="table"
                 :data="tableData"
                 height="100%"
+                :loading="isLoading"
                 :total="total"
                 :columns="tableColumns"
                 :column-type="['index']"
                 @update-data="getList">
         <div slot="btn">
-          <el-button type="primary" @click="fileDownload">导出记录</el-button>
+          <dj-button type="primary" @click="fileDownload">导出记录</dj-button>
         </div>
       </dj-table>
     </page-pane>
@@ -31,7 +32,7 @@
             key: orderKeys.orderType,
             attrs: {
               options: this.$enum.orderType._arr.filter(obj=>![this.$enum.orderType['abnormal'].value, this.$enum.orderType['merge'].value, this.$enum.orderType['preparingMaterials'].value].includes(obj.value)),
-              deafult: ''
+              default: ''
             }
           }
         ],
@@ -56,7 +57,7 @@
             label: '产品名称',
             width: 100,
             formatter(a, b, cur) {
-              return cur || '——'
+              return cur || '——';
             }
           },
           {
@@ -90,7 +91,7 @@
           {
             prop: 'affluxTime',
             label: '汇入时间',
-            width: 200,
+            width: 170,
             formatter(row, index, cur) {
               return cur ? dayjs(cur).format('YYYY-MM-DD HH:mm:ss') : '';
             }
@@ -98,7 +99,7 @@
           {
             prop: 'packTime',
             label: '打包时间',
-            width: 200,
+            width: 170,
             formatter(row, index, cur) {
               return cur ? dayjs(cur).format('YYYY-MM-DD HH:mm:ss') : '';
             }
@@ -114,14 +115,15 @@
           {
             prop: orderKeys.orderType,
             label: '订单类型',
-            width: 100,
+            width: 120,
             formatter: (row, index, cur) => {
               let obj = this.$enum.orderType._swap[cur] || {};
-              return obj.label || ''
+              return obj.label || '';
             }
           }
         ],
         searchData: {},
+        isLoading: false,
         total: 0
       };
     },
@@ -131,24 +133,28 @@
       this.$refs.search.search();
     },
     methods: {
-      fileDownload() {
+      fileDownload(cb) {
         this.dj_api_extend(productionMinorityService.exportFile, this.searchData).then(res=>{
           this.$method.fileDownload(res, `生产少数 ${dayjs().format('YYYYMMDD')}.xlsx`);
-        });
+        }).finally(cb);
       },
       getList(page) {
         let post = {
           ...this.searchData,
           ...page
         };
+        this.tableData = [];
+        this.isLoading = true;
         this.dj_api_extend(productionMinorityService.list, post).then(res=>{
           this.tableData = res.list || [];
           this.total = res.total || 0;
+        }).finally(()=>{
+          this.isLoading = false;
         });
-        console.log(post);
       },
       search(query) {
         this.searchData = query;
+        this.total = 0;
         this.$refs.table.changePage(1);
       },
       refresh() {
