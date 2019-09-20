@@ -192,7 +192,7 @@
             }
           },
           {
-            prop: 'order',
+            prop: orderKeys.sortIndex,
             label: '排序',
             width: 85,
           },
