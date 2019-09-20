@@ -272,7 +272,7 @@ export default {
     },
     'no': {
       label: '不叠单',
-      value: 0,
+      value: '',
     }
   }),
   basketType: new MapObject({

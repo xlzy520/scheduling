@@ -132,6 +132,9 @@
             this.$message('更换成功');
             this.$emit('success');
             this.close();
+          }).catch(()=>{
+            this.$emit('success');
+            this.close();
           }).finally(cb);
         }, cb);
       },

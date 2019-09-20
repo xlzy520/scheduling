@@ -20,6 +20,7 @@
                       :page-size-list="[1000,2000,3000]"
                       :defaultPageSize="1000"
                       :total="total"
+                      :row-class-name="rowClassName"
                       :column-type-props="columnsTypeProps"
                       :loading="isTableLoading"
                       @selection-change="selectionChange"
@@ -33,7 +34,7 @@
                   <dj-button type="primary" @click="sort">排序</dj-button>
                   <dj-button v-if="selectList.length" type="primary" @click="calcPaperSize">计算门幅</dj-button>
                   <dj-button v-if="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
-                  <el-button type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
+                  <el-button v-if="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
                   <el-button v-if="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
                   <el-button v-if="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
                 </div>
@@ -52,6 +53,7 @@
     <look-dialog ref="lookDialog" v-if="lookDialogFlag" @close="lookDialogFlag = false" @success="refresh"></look-dialog>
     <edit-dialog ref="editDialog" v-if="editDialogFlag" @close="editDialogFlag = false" @success="refresh"></edit-dialog>
     <change-prod-line-dialog ref="changeProdLineDialog" v-if="changeProdLineDialogFlag" @close="changeProdLineDialogFlag = false" @success="refresh"></change-prod-line-dialog>
+    <edit-stack-dialog ref="editStackDialog" v-if="editStackDialogFlag" @close="editStackDialogFlag = false" @success="refresh"></edit-stack-dialog>
   </single-page>
 </template>
 <script>
@@ -67,6 +69,7 @@
   import editDialog from "./planArrangeModule/editDialog";
   import paperButton from "./planArrangeModule/paperButton";
   import changeProdLineDialog from "./planArrangeModule/changeProdLineDialog";
+  import editStackDialog from "./planArrangeModule/editStackDialog";
   export default {
     name: 'planArrange',
     data: function () {
@@ -168,7 +171,7 @@
             prop: 'operate',
             label: '操作',
             fixed: 'right',
-            width: 105,
+            width: 155,
             render: (h, {props: {row}}) => {
               // let arr = [];
               // let obj = this.$enum.mergeStatus._swap[this.lineId] || {};
@@ -180,6 +183,8 @@
               return (
                 <div class="td-btn-group">
                   <a on-click={()=>{this.openDialog('editDialog', row);}}>编辑</a>
+                  <span></span>
+                  <a on-click={()=>{this.openDialog('editStackDialog', row);}}>叠单</a>
                   <span></span>
                   <a on-click={()=>{this.openDialog('lookDialog', row);}}>查看</a>
                 </div>
@@ -298,6 +303,7 @@
         lookDialogFlag: false,
         editDialogFlag: false,
         changeProdLineDialogFlag: false,
+        editStackDialogFlag: false,
         isTableLoading: false
       };
     },
@@ -317,6 +323,11 @@
     },
     mounted() {},
     methods: {
+      rowClassName({row}) {
+        if (row[orderKeys.stackUp] + '' === '0') {
+          return 'is-error';
+        }
+      },
       getAllLine() {
         this.isLoading = true;
         return this.dj_api_extend(productionLineService.list).then(res=>{
@@ -383,14 +394,14 @@
           this.$message('请选择订单', 'error');
           return;
         }
-        // if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
-        //   this.$message('请先进行排序叠单', 'error');
-        //   return;
-        // }
+        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
+          this.$message('请先进行排序叠单', 'error');
+          return;
+        }
         let map = {
           importProd: {
             api: prodTaskService.toProduceManager,
-            post: {lineId: this.lineId},
+            post: {orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId},
             tip: '确认汇入所选订单？',
             msg: '汇入订单成功'
           },
@@ -462,12 +473,14 @@
         }).finally(cb);
       },
       stackUp(cb) {
+        this.$message('叠单中', 'info');
         this.dj_api_extend(planArrangeService.stackUp, {lineId: this.lineId}).then(()=>{
           this.$message('叠单成功');
           this.refresh();
         }).finally(cb);
       },
       calcPaperSize(cb) {
+        this.$message('计算中', 'info');
         this.dj_api_extend(planArrangeService.calcPaperSize, {banList: this.banPaperSize_arr, orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId}).then(()=>{
           this.$message('计算门幅成功');
           this.refresh();
@@ -477,7 +490,7 @@
         this.$refs.table.updateData();
       },
     },
-    components: {editPaperSizeDialog, changeSortDialog, lookDialog, editDialog, paperButton, changeProdLineDialog}
+    components: {editPaperSizeDialog, changeSortDialog, lookDialog, editDialog, paperButton, changeProdLineDialog, editStackDialog}
   };
 </script>
 <style lang="less" scoped>
@@ -497,6 +510,9 @@
       }
       /deep/ .delay {
         color: #F89816;
+      }
+      /deep/ .is-error {
+        color: red;
       }
     }
     /*.el-tabs {*/

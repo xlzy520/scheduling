@@ -42,6 +42,9 @@ export default{
   editOrder(data) {
     return planArrange('/updateEditOrder.do', data)
   },
+  editStack(data) {
+    return planArrange('/updateStack.do', data)
+  },
   getPaperSizeList(data) {
     return planArrange('/expectLength.do', data)
   },
