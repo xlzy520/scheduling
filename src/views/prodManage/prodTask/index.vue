@@ -88,7 +88,11 @@
           {label: '客户名称', key: 'customerName', type: 'input'},
           {
             label: '门幅范围', key: 'paperSize', type: 'custom',
-            component: paperSizeRange
+            component: paperSizeRange,
+            attrs: {
+              default: [],
+              reg: /^\d*$/
+            }
           },
         ],
         tableData: [],
