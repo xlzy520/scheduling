@@ -1,7 +1,7 @@
 <template>
   <dj-input-group connector="-">
-    <dj-input placeholder="门幅" suffix-label="mm" :value="value[0]" @input="(val)=>input(val, 0)"></dj-input>
-    <dj-input placeholder="门幅" suffix-label="mm" :value="value[1]" @input="(val)=>input(val, 1)"></dj-input>
+    <dj-input v-bind="$attrs" placeholder="门幅" suffix-label="mm" :value="value[0]" @input="(val)=>input(val, 0)"></dj-input>
+    <dj-input v-bind="$attrs" placeholder="门幅" suffix-label="mm" :value="value[1]" @input="(val)=>input(val, 1)"></dj-input>
   </dj-input-group>
 </template>
 <script>

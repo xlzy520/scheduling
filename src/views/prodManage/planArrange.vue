@@ -149,7 +149,8 @@
             label: '门幅范围',
             component: paperSizeRange,
             attrs: {
-              default: []
+              default: [],
+              reg: /^\d*$/
             }
           },
         ],
