@@ -47,12 +47,9 @@
             label: '客户名称',
           },
           {
-            prop: orderKeys.orderId,
-            label: '订单编号',
-            width: 150,
-            formatter(a, b, cur) {
-              return cur || '——'
-            }
+            prop: 'produceMaterial',
+            label: '用料代码',
+            width: 100,
           },
           {
             prop: orderKeys.productName,
@@ -61,11 +58,6 @@
             formatter(a, b, cur) {
               return cur || '——'
             }
-          },
-          {
-            prop: 'produceMaterial',
-            label: '用料代码',
-            width: 100,
           },
           {
             prop: orderKeys.fluteType,
@@ -109,6 +101,14 @@
             width: 200,
             formatter(row, index, cur) {
               return cur ? dayjs(cur).format('YYYY-MM-DD HH:mm:ss') : '';
+            }
+          },
+          {
+            prop: 'lineNum',
+            label: '生产线',
+            width: 100,
+            formatter(row, index, cur) {
+              return cur ? cur + '号线' : '';
             }
           },
           {
