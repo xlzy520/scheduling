@@ -10,6 +10,7 @@
           <dj-table
             ref="table"
             :data="tableData"
+            scroll-load
             :columns="tableColumns"
             :column-type="['selection', 'index']"
             @selection-change="selectionChange"
@@ -21,7 +22,7 @@
             :pageSizeList="[100,200]"
           >
             <div slot="btn">
-              <el-button type="primary" @click="removeOrder">移除订单</el-button>
+              <el-button type="primary" @click="removeOrder" :loading="removeLoading">移除订单</el-button>
               <el-button type="primary" @click="adjustSort">调整排序</el-button>
               <el-button type="primary" @click="printQRCode">打印二维码</el-button>
               <el-button type="primary" @click="printAll" :loading="printLoading">打印全部</el-button>
@@ -134,7 +135,8 @@
           packageAmount: 'packCount'
         },
         contentLoading: false,
-        timeRange: []
+        timeRange: [],
+        removeLoading: false
       };
     },
     methods: {
@@ -182,7 +184,6 @@
       ViewImportRecord () {
         this.visibleType = 'record';
         this.$nextTick(() => {
-          console.log(this.searchData);
           this.$refs.view.open();
           this.$refs.view.searchConfig[1].attrs.default = this.activeTab;
           this.$refs.view.searchConfig[0].attrs.default = this.timeRange;
@@ -207,17 +208,17 @@
             type: 'warning',
             showClose: false,
           }).then(() => {
-            this.contentLoading = true;
+            this.removeLoading = true;
             const idList = this.checkedList.map(v=> v.id);
             this.dj_api_extend(prodTaskService.removeOrder, {
               produceOrderNumbers: idList
             }).then(res => {
               this.$message('移除成功', 'success');
-              this.contentLoading = false;
-            }).catch(() => {
-              this.contentLoading = false;
             }).finally(() => {
-              this.$refs.search.search();
+              this.removeLoading = false;
+              setTimeout(()=>{
+                this.$refs.search.search();
+              }, 500);
             });
           });
 
@@ -264,6 +265,7 @@
           const {list, total} = res;
           this.tableData = list;
           this.pageTotal = total;
+          this.checkedList = [];
         }).finally(() => {
           this.loading = false;
         });
