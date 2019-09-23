@@ -187,8 +187,8 @@
       this.col_right_map = this.getColRightMap();
     },
     methods: {
-      splitAssociatedOrders(str = '') {
-        return str.split(',');
+      splitAssociatedOrders(str) {
+        return str ? str.split(',') : '';
       },
       getTitle(item) {
         let obj = this.$enum.orderType._swap[item[this.orderKeys.orderType]] || {};
