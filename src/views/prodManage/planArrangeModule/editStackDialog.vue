@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" width="400px" title="叠单" @confirm="confirm">
+  <dj-dialog ref="dialog" @close="close" width="400px" title="叠单标记" @confirm="confirm">
     <classify-form ref="form" :formData="formData" :config="config"></classify-form>
     <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
@@ -31,16 +31,16 @@
                   options: this.$enum.stackUpTip._arr
                 }
               },
-              {
-                formItem: {
-                  prop: 're-' + this.$method.getOriginKey(orderKeys.stackUp, 'old'),
-                  label: '原叠单标记'
-                },
-                computed: () => {
-                  let obj = this.$enum.stackUpTip._swap[this.formData[this.$method.getOriginKey(orderKeys.stackUp, 'old')]] || {};
-                  return obj.label || ''
-                }
-              },
+              // {
+              //   formItem: {
+              //     prop: 're-' + this.$method.getOriginKey(orderKeys.stackUp, 'old'),
+              //     label: '原叠单标记'
+              //   },
+              //   computed: () => {
+              //     let obj = this.$enum.stackUpTip._swap[this.formData[this.$method.getOriginKey(orderKeys.stackUp, 'old')]] || {};
+              //     return obj.label || ''
+              //   }
+              // },
             ]
           }
         ]

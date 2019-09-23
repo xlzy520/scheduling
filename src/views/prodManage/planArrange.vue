@@ -171,7 +171,7 @@
             prop: 'operate',
             label: '操作',
             fixed: 'right',
-            width: 155,
+            width: 175,
             render: (h, {props: {row}}) => {
               // let arr = [];
               // let obj = this.$enum.mergeStatus._swap[this.lineId] || {};
@@ -184,7 +184,7 @@
                 <div class="td-btn-group">
                   <a on-click={()=>{this.openDialog('editDialog', row);}}>编辑</a>
                   <span></span>
-                  <a on-click={()=>{this.openDialog('editStackDialog', row);}}>叠单</a>
+                  <a on-click={()=>{this.openDialog('editStackDialog', row);}}>叠单标记</a>
                   <span></span>
                   <a on-click={()=>{this.openDialog('lookDialog', row);}}>查看</a>
                 </div>
@@ -287,7 +287,10 @@
           {
             prop: orderKeys.stackUp,
             label: '叠单',
-            width: 86
+            width: 86,
+            formatter(row, index, cur) {
+              return cur + '' === '0' ? '' : cur;
+            }
           }
         ],
         total: 0,
