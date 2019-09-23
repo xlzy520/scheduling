@@ -241,7 +241,7 @@
           };
           Object.assign(params, guigeParams);
         }
-        if (paperSize !== undefined) {
+        if (paperSize !== undefined && paperSize.some(v=>v)) {
           let paperSizeParams = {
             'search[paperSizeStart]': Math.min.apply(null, paperSize),
             'search[paperSizeEnd]': Math.max.apply(null, paperSize),
