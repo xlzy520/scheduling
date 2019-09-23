@@ -46,7 +46,7 @@
             // 默认近三天
             label: '汇入日期', key: 'timeRange', type: 'date', attrs: {
               default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'),
-                dayjs().add(40, 'day').format('YYYY-MM-DD 23:59:59')],
+                dayjs().format('YYYY-MM-DD 23:59:59')],
               type: 'daterange',
               clearable: false,
               pickerOptions: {
@@ -206,7 +206,6 @@
           paramsStr += item + '=' + this.searchData[item] + '&';
         }
         const url = '/djsupplier/produceTask/exportExcel.do?' + paramsStr;
-        console.log(url);
         this.$method.fileDownload(url);
       },
       close() {

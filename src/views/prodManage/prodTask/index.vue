@@ -63,7 +63,7 @@
             label: '汇入日期', key: 'timeRange', type: 'date', attrs: {
               type: 'daterange',
               clearable: false,
-              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'), dayjs().add(40, 'day').format('YYYY-MM-DD 23:59:59')],
+              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
               beforeChange: (val) => {
                 let _val = val ? [...val] : [];
                 if (val[0] && val[1]) {
@@ -133,7 +133,8 @@
           consignee: 'linkMan',
           packageAmount: 'packCount'
         },
-        contentLoading: false
+        contentLoading: false,
+        timeRange: []
       };
     },
     methods: {
@@ -181,8 +182,10 @@
       ViewImportRecord () {
         this.visibleType = 'record';
         this.$nextTick(() => {
+          console.log(this.searchData);
           this.$refs.view.open();
           this.$refs.view.searchConfig[1].attrs.default = this.activeTab;
+          this.$refs.view.searchConfig[0].attrs.default = this.timeRange;
         });
       },
       view(row) {
@@ -225,6 +228,7 @@
       },
       search(query) {
         const {timeRange, guige, paperSize, produceOrderNumber, materialCode, customerName } = query;
+        this.timeRange = timeRange;
         let params = {
           'search[affluxTimeStart]': timeRange[0],
           'search[affluxTimeEnd]': timeRange[1],
