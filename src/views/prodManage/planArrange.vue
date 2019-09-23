@@ -138,6 +138,7 @@
             key: orderKeys.orderTip,
             label: '订单标记',
             attrs: {
+              default: '',
               options: this.$enum.orderTip._arr
             }
           },
