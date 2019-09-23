@@ -132,39 +132,39 @@ export default {
     },
     'groupPurchase': {
       label: '平台纸板订单',
-      value: 1
+      value: 0
     },
     'abnormal': {
       label: '生产补单',
-      value: 2
+      value: 12
     },
     'merge': {
       label: '合并订单',
-      value: 3
+      value: 13
     },
     'preparingMaterials': {
       label: '备料订单',
-      value: 4
+      value: 14
     },
     'paperBoard': {
       label: '线下纸板订单',
-      value: 5
+      value: 1
     },
     'paperBoardSupplement': {
       label: '线下纸板补单',
-      value: 6
+      value: 2
     },
     'groupPurchaseSupplement': {
       label: '平台纸板补单',
-      value: 7
+      value: 3
     },
     'paperBox': {
       label: '线下纸箱订单',
-      value: 8
+      value: 4
     },
     'paperBoxSupplement': {
       label: '线下纸箱补单',
-      value: 9
+      value: 5
     },
   }),
   linePressingWay: new MapObject({
