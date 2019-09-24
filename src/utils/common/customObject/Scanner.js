@@ -6,15 +6,17 @@ export default function Scanner() {
   let listenerObj = window.document;
   let callback;
   let keydownFn = function (e) {
-    keycode = e.keyCode || e.which || e.charCode;
-    downTime = new Date().getTime();
+    if (e.target.nodeName !== 'INPUT') {
+      keycode = e.keyCode || e.which || e.charCode;
+      downTime = new Date().getTime();
+    }
     // e.preventDefault();
     // e.stopPropagation();
   };
   let keyupFn = function (e) {
     let _keycode = e.keyCode || e.which || e.charCode;
     upTime = new Date().getTime();
-    if (upTime - downTime < 30 && _keycode === keycode) {
+    if (downTime && upTime - downTime < 30 && _keycode === keycode) {
       if (_keycode === 13) {
         callback(text);
         text = '';

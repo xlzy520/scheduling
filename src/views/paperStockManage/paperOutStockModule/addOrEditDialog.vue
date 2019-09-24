@@ -49,6 +49,7 @@
       return {
         selectUsePersonFlag: false,
         selectForkliftDriverFlag: false,
+        gettingMap: {},
         formData: {},
         tableData: [],
         tableColumns: [
@@ -86,13 +87,14 @@
             },
             propsHandler: (props) => {
               const beforeEnter = (val, cb) => {
-                if (val) {
+                if (val && !this.gettingMap[val]) {
                   let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === val && props.row !== obj)[0];
                   if (sameRow && sameRow[paperKeys.paperCode]) {
                     this.$message('纸筒已录入', 'error');
                     this.$set(this.tableData, props.index, {});
                     // props.row[cylinderKeys.cylinderNo] = '';
                   } else {
+                    this.gettingMap[val] = true;
                     this.getTubeByNumber(val).then(obj=>{
                       // if (obj[paperKeys.paperStatus]) {
                       //   this.$message('该纸筒编号已出库', 'error');
@@ -103,6 +105,8 @@
                     }).catch(()=>{
                       this.$set(this.tableData, props.index, {});
                       // this.tableData.splice(index, 1, {});
+                    }).finally(()=>{
+                      this.gettingMap[val] = false;
                     });
                     cb();
                   }
@@ -474,7 +478,7 @@
         // return Promise.resolve(data);
       },
       scannerAdd(text) {
-        if (text) {
+        if (text && !this.gettingMap[text]) {
           let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === text)[0];
           if (sameRow && sameRow[paperKeys.paperCode]) {
             this.$message('纸筒已录入', 'error');
@@ -489,6 +493,7 @@
             this.$message('数据超出最大长度', 'error');
             return;
           }
+          this.gettingMap[text] = true;
           this.getTubeByNumber(text).then((obj = {})=>{
             if (obj[paperKeys.paperStatus]) {
               this.$message('该纸筒编号已出库', 'error');
@@ -502,6 +507,8 @@
             } else {
               this.tableData.splice(index, 1, obj);
             }
+          }).finally(()=>{
+            this.gettingMap[text] = false;
           });
         }
       },
