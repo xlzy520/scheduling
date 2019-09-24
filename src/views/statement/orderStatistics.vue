@@ -32,13 +32,15 @@
             label: '分发日期', key: 'timeRange', type: 'date', attrs: {
               default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
               beforeChange: (val) => {
-                let _val = val;
+                let _val = val ? [...val] : [];
                 if (val[0] && val[1]) {
-                  let day92 = dayjs(val[0]).add(92, 'day');
-                  if (day92.isBefore(dayjs(val[1]))) {
+                  let towMonth = dayjs(val[0]).add(91, 'day');
+                  if (towMonth.isBefore(dayjs(val[1]))) {
                     this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], day92.toDate()];
+                    _val = [val[0], dayjs(towMonth).toDate()];
                   }
+                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD');
+                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD');
                 }
                 return _val;
               },

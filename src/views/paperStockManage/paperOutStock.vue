@@ -45,7 +45,7 @@
               beforeChange: (val) => {
                 let _val = val;
                 if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(92, 'day');
+                  let towMonth = dayjs(val[0]).add(91, 'day');
                   if (towMonth.isBefore(dayjs(val[1]))) {
                     this.$message('时间不能超过92天', 'error');
                     _val = [val[0], towMonth.toDate()];
