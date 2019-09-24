@@ -23,8 +23,8 @@
                 {pattern: /^\d+$/, message: '请输入正整数'},
                 {
                   validator: (rule, value, callback) => {
-                    if (!(value && Number(value) <= 999999 && Number(value) >= Number(this.formData[this.$method.getOriginKey(orderKeys.orderAmount)]))) {
-                      callback(new Error('请输入范围原订单数量~999999'));
+                    if (!(value && Number(value) <= 999999 && Number(value) >= 1)) {
+                      callback(new Error('请输入范围1~999999'));
                     } else {
                       callback();
                     }
