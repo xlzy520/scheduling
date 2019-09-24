@@ -279,9 +279,9 @@
   };
 </script>
 <style lang="less" scoped>
-  .dialog-content{
-    height: 537px; //685
-  }
+  /*.dialog-content{*/
+    /*height: 537px; //685*/
+  /*}*/
   /deep/ .status {
     color: #3654ea;
   }
