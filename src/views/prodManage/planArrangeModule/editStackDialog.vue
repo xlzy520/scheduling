@@ -23,7 +23,7 @@
               {
                 type: 'select',
                 formItem: {
-                  prop: 'stack',
+                  prop: orderKeys.stackUp,
                   label: '叠单标记'
                 },
                 attrs: {
@@ -51,8 +51,8 @@
     methods: {
       getOrderMsg(params) {
         this.dj_api_extend(planArrangeService.getOrder, params).then(res => {
-          if (res[orderKeys.stackUp] + '' !== '0') {
-            res['stack'] = res[orderKeys.stackUp];
+          if (res[orderKeys.stackUp] + '' === '0') {
+            res[orderKeys.stackUp] = null;
           }
           // if (res[orderKeys.stackUp] === null) {
           // }
