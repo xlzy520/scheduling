@@ -196,6 +196,9 @@
             prop: orderKeys.sortIndex,
             label: '排序',
             width: 85,
+            formatter(row, index, cur) {
+              return cur + '' === '0' ? '' : cur;
+            }
           },
           {
             prop: orderKeys.orderTip,
@@ -328,7 +331,7 @@
     mounted() {},
     methods: {
       rowClassName({row}) {
-        if (row[orderKeys.stackUp] + '' === '0') {
+        if (row[orderKeys.stackUp] + '' === '0' || [2, 4].includes(Number(row['sortFlag']))) {
           return 'is-error';
         }
       },
@@ -398,7 +401,7 @@
           this.$message('请选择订单', 'error');
           return;
         }
-        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
+        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null, '0', 0].includes(obj[orderKeys.stackUp]))) {
           this.$message('请先进行排序叠单', 'error');
           return;
         }
