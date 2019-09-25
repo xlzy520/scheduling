@@ -624,7 +624,7 @@
           remove: '移除订单',
         };
         let name = map[type];
-        let isEdited = list.some(obj=>['judgeSpecificationUpdate', 'judgePieceAmountUpdate', 'judgeStaveType', 'judgePressLineUpdate'].some(key=>!obj[key]));
+        let isEdited = list.some(obj=>['judgeSpecificationUpdate', 'judgePieceAmountUpdate', 'judgeStaveType', 'judgePressLineUpdate'].some(key=>!obj[key]) && this.$enum.orderType['merge'].value !== obj[orderKeys.orderType]);
         if (isEdited) {
           return `订单已被修改，确认是否还原该订单数据并${name}?`
         } else {
