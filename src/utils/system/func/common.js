@@ -1,11 +1,15 @@
 import {orderKeys} from '../constant/dataKeys';
-import _enum  from '../enum';
+import _enum from '../enum';
 import {methods} from "djweb";
-const { checkType, fileDownload } = methods;
-import dayjs  from 'dayjs';
-import {MessageBox}  from 'element-ui';
+import {isObject} from '../../common/func/object';
+
+const {checkType, fileDownload} = methods;
+import dayjs from 'dayjs';
+import {MessageBox, Message} from 'element-ui';
+import el from "element-ui/src/locale/lang/el";
+
 export const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
-  arr.forEach(key=>{
+  arr.forEach(key => {
     obj1[key] = obj2[key];
   });
   return obj1;
@@ -31,7 +35,7 @@ export const getProductSize = function (obj = {}) {
 export const getVFormula = function (obj = {}, key) {
   let val = obj[key];
   if (Array.isArray(val)) {
-    return val.filter(val=>!['', null, undefined].includes(val)).map(val=>Number(val)).join('+');
+    return val.filter(val => !['', null, undefined].includes(val)).map(val => Number(val)).join('+');
   } else if (checkType(val, 'String')) {
     return val.split('+');
   }
@@ -45,24 +49,26 @@ export const getOrderTip = function (obj = {}, bool) {
 export const handleTime = function (obj, keys, bool) {
   function time(t) {
     if (t) {
-      return dayjs(t).format(bool ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss')
+      return dayjs(t).format(bool ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss');
     }
     return '';
   }
+
   if (Array.isArray(keys)) {
-    keys.forEach(key=>{
+    keys.forEach(key => {
       obj[key] = time(obj[key]);
-    })
+    });
   } else {
     obj[keys] = time(obj[keys]);
   }
 };
+
 export function getOriginKey(key, suffix = 'original') {
-  return suffix + key.substring(0,1).toUpperCase() + key.substring(1);
+  return suffix + key.substring(0, 1).toUpperCase() + key.substring(1);
 }
 
 export function getOrderList(arr) {
-  return arr && arr.map(obj=>obj[orderKeys.productionNo]);
+  return arr && arr.map(obj => obj[orderKeys.productionNo]);
 }
 
 /**
@@ -73,7 +79,7 @@ export function getOrderList(arr) {
  */
 export function handleFormDataStartOrEndByZero(formData, props = [], contain = true) {
   const entriesFormData = Object.entries(formData);
-  entriesFormData.map(v=>{
+  entriesFormData.map(v => {
     if (props.includes(v[0]) === contain) {
       if (typeof v[1] === 'string') {
         v[1] = v[1].replace(/^[0]*|(\.[0]{1,2})$/g, '');
@@ -82,7 +88,8 @@ export function handleFormDataStartOrEndByZero(formData, props = [], contain = t
   });
   return fromEntries(entriesFormData);
 }
-export function fromEntries (iterable) {
+
+export function fromEntries(iterable) {
   return [...iterable].reduce((obj, [key, val]) => {
     obj[key] = val;
     return obj;
@@ -111,7 +118,7 @@ export const tipBox = (txt, fn1) => {
               }).catch(e => {
                 done();
                 reject(e);
-              }).finally(()=>{
+              }).finally(() => {
                 instance.confirmButtonLoading = false;
                 // instance.confirmButtonText = oldConfirmButtonText;
               });
@@ -137,7 +144,7 @@ export const tipBox = (txt, fn1) => {
  * @param {number} computedType 计算类型，+加-减*乘/除
  * @return {number} 计算结果
  */
-export function accuracyCompute (number_a, number_b, computedType) {
+export function accuracyCompute(number_a, number_b, computedType) {
   var result,
     decNum_a = getDecNum(number_a),
     decNum_b = getDecNum(number_b),
@@ -169,6 +176,7 @@ export function accuracyCompute (number_a, number_b, computedType) {
       break;
   }
   return result;
+
   /**
    * 获取数字的小数位数
    * @param {number} number 目标数字
@@ -182,6 +190,7 @@ export function accuracyCompute (number_a, number_b, computedType) {
     }
     return DecNum;
   }
+
   /**
    * 将数字转换成整数（去掉小数点）
    * @param {number} number 目标数字
@@ -198,17 +207,17 @@ export function accuracyCompute (number_a, number_b, computedType) {
   }
 };
 
-
 //获取formData中可变的字段
 export const getFormDataChangeableValue = (formData, config) => {
-  return cloneData(config.reduce((arr, opt)=>{
+  return cloneData(config.reduce((arr, opt) => {
     function judgeChangeable(obj) {
       if (!(!obj.type || (obj.attrs && obj.attrs.disabled))) {
         arr.push(obj.formItem.prop);
       }
     }
+
     if (opt.formOptions) {
-      opt.formOptions.forEach(obj=>{
+      opt.formOptions.forEach(obj => {
         judgeChangeable(obj);
       });
     } else {
@@ -221,4 +230,46 @@ export const getFormDataChangeableValue = (formData, config) => {
 //下载execl文件
 export const downloadExecl = (data, text) => {
   return fileDownload(data, `${text} ${dayjs().format('YYYYMMDDHHmmss')}.xlsx`);
+};
+
+export const equalsObj = (oldData, newData) => {
+  //       类型为基本类型时,如果相同,则返回true
+  if (oldData == newData || [oldData, newData].every(v=>['', null, undefined, NaN].includes(v))) return true;
+  const isArray = Array.isArray;
+  if (isObject(oldData) && isObject(newData) && Object.keys(oldData).length === Object.keys(newData).length) {
+    //      类型为对象并且元素个数相同
+    //      遍历所有对象中所有属性,判断元素是否相同
+    for (const key in oldData) {
+      if (oldData.hasOwnProperty(key)) {
+        //      对象中具有不相同属性 返回false
+        if (!equalsObj(oldData[key], newData[key])) {
+          return false;
+        }
+      }
+    }
+  } else if (isArray(oldData) && isArray(newData) && oldData.length === newData.length) {
+    //      类型为数组并且数组长度相同
+    for (let i = 0, length = oldData.length; i < length; i++) {
+      //      如果数组元素中具有不相同元素,返回false
+      if (!equalsObj(oldData[i], newData[i])) {
+        return false;
+      }
+    }
+  } else {
+    //      其它类型,均返回false
+    return false;
+  }
+  //      走到这里,说明数组或者对象中所有元素都相同,返回true
+  return true;
+};
+
+export const equalsObjMessage = (oldData, newData)=>{
+  const isEquals = equalsObj(oldData, newData);
+  if (isEquals) {
+    Message.info({
+      message: '未编辑数据，请确认',
+      duration: 1000
+    });
+  }
+  return isEquals;
 };
