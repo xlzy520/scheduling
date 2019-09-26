@@ -32,9 +32,9 @@
   import PagePane from "../../components/page/pagePane";
 
   const initFormData = {
-    paperCode: '',
-    paperType: '',
-    paperGram: '',
+    paperCode: null,
+    paperType: null,
+    paperGram: null,
   };
   export default {
     name: 'paperCode',
@@ -73,6 +73,7 @@
           },
         ],
         formData: initFormData,
+        originFormData: {},
         formOptions: [
           {
             type: 'input',
@@ -169,8 +170,9 @@
         this.dialogLoading = true;
         this.dj_api_extend(paperCodeService.getPaperCodeByid, {id: row.id}).then(res=>{
           this.formData = res;
+          this.originFormData = this.$method.deepClone(res);
         }).finally(() => {
-          this.dialogLoading = false
+          this.dialogLoading = false;
         });
         this.$nextTick(()=>{
           this.$refs.dialog.open();
@@ -178,31 +180,33 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          this.dialogLoading = true;
-          let message;
-          let api;
-          let post = {
-            paperCode: this.formData.paperCode,
-            paperType: this.formData.paperType,
-            paperGram: this.formData.paperGram,
-          };
-          if (this.dialogTypeIsAdd) {
-            message = '新增成功';
-            api = paperCodeService.add;
-          } else {
-            message = '编辑成功';
-            api = paperCodeService.edit;
-            post.id = this.formData.id;
+          if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
+            this.dialogLoading = true;
+            let message;
+            let api;
+            let post = {
+              paperCode: this.formData.paperCode,
+              paperType: this.formData.paperType,
+              paperGram: this.formData.paperGram,
+            };
+            if (this.dialogTypeIsAdd) {
+              message = '新增成功';
+              api = paperCodeService.add;
+            } else {
+              message = '编辑成功';
+              api = paperCodeService.edit;
+              post.id = this.formData.id;
+            }
+            post = this.$method.handleFormDataStartOrEndByZero(post, ['paperGram'], true);
+            this.dj_api_extend(api, post).then((res) => {
+              this.close();
+              this.$refs.table.updateData();
+              this.$message(message, 'success');
+              this.dialogLoading = false;
+            }).catch(() => {
+              this.dialogLoading = false;
+            });
           }
-          post = this.$method.handleFormDataStartOrEndByZero(post, ['paperGram'], true);
-          this.dj_api_extend(api, post).then((res) => {
-            this.close();
-            this.$refs.table.updateData();
-            this.$message(message, 'success');
-            this.dialogLoading = false;
-          }).catch(() => {
-            this.dialogLoading = false;
-          });
         });
       },
       close() {

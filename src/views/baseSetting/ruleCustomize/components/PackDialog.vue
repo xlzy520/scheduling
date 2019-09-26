@@ -74,6 +74,7 @@
           eTilemodelRate: '',
           fTilemodelRate: '',
         },
+        originPackFormData: {},
         packFormOptions: [
           {
             type: 'input',
@@ -185,6 +186,7 @@
             }
           ]
         ],
+        originPackConditionFormData: [],
         packRules: {
           layer: [
             djForm.rules.required('请选择层数'),
@@ -276,7 +278,11 @@
         }
       },
       confirm() {
-        this.$emit('confirm');
+        const old = [this.originPackFormData, this.originPackConditionFormData];
+        const latest = [this.packFormData, this.packConditionFormData];
+        if (!this.$method.equalsObjMessage(old, latest)) {
+          this.$emit('confirm');
+        }
       },
       close() {
         this.$emit('close');
@@ -297,6 +303,7 @@
             }
           }
           this.packFormData = rest;
+          this.originPackFormData = this.$method.deepClone(rest);
           let cache = [];
           let tileModelMap = Array.from(new Set(packRuleDetails.map(v=>v.layer)));
           tileModelMap.forEach(()=>cache.push([]));
@@ -308,6 +315,7 @@
             }
           }
           this.packConditionFormData = cache;
+          this.originPackConditionFormData = this.$method.deepClone(cache);
           this.loading = false;
         }).catch(() => {
           this.loading = false;

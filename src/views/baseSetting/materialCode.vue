@@ -86,7 +86,7 @@
           materialCode: [],
           platformMaterialCode: null,
         },
-        materialCodeCache: [],
+        originFormData: {},
         formOptions: [
           {
             type: 'custom',
@@ -133,11 +133,14 @@
     },
     methods: {
       selectPaper(obj) {
-        const { materialCode } = this.formData;
+        let { materialCode } = this.formData;
         if (materialCode.length === 10) {
           this.$message('最多支持10个原纸组合！', 'warning');
         } else {
-          materialCode.push(obj);
+          const materialCodeCache = this.$method.deepClone(materialCode);
+          materialCodeCache.push(obj);
+          this.formData.materialCode = materialCodeCache;
+          this.$refs.form.validateField('materialCode');
         }
       },
       add() {
@@ -189,7 +192,7 @@
             id: row.id
           };
           this.formData = {...(res || {}), ...data};
-          this.materialCodeCache = this.formData.materialCode;
+          this.originFormData = this.$method.deepClone(this.formData);
         }).finally(() => {
           this.dialogLoading = false;
         });
@@ -203,33 +206,35 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          this.dialogLoading = true;
-          let message;
-          let api;
-          let post = {
-            paperMaterialDetails: this.formData.materialCode.map((obj, index)=>({
-              seq: index + 1,
-              paperCodeId: obj.id,
-              id: obj._id
-            })),
-            platformMaterialCode: this.formData.platformMaterialCode || undefined,
-          };
-          if (this.dialogTypeIsAdd) {
-            message = '新增成功';
-            api = materialCodeService.add;
-          } else {
-            message = '编辑成功';
-            api = materialCodeService.edit;
-            post.id = this.formData.id;
+          if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
+            this.dialogLoading = true;
+            let message;
+            let api;
+            let post = {
+              paperMaterialDetails: this.formData.materialCode.map((obj, index)=>({
+                seq: index + 1,
+                paperCodeId: obj.id,
+                id: obj._id
+              })),
+              platformMaterialCode: this.formData.platformMaterialCode || undefined,
+            };
+            if (this.dialogTypeIsAdd) {
+              message = '新增成功';
+              api = materialCodeService.add;
+            } else {
+              message = '编辑成功';
+              api = materialCodeService.edit;
+              post.id = this.formData.id;
+            }
+            this.dj_api_extend(api, post).then((res) => {
+              this.close();
+              this.$refs.table.updateData();
+              this.$message(message, 'success');
+              this.dialogLoading = false;
+            }).catch(() => {
+              this.dialogLoading = false;
+            });
           }
-          this.dj_api_extend(api, post).then((res) => {
-            this.close();
-            this.$refs.table.updateData();
-            this.$message(message, 'success');
-            this.dialogLoading = false;
-          }).catch(() => {
-            this.dialogLoading = false;
-          });
         });
       },
       close() {

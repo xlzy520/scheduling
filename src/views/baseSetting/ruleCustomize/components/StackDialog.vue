@@ -64,6 +64,7 @@
           maxStackHeight: '',
           maxStackCount: '',
         },
+        originStackFormData: {},
         stackFormOptions: [
           {
             type: 'input',
@@ -144,6 +145,7 @@
             }
           ]
         ],
+        originStackConditionFormData: [],
         stackRules: {
           tilemodel: [
             djForm.rules.required('请选择楞型'),
@@ -247,7 +249,11 @@
         }
       },
       confirm() {
-        this.$emit('confirm');
+        const old = [this.originStackFormData, this.originStackConditionFormData];
+        const latest = [this.stackFormData, this.stackConditionFormData];
+        if (!this.$method.equalsObjMessage(old, latest)) {
+          this.$emit('confirm');
+        }
       },
       close() {
         this.$emit('close');
@@ -274,6 +280,7 @@
           let { detailModels, ...rest } = res;
           // 一下操作皆为将一组数据根据两个关键词合并同类
           this.stackFormData = rest;
+          this.originStackFormData = this.$method.deepClone(rest);
           let cache = [];
           let tileModelMap = Array.from(new Set(detailModels.map(v=>v.tilemodel)));
           tileModelMap.forEach(()=>cache.push([]));
@@ -305,6 +312,7 @@
             return merge;
           });
           this.stackConditionFormData = formatData;
+          this.originStackConditionFormData = this.$method.deepClone(formatData);
           this.loading = false;
         }).catch(() => {
           this.loading = false;

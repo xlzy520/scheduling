@@ -88,7 +88,8 @@
             },
           },
         ],
-        formData: this.$method.deepClone(initFormData),
+        formData: initFormData,
+        originFormData: {},
         pageTotal: 0,
         dialogTypeIsAdd: null,
         dialogVisible: false,
@@ -271,6 +272,7 @@
             this.paperCodeList.push({id, paperCode, paperGram, paperType});
           }
           this.formData = res || {};
+          this.originFormData = this.$method.deepClone(res);
           return res;
         });
       },
@@ -351,28 +353,30 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          this.dialogLoading = true;
-          let message;
-          let api;
-          let { paperCodeId, paperGram, paperNumber, paperSize, paperType, warehouseAreaId, warehouseId } = this.formData;
-          let post = {paperCodeId, paperGram, paperNumber, paperSize, paperType, warehouseAreaId, warehouseId};
-          if (this.dialogTypeIsAdd) {
-            message = '新增成功';
-            api = paperKindService.add;
-          } else {
-            message = '编辑成功';
-            api = paperKindService.edit;
-            post.id = this.formData.id;
+          if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
+            this.dialogLoading = true;
+            let message;
+            let api;
+            let { paperCodeId, paperGram, paperNumber, paperSize, paperType, warehouseAreaId, warehouseId } = this.formData;
+            let post = {paperCodeId, paperGram, paperNumber, paperSize, paperType, warehouseAreaId, warehouseId};
+            if (this.dialogTypeIsAdd) {
+              message = '新增成功';
+              api = paperKindService.add;
+            } else {
+              message = '编辑成功';
+              api = paperKindService.edit;
+              post.id = this.formData.id;
+            }
+            post = this.$method.handleFormDataStartOrEndByZero(post, ['paperSize'], true);
+            this.dj_api_extend(api, post).then((res) => {
+              this.close();
+              this.$refs.table.updateData();
+              this.$message(message, 'success');
+              this.dialogLoading = false;
+            }).catch(() => {
+              this.dialogLoading = false;
+            });
           }
-          post = this.$method.handleFormDataStartOrEndByZero(post, ['paperSize'], true);
-          this.dj_api_extend(api, post).then((res) => {
-            this.close();
-            this.$refs.table.updateData();
-            this.$message(message, 'success');
-            this.dialogLoading = false;
-          }).catch(() => {
-            this.dialogLoading = false;
-          });
         });
       },
       close() {
@@ -380,7 +384,7 @@
         this.$refs.dialog.close();
         this.dialogVisible = false;
         this.getAllPaperCode();
-        this.formData = this.$method.deepClone(initFormData);
+        this.formData = initFormData;
         this.warehouseAreaList = [];
       }
     },

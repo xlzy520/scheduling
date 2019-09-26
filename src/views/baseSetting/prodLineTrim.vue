@@ -41,7 +41,7 @@
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
-
+  
   const cengshuOption = [
       {label: '二层', value: 2},
       {label: '三层', value: 3},
@@ -160,11 +160,11 @@
           },
         ]),
         formData: [{
-          lineId: '',
-          layer: '',
-          wasteSize: ''
+          lineId: null,
+          layer: null,
+          wasteSize: null
         }],
-
+        originFormData: {},
         formOptions: [],
         pageOptions: {
           pageNo: 1,
@@ -242,9 +242,9 @@
       formReset() {
         this.formOptions = [this.baseOption];
         this.formData = [{
-          lineId: '',
-          layer: '',
-          wasteSize: ''
+          lineId: null,
+          layer: null,
+          wasteSize: null
         }];
       },
       edit(row) {
@@ -256,6 +256,12 @@
           id: row.id
         }).then(res=>{
           this.formData = [{
+            id: row.id,
+            lineId: res.id,
+            layer: res.layer,
+            wasteSize: res.wasteSize
+          }];
+          this.originFormData = [{
             id: row.id,
             lineId: res.id,
             layer: res.layer,
@@ -295,38 +301,40 @@
         });
         formValidate.then(res=>{
           if (res.length === this.addLayerNum && res.every(v=>v)) {
-            let poor = this.formData.map(v=>v.layer.toString() + '&' + v.lineId);
-            if (this.dialogTypeIsAdd) {
-              let existData;
-              for (let i = 0; i < poor.length; i++) {
-                if (poor.findIndex(v=>poor[i] === v) !== i) {
-                  existData = poor[i].split('&');
+            if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
+              let poor = this.formData.map(v=>v.layer.toString() + '&' + v.lineId);
+              if (this.dialogTypeIsAdd) {
+                let existData;
+                for (let i = 0; i < poor.length; i++) {
+                  if (poor.findIndex(v=>poor[i] === v) !== i) {
+                    existData = poor[i].split('&');
+                  }
+                }
+                if (existData && existData.length > 1) {
+                  const [layer, lineId] = existData;
+                  const lineNum = this.baseOption[0].attrs.options.find(v=>v.value === lineId).label;
+                  this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
+                  return false;
                 }
               }
-              if (existData && existData.length > 1) {
-                const [layer, lineId] = existData;
-                const lineNum = this.baseOption[0].attrs.options.find(v=>v.value === lineId).label;
-                this.$message(`已存在生产线：${lineNum}号线，层数：${layer}，该核对`, 'warning');
-                return false;
-              }
-            }
-            const post = this.formData.map(v=>{
-              return this.$method.handleFormDataStartOrEndByZero(v, ['wasteSize'], true);
-            });
-            const request = this.dialogTypeIsAdd
-            ? prodLineTrimService.add(post)
-            : prodLineTrimService.modifyWasterLineByid({
-                ...post[0],
+              const post = this.formData.map(v=>{
+                return this.$method.handleFormDataStartOrEndByZero(v, ['wasteSize'], true);
               });
-            this.dialogLoading = true;
-            request.then((res) => {
-              this.close();
-              const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
-              this.$message(message, 'success');
-              this.$refs.search.search();
-            }).finally(() => {
-              this.dialogLoading = false;
-            });
+              const request = this.dialogTypeIsAdd
+                ? prodLineTrimService.add(post)
+                : prodLineTrimService.modifyWasterLineByid({
+                  ...post[0],
+                });
+              this.dialogLoading = true;
+              request.then((res) => {
+                this.close();
+                const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+                this.$message(message, 'success');
+                this.$refs.search.search();
+              }).finally(() => {
+                this.dialogLoading = false;
+              });
+            }
           }
         });
       },

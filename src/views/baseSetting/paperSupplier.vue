@@ -72,6 +72,7 @@
           },
         ],
         formData: initFormData,
+        originFormData: {},
         pageTotal: 0,
         dialogTypeIsAdd: null,
         dialogVisible: false,
@@ -186,6 +187,7 @@
         this.dialogLoading = true;
         this.dj_api_extend(paperSupplierService.getSupplierById, {id: row.id}).then(res=>{
           this.formData = res;
+          this.originFormData = this.$method.deepClone(res);
         }).finally(() => {
           this.dialogLoading = false;
         });
@@ -199,29 +201,31 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          this.dialogLoading = true;
-          let message;
-          let api;
-          let post = this.formData;
-          post.socialCreditCode = post.socialCreditCode || undefined;
-          post.legalRepresentative = post.legalRepresentative || undefined;
-          post.address = post.address || undefined;
-          if (this.dialogTypeIsAdd) {
-            message = '新增成功';
-            api = paperSupplierService.add;
-          } else {
-            message = '编辑成功';
-            api = paperSupplierService.edit;
-            post.id = this.formData.id;
+          if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
+            this.dialogLoading = true;
+            let message;
+            let api;
+            let post = this.formData;
+            post.socialCreditCode = post.socialCreditCode || undefined;
+            post.legalRepresentative = post.legalRepresentative || undefined;
+            post.address = post.address || undefined;
+            if (this.dialogTypeIsAdd) {
+              message = '新增成功';
+              api = paperSupplierService.add;
+            } else {
+              message = '编辑成功';
+              api = paperSupplierService.edit;
+              post.id = this.formData.id;
+            }
+            this.dj_api_extend(api, post).then((res) => {
+              this.close();
+              this.$refs.table.updateData();
+              this.$message(message, 'success');
+              this.dialogLoading = false;
+            }).catch(() => {
+              this.dialogLoading = false;
+            });
           }
-          this.dj_api_extend(api, post).then((res) => {
-            this.close();
-            this.$refs.table.updateData();
-            this.$message(message, 'success');
-            this.dialogLoading = false;
-          }).catch(() => {
-            this.dialogLoading = false;
-          });
         });
       },
       close() {
