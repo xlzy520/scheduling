@@ -424,6 +424,7 @@
           this.$method.tipBox(obj.tip, ()=>{
             return this.dj_api_extend(obj.api, obj.post).then(()=>{
               this.$message(obj.msg);
+            }).finally(()=>{
               this.refresh();
             });
           });
@@ -490,8 +491,10 @@
         this.$message('计算中', 'info');
         this.dj_api_extend(planArrangeService.calcPaperSize, {banList: this.banPaperSize_arr, orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId}).then(()=>{
           this.$message('计算门幅成功');
+        }).finally(()=>{
+          cb();
           this.refresh();
-        }).finally(cb);
+        });
       },
       refresh() {
         this.$refs.table.updateData();

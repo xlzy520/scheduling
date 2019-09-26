@@ -70,6 +70,9 @@
             this.$message('修改成功');
             this.$emit('success');
             this.close();
+          }).catch(()=>{
+            this.$emit('success');
+            this.close();
           }).finally(()=>{
             cb && cb();
           });

@@ -54,6 +54,9 @@
             this.$message('调整排序成功');
             this.$emit('success');
             this.close();
+          }).catch(()=>{
+            this.$emit('success');
+            this.close();
           }).finally(()=>{
             cb && cb();
           });
