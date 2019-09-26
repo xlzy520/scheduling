@@ -39,6 +39,7 @@
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
+  import McDjSelect from "./materialCodeSelect/McDjSelect.vue";
 
   export default {
     name: 'materialCode',
@@ -85,9 +86,10 @@
           materialCode: [],
           platformMaterialCode: null,
         },
+        materialCodeCache: [],
         formOptions: [
           {
-            type: 'select',
+            type: 'custom',
             formItem: {
               prop: 'materialCode',
               label: '用料代码',
@@ -98,15 +100,15 @@
             },
             attrs: {
               class: 'code',
-              key: 'multiple',
+              default: [],
               type: 'multiple',
               bindObject: true,
               keyMap: {
                 label: 'paperCode',
                 value: 'id'
               },
-              options: [],
             },
+            component: McDjSelect
           },
           {
             type: 'input',
@@ -131,11 +133,11 @@
     },
     methods: {
       selectPaper(obj) {
-        const materialCode = this.formData.materialCode;
+        const { materialCode } = this.formData;
         if (materialCode.length === 10) {
           this.$message('最多支持10个原纸组合！', 'warning');
         } else {
-          this.formData.materialCode = this.formData.materialCode.concat([obj]);
+          materialCode.push(obj);
         }
       },
       add() {
@@ -187,6 +189,7 @@
             id: row.id
           };
           this.formData = {...(res || {}), ...data};
+          this.materialCodeCache = this.formData.materialCode;
         }).finally(() => {
           this.dialogLoading = false;
         });
@@ -227,8 +230,6 @@
           }).catch(() => {
             this.dialogLoading = false;
           });
-        }, ()=>{
-          console.log(2);
         });
       },
       close() {
