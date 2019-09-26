@@ -384,48 +384,6 @@
       };
     },
     methods: {
-      isObject(obj) {
-        return Object.prototype.toString.call(obj) === '[object Object]';
-      },
-      isArray(arr) {
-        return Object.prototype.toString.call(arr) === '[object Array]';
-      },
-      /**
-       *  深度比较两个对象是否相同
-       * @param {Object} oldData
-       * @param {Object} newData
-       */
-      equalsObj(oldData, newData) {
-        //       类型为基本类型时,如果相同,则返回true
-        // console.log(oldData, newData);
-        if (oldData == newData) return true;
-        if (this.isObject(oldData) && this.isObject(newData) && Object.keys(oldData).length === Object.keys(newData).length) {
-          //      类型为对象并且元素个数相同
-
-          //      遍历所有对象中所有属性,判断元素是否相同
-          for (const key in oldData) {
-            if (oldData.hasOwnProperty(key)) {
-              if (!this.equalsObj(oldData[key], newData[key]))
-              //      对象中具有不相同属性 返回false
-                {return false;}
-            }
-          }
-        } else if (this.isArray(oldData) && this.isArray(oldData) && oldData.length === newData.length) {
-          //      类型为数组并且数组长度相同
-
-          for (let i = 0, length = oldData.length; i < length; i++) {
-            if (!this.equalsObj(oldData[i], newData[i]))
-            //      如果数组元素中具有不相同元素,返回false
-              {return false;}
-          }
-        } else {
-          //      其它类型,均返回false
-          return false;
-        }
-
-        //      走到这里,说明数组或者对象中所有元素都相同,返回true
-        return true;
-      },
       confirm() {
         const formMap = ['1', '2', '3'];
         const formValidate = new Promise((resolve) => {
@@ -482,17 +440,14 @@
                   this.loading = false;
                 });
               });
-            } else {
-              this.$message('未编辑数据，请确认', 'info');
-              return false;
             }
           }
         });
 
       },
-      isModify() {
+      isModify(needMsg) {
         const params = this.getFlatObject(this.prodLineData);
-        const isEqual = this.equalsObj(this.cache, params);
+        const isEqual = this.$method.equalsObjMessage(this.cache, params, needMsg);
         return isEqual;
       },
       /**
@@ -539,7 +494,7 @@
         }
       },
       close() {
-        if (!this.isModify()) {
+        if (!this.isModify(false)) {
           this.$confirm('生产线信息未保存，确认是否关闭？', '', {
             type: 'warning',
             showClose: false,
