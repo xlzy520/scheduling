@@ -46,7 +46,7 @@
       </div>
     </single-page>
     <div v-loading="isLoading" v-else class="empty-text">
-      暂无生产线
+      <i class="cl-common- dj-common-Nodata"></i>暂无数据
     </div>
     <edit-paper-size-dialog ref="editPaperSizeDialog" v-if="editPaperSizeDialogFlag" @close="editPaperSizeDialogFlag = false" @success="refresh"></edit-paper-size-dialog>
     <change-sort-dialog ref="changeSortDialog" v-if="changeSortDialogFlag" @close="changeSortDialogFlag = false" @success="refresh"></change-sort-dialog>
@@ -536,7 +536,13 @@
       height: 100%;
       display: flex;
       justify-content: center;
+      font-size: 20px;
+      color: #C0C4CC;
       align-items: center;
+      .dj-common-Nodata {
+        margin-right: 9px;
+        font-size: 25px;
+      }
     }
   }
 </style>
