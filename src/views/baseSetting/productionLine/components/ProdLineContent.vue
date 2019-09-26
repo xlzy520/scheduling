@@ -48,7 +48,7 @@
               <div class="time">{{record.operateTime.substr(0,16)}}</div>
               <div class="">{{record.operator}}</div>
               <div class="detail" :title="record.operateDetail">{{formatDetail(record.operateDetail)}}</div>
-              <a class="view-btn" v-if="!record.operateDetail.includes('用】')" @click="viewRecordDetail(record.operateDetail)">查看详情</a>
+              <a class="view-btn" v-if="record.operaType" @click="viewRecordDetail(record.operateDetail)">查看详情</a>
             </div>
           </div>
         </card>
