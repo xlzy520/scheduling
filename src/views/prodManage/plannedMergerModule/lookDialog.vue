@@ -263,7 +263,8 @@
       getRecord() {
         this.isLoading = true;
         this.dj_api_extend(record.list, {
-          sourceId: this.id
+          sourceId: this.id,
+          operaType: 1
         }).then((res) => {
           this.recordData = res.list || [];
         }).finally(() => {

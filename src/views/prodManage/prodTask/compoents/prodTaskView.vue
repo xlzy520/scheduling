@@ -49,9 +49,11 @@
               {
                 type: 'custom', isText: true, formItem: {prop: 'chanpingguige', label: '产品规格：'},
                 render: (h) => {
-                  return (
-                    <span>{this.formData.productLength + '*' + this.formData.productWidth + '*' + this.formData.productHeight}</span>
-                  );
+                  if (this.formData.productLength || this.formData.productLength === 0) {
+                    return (
+                      <span>{this.formData.productLength + '*' + this.formData.productWidth + '*' + this.formData.productHeight}</span>
+                    );
+                  }
                 },
               },
               {
@@ -77,7 +79,7 @@
               {formItem: {prop: 'materialWidth', label: '切宽：'}},
               {formItem: {prop: 'orderMeter', label: '订单米数：'}},
               {formItem: {prop: 'trimming', label: '修边(mm)：'}},
-              {formItem: {prop: 'trimmingRate', label: '修边率(%)：'}},
+              {formItem: {prop: 'trimmingRate', label: '修边率：'}},
               {formItem: {prop: 'stackFlag', label: '叠单标志：'}},
             ]
           },
@@ -92,7 +94,7 @@
               {formItem: {prop: 'sourceMaterialWidth', label: '切宽：'}},
               {formItem: {prop: 'orderMeter', label: '订单米数：'}},
               {formItem: {prop: 'sourceTrimmingRate', label: '修边(m)：'}},
-              {formItem: {prop: 'sourceTrimmingRate', label: '修边率(%)：'}},
+              {formItem: {prop: 'sourceTrimmingRate', label: '修边率：'}},
               {formItem: {prop: 'stackFlag', label: '叠单标志：'}},
             ]
           },
