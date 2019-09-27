@@ -13,7 +13,7 @@
         <div slot="btn">
           <el-button type="primary" @click="addStackOrPack('stack')">新增叠单规则</el-button>
           <el-button type="primary" @click="addStackOrPack('pack')">新增打包规则</el-button>
-          <el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>
+          <el-button type="primary" @click="closeShrink" v-if="shrink !== 0">{{getShrinkText()}}缩边</el-button>
         </div>
       </dj-table>
     </page-pane>
@@ -73,6 +73,7 @@
           },
         ],
         pageTotal: 0,
+        shrink: 0
       };
     },
     methods: {
@@ -113,13 +114,24 @@
           this.$refs.dialog.renderAllCondition(row.id);
         });
       },
-      closeSuoBian() {
-        this.$confirm('确定关闭缩边吗？', '', {
+      getShrinkText() {
+        const textMap = ['', '关闭', '开启'];
+        return textMap[this.shrink];
+      },
+      getShrink() {
+        this.dj_api_extend(ruleCustomizeService.getShrink).then(res=>{
+          this.shrink = res;
+        });
+      },
+      closeShrink() {
+        const text = this.getShrinkText();
+        this.$confirm(`确定${text}缩边吗？`, '', {
           type: 'warning',
           showClose: false,
         }).then(() => {
-          ruleCustomizeService.list().then((res) => {
-            this.$message('关闭成功', 'success');
+          this.dj_api_extend(ruleCustomizeService.changeShrinkType).then(()=>{
+            this.$message(`${text}成功`, 'success');
+            this.getShrink();
           });
         });
       },
@@ -250,6 +262,7 @@
     },
     mounted() {
       this.$refs.table.changePage(1);
+      this.getShrink();
     },
   };
 </script>
