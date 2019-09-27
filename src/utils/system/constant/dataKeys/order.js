@@ -11,7 +11,7 @@ export default {
   materialSize: 'materialSize', //下料规格
   materialLength: 'materialLength', //下料长
   materialWidth: 'materialWidth', //下料宽
-  orderStatus: 'orderStatus', //订单状态
+  orderStatus: 'orderState', //订单状态
   productStatus: 'state', //生产状态
   deliveryTime: 'arriveTime', //订单交期
   layer: 'layers', //层数

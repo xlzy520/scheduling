@@ -300,10 +300,10 @@
             prop: orderKeys.orderStatus,
             label: '订单状态',
             width: 116,
-            formatter: (row, index, cur) => {
-              let obj = this.$enum.orderStatus._swap[cur] || {};
-              return obj.label || '';
-            }
+            // formatter: (row, index, cur) => {
+            //   let obj = this.$enum.orderStatus._swap[cur] || {};
+            //   return obj.label || '';
+            // }
           },
           {
             prop: orderKeys.productStatus,
