@@ -88,13 +88,14 @@
         } else {
           this.$emit('input', this.value.filter(str=>str !== item[paperKeys.paperSize]));
         }
-        this.$message(`该门幅已被${!this.judgeEffect(item) ? '禁用' : '启用'}`);
+        this.$message(`该门幅已被${this.judgeEffect(item) ? '禁用' : '启用'}`);
       },
       getPaperSizeList() {
         this.isLoading = true;
         this.paperSize_arr = [];
         this.dj_api_extend(planArrangeService.getPaperSizeList).then((res = {})=>{
-          this.paperSize_arr = Object.keys(res).map(key=>{
+          let paperSizeList = Object.keys(res);
+          this.paperSize_arr = paperSizeList.map(key=>{
             let obj = {};
             obj[paperKeys.paperSize] = key;
             obj['tableData'] = res[key].reduce((arr, _obj, index)=>{
@@ -112,6 +113,7 @@
             }, [[], []]);
             return obj;
           });
+          this.$emit('input', this.value.filter(str=>paperSizeList.includes(str)));
         }).finally(()=>{
           this.isLoading = false;
         });
