@@ -1,6 +1,6 @@
 <template>
   <single-page class="table-page prod-task">
-    <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
+    <el-tabs v-model="activeTab" @tab-click="tabClick">
       <el-tab-pane v-for="tab in tabs" :key="tab.value" :label="tab.lineNum+'号线'" :name="tab.id"></el-tab-pane>
     </el-tabs>
     <div class="content" v-loading="contentLoading">
@@ -297,16 +297,16 @@
     }
   }
   .el-tabs{
-    margin: 0 18px;
+    /*margin: 0 18px;*/
   }
   @{deep} .el-tabs__nav-wrap{
-    width: 70%;
+    /*width: 70%;*/
     .el-tabs__nav.is-stretch{
-      min-width: 80%;
+      /*min-width: 80%;*/
     }
     .el-tabs__item{
-      font-size: 16px;
-      max-width: 180px;
+      /*font-size: 16px;*/
+      /*max-width: 180px;*/
     }
 
   }

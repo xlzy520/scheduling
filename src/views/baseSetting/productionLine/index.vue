@@ -2,7 +2,7 @@
   <single-page>
     <div class="production-line" v-loading="loading">
       <el-button type="primary" @click="addProdLine">新增</el-button>
-      <el-tabs stretch v-model="activeTab" @tab-click="tabClick">
+      <el-tabs v-model="activeTab" @tab-click="tabClick">
         <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
       </el-tabs>
       <div class="tab-right-btns">
@@ -204,17 +204,6 @@ const initProdLineData = {
       margin-top: 12px;
       .el-tabs__header{
         margin: 0 0 16px;
-      }
-      .el-tabs__nav-wrap{
-        width: 70%;
-        .el-tabs__nav.is-stretch{
-          min-width: 80%;
-        }
-        .el-tabs__item{
-          font-size: 16px;
-          max-width: 180px;
-        }
-
       }
     }
     .tab-right-btns{
