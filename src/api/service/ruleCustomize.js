@@ -25,4 +25,10 @@ export default {
   getAllLine(data) {
     return ruleCustomize('/getAllLine.do', data, 'get');
   },
+  getShrink() {
+    return ruleCustomize('/getShrink.do');
+  },
+  changeShrinkType() {
+    return ruleCustomize('/changeShrinkType.do');
+  },
 };

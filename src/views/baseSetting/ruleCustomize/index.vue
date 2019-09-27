@@ -13,7 +13,7 @@
         <div slot="btn">
           <el-button type="primary" @click="addStackOrPack('stack')">新增叠单规则</el-button>
           <el-button type="primary" @click="addStackOrPack('pack')">新增打包规则</el-button>
-          <!--<el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>-->
+          <el-button type="primary" @click="closeSuoBian">关闭缩边</el-button>
         </div>
       </dj-table>
     </page-pane>
