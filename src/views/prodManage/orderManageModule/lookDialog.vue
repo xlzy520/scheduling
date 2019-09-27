@@ -330,7 +330,6 @@
     },
     methods: {
       open(order) {
-        this.id = order.id;
         this.$refs.dialog.open();
         this.isStore = this.$enum.orderType.preparingMaterials.value === order[orderKeys.orderType];
         this.getOrderDetail(order[orderKeys.productionNo]);
@@ -343,6 +342,7 @@
         this.isLoading = true;
         this.dj_api_extend(orderManageService.getOrderById, {produceOrderNumber: prodId}).then(res=>{
           this.order = res;
+          this.id = res.produceOrderNumber;
           // console.log(this.order);
         }).finally(()=>{
           this.isLoading = false;
@@ -352,7 +352,7 @@
         this.isLoading = true;
         this.dj_api_extend(record.list, {
           sourceId: this.id,
-          operaType: 1
+          operaType: 0
         }).then((res) => {
           this.recordData = res.list || [];
         }).finally(() => {

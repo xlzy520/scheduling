@@ -296,10 +296,10 @@
           res[orderKeys.materialSize] = this.$method.getMaterialSize(res);
           res[orderKeys.productSize] = this.$method.getProductSize(res);
           this.formData = res || {};
+          this.id = res.produceOrderNumber;
         });
       },
       open(param = {}) {
-        this.id = param.data.id;
         this.$refs.dialog.open();
         this.getOrderMsg(param.data);
       },
