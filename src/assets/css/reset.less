@@ -27,6 +27,33 @@ div:not(.under-table) > .base-table {
     color: red;
     vertical-align: middle;
   }
+  &.input-table {
+    .el-table__header th {
+      padding: 8px 0;
+    }
+    .el-table__row td, .el-table__footer td {
+      padding: 0;
+      &.is-change {
+        background-color: rgba(248, 152, 22, 0.1);
+        .el-autocomplete {
+          width: 100%;
+        }
+        .el-input__inner {
+          height: 33px;
+          padding-left: 0;
+          line-height: 33px;
+          background-color: transparent;
+          border: none;
+        }
+      }
+    }
+    .is-error .el-input__inner {
+      color: red;
+    }
+    .loading-wrap {
+      display: none;
+    }
+  }
 }
 .el-message.el-message--info {
   .el-message__content, .el-icon-info {

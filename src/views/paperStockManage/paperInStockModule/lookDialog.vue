@@ -14,6 +14,7 @@
           </p>
           <base-table ref="table"
                       :data="tableData"
+                      class="input-table"
                       border
                       height="370"
                       :column-type-props="columnsTypeProps"
@@ -434,24 +435,6 @@
     /deep/ .el-row:nth-last-of-type(1) {
       .dj-input-content {
         width: 100%;
-      }
-    }
-  }
-  .el-tabs__content .el-tab-pane:nth-of-type(1) {
-    .base-table {
-      /deep/ .td-btn-group .dj-common-red-delete {
-        color: red;
-        cursor: pointer;
-      }
-      /deep/ .icon-require {
-        color: red;
-        vertical-align: middle;
-      }
-      /deep/ .el-table__header-wrapper th, /deep/ .el-table__fixed-header-wrapper th {
-        padding: 8px 0;
-      }
-      /deep/ .el-table__row td, /deep/ .el-table__fixed-footer-wrapper td, /deep/ .el-table__footer-wrapper td {
-        padding: 7px;
       }
     }
   }

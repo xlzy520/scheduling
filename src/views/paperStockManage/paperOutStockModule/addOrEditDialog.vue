@@ -17,6 +17,7 @@
           </span>
         </p>
         <base-table ref="table"
+                    class="input-table"
                     :loading="isTableLoading"
                     :data="tableData"
                     max-height="370"
@@ -686,12 +687,6 @@
   };
 </script>
 <style lang="less" scoped>
-  .base-table /deep/ .is-error .el-input__inner {
-    color: red;
-  }
-  .base-table /deep/ .loading-wrap {
-    display: none;
-  }
   .sub-title {
     font-size: 13px;
     margin-left: 36px;
@@ -714,35 +709,6 @@
     /deep/ .el-row:nth-last-of-type(1) {
       .dj-input-content {
         width: 100%;
-      }
-    }
-  }
-  .base-table {
-    /*/deep/ .td-btn-group .dj-common-red-delete {*/
-      /*color: red;*/
-      /*cursor: pointer;*/
-    /*}*/
-    /*/deep/ .icon-require {*/
-      /*color: red;*/
-      /*vertical-align: middle;*/
-    /*}*/
-    /deep/ .el-table__header-wrapper th, /deep/ .el-table__fixed-header-wrapper th {
-      padding: 8px 0;
-    }
-    /deep/ .el-table__row td, /deep/ .el-table__fixed-footer-wrapper td, /deep/ .el-table__footer-wrapper td {
-      padding: 0;
-      &.is-change {
-        background-color: rgba(248,152,22,0.1);
-        .el-autocomplete {
-          width: 100%;
-        }
-        .el-input__inner {
-          border: none;
-          background-color: transparent;
-          line-height: 33px;
-          height: 33px;
-          padding-left: 0;
-        }
       }
     }
   }

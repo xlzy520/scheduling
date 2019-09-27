@@ -15,7 +15,7 @@
           <span>总件数：{{effectiveTableData.length}}件</span>
           </span>
         </p>
-        <base-table ref="table"
+        <base-table class="input-table" ref="table"
                     v-if="readyTable"
                     border
                     :column-type-props="{index: {fixed: false,width: 64}}"
@@ -41,6 +41,7 @@
   const {rules} = djForm;
   import tableInput from './tableInput.vue'
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
+  //更新面积
   const updateArea = function (row) {
     let value;
     let length = row[cylinderKeys.length];
@@ -52,6 +53,7 @@
     this.$set(row, cylinderKeys.area, value);
     // return value;
   };
+  //更新长度
   const updateLength = function (row) {
     let value;
     let weight = row[cylinderKeys.weight];
@@ -64,10 +66,12 @@
     this.$set(row, cylinderKeys.length, value);
     updateArea.bind(this)(row);
   };
+  //判断当前行是否要置灰
   const checkDisabled = function (row) {
     return row[paperKeys.paperStatus] || Boolean(Number(row[cylinderKeys.unitPrice]));
   };
-  const TABLE_SELECT = {
+  //仓库选择框
+  const SELECT_WAREHOUSE = {
     render(h) {
       let { row, index, col, keyMap } = this;
       const input = (val)=>{
@@ -87,7 +91,8 @@
     },
     props: ['row', 'index', 'col', 'service', 'keyMap', 'options', 'disabled'],
   };
-  const TABLE_SELECT2 = {
+  //库区选择框
+  const SELECT_WAREHOUSE_AREA = {
     render(h) {
       let { row, index, col, keyMap } = this;
       const input = (val)=>{
@@ -126,12 +131,7 @@
     },
     props: ['row', 'index', 'col', 'service', 'keyMap', 'options', 'disabled'],
   };
-  const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
-    arr.forEach(key=>{
-      obj1[key] = obj2[key];
-    });
-    return obj1;
-  };
+  //表格最大长度
   const tableMaxLength = 150;
   export default {
     name: 'addOrEditInStock',
@@ -274,7 +274,7 @@
             propsHandler: (props) => {
               return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}, disabled: checkDisabled(props.row)}
             },
-            component: TABLE_SELECT
+            component: SELECT_WAREHOUSE
           },
           {
             prop: paperKeys.warehouseAreaId,
@@ -284,7 +284,7 @@
             propsHandler: (props) => {
               return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}, disabled: checkDisabled(props.row)}
             },
-            component: TABLE_SELECT2,
+            component: SELECT_WAREHOUSE_AREA,
             listeners: {
               input: (props) => {
                 this.tableData.splice(props.index, 1, props.row);
@@ -556,15 +556,7 @@
       });
     },
     methods: {
-      // getRole(val) {
-      //   return this.dj_api_extend(paperWarehouseService.getRole, {id:val});
-      // },
-      // getMember(val) {
-      //   return this.dj_api_extend(paperWarehouseService.getMember, {id:val}).then(arr=>{
-      //     this.member_arr = arr;
-      //     return arr;
-      //   });
-      // },
+      //获取供应商列表
       getSupplierList() {
         this.dj_api_extend(paperWarehouseService.getSupplierList).then(res=>{
           this.supplier_arr = Object.keys(res).reduce((arr, key)=>{
@@ -603,19 +595,14 @@
           if (!data) {
             return Promise.reject();
           } else {
-            return cloneData(keyList, {paperVarietyId: data['id']}, data);
+            return this.$method.cloneData(keyList, {paperVarietyId: data['id']}, data);
           }
         }).catch(()=>{
           this.$message('无对应原纸编号，请先设置原纸品种', 'warning');
-          // this.$confirm('无对应原纸编号，请先设置原纸品种.', '提示', {
-          //   confirmButtonText: '确认',
-          //   cancelButtonText: '取消',
-          //   type: 'warning ',
-          //   showClose: false
-          // });
           return Promise.reject();
         });
       },
+      //快捷复制与插入空白行
       shortcutCopy(e) {
         let keyCode = e.keyCode;
         if (this.activeIndex !== undefined) {
@@ -646,7 +633,6 @@
               }
             }
           } else if (keyCode === 13 && e.target.tagName !== 'INPUT') {
-            // this.tableData.splice(this.activeIndex + 1, 0, {});
             if (this.tableData.length >= this.tableMaxLength && !Object.keys(this.tableData[this.tableData.length - 1]).length) {
               this.tableData.pop();
             }
@@ -662,6 +648,7 @@
           this.activeIndex = index;
         }
       },
+      //获得空对象数组
       getEmptyData(num) {
         let reset = tableMaxLength - this.tableData.length;
         return new Promise(resolve => {
@@ -669,9 +656,7 @@
           for (let i = 0; i < (reset > num ? num : reset); i++) {
             data.push({});
           }
-          // setTimeout(()=>{
             resolve(data);
-          // }, 8000);
         });
         // let data = [];
         // for (let i = 0; i < num; i++) {
@@ -679,11 +664,13 @@
         // }
         // return Promise.resolve(data);
       },
+      //获得所有原纸仓库
       getAllWarehouse() {
         return this.dj_api_extend(paperWarehouseService.getPaperWarehouse).then((res) => {
           this.warehouseList = res.list || [];
         });
       },
+      //获得当前仓库下所有库区
       getWarehouseArea(id) {
         if (!this.warehouseArea_map[id]) {
           this.warehouseArea_map[id] = paperWarehouseService.getAreaAllList({warehouseId: id}).then((res) => {
@@ -692,10 +679,6 @@
           });
         }
         return this.warehouseArea_map[id];
-        // return paperWarehouseService.getAreaAllList({warehouseId: id}).then((res) => {
-        //   this.warehouseArea_map[id] =
-        //   return res.list || [];
-        // });
       },
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
@@ -710,7 +693,6 @@
             this.$message('未编辑数据，请确认', 'error');
             return;
           }
-          // let message;
           let api;
           let post = {
             ...this.formData,
@@ -718,18 +700,11 @@
             tubeList: this.effectiveTableData.map((obj, index)=>{
               let _obj = {...obj};
               _obj['sortNumber'] = index + 1;
-              // _obj['paperVarietyId'] = obj['id'];
               _obj[cylinderKeys.length] = Number(_obj[cylinderKeys.length]).toFixed(2);
               _obj[cylinderKeys.area] = Number(_obj[cylinderKeys.area]).toFixed(2);
               return _obj;
             })
           };
-          // let forkliftDriver_arr = post['forkliftDriver'];
-          // if (Array.isArray(forkliftDriver_arr) && forkliftDriver_arr.length) {
-          //   let id = forkliftDriver_arr[forkliftDriver_arr.length - 1];
-          //   post[cylinderKeys.forkliftDriverId] = id;
-          //   post[cylinderKeys.forkliftDriverName] = this.member_arr.filter(obj=>obj['value'] === id)[0]['label'];
-          // }
           if (!this.isEdit) {
             // message = '新增成功';
             api = paperWarehouseService.addInStorage;
@@ -779,11 +754,13 @@
           });
         }
       },
+      //保存初始数据，用于是否修改的校验
       saveDefaultData() {
         this.defaultFormData = this.$method.deepClone(this.formData);
         this.defaultTableData = this.$method.deepClone(this.tableData);
         this.defaultEffectiveTableData = this.$method.deepClone(this.effectiveTableData);
       },
+      //校验是否修改
       changeCheck(bool) {
         let formKeys = this.formOptions.reduce((arr, obj)=>{
           if (!(obj.attrs || {}).disabled) {
@@ -851,9 +828,6 @@
   };
 </script>
 <style lang="less" scoped>
-  /deep/ .loading-wrap {
-    display: none;
-  }
   .sub-title {
     font-size: 13px;
     margin-left: 36px;
@@ -876,35 +850,6 @@
     /deep/ .el-row:nth-last-of-type(1) {
       .dj-input-content {
         width: 100%;
-      }
-    }
-  }
-  .base-table {
-    /*/deep/ .td-btn-group .dj-common-red-delete {*/
-      /*color: red;*/
-      /*cursor: pointer;*/
-    /*}*/
-    /*/deep/ .icon-require {*/
-      /*color: red;*/
-      /*vertical-align: middle;*/
-    /*}*/
-    /deep/ .el-table__header-wrapper th, /deep/ .el-table__fixed-header-wrapper th {
-      padding: 8px 0;
-    }
-    /deep/ .el-table__row td, /deep/ .el-table__fixed-footer-wrapper td, /deep/ .el-table__footer-wrapper td {
-      padding: 0;
-      &.is-change {
-        background-color: rgba(248,152,22,0.1);
-        .el-autocomplete {
-          width: 100%;
-        }
-        .el-input__inner {
-          border: none;
-          background-color: transparent;
-          line-height: 33px;
-          height: 33px;
-          padding-left: 0;
-        }
       }
     }
   }
