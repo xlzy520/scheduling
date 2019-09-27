@@ -678,24 +678,9 @@
       position: relative;
     }
     .dj-table-container {
-      /deep/ .urgent {
-        color: #FF0000;
-      }
-      /deep/ .delay {
-        color: #F89816;
-      }
-      /deep/ .illegal {
-        color: #FF0000;
-      }
       /deep/ .el-checkbox.is-disabled {
         display: none;
       }
-      /*/deep/ .edited {*/
-        /*color: #303133;*/
-      /*}*/
     }
-    /*.el-tabs {*/
-      /*margin: 0 32px;*/
-    /*}*/
   }
 </style>

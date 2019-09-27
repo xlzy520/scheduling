@@ -128,7 +128,7 @@
   .paper-button {
     position: absolute;
     right: 32px;
-    top: 1px;
+    top: 11px;
     z-index: 100;
     .el-button {
       padding: 10px 27px;

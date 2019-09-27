@@ -411,12 +411,4 @@
   };
 </script>
 <style lang="less" scoped>
-  .dj-table-container {
-    /deep/ .urgent {
-      color: #FF0000;
-    }
-    /deep/ .delay {
-      color: #F89816;
-    }
-  }
 </style>

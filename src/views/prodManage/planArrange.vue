@@ -505,29 +505,14 @@
 </script>
 <style lang="less" scoped>
   .planArrange {
-    margin-top: 10px;
+    /*margin-top: 10px;*/
     display: flex;
     flex-direction: column;
-    height: calc(~'100% - 10px');
-    /*box-sizing: border-box;*/
+    /*height: calc(~'100% - 10px');*/
     .content {
       flex: 1 1;
       position: relative;
     }
-    .dj-table-container {
-      /deep/ .urgent {
-        color: #FF0000;
-      }
-      /deep/ .delay {
-        color: #F89816;
-      }
-      /deep/ .is-error {
-        color: red;
-      }
-    }
-    /*.el-tabs {*/
-      /*margin: 0 32px;*/
-    /*}*/
     .font-total {
       font-size: 16px;
       margin-top: 16px;

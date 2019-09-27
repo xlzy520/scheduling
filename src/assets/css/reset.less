@@ -6,7 +6,7 @@
   }
 }
 .single-page > .el-tabs {
-  margin: 0 32px;
+  margin: 12px 32px 0;
 }
 div:not(.under-table) > .base-table {
   .el-table th > .cell {
@@ -27,6 +27,27 @@ div:not(.under-table) > .base-table {
     color: red;
     vertical-align: middle;
   }
+  // 表格字体颜色控制
+  .el-table__row, .el-table__footer {
+    td {
+      // 急单字段
+      .urgent {
+        color: #f00;
+      }
+      // 延单字段
+      .delay {
+        color: #f89816;
+      }
+      // 不合规字段
+      .illegal {
+        color: #f00;
+      }
+    }
+    &.is-error {
+      color: red;
+    }
+  }
+  // 原纸出入库特有表格样式
   &.input-table {
     .el-table__header th {
       padding: 8px 0;

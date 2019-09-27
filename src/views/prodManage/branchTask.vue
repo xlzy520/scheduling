@@ -393,15 +393,6 @@
     }
   }
 
-  @{deep} .cell {
-    .urgent {
-      color: #ff0000;
-    }
-    .delay {
-      color: #F89816;
-    }
-  }
-
   .dialog {
     width: 1100px;
     .order-info-text {
