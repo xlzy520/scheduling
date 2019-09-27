@@ -325,9 +325,6 @@
         ];
       }
     },
-    mounted() {
-      this.fixedDialog();
-    },
     methods: {
       open(order) {
         this.$refs.dialog.open();

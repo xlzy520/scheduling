@@ -365,9 +365,6 @@
         return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
     },
-    mounted() {
-      this.fixedDialog();
-    },
     methods: {
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;

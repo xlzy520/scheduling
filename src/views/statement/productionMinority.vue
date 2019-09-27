@@ -57,7 +57,7 @@
             label: '产品名称',
             width: 100,
             formatter(a, b, cur) {
-              return cur || '——';
+              return cur || '—';
             }
           },
           {

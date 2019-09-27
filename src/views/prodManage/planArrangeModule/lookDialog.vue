@@ -181,7 +181,7 @@
               {
                 formItem: {
                   prop: orderKeys.trimRate,
-                  label: '修边率(%)'
+                  label: '修边率'
                 },
               },
               {
@@ -246,7 +246,7 @@
               {
                 formItem: {
                   prop: this.$method.getOriginKey(orderKeys.trimRate, 'old'),
-                  label: '修边率(%)'
+                  label: '修边率'
                 },
               },
               {
@@ -269,9 +269,6 @@
         isTableLoading: false,
         id: ''
       };
-    },
-    created() {
-      this.fixedDialog();
     },
     methods: {
       getRecord() {

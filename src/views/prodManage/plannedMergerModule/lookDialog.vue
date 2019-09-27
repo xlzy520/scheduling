@@ -229,9 +229,6 @@
         return total_arr.filter(obj=>!hidden_arr.includes(obj.formItem.prop));
       }
     },
-    created() {
-      this.fixedDialog();
-    },
     methods: {
       changeFormData(val) {
         this.formData = {...(this.order_arr.filter(obj=>obj[orderKeys.productionNo] === val)[0] || {})};

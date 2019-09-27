@@ -340,9 +340,6 @@
         return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
     },
-    mounted() {
-      this.fixedDialog();
-    },
     created() {
     },
     methods: {
