@@ -266,7 +266,7 @@ export const equalsObj = (oldData, newData) => {
 export const equalsObjMessage = (oldData, newData, needMsg = true)=>{
   const isEquals = equalsObj(oldData, newData);
   if (isEquals && needMsg) {
-    Message.info({
+    Message.error({
       message: '未编辑数据，请确认',
       duration: 1000
     });
