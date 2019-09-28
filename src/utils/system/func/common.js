@@ -273,3 +273,7 @@ export const equalsObjMessage = (oldData, newData, needMsg = true)=>{
   }
   return isEquals;
 };
+
+export const parseTime = (time, format = 'YYYY-MM-DD') => {
+  return time ? dayjs(time).format(format) : '';
+};

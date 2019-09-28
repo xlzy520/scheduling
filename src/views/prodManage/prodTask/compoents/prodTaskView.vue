@@ -112,6 +112,7 @@
         this.dj_api_extend(prodTaskService.findByProduceOrderNumber, {
           produceOrderNumber: id
         }).then(res => {
+          res['arriveTime'] = this.$method.parseTime(res['arriveTime']);
           this.formData = res;
         }).finally(() => {
           this.loading = false;
