@@ -401,7 +401,7 @@
           this.$message('请选择订单', 'error');
           return;
         }
-        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null, '0', 0].includes(obj[orderKeys.stackUp]))) {
+        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
           this.$message('请先进行排序叠单', 'error');
           return;
         }
