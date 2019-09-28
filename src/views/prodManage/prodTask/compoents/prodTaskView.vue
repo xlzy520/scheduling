@@ -93,7 +93,7 @@
               {formItem: {prop: 'sourceVformula', label: '纵压公式：'}},
               {formItem: {prop: 'sourceMaterialWidth', label: '切宽：'}},
               {formItem: {prop: 'orderMeter', label: '订单米数：'}},
-              {formItem: {prop: 'sourceTrimmingRate', label: '修边(m)：'}},
+              {formItem: {prop: 'sourceTrimming', label: '修边(mm)：'}},
               {formItem: {prop: 'sourceTrimmingRate', label: '修边率：'}},
               {formItem: {prop: 'stackFlag', label: '叠单标志：'}},
             ]
