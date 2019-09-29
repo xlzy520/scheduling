@@ -54,7 +54,7 @@ function login(to) {
   if (process.env.NODE_ENV === 'development') {
     return autoLogin().then(res=>{
       return innerUser.getToken({token: res});
-    }).then(()=>{
+    }).finally(()=>{
       setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
       return to.path
     });

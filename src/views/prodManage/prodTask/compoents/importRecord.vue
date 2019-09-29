@@ -8,7 +8,6 @@
             ref="table"
             :data="tableData"
             :columns="tableColumns"
-            :column-type="['index']"
             :total="pageTotal"
             height="100%"
             :loading="loading"
@@ -112,6 +111,7 @@
         searchData: {},
         tableData: [],
         tableColumns: [
+          {label: '排序', prop: 'listNumber',width: 160},
           {label: '生产编号', prop: 'produceOrderNumber', width: 160},
           {
             label: '汇入日期', prop: 'affluxTime', width: 180,

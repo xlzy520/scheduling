@@ -36,7 +36,7 @@ const development = {
       'vue-router': 'VueRouter',
       'vuex': 'Vuex',
       'axios': 'axios',
-      // 'djweb': 'djweb',
+      'djweb': 'djweb',
     };
   },
 };

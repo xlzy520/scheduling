@@ -1,8 +1,9 @@
 const baseConfig = {
   // service_ip: 'http://192.168.2.92:8089', //有缘
+  service_ip: 'http://192.168.2.140:8080', // 戴信乐
   // service_ip: 'http://192.168.2.199:8080', //作鑫
   // service_ip: 'http://192.168.2.171:8080', //宏权
-  service_ip: 'http://192.168.23.4:8080', //dev
+  // service_ip: 'http://172.17.0.134', //dev
   // service_ip: 'http://192.168.23.10:9011',
   proxyRouter: ['/djsupplier'],
 };

@@ -12,7 +12,7 @@
             :data="tableData"
             scroll-load
             :columns="tableColumns"
-            :column-type="['selection', 'index']"
+            :column-type="['selection']"
             @selection-change="selectionChange"
             :total="pageTotal"
             height="100%"
@@ -98,6 +98,7 @@
         ],
         tableData: [],
         tableColumns: [
+          {label: '排序', prop: 'listNumber', width: 160},
           {label: '生产编号', prop: 'produceOrderNumber', width: 160},
           {label: '客户名称', prop: 'customerName'},
           {label: '产品名称', prop: 'grouponProductName'},
