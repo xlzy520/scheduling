@@ -83,7 +83,7 @@
           if (dayjs(_val[1]).isSame(dayjs(), 'day')) {
             _val[1] = dayjs().format('YYYY-MM-DD HH:mm:ss');
           } else {
-            _val[1] = _val[1] + ' 23:59:59';
+            _val[1] = dayjs(_val[1]).format('YYYY-MM-DD') + ' 23:59:59';
           }
           data.endTime = _val[1];
         }
