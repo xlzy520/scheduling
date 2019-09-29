@@ -1,7 +1,6 @@
 <template>
   <dj-dialog ref="dialog" @close="close" title="查看" width="780px">
-    <div class="dialog-content">
-      <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
+    <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
           <classify-form :config="config" :formData="formData" :column-num="2"></classify-form>
           <!--<dj-form :formData="formData" :formOptions="formOptions_header" :column-num="2"></dj-form>-->
@@ -15,8 +14,7 @@
           <base-table :data="recordData" :columns="recordColumns"></base-table>
         </el-tab-pane>
       </el-tabs>
-      <div slot="footer"></div>
-    </div>
+    <div slot="footer"></div>
   </dj-dialog>
 </template>
 <script>
