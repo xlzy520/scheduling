@@ -80,10 +80,11 @@
     margin-bottom: 24px;
     margin-top: 18px;
   }
-
-  .dj-form.text-form {
-    margin-bottom: 13px;
-    /deep/ .el-form-item {
+  .classifyForm {
+    .dj-form:not(:nth-last-of-type(1)) {
+      margin-bottom: 13px;
+    }
+    .dj-form.text-form /deep/ .el-form-item {
       margin-bottom: 0;
     }
   }

@@ -392,7 +392,8 @@
     }
   }
   .dj-form {
-    margin-top: 9px;
+    /*margin-top: 9px;*/
+    padding-top: 9px;
     margin-bottom: 4px;
     margin-left: 30px;
     /deep/ .el-form-item {
