@@ -3,7 +3,7 @@ const permission = {
   state: {
     menus: [],
     permission: [],
-    amountPermission: false
+    amountPermission: undefined
   },
   mutations: {
     ADD_MENUS: (state, data) => {
@@ -23,11 +23,12 @@ const permission = {
     addPermission({commit}, data) {
       commit('ADD_PERMISSION', data);
     },
-    judgeAmountPermission({commit}) {
-      return paperWarehouseService.judgeAmountAuth().then((res)=>{
-        commit('SET_AMOUNTPERMISSION', res);
-      });
-
+    judgeAmountPermission({commit, state}) {
+      if (state.amountPermission === undefined) {
+        return paperWarehouseService.judgeAmountAuth().then((res)=>{
+          commit('SET_AMOUNTPERMISSION', res);
+        });
+      }
     },
   }
 };

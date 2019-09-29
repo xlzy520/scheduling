@@ -180,6 +180,7 @@
       };
     },
     created() {
+      this.$store.dispatch('judgeAmountPermission');
     },
     computed: {
       isShowMoney() {

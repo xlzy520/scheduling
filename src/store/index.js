@@ -15,7 +15,6 @@ const store = new DjStore(Vuex, {
     user
   }
 });
-store.dispatch('judgeAmountPermission');
 window.Dj_DATASOURCE_CACHE.personMsg.then(res=>{
   store.dispatch('setUserMsg', res);
 });

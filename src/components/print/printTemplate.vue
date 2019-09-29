@@ -61,7 +61,8 @@
 
   @media print {
     body {
-      min-height: auto;
+      min-width: auto !important;
+      min-height: auto !important;
       padding: 0 !important;
       position: static !important;
       //解决弹框打开状态打印时无法分页的问题

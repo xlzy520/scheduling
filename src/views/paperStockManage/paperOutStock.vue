@@ -262,7 +262,7 @@
       }
     },
     created() {
-      // this.tableData = [{}]
+      this.$store.dispatch('judgeAmountPermission');
     },
     mounted() {
       this.$refs.search.search();
