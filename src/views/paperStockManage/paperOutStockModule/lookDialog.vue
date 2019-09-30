@@ -9,7 +9,7 @@
             <span class="sub-title">
               <span>总重量：{{formData[cylinderKeys.totalWeight]}}kg</span>
               <span>总件数：{{formData[cylinderKeys.totalAmount]}}件</span>
-              <span v-if="isShowMoney">总金额：{{formData[cylinderKeys.totalMoney]}}元</span>
+              <span v-if="isShowMoney">总金额：{{formData[cylinderKeys.totalMoney] || 0}}元</span>
             </span>
           </p>
           <base-table ref="table"
