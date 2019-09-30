@@ -481,7 +481,6 @@
         }).finally(cb);
       },
       stackUp(cb) {
-        this.$message('叠单中', 'info');
         this.dj_api_extend(planArrangeService.stackUp, {lineId: this.lineId}).then(()=>{
           this.$message('叠单成功');
           this.refresh();
