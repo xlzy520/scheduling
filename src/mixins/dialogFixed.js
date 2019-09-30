@@ -27,6 +27,12 @@ export default {
     this.fixedDialog();
   },
   methods: {
+    updateHeight() {
+      this.$nextTick(()=>{
+        this.updateContentHeight();
+        this.calcHeight();
+      });
+    },
     updateContentHeight() {
       this.content_height = Array.prototype.reduce.call(this.elTabsContent.childNodes, (max, div)=>{
         let h = getElHeight(div);

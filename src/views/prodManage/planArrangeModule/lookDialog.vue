@@ -294,6 +294,7 @@
           res[orderKeys.productSize] = this.$method.getProductSize(res);
           this.formData = res || {};
           this.id = res.produceOrderNumber;
+          this.updateHeight();
         });
       },
       open(param = {}) {

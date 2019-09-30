@@ -341,6 +341,7 @@
           this.order = res;
           this.id = res.produceOrderNumber;
           // console.log(this.order);
+          this.updateHeight();
         }).finally(()=>{
           this.isLoading = false;
         });

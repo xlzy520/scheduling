@@ -250,6 +250,7 @@
           // }
           this.order_arr = list;
           this.formData = {...main};
+          this.updateHeight();
         }).finally(()=>{
           this.isLoading = false;
         });

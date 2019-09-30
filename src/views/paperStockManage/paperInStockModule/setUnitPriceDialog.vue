@@ -2,7 +2,11 @@
   <dj-dialog ref="dialog" @close="confirmClose" width="1160px" title="设置单价" @confirm="confirm">
     <div v-loading="isTableLoading">
       <p class="font-subhead">基础信息</p>
-      <dj-form labelPosition="left" labelWidth="" ref="form" labelSuffix=":" :form-data="formData" :form-options="formOptions" :column-num="3"
+      <dj-form ref="form"
+               v-bind="formAttrs"
+               :form-data="formData"
+               :form-options="formOptions"
+               :column-num="3"
                :col-rule="colRule"></dj-form>
       <p class="font-subhead">
         纸筒信息
@@ -29,12 +33,17 @@
   import {cylinderKeys, paperKeys} from "../../../utils/system/constant/dataKeys";
   import tableInput from './tableInput.vue';
   import paperWarehouseService from '../../../api/service/paperWarehouse';
-
+  const formAttrs = {
+    labelPosition: "left",
+    labelWidth: "",
+    labelSuffix: ":"
+  };
   const {rules} = djForm;
   export default {
     name: 'setUnitPriceDialog',
     data: function () {
       return {
+        formAttrs,
         cylinderKeys,
         formOptions: [
           {
