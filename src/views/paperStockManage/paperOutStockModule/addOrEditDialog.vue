@@ -444,7 +444,7 @@
       },
       rowClick(row) {
         let index = this.tableData.findIndex(obj=>obj === row);
-        if (index !== 1) {
+        if (index !== -1) {
           this.activeIndex = index;
         }
       },
