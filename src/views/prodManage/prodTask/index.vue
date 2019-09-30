@@ -210,7 +210,7 @@
             showClose: false,
           }).then(() => {
             this.removeLoading = true;
-            const idList = this.checkedList.map(v=> v.id);
+            const idList = this.checkedList.map(v=> v.produceOrderNumber);
             this.dj_api_extend(prodTaskService.removeOrder, {
               produceOrderNumbers: idList
             }).then(res => {
