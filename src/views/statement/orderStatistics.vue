@@ -58,7 +58,7 @@
             },
             component: {
               props: ['value', 'default'],
-              render(h) {
+              render() {
                 // 全选逻辑
                 const input = (arr) => {
                   let realArr;
@@ -143,14 +143,14 @@
   };
 </script>
 <style lang="less" scoped>
-  .ext-data{
-    font-size:16px;
-    font-family:PingFang SC Medium,sans-serif;
-    font-weight:500;
-    color:rgba(48,49,51,1);
-    line-height:22px;
+  .ext-data {
     display: flex;
-    &-item{
+    font-family: PingFang SC Medium, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    color: rgba(48, 49, 51, 1);
+    &-item {
       margin-right: 20px;
     }
   }

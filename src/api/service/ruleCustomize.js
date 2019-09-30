@@ -8,7 +8,7 @@ export default {
     return ruleCustomize('/changeEffected.do', data);
   },
   getRuleDetail(data) {
-    return ruleCustomize('/getRuleDetail.do', data,'get');
+    return ruleCustomize('/getRuleDetail.do', data, 'get');
   },
   addStackRule(data) {
     return ruleCustomize('/addStackRule.do', data);

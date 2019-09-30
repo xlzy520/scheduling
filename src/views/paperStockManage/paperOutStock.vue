@@ -244,7 +244,7 @@
               if (this.isShowMoney) {
                 return cur;
               } else {
-                return '****'
+                return '****';
               }
             }
           },
@@ -256,9 +256,9 @@
         ];
         let hidden_arr = [];
         if (!this.isShowMoney) {
-          hidden_arr = [cylinderKeys.totalMoney]
+          hidden_arr = [cylinderKeys.totalMoney];
         }
-        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop))
+        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
     },
     created() {
@@ -314,15 +314,15 @@
 </script>
 <style lang="less" scoped>
 /*/deep/ .operate {*/
-  /*a {*/
-    /*cursor: pointer;*/
-  /*}*/
-  /*a + span:empty {*/
-    /*&:before {*/
-      /*content: '|';*/
-      /*margin: 0 9px;*/
-      /*color: #EBEEF5;*/
-    /*}*/
-  /*}*/
+/*a {*/
+/*cursor: pointer;*/
+/*}*/
+/*a + span:empty {*/
+/*&:before {*/
+/*content: '|';*/
+/*margin: 0 9px;*/
+/*color: #EBEEF5;*/
+/*}*/
+/*}*/
 /*}*/
 </style>

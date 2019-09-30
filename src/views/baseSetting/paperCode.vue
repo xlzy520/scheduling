@@ -158,7 +158,7 @@
           type: 'warning',
           showClose: false,
         }).then(() => {
-          this.dj_api_extend(paperCodeService.changeEffected, post).then((res) => {
+          this.dj_api_extend(paperCodeService.changeEffected, post).then(() => {
             this.$message(`${text}成功`, 'success');
             row.isEffected = !row.isEffected;
           });
@@ -198,7 +198,7 @@
               post.id = this.formData.id;
             }
             post = this.$method.handleFormDataStartOrEndByZero(post, ['paperGram'], true);
-            this.dj_api_extend(api, post).then((res) => {
+            this.dj_api_extend(api, post).then(() => {
               this.close();
               this.$refs.table.updateData();
               this.$message(message, 'success');
@@ -224,10 +224,9 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .status-off{
+  @{deep} .status-off {
     color: #909399;
   }
-
   .paper-kind-dialog {
     width: 400px;
   }

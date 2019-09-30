@@ -2,7 +2,7 @@
     <dj-dialog ref="dialog" @close="close" title="查看" width="780px">
       <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
-          <classify-form ref="form" :config="config" :formData="order" :column-num="2"></classify-form>
+          <classify-form ref="form" :config="config" :form-data="order" :column-num="2"></classify-form>
           <!--<el-row>-->
             <!--<el-col :span="17"><span class="bold">生产编号: {{order[orderKeys.productionNo]}}</span></el-col>-->
             <!--<el-col :span="7"><span class="bold">生产状态: <span class="status">{{$enum.productStatus._swap[order[orderKeys.productStatus]] && $enum.productStatus._swap[order[orderKeys.productStatus]].label}}</span></span></el-col>-->
@@ -374,18 +374,18 @@
     }
   }
   /*.bold {*/
-    /*font-weight: bold;*/
+  /*font-weight: bold;*/
   /*}*/
   /*.status {*/
-    /*color: #3654ea;*/
+  /*color: #3654ea;*/
   /*}*/
   /*.el-row {*/
-    /*margin-top: 10px;*/
+  /*margin-top: 10px;*/
   /*}*/
   /*.el-col {*/
-    /*margin-bottom: 30px;*/
+  /*margin-bottom: 30px;*/
   /*}*/
   /*.line {*/
-    /*border-top: 1px solid #ebeef5;*/
+  /*border-top: 1px solid #ebeef5;*/
   /*}*/
 </style>

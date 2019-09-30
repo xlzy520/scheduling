@@ -1,7 +1,7 @@
 <template>
   <dj-dialog ref="dialog" @close="close" width="780px" title="更换生产线" @confirm="confirm">
     <div v-loading="isLoading">
-      <dj-form ref="form" :formData="formData" :formOptions="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
+      <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
     </div>
     <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
@@ -113,7 +113,7 @@
       },
       confirm(cb) {
         this.$refs.form.validate(()=>{
-          let post ={
+          let post = {
             // ...this.formData,
             oldLine: this.oldLine,
             newLine: this.formData.newLine,
@@ -128,7 +128,7 @@
               return arr;
             }, [])
           };
-          this.dj_api_extend(planArrangeService.changeProdLine, post).then(res=>{
+          this.dj_api_extend(planArrangeService.changeProdLine, post).then(()=>{
             this.$message('更换成功');
             this.$emit('success');
             this.close();
@@ -147,7 +147,7 @@
           this.allData = Object.keys(res).map(key=>{
             if (Array.isArray(res[key])) {
               res[key].map(obj=>{
-                obj.value = `${key}+${obj[orderKeys.orderMetres]}`
+                obj.value = `${key}+${obj[orderKeys.orderMetres]}`;
               });
             }
             return {
@@ -175,7 +175,7 @@
     .el-form-item.is-success .el-transfer-panel {
       border-color: #40b317;
     }
-    .el-col:nth-last-of-type(1) .el-form-item__content{
+    .el-col:nth-last-of-type(1) .el-form-item__content {
       margin-left: 60px !important;
     }
   }

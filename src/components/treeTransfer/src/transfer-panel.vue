@@ -13,7 +13,7 @@
         v-model="checkedList"
         v-show="data.length > 0"
         class="el-transfer-panel__list">
-        <tree-check-box :keyMap="_keyMap" :data="item" v-for="item in data" :key="item[_keyMap.value]"
+        <tree-check-box :key-map="_keyMap" :data="item" v-for="item in data" :key="item[_keyMap.value]"
                         v-on="$listeners">
           <template v-if="$scopedSlots.parent"  slot="parent" slot-scope="props">
             <slot v-bind="props" name="parent"></slot>
@@ -105,19 +105,16 @@
   .el-checkbox-group, .tree-check-box {
     display: block;
   }
-
   /deep/ .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-    &:before {
+    &::before {
       top: 5px;
       left: 0;
       width: auto;
     }
   }
-
-  .el-transfer-panel /deep/ .el-checkbox__inner:after {
+  .el-transfer-panel /deep/ .el-checkbox__inner::after {
     top: 2px;
   }
-
   .el-transfer-panel__footer {
     background-color: rgb(245, 247, 250);
   }

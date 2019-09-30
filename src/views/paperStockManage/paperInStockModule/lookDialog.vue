@@ -2,7 +2,7 @@
     <dj-dialog ref="dialog" @close="close" width="872px" title="查看">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
-          <dj-form labelPosition="left" labelWidth="" labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3" :col-rule="colRule"></dj-form>
+          <dj-form label-position="left" label-width="110px" label-suffix=":" ref="form" :form-data="formData" :form-options="formOptions" :column-num="3" :col-rule="colRule"></dj-form>
           <!--<p class="font-subhead">纸筒信息</p>-->
           <p class="font-subhead">
             纸筒信息
@@ -204,6 +204,9 @@
       };
     },
     mixins: [dialogFixed],
+    mounted() {
+      console.log(this);
+    },
     computed: {
       isShowMoney() {
         return this.$store.getters.amountPermission;
@@ -405,15 +408,9 @@
   };
 </script>
 <style lang="less" scoped>
-  .dj-form {
-    margin-bottom: 13px;
-    /deep/ .el-form-item {
-      margin-bottom: 0;
-    }
-  }
   .sub-title {
-    font-size: 13px;
     margin-left: 36px;
+    font-size: 13px;
     span {
       margin-right: 24px;
     }

@@ -4,7 +4,7 @@
     :search-config="searchConfig"
     :table-columns="tableColumns"
     :download="downloadConfig"
-    serviceUrl="listDetail">
+    service-url="listDetail">
   </simple-table-box>
 </template>
 
@@ -19,7 +19,7 @@
       return {
         searchConfig: [
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'paperSize', type: 'input',},
+          {label: '门幅：', key: 'paperSize', type: 'input'},
           {label: '仓库：', type: 'select', key: 'warehouseId', attrs: {
               keyMap: {
                 label: 'name',
@@ -106,7 +106,7 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .ext-data{
+  .ext-data {
     display: flex;
   }
 </style>

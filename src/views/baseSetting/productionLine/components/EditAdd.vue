@@ -80,7 +80,7 @@
               },
               component: {
                 props: ['value', 'default'],
-                render(h) {
+                render() {
                   // 全选逻辑
                   const input = (arr) => {
                     let realArr;
@@ -435,7 +435,7 @@
                   this.$emit('close');
                   const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
                   this.$message(message, 'success');
-                  this.$emit('getData', this.lineNum);
+                  this.$emit('get-data', this.lineNum);
                 }).catch(() => {
                   this.loading = false;
                 });
@@ -571,7 +571,7 @@
   .production-line-dialog {
     padding: 0 18px 0 10px;
     h4 {
-      padding: 4px 0 16px 0;
+      padding: 4px 0 16px;
     }
   }
   @{deep} .optional {
@@ -580,35 +580,34 @@
     margin-bottom: 20px;
     box-sizing: border-box;
     &-area {
+      display: flex;
       width: 100%;
       min-height: 80px;
-      display: flex;
+      padding-top: 12px;
+      padding-bottom: 8px;
+      padding-left: 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      box-sizing: border-box;
       flex-wrap: wrap;
       justify-content: flex-start;
-      border: 1px solid #DCDFE6;
-      border-radius: 4px;
-      padding-left: 12px;
-      padding-bottom: 8px;
-      padding-top: 12px;
-      box-sizing: border-box;
-
       &-item {
-        text-align: center;
-        font-size: 12px;
         width: 55px;
         height: 24px;
-        line-height: 24px;
         margin-right: 16px;
         margin-bottom: 12px;
+        font-size: 12px;
+        line-height: 24px;
         color: #606266;
-        background: #F0F2F5;
-        border-radius: 3px;
-        user-select: none;
+        text-align: center;
         cursor: pointer;
+        background: #f0f2f5;
+        border-radius: 3px;
         box-sizing: border-box;
+        user-select: none;
         &.selected {
           color: #fff;
-          background: #3654EA;
+          background: #3654ea;
         }
       }
     }

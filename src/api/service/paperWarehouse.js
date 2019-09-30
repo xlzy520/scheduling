@@ -69,7 +69,7 @@ export default {
           label: obj.oname,
           value: obj.id
         };
-      })
+      });
     });
   },
   getRole(data) {
@@ -79,7 +79,7 @@ export default {
           label: obj.rname,
           value: obj.id
         };
-      })
+      });
     });
   },
   getMember(data) {
@@ -89,7 +89,7 @@ export default {
           label: obj.uname,
           value: obj.id
         };
-      })
+      });
     });
   },
   judgeAmountAuth(data) {

@@ -242,7 +242,7 @@
               id: id,
               processeAmount: processeAmount,
               divideState: divideState,
-            }).then(res => {
+            }).then(() => {
               this.$message('处理成功', 'success');
               this.close();
               this.$refs.search.search();
@@ -305,7 +305,7 @@
                 id: v.id
               };
             });
-            this.dj_api_extend(branchTaskService.removeOrder, idList).then(res => {
+            this.dj_api_extend(branchTaskService.removeOrder, idList).then(() => {
               this.$message('移除成功', 'success');
             }).catch(() => {
               this.loading = false;
@@ -379,65 +379,62 @@
       margin: auto 5px;
     }
   }
-
   @{deep} .operation {
     line-height: 1;
     a {
-      color: #3654EA;
       padding: 2px 10px;
+      color: #3654ea;
       cursor: pointer;
     }
     .divideState-completed {
-      pointer-events: none;
       color: #909399;
+      pointer-events: none;
     }
   }
-
   .dialog {
     width: 1100px;
     .order-info-text {
+      width: 105px;
+      padding: 15px 8px 15px 0;
       font-family: PingFang SC Medium, sans-serif;
       font-weight: 500;
       color: rgba(48, 49, 51, 1);
-      width: 105px;
-      padding: 15px 8px 15px 0;
       text-align: right;
     }
   }
-  .branch-task-msg{}
-  .msg-header{
-    font-size:16px;
-    font-weight:500;
-    color:rgba(48,49,51,1);
-    line-height:22px;
+  .msg-header {
     margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    color: rgba(48, 49, 51, 1);
   }
-  .msg-content{
-    line-height:22px;
-    color:rgba(96,98,102,1);
-    font-size:14px;
-    font-weight:400;
-    &-label{
+  .msg-content {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    color: rgba(96, 98, 102, 1);
+    &-label {
       width: 80px;
       margin-bottom: 16px;
     }
-    &-detail{
+    &-detail {
       display: flex;
-      flex-wrap: wrap;
       margin-bottom: 24px;
+      flex-wrap: wrap;
     }
-    &-item{
+    &-item {
       margin-right: 16px;
       margin-bottom: 8px;
     }
   }
 </style>
 <style lang="less">
-  .branch-task{
+  .branch-task {
     width: 442px;
-    &.el-message-box{
-      .el-message-box__content{
-        .el-message-box__status{
+    &.el-message-box {
+      .el-message-box__content {
+        .el-message-box__status {
           top: 20px;
         }
       }

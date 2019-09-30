@@ -1,8 +1,7 @@
 import {plannedMerger} from '../base-service/service';
 import methods from "../../utils/methods";
 import { orderKeys } from "../../utils/system/constant/dataKeys";
-const { getMaterialSize, getProductSize, getOrderTip, handleTime, getOriginKey } = methods;
-import dayjs from 'dayjs';
+const { getMaterialSize, getProductSize, handleTime, getOriginKey } = methods;
 export default{
   list(params) {
     return plannedMerger('/getMergeList.do', params).then(res=>{
@@ -12,7 +11,7 @@ export default{
           obj.childList.forEach(item=>{
             item.isChild = true;
             item['table_level'] = 1;
-          })
+          });
         }
         obj.childNum = (obj.childList || []).length;
         obj[orderKeys.materialSize] = getMaterialSize(obj);
@@ -43,7 +42,7 @@ export default{
   getOrderById(params) {
     return plannedMerger('/getOrderDetail.do', params).then((res = {})=>{
       let list = res.list || [res, ...(res.childList || [])];
-      list.forEach((obj, index)=>{
+      list.forEach((obj)=>{
         // if (Array.isArray(res.childList)) {
         //   res.childList.forEach(item=>{
         //     item.isChild = true;

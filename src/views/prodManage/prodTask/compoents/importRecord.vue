@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog title="汇入记录" ref="dialog" @close="close" :hasFooter="false">
+  <dj-dialog title="汇入记录" ref="dialog" @close="close" :has-footer="false">
     <div class="content">
       <single-page>
         <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
@@ -111,7 +111,7 @@
         searchData: {},
         tableData: [],
         tableColumns: [
-          {label: '排序', prop: 'listNumber',width: 160},
+          {label: '排序', prop: 'listNumber', width: 160},
           {label: '生产编号', prop: 'produceOrderNumber', width: 160},
           {
             label: '汇入日期', prop: 'affluxTime', width: 180,

@@ -2,13 +2,13 @@
   <dj-dialog ref="dialog" @close="close" title="查看" width="780px">
     <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
-          <classify-form :config="config" :formData="formData" :column-num="2"></classify-form>
-          <!--<dj-form :formData="formData" :formOptions="formOptions_header" :column-num="2"></dj-form>-->
+          <classify-form :config="config" :form-data="formData" :column-num="2"></classify-form>
+          <!--<dj-form :form-data="formData" :form-options="formOptions_header" :column-num="2"></dj-form>-->
           <!--<p class="font-default">订单信息</p>-->
-          <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_order" :column-num="2"></dj-form>-->
+          <!--<dj-form labelSuffix=":" :form-data="formData" :form-options="formOptions_order" :column-num="2"></dj-form>-->
           <!--<p class="line"></p>-->
           <!--<p class="font-default">产品信息</p>-->
-          <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="formOptions_product" :column-num="2"></dj-form>-->
+          <!--<dj-form labelSuffix=":" :form-data="formData" :form-options="formOptions_product" :column-num="2"></dj-form>-->
         </el-tab-pane>
         <el-tab-pane label="编辑记录" name="2">
           <base-table :data="recordData" :columns="recordColumns"></base-table>
@@ -21,7 +21,6 @@
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
   import plannedMergerService from '../../../api/service/plannedMerger';
   import record from "../../../api/service/record";
-  import dayjs from 'dayjs';
   import dialogFixed from "../../../mixins/dialogFixed";
   export default {
     name: 'lookDialog',
@@ -184,7 +183,7 @@
               return (<span class="status">{obj.label || ''}</span>);
             }
           },
-        ]
+        ];
       },
       formOptions_order() {
         let total_arr = [
@@ -222,7 +221,7 @@
         let hidden_arr = [];
         let productionNo = this.formData[orderKeys.productionNo] || '';
         if (!productionNo.startsWith('V')) {
-          hidden_arr = [orderKeys.mergeTime]
+          hidden_arr = [orderKeys.mergeTime];
         }
         return total_arr.filter(obj=>!hidden_arr.includes(obj.formItem.prop));
       }
@@ -276,15 +275,15 @@
 </script>
 <style lang="less" scoped>
   /*.dialog-content{*/
-    /*height: 537px; //685*/
+  /*height: 537px; //685*/
   /*}*/
   /deep/ .status {
     color: #3654ea;
   }
   .line {
     margin-top: 11px;
-    border-top: 1px solid #ebeef5;
     margin-bottom: 24px;
+    border-top: 1px solid #ebeef5;
   }
   .el-tab-pane {
     .dj-form:not(:nth-of-type(1)) {

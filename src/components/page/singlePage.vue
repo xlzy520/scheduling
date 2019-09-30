@@ -10,11 +10,11 @@
 </script>
 <style lang="less" scoped>
   .single-page {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
     position: absolute;
+    display: flex;
     width: 100%;
+    height: 100%;
     overflow: auto;
+    flex-direction: column;
   }
 </style>

@@ -78,10 +78,7 @@
     /*height: 7.9cm;*/
     font-size: 20px;
     .notice-text {
-      /*font-size: 18px;*/
       font-weight: bold;
-    }
-    .notice-text {
       > p {
         width: 50%;
       }

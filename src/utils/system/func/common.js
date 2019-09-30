@@ -6,7 +6,6 @@ import {isObject} from '../../common/func/object';
 const {checkType, fileDownload} = methods;
 import dayjs from 'dayjs';
 import {MessageBox, Message} from 'element-ui';
-import el from "element-ui/src/locale/lang/el";
 
 export const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
   arr.forEach(key => {
@@ -144,6 +143,7 @@ export const tipBox = (txt, fn1) => {
  * @param {number} computedType 计算类型，+加-减*乘/除
  * @return {number} 计算结果
  */
+/* eslint-disable */
 export function accuracyCompute(number_a, number_b, computedType) {
   var result,
     decNum_a = getDecNum(number_a),
@@ -206,7 +206,7 @@ export function accuracyCompute(number_a, number_b, computedType) {
     }
   }
 };
-
+/* eslint-disable */
 //获取formData中可变的字段
 export const getFormDataChangeableValue = (formData, config) => {
   return cloneData(config.reduce((arr, opt) => {
@@ -234,6 +234,7 @@ export const downloadExecl = (data, text) => {
 
 export const equalsObj = (oldData, newData) => {
   //       类型为基本类型时,如果相同,则返回true
+  //eslint-disable-next-line
   if (oldData == newData || [oldData, newData].every(v=>['', null, undefined, NaN].includes(v))) return true;
   const isArray = Array.isArray;
   if (isObject(oldData) && isObject(newData) && Object.keys(oldData).length === Object.keys(newData).length) {

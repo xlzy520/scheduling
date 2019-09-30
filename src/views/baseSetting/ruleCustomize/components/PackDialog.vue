@@ -23,7 +23,7 @@
                     <dj-input v-model="child.startUnitarea" placeholder="请输入" maxlength="10"
                               disabled suffix-icon="m²"></dj-input>
                   </el-form-item>
-                  <div style="margin: 0 5px">至</div>
+                  <div style="margin: 0 5px;">至</div>
                   <el-form-item prop="endUnitarea">
                     <dj-input v-model="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
                               maxlength="10" @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
@@ -43,7 +43,7 @@
           </transition-group>
         </div>
       </div>
-      <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px">添加条件</el-button>
+      <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px;">添加条件</el-button>
     </div>
   </dj-dialog>
 </template>
@@ -333,39 +333,40 @@
   @deep: ~'>>>';
   .pack-dialog {
     width: 1196px;
-    height: 849-138px;
-  }
-  @media screen and (max-width: 1601px) {
-    .pack-dialog {
-      height: 669-138px;
-    }
-  }
-  @media screen and (max-width: 1367px) {
-    .pack-dialog {
-      height: 549-138px;
-    }
-  }
-  .dj-form{
-    padding-right: 65px;
+    height: 711px;
   }
 
+  @media screen and (max-width: 1601px) {
+    .pack-dialog {
+      height: 531px;
+    }
+  }
+
+  @media screen and (max-width: 1367px) {
+    .pack-dialog {
+      height: 411px;
+    }
+  }
+  .dj-form {
+    padding-right: 65px;
+  }
   .condition-item {
     display: flex;
     .rule-row {
       display: flex;
       justify-content: flex-end;
-      &>@{deep} .el-form-item {
+      & > @{deep} .el-form-item {
         width: 30.8%;
-        &.unit-area{
-          .el-form-item__label{
+        &.unit-area {
+          .el-form-item__label {
             width: 78px;
           }
         }
-        &.packpiece{
-          .el-form-item__label{
+        &.packpiece {
+          .el-form-item__label {
             width: 109px;
           }
-          .el-input{
+          .el-input {
             width: 232px;
           }
         }
@@ -378,15 +379,15 @@
       }
     }
     .condition-index-label {
-      font-family: "PingFang SC",sans-serif;
-      font-weight: 500;
       width: 50px;
-      box-sizing: content-box;
       padding-left: 20px;
+      font-family: "PingFang SC", sans-serif;
+      font-weight: 500;
+      box-sizing: content-box;
     }
     .button-col {
-      width: 65px;
       display: flex;
+      width: 65px;
       margin-top: 8px;
       margin-right: 10px;
       i.el-icon-delete, i.el-icon-circle-plus {
@@ -412,15 +413,14 @@
       }
     }
   }
-
   .childCondition-enter-active {
-    transition: all .3s ease;
+    transition: all 0.3s ease;
   }
   .childCondition-leave-active {
-    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
   }
   .childCondition-enter, .childCondition-leave-to {
-    transform: translateY(10px);
     opacity: 0;
+    transform: translateY(10px);
   }
 </style>

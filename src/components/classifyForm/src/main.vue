@@ -3,7 +3,7 @@
     <template v-for="(item, index) in _config">
       <p v-if="item.title" class="bold">{{item.title}}</p>
       <dj-form ref="form" :class="{'text-form': hasSuffix[index]}"
-               :formOptions="item.formOptions" v-bind="$attrs"></dj-form>
+               :form-options="item.formOptions" v-bind="$attrs"></dj-form>
       <p v-if="(hasLine || item.hasLine) && index !== config.length - 1" class="line"></p>
     </template>
   </div>
@@ -55,10 +55,10 @@
         this.$refs.form.forEach(com=>{
           com.validate((p)=>{
             obj = p;
-          },(p)=>{
+          }, (p)=>{
             obj = p;
             flag = false;
-          })
+          });
         });
         if (flag) {
           typeof successFn === 'function' && successFn(obj);
@@ -71,14 +71,13 @@
 </script>
 <style lang="less" scoped>
   .bold {
-    font-weight: bold;
     margin-bottom: 10px;
+    font-weight: bold;
   }
-
   .line {
-    border-top: 1px solid #ebeef5;
-    margin-bottom: 24px;
     margin-top: 18px;
+    margin-bottom: 24px;
+    border-top: 1px solid #ebeef5;
   }
   .classifyForm {
     .dj-form:not(:nth-last-of-type(1)) {

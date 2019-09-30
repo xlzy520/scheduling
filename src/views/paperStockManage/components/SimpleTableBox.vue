@@ -114,15 +114,15 @@
 </script>
 
 <style lang="less" scoped>
-  .ext-content{
+  .ext-content {
     padding-left: 15px;
   }
-  .ext-data{
+  .ext-data {
     display: flex;
     padding: 5px 0;
-    font-family: "PingFang SC Regular",sans-serif;
+    font-family: "PingFang SC Regular", sans-serif;
     font-weight: bold;
-    div{
+    div {
       margin-right: 30px;
     }
   }

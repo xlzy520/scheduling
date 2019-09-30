@@ -5,8 +5,8 @@
         <!--<el-button @click="scannerAdd('sadasdsadasd')"></el-button>-->
         <p class="font-subhead">基础信息</p>
         <dj-form ref="form"
-                 :formData="formData"
-                 :formOptions="formOptions"
+                 :form-data="formData"
+                 :form-options="formOptions"
                  :column-num="3"
                  :col-rule="colRule"></dj-form>
         <p class="font-subhead">
@@ -31,14 +31,14 @@
         </base-table>
       </div>
     </dj-dialog>
-    <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" title="选择责任部门/责任人" @close="selectUsePersonFlag = false" @selectPerson="changeUserPerson"></select-use-person>
-    <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @selectPerson="changeForkliftDriver"></select-use-person>
+    <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" title="选择责任部门/责任人" @close="selectUsePersonFlag = false" @select-person="changeUserPerson"></select-use-person>
+    <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @select-person="changeForkliftDriver"></select-use-person>
   </div>
 </template>
 <script>
   import {djForm} from 'djweb';
   const {rules} = djForm;
-  import tableInput from '../paperInStockModule/tableInput.vue'
+  import tableInput from '../paperInStockModule/tableInput.vue';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import selectUsePerson from './selectUsePerson';
   import {Scanner} from "../../../utils";
@@ -123,7 +123,7 @@
                 //   cb();
                 // }
               };
-              return {...props, beforeEnter, reg: /^\d*$/, 'class': {'is-error': props.row['isError']}, maxlength: 12}
+              return {...props, beforeEnter, reg: /^\d*$/, 'class': {'is-error': props.row['isError']}, maxlength: 12};
             },
             component: tableInput,
             listeners: {
@@ -244,8 +244,8 @@
             },
             render: (h, {props: {value, disabled}}) => {
               return (
-                <el-input placeholder="请选择领用部门/领用人" value={value} disabled={disabled} on-focus={()=>!disabled&&this.openSelectUsePerson()}>
-                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled&&this.openSelectUsePerson()}></i>
+                <el-input placeholder="请选择领用部门/领用人" value={value} disabled={disabled} on-focus={()=>!disabled && this.openSelectUsePerson()}>
+                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled && this.openSelectUsePerson()}></i>
                 </el-input>
               );
             }
@@ -330,8 +330,8 @@
             },
             render: (h, {props: {value, disabled}}) => {
               return (
-                <el-input placeholder="请选择叉车员" value={value} disabled={disabled} on-focus={()=>!disabled&&this.openSelectForkliftDriver()}>
-                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled&&this.openSelectForkliftDriver()}></i>
+                <el-input placeholder="请选择叉车员" value={value} disabled={disabled} on-focus={()=>!disabled && this.openSelectForkliftDriver()}>
+                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled && this.openSelectForkliftDriver()}></i>
                 </el-input>
               );
             }
@@ -397,7 +397,8 @@
         return this.tableData.filter(obj=>{
           let arr = [cylinderKeys.cylinderNo, paperKeys.paperGram, cylinderKeys.weight, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
           return arr.every(key=>{
-            return !['', undefined, null].includes(obj[key]);});
+            return !['', undefined, null].includes(obj[key]);
+});
         });
       }
     },
@@ -420,10 +421,10 @@
         });
       },
       getRole(val) {
-        return this.dj_api_extend(paperWarehouseService.getRole, {id:val});
+        return this.dj_api_extend(paperWarehouseService.getRole, {id: val});
       },
       getMember(val) {
-        return this.dj_api_extend(paperWarehouseService.getMember, {id:val}).then(arr=>{
+        return this.dj_api_extend(paperWarehouseService.getMember, {id: val}).then(arr=>{
           this.member_arr = arr;
           return arr;
         });
@@ -438,9 +439,9 @@
       },
       //获取单据编号
       getReceiptId() {
-        this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType:"YZC"}).then(res=>{
+        this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType: "YZC"}).then(res=>{
           this.$set(this.formData, cylinderKeys.receiptNumber, res);
-        })
+        });
       },
       rowClick(row) {
         let index = this.tableData.findIndex(obj=>obj === row);
@@ -570,7 +571,7 @@
             api = paperWarehouseService.editOutStorage;
             // post.id = this.formData.id;
           }
-          this.dj_api_extend(api, post).then((res) => {
+          this.dj_api_extend(api, post).then(() => {
             this.$emit('success');
             this.$message('操作成功');
             this.close();
@@ -688,16 +689,16 @@
 </script>
 <style lang="less" scoped>
   .sub-title {
-    font-size: 13px;
     margin-left: 36px;
+    font-size: 13px;
     span {
       margin-right: 24px;
     }
   }
   .dj-form {
     position: relative;
-    width: 1060px;
     left: -14px;
+    width: 1060px;
     margin-bottom: 11px;
     /deep/ .el-row .el-col {
       padding: 0;

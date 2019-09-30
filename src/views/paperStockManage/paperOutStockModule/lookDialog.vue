@@ -2,7 +2,7 @@
     <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
       <el-tabs v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
-          <dj-form labelPosition="left" labelWidth="" labelSuffix=":" ref="form" :formData="formData" :formOptions="formOptions" :column-num="3"></dj-form>
+          <dj-form labelPosition="left" labelWidth="" labelSuffix=":" ref="form" :form-data="formData" :form-options="formOptions" :column-num="3"></dj-form>
           <!--<p class="font-subhead">纸筒信息</p>-->
           <p class="font-subhead">
             纸筒信息
@@ -32,12 +32,10 @@
     </dj-dialog>
 </template>
 <script>
-  import {djForm} from 'djweb';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import paperWarehouseService from '../../../api/service/paperWarehouse';
   import record from "../../../api/service/record";
   import dialogFixed from "../../../mixins/dialogFixed";
-  const {rules} = djForm;
   export default {
     name: 'lookDialog',
     mixins: [dialogFixed],
@@ -385,8 +383,8 @@
 </script>
 <style lang="less" scoped>
   .sub-title {
-    font-size: 13px;
     margin-left: 36px;
+    font-size: 13px;
     span {
       margin-right: 24px;
     }

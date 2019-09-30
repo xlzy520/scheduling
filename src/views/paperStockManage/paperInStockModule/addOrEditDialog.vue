@@ -4,8 +4,8 @@
       <div v-loading="isTableLoading">
         <p class="font-subhead">基础信息</p>
         <dj-form ref="form"
-                 :formData="formData"
-                 :formOptions="formOptions"
+                 :form-data="formData"
+                 :form-options="formOptions"
                  :col-rule="colRule"
                  :column-num="3"></dj-form>
         <p class="font-subhead">
@@ -29,7 +29,7 @@
         </base-table>
       </div>
     </dj-dialog>
-    <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @selectPerson="changeForkliftDriver"></select-use-person>
+    <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @select-person="changeForkliftDriver"></select-use-person>
   </div>
 </template>
 <script>
@@ -39,14 +39,14 @@
   import selectUsePerson from '../paperOutStockModule/selectUsePerson';
 
   const {rules} = djForm;
-  import tableInput from './tableInput.vue'
+  import tableInput from './tableInput.vue';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   //更新面积
   const updateArea = function (row) {
     let value;
     let length = row[cylinderKeys.length];
     let paperSize = row[paperKeys.paperSize];
-    value = paperSize*length/1000;
+    value = paperSize * length / 1000;
     if (isNaN(value) || !value || !Number(length || 0)) {
       value = '';
     }
@@ -59,7 +59,7 @@
     let weight = row[cylinderKeys.weight];
     let paperSize = row[paperKeys.paperSize];
     let paperGram = row[paperKeys.paperGram];
-    value = weight/(paperSize*paperGram/1000/1000);
+    value = weight / (paperSize * paperGram / 1000 / 1000);
     if (isNaN(value) || !Number(paperGram || 0) || !Number(paperSize || 0)) {
       value = '';
     }
@@ -72,8 +72,8 @@
   };
   //仓库选择框
   const SELECT_WAREHOUSE = {
-    render(h) {
-      let { row, index, col, keyMap } = this;
+    render() {
+      let { row, col, keyMap } = this;
       const input = (val)=>{
         row[paperKeys.warehouseAreaId] = undefined;
         this.$set(row, col.prop, val);
@@ -93,11 +93,11 @@
   };
   //库区选择框
   const SELECT_WAREHOUSE_AREA = {
-    render(h) {
-      let { row, index, col, keyMap } = this;
+    render() {
+      let { row, col, keyMap } = this;
       const input = (val)=>{
         this.$set(row, col.prop, val);
-        this.$emit('input', this)
+        this.$emit('input', this);
       };
       return (
         <dj-select ref="select"
@@ -127,7 +127,7 @@
     data() {
       return {
         realOptions: []
-      }
+      };
     },
     props: ['row', 'index', 'col', 'service', 'keyMap', 'options', 'disabled'],
   };
@@ -157,7 +157,7 @@
               };
               return (
                 <div class="td-btn-group">
-                  <i class={{'dj-common-red-delete': true, disabled: checkDisabled(row)}} on-click={()=>!checkDisabled(row)&&remove()}></i>
+                  <i class={{'dj-common-red-delete': true, disabled: checkDisabled(row)}} on-click={()=>!checkDisabled(row) && remove()}></i>
                 </div>
               );
             }
@@ -202,7 +202,7 @@
                   cb();
                 }
               };
-              return {...props, service, beforeEnter, label: 'paperNumber', valueKey: 'paperNumber', disabled: checkDisabled(props.row)}
+              return {...props, service, beforeEnter, label: 'paperNumber', valueKey: 'paperNumber', disabled: checkDisabled(props.row)};
             },
             component: tableInput,
             listeners: {
@@ -237,7 +237,7 @@
               );
             },
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.NONZERO_REGEXP, disabled: checkDisabled(props.row), maxlength: 3}
+              return {...props, reg: this.$reg.NONZERO_REGEXP, disabled: checkDisabled(props.row), maxlength: 3};
             },
             component: tableInput,
             listeners: {
@@ -257,7 +257,7 @@
               );
             },
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), disabled: checkDisabled(props.row), maxlength: 8}
+              return {...props, reg: this.$reg.getFloatReg(3), disabled: checkDisabled(props.row), maxlength: 8};
             },
             component: tableInput,
             listeners: {
@@ -272,7 +272,7 @@
             width: 112,
             className: 'is-change',
             propsHandler: (props) => {
-              return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}, disabled: checkDisabled(props.row)}
+              return {...props, options: this.warehouseList, keyMap: {label: 'name', value: paperKeys.warehouseId}, disabled: checkDisabled(props.row)};
             },
             component: SELECT_WAREHOUSE
           },
@@ -282,7 +282,7 @@
             width: 112,
             className: 'is-change',
             propsHandler: (props) => {
-              return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}, disabled: checkDisabled(props.row)}
+              return {...props, service: this.getWarehouseArea, keyMap: {label: 'name', value: paperKeys.warehouseAreaId}, disabled: checkDisabled(props.row)};
             },
             component: SELECT_WAREHOUSE_AREA,
             listeners: {
@@ -466,8 +466,8 @@
             },
             render: (h, {props: {value, disabled}}) => {
               return (
-                <el-input placeholder="请选择叉车员" value={value} disabled={disabled} on-focus={()=>!disabled&&this.openSelectForkliftDriver()}>
-                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled&&this.openSelectForkliftDriver()}></i>
+                <el-input placeholder="请选择叉车员" value={value} disabled={disabled} on-focus={()=>!disabled && this.openSelectForkliftDriver()}>
+                  <i slot="suffix" class="el-input__icon el-icon-search" on-click={()=>!disabled && this.openSelectForkliftDriver()}></i>
                 </el-input>
               );
             }
@@ -562,14 +562,14 @@
           this.supplier_arr = Object.keys(res).reduce((arr, key)=>{
             arr.push(res[key]);
             return arr;
-          }, [])
+          }, []);
         });
       },
       //获取单据编号
       getReceiptId() {
-        return this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType:"YZR"}).then(res=>{
+        return this.dj_api_extend(paperWarehouseService.getReceiptId, {receiptType: "YZR"}).then(res=>{
           this.$set(this.formData, cylinderKeys.receiptNumber, res);
-        })
+        });
       },
       //获取纸筒编号
       getCylinderId(row = {}) {
@@ -616,7 +616,7 @@
                   if (row[cylinderKeys.cylinderNo]) {
                     this.getCylinderId().then(res=>{
                       this.$set(cloneObj, cylinderKeys.cylinderNo, res);
-                    })
+                    });
                   }
                 } else {
                   let lastObj = this.tableData[this.tableData.length - 1];
@@ -626,7 +626,7 @@
                     if (row[cylinderKeys.cylinderNo]) {
                       this.getCylinderId().then(res=>{
                         this.$set(cloneObj, cylinderKeys.cylinderNo, res);
-                      })
+                      });
                     }
                   }
                 }
@@ -713,7 +713,7 @@
             api = paperWarehouseService.editInStorage;
             // post.id = this.formData.id;
           }
-          this.dj_api_extend(api, post).then((res) => {
+          this.dj_api_extend(api, post).then(() => {
             this.$emit('success');
             this.$message('操作成功');
             this.close();
@@ -829,17 +829,17 @@
 </script>
 <style lang="less" scoped>
   .sub-title {
-    font-size: 13px;
     margin-left: 36px;
+    font-size: 13px;
     span {
       margin-right: 24px;
     }
   }
   .dj-form {
-    margin-bottom: 11px;
     position: relative;
-    width: 1060px;
     left: -14px;
+    width: 1060px;
+    margin-bottom: 11px;
     /deep/ .el-row .el-col {
       padding: 0;
     }

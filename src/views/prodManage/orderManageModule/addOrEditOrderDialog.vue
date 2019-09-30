@@ -1,6 +1,6 @@
 <template>
     <dj-dialog ref="dialog" @close="close" width="780px" :title="`${isEdit ? '编辑' : '新增'}备料订单`" @confirm="confirm">
-      <dj-form v-loading="isLoading" ref="form" :formData="formData" :formOptions="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
+      <dj-form v-loading="isLoading" ref="form" :form-data="formData" :form-options="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
       <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
     </dj-dialog>
 </template>
@@ -153,7 +153,7 @@
                     sum += Number(cur || 0);
                     return sum;
                   }, 0);
-                  if (sum !== Number(materialSize && materialSize[1]) && sum !==0) {
+                  if (sum !== Number(materialSize && materialSize[1]) && sum !== 0) {
                     callback(new Error('请输入正确的压线公式'));
                   } else {
                     callback();

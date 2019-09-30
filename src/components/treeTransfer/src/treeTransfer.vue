@@ -1,8 +1,8 @@
 <template>
   <div class="tree-transfer el-transfer">
-    <transfer-panel ref="panel_left" :keyMap="_keyMap" :data="leftData" :title="titles[0]" @change="handleLeftSelection">
+    <transfer-panel ref="panel_left" :key-map="_keyMap" :data="leftData" :title="titles[0]" @change="handleLeftSelection">
       <template v-if="$scopedSlots['left-footer']" slot="footer">
-        <slot name="left-footer" :list="leftData" :checkList="getCheckList(false)" :keyMap="_keyMap"></slot>
+        <slot name="left-footer" :list="leftData" :check-list="getCheckList(false)" :key-map="_keyMap"></slot>
       </template>
       <template v-if="$scopedSlots.parent"  slot="parent" slot-scope="props">
         <slot v-bind="props" name="parent"></slot>
@@ -15,9 +15,9 @@
       <p><i class="el-icon-arrow-left" @click="toLeft"></i></p>
       <p><i class="el-icon-arrow-right" @click="toRight"></i></p>
     </div>
-    <transfer-panel ref="panel_right" :keyMap="_keyMap" :data="rightData" :title="titles[1]" @change="handleRightSelection">
+    <transfer-panel ref="panel_right" :key-map="_keyMap" :data="rightData" :title="titles[1]" @change="handleRightSelection">
       <template v-if="$scopedSlots['right-footer']" slot="footer">
-        <slot name="right-footer" :list="rightData" :checkList="getCheckList(true)" :keyMap="_keyMap"></slot>
+        <slot name="right-footer" :list="rightData" :check-list="getCheckList(true)" :key-map="_keyMap"></slot>
       </template>
       <template v-if="$scopedSlots.parent"  slot="parent" slot-scope="props">
         <slot v-bind="props" name="parent"></slot>
@@ -42,12 +42,12 @@
         }
       }
     });
-    return result
+    return result;
   }
   function removeRepeat(arr) {
     return Array.from(new Set(arr));
   }
-  function getDataMap(data = [], keyMap, parent,  map = {}) {
+  function getDataMap(data = [], keyMap, parent, map = {}) {
     data.forEach(obj=>{
       let _obj = {...obj, parent};
       map[_obj[keyMap.value]] = _obj;
@@ -55,7 +55,7 @@
         getDataMap(_obj[keyMap.childKey], keyMap, _obj, map);
       }
     });
-    return map
+    return map;
   }
   function addParentValue(list, dataMap, keyMap) {
     return removeRepeat(list.reduce((arr, val)=>{
@@ -172,7 +172,7 @@
     p:not(:nth-last-of-type(1)) {
       margin-bottom: 38px;
     }
-    > p >i {
+    > p > i {
       font-size: 24px;
       &:hover {
         color: #3654ea;

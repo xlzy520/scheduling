@@ -145,7 +145,7 @@
             },
             component: {
               props: ['value', 'default'],
-              render(h) {
+              render() {
                 // 全选逻辑
                 const input = (arr) => {
                   let realArr;
@@ -235,13 +235,13 @@
             prop: orderKeys.orderTip,
             label: '订单标记',
             width: 116,
-            render: (h, {props:{row, col}}) => {
+            render: (h, {props: {row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
               let key = obj.value || '';
               return (
-                <span class={key? key : '' }>{text}</span>
-              )
+                <span class={key ? key : '' }>{text}</span>
+              );
             }
           },
           {
@@ -254,7 +254,7 @@
             label: '订单编号',
             width: 220,
             formatter(a, b, cur) {
-              return cur || '—'
+              return cur || '—';
             }
           },
           {
@@ -267,7 +267,7 @@
             label: '产品名称',
             width: 118,
             formatter(a, b, cur) {
-              return cur || '—'
+              return cur || '—';
             }
           },
           {

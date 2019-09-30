@@ -83,7 +83,7 @@
       },
       confirm() {
       },
-      open(param) {
+      open() {
         this.$refs.dialog.open();
       },
       close() {
@@ -96,7 +96,7 @@
           while (root.level > 1) {
             root = root.parent;
           }
-          this.$emit('selectPerson', [root.data, data]);
+          this.$emit('select-person', [root.data, data]);
           this.close();
         }
       }

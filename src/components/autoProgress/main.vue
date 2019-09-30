@@ -30,7 +30,7 @@
         parent: `.${this.className}`,
         speed: this.speed,
         trickleSpeed: this.trickleSpeed
-      })
+      });
     },
     methods: {
       start() {
@@ -48,16 +48,16 @@
 </script>
 <style lang="less" scoped>
   .nprogress {
-    height: 6px;
     position: relative;
-    border-radius: 3px;
+    height: 6px;
     overflow: hidden;
     background: #ebeef5;
+    border-radius: 3px;
     .bar {
-      height: 100%;
       position: absolute;
-      background: #3654ea;
       width: 100%;
+      height: 100%;
+      background: #3654ea;
     }
   }
 </style>

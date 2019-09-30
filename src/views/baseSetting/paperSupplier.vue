@@ -20,7 +20,7 @@
     <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" width="780px"
                :title="dialogTypeIsAdd?'新增原纸供应商': '编辑原纸供应商'">
       <div class="paper-supplier-dialog" v-loading="dialogLoading">
-        <dj-form ref="form" :form-data="formData" labelWidth="120px"
+        <dj-form ref="form" :form-data="formData"
                  :form-options="formOptions" :column-num="2" :col-rule="colRule" ></dj-form>
       </div>
     </dj-dialog>
@@ -33,7 +33,6 @@
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
-  const { rules } = djForm;
   const initFormData = {
     supplierNumber: null,
     supplierName: null,
@@ -217,7 +216,7 @@
               api = paperSupplierService.edit;
               post.id = this.formData.id;
             }
-            this.dj_api_extend(api, post).then((res) => {
+            this.dj_api_extend(api, post).then(() => {
               this.close();
               this.$refs.table.updateData();
               this.$message(message, 'success');
@@ -243,15 +242,14 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-
   .paper-supplier-dialog {
-    @{deep} .dj-form .el-form-item{
-      .el-form-item__content{
+    @{deep} .dj-form .el-form-item {
+      .el-form-item__content {
         width: auto;
       }
     }
-    @{deep} .el-col-24{
-      .dj-input-content{
+    @{deep} .el-col-24 {
+      .dj-input-content {
         width: auto;
       }
     }

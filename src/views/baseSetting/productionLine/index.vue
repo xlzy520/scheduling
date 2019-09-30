@@ -15,7 +15,7 @@
       <prod-line-content :line-id="idMap[Number(activeTab)-1]" ref="content"
                          :prod-line-data="prodLineData[Number(activeTab)-1]"
                          :prod-line-label="prodLineLabel"></prod-line-content>
-      <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close" @getData="getData"></edit-add>
+      <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close" @get-data="getData"></edit-add>
     </div>
   </single-page>
 </template>
@@ -123,7 +123,7 @@ const initProdLineData = {
           showClose: false,
         }).then(() => {
           this.statusLoading = true;
-          this.dj_api_extend(productionLineService.changeLineEffected, post).then((res) => {
+          this.dj_api_extend(productionLineService.changeLineEffected, post).then(() => {
             // this.lineStatus = val;
             this.$message(`${text}成功`, 'success');
             this.tabsColumn[this.activeTab - 1].isEffected = val ? 0 : 1;
@@ -198,18 +198,18 @@ const initProdLineData = {
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .production-line{
+  .production-line {
     padding: 24px 32px 0;
-    @{deep}.el-tabs{
+    @{deep} .el-tabs {
       margin-top: 12px;
-      .el-tabs__header{
+      .el-tabs__header {
         margin: 0 0 16px;
       }
     }
-    .tab-right-btns{
+    .tab-right-btns {
       float: right;
       transform: translateY(-54px);
-      .el-button{
+      .el-button {
         padding: 10px 41px;
         margin-right: 8px;
       }

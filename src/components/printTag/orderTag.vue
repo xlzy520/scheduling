@@ -107,7 +107,7 @@
         {
           prop: this.orderKeys.materialSize,
           label: '下料规格',
-          formatter: (row, index, cur) => {
+          formatter: (row) => {
             let length = row[this.orderKeys.materialLength];
             let width = row[this.orderKeys.materialWidth];
             return length && width ? `${length}*${width}` : '';
@@ -116,7 +116,7 @@
         {
           prop: this.orderKeys.productSize,
           label: '产品规格',
-          formatter: (row, index, cur) => {
+          formatter: (row) => {
             let length = row[this.orderKeys.productLength];
             let width = row[this.orderKeys.productWidth];
             let height = row[this.orderKeys.productHeight];
@@ -290,8 +290,8 @@
       margin-bottom: 11px;
       label {
         width: 70px;
-        text-align: right;
         line-height: @lineHeight;
+        text-align: right;
       }
       span {
         display: block;

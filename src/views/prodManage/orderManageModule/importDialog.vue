@@ -1,8 +1,8 @@
 <template>
   <dj-dialog ref="dialog" @close="close" title="导入计划" width="400px" @confirm="confirm">
-    <dj-form v-show="!importing" ref="form" :formData="formData" :formOptions="formOptions"></dj-form>
+    <dj-form v-show="!importing" ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
     <div v-show="importing" class="progress-wrap">
-      <auto-progress ref="progress" :trickleSpeed="1000"></auto-progress>
+      <auto-progress ref="progress" :trickle-speed="1000"></auto-progress>
       <p>正在导入订单</p>
     </div>
     <div v-if="importing" slot="footer"></div>
@@ -90,7 +90,7 @@
               this.$emit('success');
               this.close();
             });
-          }).catch(e=>{
+          }).catch(()=>{
             this.$refs.progress.done(()=>{
               this.$emit('success');
               this.close();
@@ -131,8 +131,8 @@
     color: #c2c6d1;
   }
   .progress-wrap {
-    overflow: hidden;
     margin-top: 10px;
+    overflow: hidden;
     text-align: center;
     p {
       margin-top: 10px;

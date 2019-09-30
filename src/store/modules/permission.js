@@ -1,4 +1,4 @@
-import paperWarehouseService from '../../api/service/paperWarehouse'
+import paperWarehouseService from '../../api/service/paperWarehouse';
 const permission = {
   state: {
     menus: [],

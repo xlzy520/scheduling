@@ -12,13 +12,13 @@
 </script>
 <style lang="less" scoped>
   .page-pane {
+    position: relative;
     margin: 14px 32px;
     flex: 1 1;
-    position: relative;
     .page-pane_absolute {
       position: absolute;
-      height: 100%;
       width: 100%;
+      height: 100%;
     }
   }
 </style>

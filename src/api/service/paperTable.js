@@ -13,5 +13,5 @@ export default {
   listInventory(data) {
     return paperTable('/listInventory.do', data);
   },
-  
+
 };

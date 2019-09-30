@@ -21,21 +21,21 @@ export default {
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .bs-card{
+  .bs-card {
     width: 100%;
     font-size: 14px;
-    line-height:20px;
-    &-header{
-      font-family:PingFangSC;
-      font-weight:500;
-      background: #fafafa;
-      color: #606266;
+    line-height: 20px;
+    &-header {
       padding: 17px;
+      font-family: PingFangSC;
+      font-weight: 500;
+      color: #606266;
+      background: #fafafa;
     }
-    &-content{
+    &-content {
       padding: 24px 0 30px 16px;
       color: #606266;
-      @{deep}.el-row{
+      @{deep} .el-row {
         margin-bottom: 16px;
       }
     }

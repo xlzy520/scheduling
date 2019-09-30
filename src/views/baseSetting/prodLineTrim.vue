@@ -41,7 +41,7 @@
   import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
-  
+
   const cengshuOption = [
       {label: '二层', value: 2},
       {label: '三层', value: 3},
@@ -233,7 +233,7 @@
           type: 'warning',
           showClose: false,
         }).then(() => {
-          this.dj_api_extend(prodLineTrimService.changeEffected, post).then((res) => {
+          this.dj_api_extend(prodLineTrimService.changeEffected, post).then(() => {
             this.$message(`${text}成功`, 'success');
             row.isEffected = !row.isEffected;
           });
@@ -268,7 +268,7 @@
             wasteSize: res.wasteSize
           }];
           this.formOptions = [this.$method.deepClone(this.baseOption).splice(0, 3)];
-        }).catch(err=>{
+        }).catch(()=>{
           this.$message('获取信息失败', 'error');
         }).finally(() => {
           this.dialogLoading = false;
@@ -326,7 +326,7 @@
                   ...post[0],
                 });
               this.dialogLoading = true;
-              request.then((res) => {
+              request.then(() => {
                 this.close();
                 const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
                 this.$message(message, 'success');
@@ -372,27 +372,26 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .status-off{
+  @{deep} .status-off {
     color: #909399;
   }
-
   @{deep} .el-col-8 {
     width: 380px;
   }
-  @{deep} .dj-form{
-    .el-col-0{
+  @{deep} .dj-form {
+    .el-col-0 {
       position: relative;
       right: 26px;
       display: block;
-      .el-icon-delete{
-        &:before{
-          line-height: 36px;
+      .el-icon-delete {
+        &::before {
           font-size: 20px;
+          line-height: 36px;
         }
       }
-      .el-form-item__content{
+      .el-form-item__content {
+        margin-left: 12px !important;
         cursor: pointer;
-        margin-left: 12px!important;
       }
     }
   }
@@ -401,14 +400,14 @@
     height: 417px;
     margin-top: 4px;
     overflow-y: auto;
-    &-aside{
+    &-aside {
       margin-left: 130px;
     }
-    &.edit{
+    &.edit {
       width: 400px;
       height: auto;
-      @{deep} .el-col-delete{
-        .el-form-item__content{
+      @{deep} .el-col-delete {
+        .el-form-item__content {
           display: none;
         }
       }

@@ -2,7 +2,7 @@
   <dj-dialog ref="dialog" @close="confirmClose" width="1160px" title="设置单价" @confirm="confirm">
     <div v-loading="isTableLoading">
       <p class="font-subhead">基础信息</p>
-      <dj-form labelPosition="left" labelWidth="" ref="form" labelSuffix=":" :formData="formData" :formOptions="formOptions" :column-num="3"
+      <dj-form labelPosition="left" labelWidth="" ref="form" labelSuffix=":" :form-data="formData" :form-options="formOptions" :column-num="3"
                :col-rule="colRule"></dj-form>
       <p class="font-subhead">
         纸筒信息
@@ -145,12 +145,12 @@
             width: 96,
             className: 'is-change',
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}}
+              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}};
             },
             component: tableInput,
             listeners: {
               input: (val, {row}) => {
-                let _val = parseFloat(val)*parseFloat(row[cylinderKeys.weight]);
+                let _val = parseFloat(val) * parseFloat(row[cylinderKeys.weight]);
                 this.$set(row, cylinderKeys.money, isNaN(_val) || _val === 0 ? '' : _val);
                 if (row['isError']) {
                   this.$set(row, 'isError', false);
@@ -243,7 +243,7 @@
             id: this.formData.id,
             tubeList: this.tableData
           };
-          this.dj_api_extend(paperWarehouseService.setAmount, post).then((res) => {
+          this.dj_api_extend(paperWarehouseService.setAmount, post).then(() => {
             this.$emit('success');
             this.$message('操作成功');
             this.close();
@@ -309,16 +309,16 @@
 </script>
 <style lang="less" scoped>
   .sub-title {
-    font-size: 13px;
     margin-left: 36px;
+    font-size: 13px;
     span {
       margin-right: 24px;
     }
   }
   .dj-form {
+    margin-right: 129px;
     margin-bottom: 4px;
     margin-left: 30px;
-    margin-right: 129px;
     /deep/ .el-form-item {
       margin-top: 0;
       margin-bottom: 16px;

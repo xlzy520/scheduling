@@ -55,7 +55,7 @@
       </div>
     </div>
     <dj-dialog v-if="visible" ref="dialog" @close="close" title="查看详情" width="400px" :has-footer="false">
-      <div class="dialog" style="height: 355px">
+      <div class="dialog" style="height: 355px;">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"
                  :column-num="1" labelWidth="152px"></dj-form>
       </div>
@@ -193,12 +193,12 @@
 
 <style lang="less" scoped>
   .tab-content {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
     position: relative;
     top: -36px;
-    &-item{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    &-item {
       display: flex;
     }
     .bs-card-row {
@@ -210,8 +210,8 @@
     }
     .left-content {
       width: 1083px;
-      .el-col-24{
-        .jccs{
+      .el-col-24 {
+        .jccs {
           .bs-card-value {
             width: 84%;
           }
@@ -220,23 +220,24 @@
           }
         }
       }
-      .el-col-16{
-        .jccs{
+      .el-col-16 {
+        .jccs {
           .bs-card-label {
             width: 85px;
           }
-          .bs-card-value{
-            word-break: break-all;
+          .bs-card-value {
             width: 95%;
+            word-break: break-all;
           }
         }
       }
     }
+
     @media screen and (max-width: 1367px) {
       .left-content {
         width: 800px;
-        .el-col-24{
-          .jccs{
+        .el-col-24 {
+          .jccs {
             .bs-card-value {
               width: 75%;
             }
@@ -246,29 +247,29 @@
     }
     .right-content {
       width: 400px;
-      flex-grow: 1;
       margin-left: 80px;
-      .record{
+      flex-grow: 1;
+      .record {
         height: 400px;
         overflow: auto;
-        .record-item{
+        .record-item {
           display: flex;
           margin-bottom: 16px;
-          .detail{
+          .detail {
             margin-right: 24px;
           }
-          div{
+          div {
             margin-right: 16px;
           }
-          .view-btn{
+          .view-btn {
             cursor: pointer;
           }
         }
       }
-
     }
+
     @media screen and (max-width: 1600px) {
-      .right-content{
+      .right-content {
         width: 600px;
       }
     }

@@ -175,7 +175,7 @@
           type: 'warning',
           showClose: false,
         }).then(() => {
-          this.dj_api_extend(materialCodeService.changeEffected, post).then((res) => {
+          this.dj_api_extend(materialCodeService.changeEffected, post).then(() => {
             this.$message(`${text}成功`, 'success');
             row.isEffected = !row.isEffected;
           });
@@ -226,7 +226,7 @@
               api = materialCodeService.edit;
               post.id = this.formData.id;
             }
-            this.dj_api_extend(api, post).then((res) => {
+            this.dj_api_extend(api, post).then(() => {
               this.close();
               this.$refs.table.updateData();
               this.$message(message, 'success');
@@ -263,62 +263,62 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .material-code-dialog {
-    @{deep} .dj-form .el-form-item{
-      .el-form-item__label{
+    @{deep} .dj-form .el-form-item {
+      .el-form-item__label {
         float: unset;
       }
-      .el-select.code{
+      .el-select.code {
         width: 100%;
         pointer-events: none;
       }
-      .el-form-item__content{
+      .el-form-item__content {
         width: 100%;
-        margin-left: 0!important;
+        margin-left: 0 !important;
       }
-      .el-input__suffix{
+      .el-input__suffix {
         display: none;
       }
-      .el-select__tags .el-tag .el-tag__close{
+      .el-select__tags .el-tag .el-tag__close {
         pointer-events: visible;
       }
-      .el-select__tags-text{
-        user-select: none;
+      .el-select__tags-text {
         pointer-events: none;
+        user-select: none;
       }
     }
-    @{deep} .optional{
+    @{deep} .optional {
       width: 100%;
       margin-bottom: 20px;
-      &-label{
-        font-size: 14px;
-        color: #606266;
-        line-height: 34px;
+      &-label {
         padding: 0 12px 0 0;
         margin: 0;
+        font-size: 14px;
+        line-height: 34px;
+        color: #606266;
       }
-      &-area{
-        height: 192px;
+      &-area {
         display: flex;
+        height: 192px;
+        padding-bottom: 10px;
+        overflow-y: scroll;
+        border: 1px solid #dcdfe6;
+        border-radius: 4px;
         flex-wrap: wrap;
         align-content: flex-start;
-        border: 1px solid #DCDFE6;
-        border-radius: 4px;
-        overflow-y: scroll;
-        padding-bottom: 10px;
-        &-item{
-          text-align: center;
-          font-size: 12px;
-          min-width: 50px;
+        &-item {
           height: 24px;
-          line-height: 24px;
+          min-width: 50px;
           padding: 6px 14px;
           margin-top: 12px;
           margin-left: 10px;
+          font-size: 12px;
+          line-height: 24px;
           color: #606266;
-          background: #F0F2F5;
+          text-align: center;
+          cursor: pointer;
+          background: #f0f2f5;
           border-radius: 3px;
           user-select: none;
-          cursor: pointer;
         }
       }
     }

@@ -1,16 +1,15 @@
 <template>
   <dj-dialog ref="dialog" @close="confirmClose" width="780px" title="调整压线方式" @confirm="confirm">
     <div v-loading="isLoading">
-      <classify-form ref="form" :config="config" :formData="formData" :column-num="2" :col-rule="colRule"></classify-form>
-      <!--<dj-form ref="form" :formData="formData" :formOptions="formOptions"></dj-form>-->
+      <classify-form ref="form" :config="config" :form-data="formData" :column-num="2" :col-rule="colRule"></classify-form>
+      <!--<dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>-->
       <!--<p class="font-subhead">原订单信息</p>-->
-      <!--<dj-form labelSuffix=":" :formData="formData" :formOptions="textOptions" :column-num="2"></dj-form>-->
+      <!--<dj-form labelSuffix=":" :form-data="formData" :form-options="textOptions" :column-num="2"></dj-form>-->
     </div>
     <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
 </template>
 <script>
-  import {djForm} from 'djweb';
   import plannedMergerService from '../../../api/service/plannedMerger';
   import longitudinalPressureInput from '../../../components/longitudinalPressureInput';
   import {orderKeys} from "../../../utils/system/constant/dataKeys";
@@ -60,7 +59,7 @@
                         sum += Number(cur || 0);
                         return sum;
                       }, 0);
-                      if (Number(materialWidth) !== sum && sum !==0) {
+                      if (Number(materialWidth) !== sum && sum !== 0) {
                         callback(new Error('请检查纵压公式'));
                       } else {
                         callback();
@@ -181,7 +180,7 @@
           if (key === orderKeys.longitudinalPressure) {
             return this.defaultFormData[key].join('+') === this.formData[key].join('+');
           } else {
-            return this.formData[key] === this.defaultFormData[key] || (['', undefined, null].includes(this.formData[key]) && ['', undefined, null].includes((this.defaultFormData || {})[key]))
+            return this.formData[key] === this.defaultFormData[key] || (['', undefined, null].includes(this.formData[key]) && ['', undefined, null].includes((this.defaultFormData || {})[key]));
           }
         }));
       },

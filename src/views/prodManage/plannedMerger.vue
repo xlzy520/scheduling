@@ -72,7 +72,7 @@
             },
             component: {
               props: ['value', 'default'],
-              render(h) {
+              render() {
                 // 全选逻辑
                 const input = (arr) => {
                   let realArr;
@@ -122,9 +122,9 @@
         ],
         tableData: [],
         columnType: {
-          'wait' : ['selection'],
-          'already' : ['selection', 'tree'],
-          'undefined' : ['tree'],
+          'wait': ['selection'],
+          'already': ['selection', 'tree'],
+          'undefined': ['tree'],
         },
         columnTypeProps: {
           selection: {
@@ -337,9 +337,9 @@
       },
       tableColumns() {
         let operate_width_map = {
-          'wait' : 105,
-          'already' : 165,
-          'undefined' : 84,
+          'wait': 105,
+          'already': 165,
+          'undefined': 84,
         };
         return [
           {
@@ -351,15 +351,15 @@
               let arr = [];
               let obj = this.$enum.mergeStatus._swap[this.activeIndex] || {};
               if (obj.value === 'wait' && !row.isChild) {
-                arr.push((<a on-click={()=>{this.openDialog('editDialog', row)}}>编辑</a>));
+                arr.push((<a on-click={()=>{this.openDialog('editDialog', row);}}>编辑</a>));
                 arr.push((<span></span>));
               }
               if (obj.value === 'already' && !row.isChild && !(row.childNum > 1)) {
-                arr.push((<a on-click={()=>{this.openDialog('editLinePressDialog', row)}}>编辑压线方式</a>));
+                arr.push((<a on-click={()=>{this.openDialog('editLinePressDialog', row);}}>编辑压线方式</a>));
                 arr.push((<span></span>));
               }
               if (!row.isChild) {
-                arr.push((<a on-click={()=>{this.openDialog('lookDialog', row)}}>查看</a>));
+                arr.push((<a on-click={()=>{this.openDialog('lookDialog', row);}}>查看</a>));
               }
               return (
                 <div class="td-btn-group">
@@ -372,13 +372,13 @@
             prop: orderKeys.orderTip,
             label: '订单标记',
             width: 100,
-            render: (h, {props:{row, col}}) => {
+            render: (h, {props: {row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
               let key = obj.value || '';
               return (
-                <span class={key? key : '' }>{text}</span>
-              )
+                <span class={key ? key : '' }>{text}</span>
+              );
             }
           },
           {
@@ -437,7 +437,7 @@
             //   let materialWidth = row[orderKeys.materialWidth] || '';
             //   return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
             // },
-            render: (h, {props: {row, col}}) => {
+            render: (h, {props: {row}}) => {
               let materialLength = row[orderKeys.materialLength] || '';
               let materialWidth = row[orderKeys.materialWidth] || '';
               let materialSize = materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
@@ -513,7 +513,7 @@
               return obj.label || '';
             }
           }
-        ]
+        ];
       }
     },
     created() {},
@@ -545,11 +545,11 @@
             let isLength = list.includes('2');
             let tip = '';
             if (isSize && isLength) {
-              tip = '所选订单合并后规格产生较大浪费，且单数超过8单，是否仍要继续合并？'
+              tip = '所选订单合并后规格产生较大浪费，且单数超过8单，是否仍要继续合并？';
             } else if (isSize) {
-              tip = '所选订单合并后规格产生较大浪费，是否仍要继续合并？'
+              tip = '所选订单合并后规格产生较大浪费，是否仍要继续合并？';
             } else {
-              tip = '所选合并单数超过8单，是否仍要继续合并？'
+              tip = '所选合并单数超过8单，是否仍要继续合并？';
             }
             return this.$confirm(tip, '', {
               type: 'warning',
@@ -626,7 +626,7 @@
         let name = map[type];
         let isEdited = list.some(obj=>['judgeSpecificationUpdate', 'judgePieceAmountUpdate', 'judgeStaveType', 'judgePressLineUpdate'].some(key=>!obj[key]) && this.$enum.orderType['merge'].value !== obj[orderKeys.orderType]);
         if (isEdited) {
-          return `订单已被修改，确认是否还原该订单数据并${name}?`
+          return `订单已被修改，确认是否还原该订单数据并${name}?`;
         } else {
           return type === 'remove' ? '确认移除所选订单?' : `确认将所选订单${name}?`;
         }

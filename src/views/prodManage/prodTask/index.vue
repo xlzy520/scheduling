@@ -18,8 +18,8 @@
             height="100%"
             :loading="loading"
             @update-data="getTableData"
-            :defaultPageSize="100"
-            :pageSizeList="[100,200]"
+            :default-page-size="100"
+            :page-size-list="[100,200]"
           >
             <div slot="btn">
               <el-button type="primary" @click="removeOrder" :loading="removeLoading">移除订单</el-button>
@@ -213,7 +213,7 @@
             const idList = this.checkedList.map(v=> v.produceOrderNumber);
             this.dj_api_extend(prodTaskService.removeOrder, {
               produceOrderNumbers: idList
-            }).then(res => {
+            }).then(() => {
               this.$message('移除成功', 'success');
             }).finally(() => {
               this.removeLoading = false;
@@ -289,27 +289,26 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .prod-task{
+  .prod-task {
     display: flex;
     flex-direction: column;
-    .content{
+    .content {
       flex: 1 1;
       position: relative;
     }
   }
-  .el-tabs{
+  .el-tabs {
     /*margin: 0 18px;*/
   }
-  @{deep} .el-tabs__nav-wrap{
+  @{deep} .el-tabs__nav-wrap {
     /*width: 70%;*/
-    .el-tabs__nav.is-stretch{
+    .el-tabs__nav.is-stretch {
       /*min-width: 80%;*/
     }
-    .el-tabs__item{
+    .el-tabs__item {
       /*font-size: 16px;*/
       /*max-width: 180px;*/
     }
-
   }
   @{deep} .xialiaoguige {
     display: flex;
@@ -317,28 +316,26 @@
       margin: auto 5px;
     }
   }
-
   @{deep} .operation {
     line-height: 1;
     a {
-      color: #3654EA;
       padding: 2px 10px;
+      color: #3654ea;
       cursor: pointer;
     }
     .divideState-completed {
-      pointer-events: none;
       color: #909399;
+      pointer-events: none;
     }
   }
-
   .dialog {
     width: 1100px;
     .order-info-text {
+      width: 105px;
+      padding: 15px 8px 15px 0;
       font-family: PingFang SC Medium, sans-serif;
       font-weight: 500;
       color: rgba(48, 49, 51, 1);
-      width: 105px;
-      padding: 15px 8px 15px 0;
       text-align: right;
     }
   }

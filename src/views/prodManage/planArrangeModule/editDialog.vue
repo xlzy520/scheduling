@@ -1,12 +1,12 @@
 <template>
   <dj-dialog ref="dialog" @close="close" width="400px" title="编辑" @confirm="confirm">
-    <classify-form ref="form" :formData="formData" :config="config"></classify-form>
+    <classify-form ref="form" :form-data="formData" :config="config"></classify-form>
     <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>
 </template>
 <script>
   import {orderKeys} from "../../../utils/system/constant/dataKeys";
-  import planArrangeService from '../../../api/service/planArrange'
+  import planArrangeService from '../../../api/service/planArrange';
   export default {
     name: 'editDialog',
     data: function () {
@@ -50,7 +50,7 @@
                       <el-select value={this.value} on-input={(val)=>this.$emit('input', val)}>
                         {_options}
                       </el-select>
-                    )
+                    );
                   }
                 }
               },
@@ -99,7 +99,7 @@
               // },
             ]
           }
-        ]
+        ];
       }
     },
     created() {
@@ -139,7 +139,7 @@
             this.close();
           }).finally(() => {
             cb && cb();
-          })
+          });
         }, cb);
       },
       open(param = {}) {

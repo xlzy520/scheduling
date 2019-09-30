@@ -1,9 +1,9 @@
 const loadingMixins = {
-  data(){
+  data() {
     return {
       loading: false,
       dialogLoading: false
-    }
+    };
   }
-}
-export default loadingMixins
+};
+export default loadingMixins;

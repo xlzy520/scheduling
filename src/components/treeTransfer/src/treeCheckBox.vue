@@ -75,7 +75,7 @@
         }
       },
       checkList() {
-        return this.checkboxGroup ? this.checkboxGroup.value :[];
+        return this.checkboxGroup ? this.checkboxGroup.value : [];
       },
       childValue_arr() {
         return this.data[this._keyMap.childKey].map(obj=>obj[this._keyMap.value]);

@@ -18,7 +18,7 @@
                       scroll-load
                       :reserve-num="1"
                       :page-size-list="[1000,2000,3000]"
-                      :defaultPageSize="1000"
+                      :default-page-size="1000"
                       :total="total"
                       :row-class-name="rowClassName"
                       :column-type-props="columnsTypeProps"
@@ -57,7 +57,7 @@
   </single-page>
 </template>
 <script>
-  import {orderKeys, paperKeys} from "../../utils/system/constant/dataKeys";
+  import {orderKeys} from "../../utils/system/constant/dataKeys";
   import planArrangeService from "../../api/service/planArrange";
   import productionLineService from "../../api/service/productionLine";
   import prodTaskService from "../../api/service/prodTask";
@@ -91,7 +91,7 @@
             },
             component: {
               props: ['value', 'default'],
-              render(h) {
+              render() {
                 // 全选逻辑
                 const input = (arr) => {
                   let realArr;
@@ -514,15 +514,15 @@
       position: relative;
     }
     .font-total {
-      font-size: 16px;
       margin-top: 16px;
+      font-size: 16px;
     }
     .empty-text {
-      height: 100%;
       display: flex;
-      justify-content: center;
+      height: 100%;
       font-size: 20px;
-      color: #C0C4CC;
+      color: #c0c4cc;
+      justify-content: center;
       align-items: center;
       .dj-common-Nodata {
         margin-right: 9px;

@@ -70,8 +70,8 @@
     }
   }
   .transfer-footer {
-    text-align: center;
     line-height: 41px;
     color: #303133;
+    text-align: center;
   }
 </style>

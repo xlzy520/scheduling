@@ -1,6 +1,7 @@
 /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
  * @license MIT */
 
+/* eslint-disable */
 export default function NProgress() {
   var NProgress = {};
 
@@ -58,9 +59,9 @@ export default function NProgress() {
     NProgress.status = (n === 1 ? null : n);
 
     var progress = NProgress.render(!started),
-        bar      = progress.querySelector(Settings.barSelector),
-        speed    = Settings.speed,
-        ease     = Settings.easing;
+        bar = progress.querySelector(Settings.barSelector),
+        speed = Settings.speed,
+        ease = Settings.easing;
     progress.offsetWidth; /* Repaint */
 
     queue(function(next) {
@@ -215,8 +216,8 @@ export default function NProgress() {
     progress.className = 'nprogress';
     progress.innerHTML = Settings.template;
 
-    var bar      = progress.querySelector(Settings.barSelector),
-        perc     = fromStart ? '-100' : toBarPerc(NProgress.status || 0),
+    var bar = progress.querySelector(Settings.barSelector),
+        perc = fromStart ? '-100' : toBarPerc(NProgress.status || 0),
         spinner;
 
     css(bar, {
@@ -265,10 +266,10 @@ export default function NProgress() {
     var bodyStyle = document.body.style;
 
     // Sniff prefixes
-    var vendorPrefix = ('WebkitTransform' in bodyStyle) ? 'Webkit' :
-                       ('MozTransform' in bodyStyle) ? 'Moz' :
-                       ('msTransform' in bodyStyle) ? 'ms' :
-                       ('OTransform' in bodyStyle) ? 'O' : '';
+    var vendorPrefix = ('WebkitTransform' in bodyStyle) ? 'Webkit'
+                       : ('MozTransform' in bodyStyle) ? 'Moz'
+                       : ('msTransform' in bodyStyle) ? 'ms'
+                       : ('OTransform' in bodyStyle) ? 'O' : '';
 
     if (vendorPrefix + 'Perspective' in bodyStyle) {
       // Modern browsers with 3D support, e.g. Webkit, IE10
@@ -301,7 +302,6 @@ export default function NProgress() {
     return (-1 + n) * 100;
   }
 
-
   /**
    * (Internal) returns the correct CSS for changing the bar's
    * position given an n percentage, and speed and ease from Settings
@@ -311,14 +311,14 @@ export default function NProgress() {
     var barCSS;
 
     if (Settings.positionUsing === 'translate3d') {
-      barCSS = { transform: 'translate3d('+toBarPerc(n)+'%,0,0)' };
+      barCSS = { transform: 'translate3d(' + toBarPerc(n) + '%,0,0)' };
     } else if (Settings.positionUsing === 'translate') {
-      barCSS = { transform: 'translate('+toBarPerc(n)+'%,0)' };
+      barCSS = { transform: 'translate(' + toBarPerc(n) + '%,0)' };
     } else {
-      barCSS = { 'margin-left': toBarPerc(n)+'%' };
+      barCSS = { 'margin-left': toBarPerc(n) + '%' };
     }
 
-    barCSS.transition = 'all '+speed+'ms '+ease;
+    barCSS.transition = 'all ' + speed + 'ms ' + ease;
 
     return barCSS;
   }
@@ -353,7 +353,7 @@ export default function NProgress() {
 
   var css = (function() {
     var cssPrefixes = [ 'Webkit', 'O', 'Moz', 'ms' ],
-        cssProps    = {};
+        cssProps = {};
 
     function camelCase(string) {
       return string.replace(/^-ms-/, 'ms-').replace(/-([\da-z])/gi, function(match, letter) {
@@ -399,7 +399,7 @@ export default function NProgress() {
       } else {
         applyCss(element, args[1], args[2]);
       }
-    }
+    };
   })();
 
   /**
@@ -407,7 +407,7 @@ export default function NProgress() {
    */
 
   function hasClass(element, name) {
-    var list = typeof element == 'string' ? element : classList(element);
+    var list = typeof element === 'string' ? element : classList(element);
     return list.indexOf(' ' + name + ' ') >= 0;
   }
 
@@ -462,4 +462,4 @@ export default function NProgress() {
 
   return NProgress;
 };
-
+/* eslint-disable */

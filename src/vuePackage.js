@@ -9,7 +9,7 @@ import classifyForm from './components/classifyForm';
 import filters from './filters';
 import { regs, enumMap} from './utils';
 import './assets/css/index.less';
-import _methods from './utils/methods'
+import _methods from './utils/methods';
 // Date.prototype.toJSON = function () { //用于解决JSON.stringify转换JSON时日期时间不准确的问题，在search组件中有影响
 //   return timeFormat(this, 'yyyy-MM-dd HH:mm:ss');
 // };

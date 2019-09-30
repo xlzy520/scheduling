@@ -74,7 +74,7 @@
           }
         });
       },
-      objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      objectSpanMethod({ row, rowIndex, columnIndex }) {
         if (this.dialogType === 'stack_view') {
             if (columnIndex === 0) {
               let num = this.kind[row.tilemodel || row.layer];
@@ -165,8 +165,8 @@
     width: 40vw;
     &-header {
       padding: 0 10px;
-      color: #000;
       font-weight: bold;
+      color: #000;
       &-label {
         padding: 5px 20px;
         padding-left: 0;
@@ -177,8 +177,8 @@
       }
     }
     &-content {
-      box-sizing: border-box;
       padding-right: 20px;
+      box-sizing: border-box;
     }
   }
 </style>

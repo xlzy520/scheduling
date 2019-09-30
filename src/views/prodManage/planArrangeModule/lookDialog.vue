@@ -2,7 +2,7 @@
   <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
     <el-tabs v-model="activeTab" @tab-click="handleClick">
       <el-tab-pane v-loading="isTableLoading" label="订单信息" name="1">
-        <classify-form ref="form" hasLine :formData="formData" :config="config" :column-num="3"></classify-form>
+        <classify-form ref="form" has-line :form-data="formData" :config="config" :column-num="3"></classify-form>
       </el-tab-pane>
       <el-tab-pane label="编辑记录" name="2">
         <base-table :data="recordData" :columns="recordColumns"></base-table>

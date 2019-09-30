@@ -33,7 +33,7 @@
           </transition-group>
         </div>
       </div>
-      <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px">添加条件</el-button>
+      <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px;">添加条件</el-button>
     </div>
   </dj-dialog>
 </template>
@@ -329,87 +329,89 @@
   @deep: ~'>>>';
   .stack-dialog {
     width: 1196px;
-    height: 849-138px;
+    height: 711px;
   }
+
   @media screen and (max-width: 1601px) {
     .stack-dialog {
-      height: 669-138px;
+      height: 531px;
     }
   }
+
   @media screen and (max-width: 1367px) {
     .stack-dialog {
-      height: 549-138px;
+      height: 411px;
     }
   }
-  .dj-form{
+  .dj-form {
     padding-right: 65px;
   }
-  .condition-item{
+  .condition-item {
     display: flex;
-    .rule-row{
+    .rule-row {
       display: flex;
       justify-content: flex-end;
-      .form-hidden{
+      .form-hidden {
         visibility: hidden;
       }
-      @{deep} .el-form-item{
+      @{deep} .el-form-item {
         width: 30.8%;
-        .el-select{
+        .el-select {
           width: 232px;
         }
-        .el-form-item__content{
+        .el-form-item__content {
           float: left;
         }
-        &.cut{
-          .el-form-item__label{
+        &.cut {
+          .el-form-item__label {
             width: 78px;
           }
         }
-        &.piece{
-          .el-form-item__label{
+        &.piece {
+          .el-form-item__label {
             width: 109px;
           }
-          .dj-input{
+          .dj-input {
             width: 232px;
           }
         }
       }
     }
-    .condition-index-label{
-      font-family: "PingFang SC",sans-serif;
-      font-weight: 500;
+    .condition-index-label {
       width: 50px;
-      box-sizing: content-box;
       padding-left: 20px;
+      font-family: "PingFang SC", sans-serif;
+      font-weight: 500;
+      box-sizing: content-box;
     }
-    .button-col{
-      width: 65px;
+    .button-col {
       display: flex;
+      width: 65px;
       margin-top: 8px;
       margin-right: 10px;
-      i.el-icon-delete,i.el-icon-circle-plus{
+      i.el-icon-delete,i.el-icon-circle-plus {
         font-size: 18px;
         cursor: pointer;
       }
-      i.el-icon-delete{
+      i.el-icon-delete {
         margin: 0 10px;
       }
-      i.el-icon-circle-plus{
+      i.el-icon-circle-plus {
         color: #3554ea;
       }
     }
-    .child-condition-list{
+    .child-condition-list {
       width: 100%;
     }
   }
   .childCondition-enter-active {
-    transition: all .3s ease;
+    transition: all 0.3s ease;
   }
   .childCondition-leave-active {
-    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
   }
   .childCondition-enter, .childCondition-leave-to {
-    transform: translateY(10px);
     opacity: 0;
+    transform: translateY(10px);
   }
 </style>

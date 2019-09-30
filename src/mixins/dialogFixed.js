@@ -21,7 +21,7 @@ export default {
       scrollbarView: undefined,
       elTabsContent: undefined,
       elTabsHeader: undefined,
-    }
+    };
   },
   mounted() {
     this.fixedDialog();

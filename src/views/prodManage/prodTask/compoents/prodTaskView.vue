@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog title="查看" ref="dialog" @close="close" :hasFooter="false">
+  <dj-dialog title="查看" ref="dialog" @close="close" :has-footer="false">
     <div class="content" v-loading="loading">
       <div class="item" v-for="form in formOptions">
         <div>{{form.label}}</div>
@@ -10,8 +10,6 @@
 </template>
 
 <script>
-  import {djForm} from 'djweb';
-  import formRules from "../../../baseSetting/formRules";
   import prodTaskService from '@/api/service/prodTask';
 
   export default {
@@ -138,17 +136,15 @@
   @deep: ~'>>>';
   .content {
     width: 1140px;
-
     .item {
-      border-bottom: 1px solid #EBEEF5;
-      margin-top: 20px;
       padding-bottom: 16px;
+      margin-top: 20px;
+      border-bottom: 1px solid #ebeef5;
     }
-
     @{deep} .dj-form {
       .el-form-item {
-        margin-bottom: 0;
         margin-top: 0;
+        margin-bottom: 0;
       }
     }
   }

@@ -2,7 +2,7 @@
   <el-autocomplete ref="input"
                    v-if="service"
                    :fetch-suggestions="(val, cb) => service(val, cb, {row, index, col, ...$attrs})"
-                   triggerOnFocus
+                   trigger-on-focus
                    :value-key="col.prop"
                    v-bind="getBind()"
                    v-on:keyup.native="keyup"
@@ -43,7 +43,7 @@
       }
     },
     methods: {
-      input(val){
+      input(val) {
         // if (this.reg && this.reg.test(val) || !this.reg) {
           let {row, index, col, reg} = this;
           let oldValue = row[col.prop];
@@ -54,12 +54,12 @@
           this.$emit('input', val, {row, index, col, reg});
         // }
       },
-      select (val)  {
+      select (val) {
         let {row, index, col, reg} = this;
         this.$emit('select', val, {row, index, col, reg});
       },
-      keyup (e)  {
-        let {row, index, col, reg} = this;
+      keyup (e) {
+        let {row, index, col} = this;
         let map = {
           37: 'left',
           38: 'up',

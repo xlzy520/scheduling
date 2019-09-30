@@ -46,7 +46,7 @@ function getValueByLabel(arr, children = 'fluteType') {
   arr.forEach(obj=>{
     obj.value = obj.label.replace(/[\u4e00-\u9fa5]/g, '');
     if (Array.isArray(obj[children])) {
-      getValueByLabel(obj[children])
+      getValueByLabel(obj[children]);
     }
   });
 }

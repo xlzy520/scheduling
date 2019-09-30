@@ -31,7 +31,7 @@
       return {
         searchConfig: [
           {label: '联系人：', key: 'acceptMan', type: 'input'},
-          {label: '联系方式：', key: 'phone', type: 'input',},
+          {label: '联系方式：', key: 'phone', type: 'input'},
           {label: '用料代码：', key: 'code', type: 'input'},
           {label: '楞型：', key: 'lengxing', type: 'input'},
         ],
@@ -351,7 +351,7 @@
         }).then(() => {
           cpqsService.list({
             id: row.id
-          }).then((res) => {
+          }).then(() => {
             this.$message('禁用成功', 'success');
             this.getTableData();
           });
@@ -374,7 +374,7 @@
       },
       confirm() {
         this.$refs.form.validate(()=>{
-          cpqsService.list(this.formData).then((res) => {
+          cpqsService.list(this.formData).then(() => {
             this.close();
             const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');
@@ -410,12 +410,11 @@
     a {
       padding: 2px 10px;
       cursor: pointer;
-      &:not(:last-child){
-        border-right: 1px solid #EBEEF5;
+      &:not(:last-child) {
+        border-right: 1px solid #ebeef5;
       }
     }
   }
-
   .cpqs-dialog {
     width: 50vw;
     padding-top: 20px;

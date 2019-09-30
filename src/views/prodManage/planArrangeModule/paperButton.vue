@@ -26,7 +26,7 @@
     </div>
 </template>
 <script>
-  import { orderKeys, cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
+  import { paperKeys } from "../../../utils/system/constant/dataKeys";
   import planArrangeService from "../../../api/service/planArrange";
 
   export default {
@@ -80,7 +80,7 @@
         }
       },
       judgeEffect(item) {
-        return !this.value_map[item[paperKeys.paperSize]]
+        return !this.value_map[item[paperKeys.paperSize]];
       },
       changeEffect(item) {
         if (this.judgeEffect(item)) {
@@ -127,16 +127,16 @@
 <style lang="less" scoped>
   .paper-button {
     position: absolute;
-    right: 32px;
     top: 11px;
+    right: 32px;
     z-index: 100;
     .el-button {
       padding: 10px 27px;
     }
   }
   .title {
+    margin: 6px 8px 15px;
     font-size: 16px;
-    margin: 6px 8px 15px 8px;
   }
   .operate {
     color: #3654ea;
@@ -147,10 +147,10 @@
     right: 4px;
   }
   .paper-button-content {
-    min-height: 60px;
     max-height: 350px;
-    overflow: auto;
+    min-height: 60px;
     margin: 0 20px;
+    overflow: auto;
   }
   .el-collapse {
     border: none;
@@ -165,15 +165,16 @@
     margin-left: 37px;
   }
   .line {
-    border-top: 1px solid rgb(235, 238, 245);
     position: relative;
     left: 0;
     width: 650px;
+    border-top: 1px solid rgb(235, 238, 245);
     transform: translateX(-12px);
   }
   .base-table /deep/ .el-table__row td.red {
     color: red;
   }
+
   @media screen and (min-height: 850px) {
     .paper-button-content {
       max-height: 550px;

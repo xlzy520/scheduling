@@ -22,7 +22,7 @@
                  :dialog-type-is-add="dialogTypeIsAdd"></stack-dialog>
     <pack-dialog v-if="dialogType==='pack'" ref="dialog" @close="close" @confirm="packConfirm"
                  :dialog-type-is-add="dialogTypeIsAdd"></pack-dialog>
-    <view-dialog  ref="viewDialog" v-if="dialogType.includes('view')" @close="close" :dialogType="dialogType"></view-dialog>
+    <view-dialog  ref="viewDialog" v-if="dialogType.includes('view')" @close="close" :dialog-type="dialogType"></view-dialog>
   </single-page>
 </template>
 
@@ -94,7 +94,7 @@
           type: 'warning',
           showClose: false,
         }).then(() => {
-          this.dj_api_extend(ruleCustomizeService.changeEffected, post).then((res) => {
+          this.dj_api_extend(ruleCustomizeService.changeEffected, post).then(() => {
             this.$message(`${text}成功`, 'success');
             this.$refs.table.updateData();
           });
@@ -238,7 +238,7 @@
             packRequest({
               ...packFormData,
               packRuleDetails: packRuleDetails.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['packpiece', 'endUnitarea'], true))
-            }).then((res) => {
+            }).then(() => {
               this.$refs.dialog.loading = false;
               this.submitSuccess();
             }).catch(() => {
@@ -269,7 +269,7 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .rule-status-off{
+  @{deep} .rule-status-off {
     color: #909399;
   }
 </style>

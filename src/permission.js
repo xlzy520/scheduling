@@ -2,17 +2,17 @@ import router from './router';
 import {asyncRouter} from './router';
 // import { Loading } from 'element-ui';
 import { permission } from 'djweb';
-import { methods } from 'djweb';
-import dayjs  from 'dayjs';
+// import { methods } from 'djweb';
+// import dayjs from 'dayjs';
 import permissionService from './api/service/permission';
 import store from './store';
 import NProgress from 'nprogress'; // Progress 进度条
 import 'nprogress/nprogress.css';
 
-import innerUser from './api/service/innerUser';
-import autoLogin from './autoLogin_development';
+// import innerUser from './api/service/innerUser';
+// import autoLogin from './autoLogin_development';
 // Progress 进度条样式
-const { getCookiesItem, setCookiesItem } = methods;
+// const { getCookiesItem, setCookiesItem } = methods;
 
 /**
  * 获取权限路由，需要返回所有有权限的路由路径，路由路径即
@@ -48,38 +48,38 @@ function getPermission() {
  * @param to
  * @returns {Promise<any>}
  */
-function login(to) {
-  //该项目由自己的登录页，所以登录请求在登录页发送，此处直接处理没有登录情况下需要采取的措施就行了
-  // todo 获取token，开发使用，以后删除
-  if (process.env.NODE_ENV === 'development') {
-    return autoLogin().then(res=>{
-      return innerUser.getToken({token: res});
-    }).finally(()=>{
-      setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
-      return to.path
-    });
-  } else {
-    return Promise.resolve(to.path);
-  }
-
-  // return new Promise((resolve) => {
-  //   setCookiesItem('userName', 'gw');
-  //   // reject();
-  //   resolve('/home');
-  // });
-}
+// function login(to) {
+//   //该项目由自己的登录页，所以登录请求在登录页发送，此处直接处理没有登录情况下需要采取的措施就行了
+//   // todo 获取token，开发使用，以后删除
+//   if (process.env.NODE_ENV === 'development') {
+//     return autoLogin().then(res=>{
+//       return innerUser.getToken({token: res});
+//     }).then(()=>{
+//       setCookiesItem('username', '11111', {expires: dayjs().add(1, 'hour').toDate()});
+//       return to.path;
+//     });
+//   } else {
+//     return Promise.resolve(to.path);
+//   }
+//
+//   // return new Promise((resolve) => {
+//   //   setCookiesItem('userName', 'gw');
+//   //   // reject();
+//   //   resolve('/home');
+//   // });
+// }
 
 /**
  * 判断是否登录的方法
  * @returns {boolean}
  */
-function isLogin(to) {
-  if (process.env.NODE_ENV === 'development') {
-    return getCookiesItem('username') !== undefined;
-  } else {
-    return true;
-  }
-}
+// function isLogin(to) {
+//   if (process.env.NODE_ENV === 'development') {
+//     return getCookiesItem('username') !== undefined;
+//   } else {
+//     return true;
+//   }
+// }
 
 permission({
   router, //路由实例

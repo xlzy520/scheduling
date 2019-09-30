@@ -261,7 +261,7 @@
               if (this.isShowMoney) {
                 return cur;
               } else {
-                return '****'
+                return '****';
               }
             }
           },
@@ -273,9 +273,9 @@
         ];
         let hidden_arr = [];
         if (!this.isShowMoney) {
-          hidden_arr = [cylinderKeys.totalMoney]
+          hidden_arr = [cylinderKeys.totalMoney];
         }
-        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop))
+        return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
     },
     mounted() {

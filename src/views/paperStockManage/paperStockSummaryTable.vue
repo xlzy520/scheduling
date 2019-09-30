@@ -4,7 +4,7 @@
     :search-config="searchConfig"
     :table-columns="tableColumns"
     :download="downloadConfig"
-    serviceUrl="listSummary"></simple-table-box>
+    service-url="listSummary"></simple-table-box>
 </template>
 
 <script>
@@ -36,7 +36,7 @@
             }
             },
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'paperSize', type: 'input',},
+          {label: '门幅：', key: 'paperSize', type: 'input'},
           {label: '原纸供应商：', key: 'supplierName', type: 'input'},
         ],
         tableColumns: [
@@ -88,9 +88,9 @@
 
 <style lang="less" scoped>
 /deep/ .gress {
-  color: #40B317;
+  color: #40b317;
 }
 /deep/ .blue {
-  color: #3654EA;
+  color: #3654ea;
 }
 </style>
