@@ -93,10 +93,19 @@
             }
           },
           {
+            type: 'custom',
+            isText: true,
             formItem: {
               prop: orderKeys.fluteType,
               label: '瓦楞楞型'
-            }
+            },
+            render: (h) => {
+              let fluteType = this.formData[orderKeys.fluteType] || '';
+              let layer = this.formData[orderKeys.layer] || '';
+              return (
+                <span>{`${layer}${fluteType}`}</span>
+              );
+            },
           },
           {
             formItem: {
