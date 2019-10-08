@@ -1,10 +1,7 @@
 <template>
   <dj-dialog title="查看" ref="dialog" @close="close" :has-footer="false">
     <div class="content" v-loading="loading">
-      <div class="item" v-for="form in formOptions">
-        <div>{{form.label}}</div>
-        <dj-form :form-data="formData" ref="form" :form-options="form.formBlock" :column-num="3"></dj-form>
-      </div>
+      <classify-form :form-data="formData" ref="form" :config="formConfig" :column-num="3"></classify-form>
     </div>
   </dj-dialog>
 </template>
@@ -17,10 +14,11 @@
     data() {
       return {
         formData: {},
-        formOptions: [
+        formConfig: [
           {
-            label: '订单信息',
-            formBlock: [
+            title: '订单信息',
+            hasLine: true,
+            formOptions: [
               {formItem: {prop: 'produceOrderNumber', label: '生产编号：'}},
               {formItem: {prop: 'arriveTime', label: '订单交期：'}},
               {formItem: {prop: 'customerName', label: '客户名称：'}},
@@ -38,8 +36,9 @@
             ]
           },
           {
-            label: '产品信息',
-            formBlock: [
+            title: '产品信息',
+            hasLine: true,
+            formOptions: [
               {formItem: {prop: 'grouponProductName', label: '产品名称：'}},
               {formItem: {prop: 'pieceAmount', label: '订单数量：'}},
               {formItem: {prop: 'materialCode', label: '用料代码：'}},
@@ -67,8 +66,9 @@
             ]
           },
           {
-            label: '最终生产信息',
-            formBlock: [
+            title: '最终生产信息',
+            hasLine: true,
+            formOptions: [
               {formItem: {prop: 'paperSize', label: '最优门幅：'}},
               {formItem: {prop: 'cutCount', label: '切数：'}},
               {formItem: {prop: 'knifeCount', label: '刀数：'}},
@@ -82,8 +82,9 @@
             ]
           },
           {
-            label: '原生产信息',
-            formBlock: [
+            title: '原生产信息',
+            hasLine: true,
+            formOptions: [
               {formItem: {prop: 'sourcePaperSize', label: '最优门幅：'}},
               {formItem: {prop: 'cutCount', label: '切数：'}},
               {formItem: {prop: 'knifeCount', label: '刀数：'}},
@@ -121,7 +122,7 @@
         this.getDetail(id);
       },
       initForm() {
-        this.formOptions.map(v => v.formBlock.map(b => {
+        this.formOptions.map(v => v.formOptions.map(b => {
           this.formData[b.formItem.prop] = '';
         }));
       }
