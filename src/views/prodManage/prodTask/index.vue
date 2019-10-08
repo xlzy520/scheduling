@@ -113,7 +113,7 @@
           {label: '修边', prop: 'trimming'},
           {label: '压线方式', prop: 'staveType'},
           {label: '压线公式', prop: 'vformula', width: 120},
-          {label: '叠单', prop: 'stackFlag'},
+          {label: '叠单', prop: 'stackFlag', formatter: row=>row.stackFlag === 0 ? '' : row.stackFlag},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
