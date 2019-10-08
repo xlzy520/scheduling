@@ -1,7 +1,7 @@
 <template>
     <dj-dialog ref="dialog" @close="close" width="872px" title="查看">
-      <el-tabs v-model="activeTab" @tab-click="handleClick">
-        <el-tab-pane v-loading="isTableLoading" label="基础信息" name="1">
+      <el-tabs v-loading="isTableLoading" v-model="activeTab" @tab-click="handleClick">
+        <el-tab-pane label="基础信息" name="1">
           <dj-form v-bind="formAttrs" ref="form" :form-data="formData" :form-options="formOptions" :column-num="3" :col-rule="colRule"></dj-form>
           <!--<p class="font-subhead">纸筒信息</p>-->
           <p class="font-subhead">
@@ -194,7 +194,7 @@
         recordColumns: [
           {label: '操作时间', prop: 'operateTime', width: 226},
           {label: '操作人', prop: 'operator', width: 136},
-          {label: '操作内容', prop: 'operateDetail', width: 742}
+          {label: '操作内容', prop: 'operateDetail', width: 454}
         ],
         columnsTypeProps: {
           index: {
@@ -210,9 +210,7 @@
       };
     },
     mixins: [dialogFixed],
-    mounted() {
-      console.log(this);
-    },
+    mounted() {},
     computed: {
       isShowMoney() {
         return this.$store.getters.amountPermission;
