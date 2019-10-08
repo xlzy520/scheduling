@@ -24,6 +24,7 @@
                       :column-type-props="columnsTypeProps"
                       :loading="isTableLoading"
                       @selection-change="selectionChange"
+                      @sort-change="sortChange"
                       :columns="tableColumns"
                       :column-type="columnType"
                       @update-data="getList">
@@ -200,7 +201,8 @@
           {
             prop: orderKeys.produceMaterial,
             label: '用料代码',
-            width: 114
+            width: 114,
+            sortable: true
           },
           {
             prop: orderKeys.fluteType,
@@ -236,6 +238,38 @@
             prop: orderKeys.optimalSize,
             label: '最优门幅',
             width: 114,
+            sortable: true,
+            sortMethod: (a, b) => {
+              const table = this.$refs.table.childComponents.reTable;
+              const order = table.columns.filter(obj=>obj.property === orderKeys.optimalSize)[0].order;
+              let keys = [orderKeys.optimalSize];
+              if (this.sort_map[orderKeys.produceMaterial]) {
+                keys.unshift(orderKeys.produceMaterial);
+              }
+              const judge = (prop) => {
+                if (prop !== orderKeys.produceMaterial) {
+                  return false;
+                }
+                let map = {
+                  descending: 'ascending',
+                  ascending: 'descending'
+                };
+                let _order = this.sort_map[orderKeys.produceMaterial];
+                if (order === 'descending') {
+                  _order = map[_order];
+                }
+                return _order === 'descending';
+              };
+              for (let i = 0, len = keys.length; i < len; i++) {
+                if (a[keys[i]] < b[keys[i]]) {
+                  return judge(keys[i]) ? 1 : -1;
+                }
+                if (a[keys[i]] > b[keys[i]]) {
+                  return judge(keys[i]) ? -1 : 1;
+                }
+              }
+              return 0;
+            }
           },
           {
             prop: orderKeys.cutNumber,
@@ -277,6 +311,7 @@
         lineId: undefined,
         selectList: [],
         banPaperSize_arr: [],
+        sort_map: {},
         isLoading: false,
 
         editPaperSizeDialogFlag: false,
@@ -304,6 +339,9 @@
     },
     mounted() {},
     methods: {
+      sortChange({ prop, order }) {
+        this.sort_map[prop] = order;
+      },
       rowClassName({row}) {
         if (row[orderKeys.stackUp] + '' === '0' || [2, 4].includes(Number(row['sortFlag']))) {
           return 'is-error';
