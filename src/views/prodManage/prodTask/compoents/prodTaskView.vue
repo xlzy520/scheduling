@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog title="查看" ref="dialog" @close="close" :has-footer="false">
+  <dj-dialog title="查看" ref="dialog" @close="close" :has-footer="false" width="1180px">
     <div class="content" v-loading="loading">
       <classify-form :form-data="formData" ref="form" :config="formConfig" :column-num="3"></classify-form>
     </div>
@@ -138,21 +138,3 @@
     }
   };
 </script>
-
-<style lang="less" scoped>
-  @deep: ~'>>>';
-  .content {
-    width: 1140px;
-    .item {
-      padding-bottom: 16px;
-      margin-top: 20px;
-      border-bottom: 1px solid #ebeef5;
-    }
-    @{deep} .dj-form {
-      .el-form-item {
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-    }
-  }
-</style>
