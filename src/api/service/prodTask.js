@@ -7,10 +7,13 @@ export default {
   removeOrder(data) {
     return prodTask('/removeOrder.do', data);
   },
-  findByProduceOrderNumber(data) {
-    return prodTask('/findByProduceOrderNumber.do', data, 'get');
+  findDetailByProduceOrderNumber(data) {
+    return prodTask('/findDetailByProduceOrderNumber.do', data, 'get');
   },
   toProduceManager(data) {
     return prodTask('/toProduceManager.do', data);
+  },
+  exportExcel(data) {
+    return prodTask('/exportExcel.do', data, 'download_post');
   },
 };

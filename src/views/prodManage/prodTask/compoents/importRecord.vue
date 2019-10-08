@@ -14,7 +14,7 @@
             @update-data="getTableData"
           >
             <div slot="btn">
-              <el-button type="primary" @click="exportRecord">导出记录</el-button>
+              <el-button type="primary" @click="exportRecord" :loading="isExporting">导出记录</el-button>
             </div>
           </dj-table>
         </page-pane>
@@ -151,7 +151,9 @@
           {label: '打包数量', prop: 'packCount'},
         ],
         pageTotal: 0,
-        searchVisible: false
+        searchVisible: false,
+        isExporting: false,
+        exportConfig: {}
       };
     },
     methods: {
@@ -175,6 +177,13 @@
           'search[affluxTimeEnd]': timeRange[1],
         };
         this.searchData = params;
+        this.exportConfig = {
+          search: {
+            lineId: lineId,
+            affluxTimeStart: timeRange[0],
+            affluxTimeEnd: timeRange[1]
+          }
+        };
         this.$refs.table.changePage(1);
       },
       getTableData(data) {
@@ -200,13 +209,12 @@
         });
       },
       exportRecord() {
-        // let paramsStr = `search[materialLengthStart]=${this.searchData}`;
-        let paramsStr = ``;
-        for (const item in this.searchData) {
-          paramsStr += item + '=' + this.searchData[item] + '&';
-        }
-        const url = '/djsupplier/produceTask/exportExcel.do?' + paramsStr;
-        this.$method.fileDownload(url);
+        this.isExporting = true;
+        this.dj_api_extend(prodTaskService.exportExcel, this.exportConfig).then(res=>{
+          this.$method.downloadExecl(res, `汇入生管记录`);
+        }).finally(()=>{
+          this.isExporting = false;
+        });
       },
       close() {
         this.formData = {};
