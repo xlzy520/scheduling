@@ -85,16 +85,16 @@
             title: '原生产信息',
             hasLine: true,
             formOptions: [
-              {formItem: {prop: 'sourcePaperSize', label: '最优门幅：'}},
-              {formItem: {prop: 'cutCount', label: '切数：'}},
-              {formItem: {prop: 'knifeCount', label: '刀数：'}},
-              {formItem: {prop: 'produceAmount', label: '生产数量：'}},
-              {formItem: {prop: 'sourceVformula', label: '纵压公式：'}},
-              {formItem: {prop: 'sourceMaterialWidth', label: '切宽：'}},
-              {formItem: {prop: 'orderMeter', label: '订单米数：'}},
-              {formItem: {prop: 'sourceTrimming', label: '修边(mm)：'}},
-              {formItem: {prop: 'sourceTrimmingRate', label: '修边率：'}},
-              {formItem: {prop: 'stackFlag', label: '叠单标志：'}},
+              {formItem: {prop: 'paperSize_original', label: '最优门幅：'}},
+              {formItem: {prop: 'cut_original', label: '切数：'}},
+              {formItem: {prop: 'paperCount_original', label: '刀数：'}},
+              {formItem: {prop: 'pieceAmount_original', label: '生产数量：'}},
+              {formItem: {prop: 'vformula_original', label: '纵压公式：'}},
+              {formItem: {prop: 'materialWidth_original', label: '切宽：'}},
+              {formItem: {prop: 'paperLength_original', label: '订单米数：'}},
+              {formItem: {prop: 'wasteWidth_original', label: '修边(mm)：'}},
+              {formItem: {prop: 'wasteRate_original', label: '修边率：'}},
+              {formItem: {prop: 'stackFlag_original', label: '叠单标志：'}},
             ]
           },
         ],
@@ -108,11 +108,17 @@
       },
       getDetail(id) {
         this.loading = true;
-        this.dj_api_extend(prodTaskService.findByProduceOrderNumber, {
+        this.dj_api_extend(prodTaskService.findDetailByProduceOrderNumber, {
           produceOrderNumber: id
         }).then(res => {
           res['arriveTime'] = this.$method.parseTime(res['arriveTime']);
-          this.formData = res;
+          let _orderPlanOriginal = {};
+          for (let item in res.orderPlanOriginal) {
+            if (res.orderPlanOriginal.hasOwnProperty(item)) {
+              _orderPlanOriginal[item + '_original'] = res.orderPlanOriginal[item];
+            }
+          }
+          this.formData = Object.assign({}, res.produceTask, _orderPlanOriginal);
         }).finally(() => {
           this.loading = false;
         });
@@ -122,7 +128,7 @@
         this.getDetail(id);
       },
       initForm() {
-        this.formOptions.map(v => v.formOptions.map(b => {
+        this.formConfig.map(v => v.formOptions.map(b => {
           this.formData[b.formItem.prop] = '';
         }));
       }
