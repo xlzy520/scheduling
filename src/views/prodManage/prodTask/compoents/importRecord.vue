@@ -1,24 +1,20 @@
 <template>
   <dj-dialog title="汇入记录" ref="dialog" @close="close" :has-footer="false">
     <div class="content">
-      <single-page>
-        <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
-        <page-pane>
-          <dj-table
-            ref="table"
-            :data="tableData"
-            :columns="tableColumns"
-            :total="pageTotal"
-            height="100%"
-            :loading="loading"
-            @update-data="getTableData"
-          >
-            <div slot="btn">
-              <el-button type="primary" @click="exportRecord" :loading="isExporting">导出记录</el-button>
-            </div>
-          </dj-table>
-        </page-pane>
-      </single-page>
+      <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
+      <dj-table
+        ref="table"
+        :data="tableData"
+        :columns="tableColumns"
+        :total="pageTotal"
+        height="100%"
+        :loading="loading"
+        @update-data="getTableData"
+      >
+        <div slot="btn">
+          <el-button type="primary" @click="exportRecord" :loading="isExporting">导出记录</el-button>
+        </div>
+      </dj-table>
     </div>
   </dj-dialog>
 </template>

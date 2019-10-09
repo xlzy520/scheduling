@@ -8,6 +8,7 @@
 
 <script>
   import prodTaskService from '@/api/service/prodTask';
+  import dayjs from 'dayjs'
 
   export default {
     name: 'prodTaskView',
@@ -20,13 +21,23 @@
             hasLine: true,
             formOptions: [
               {formItem: {prop: 'produceOrderNumber', label: '生产编号：'}},
-              {formItem: {prop: 'arriveTime', label: '订单交期：'}},
+              {
+                type: 'custom', isText: true, formItem: {prop: 'arriveTime', label: '订单交期：'},
+                render: (h) => {
+                  const time = this.formData.arriveTime;
+                  if (time) {
+                    return (
+                      <span>{dayjs(time).format('YYYY-MM-DD')}</span>
+                    );
+                  }
+                }
+              },
               {formItem: {prop: 'customerName', label: '客户名称：'}},
               {formItem: {prop: 'sort', label: '订单排序：'}},
               {
                 type: 'custom', isText: true, formItem: {prop: 'orderFlag', label: '订单标记：'},
                 render: (h) => {
-                  const flagMap = ['正常订单', '急单', '延期订单'];
+                  const flagMap = ['普通', '加急', '延期'];
                   let text = flagMap[this.formData.orderFlag] || '';
                   return (
                     <span>{text}</span>
