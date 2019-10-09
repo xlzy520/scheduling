@@ -56,7 +56,7 @@
             {
               formItem: {
                 prop: orderKeys.contacts,
-                label: '联系人',
+                label: '收货人',
               }
             },
             {

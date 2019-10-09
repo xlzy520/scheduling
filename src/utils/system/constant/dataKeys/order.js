@@ -16,7 +16,7 @@ export default {
   deliveryTime: 'arriveTime', //订单交期
   layer: 'layers', //层数
   orderType: 'orderType', //订单类型
-  contacts: 'contact', //联系人
+  contacts: 'contact', //收货人
   contactWay: 'phone', //联系方式
   address: 'address', //地址
   productSize: 'productSize', //产品规格
@@ -30,7 +30,7 @@ export default {
   platformMaterialName: 'platformMaterialCode', //平台材料名称
   orderTip: 'grouponOrderFlag', //订单标签
   packageAmount: 'processeAmount', //打包数量
-  consignee: 'consignee', //联系人
+  consignee: 'consignee', //收货人
   mergeStatus: 'combinedType', //合并状态
   mergeId: 'combineId', //合并状态
   mergeTime: 'createTime', //合并时间
