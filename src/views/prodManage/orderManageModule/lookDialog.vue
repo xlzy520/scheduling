@@ -172,10 +172,17 @@
             },
             // todo 暂时没有，等待后端更新
             {
+              type: 'custom',
+              isText: true,
               formItem: {
                 prop: orderKeys.productSize,
                 label: '产品规格',
-              }
+              },
+              render: (h) => {
+                return (
+                  <span>{this.$method.getProductSize(this.order)}</span>
+                );
+              },
             },
             {
               type: 'custom',
