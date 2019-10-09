@@ -154,7 +154,7 @@
             width: 96,
             className: 'is-change',
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}};
+              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}, disabledShortcut: ['right', 'left']};
             },
             component: tableInput,
             listeners: {

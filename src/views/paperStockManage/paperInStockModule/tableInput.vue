@@ -13,7 +13,18 @@
 <script>
   export default {
     name: 'tableInput',
-    props: ['row', 'index', 'col', 'service', 'beforeEnter'],
+    props: {
+      row: {},
+      index: {},
+      col: {},
+      service: {},
+      beforeEnter: {},
+      disabledShortcut: {
+        type: Array,
+        default: ()=>[]
+      },
+    },
+    // props: ['row', 'index', 'col', 'service', 'beforeEnter', 'disabledShortcut'],
     data: function () {
       return {};
     },
@@ -90,6 +101,9 @@
         };
       },
       focus(index, prop, arrow = 'right') {
+        if (this.disabledShortcut.includes(arrow)) {
+          return;
+        }
         let _index = index;
         let arr = Array.from(this.$parent.inputKeys);
         let map = this.keyMap;
