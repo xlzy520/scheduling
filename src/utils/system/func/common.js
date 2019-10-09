@@ -45,10 +45,10 @@ export const getOrderTip = function (obj = {}, bool) {
   return (bool ? orderTip.omit : orderTip.label) || '';
 };
 
-export const handleTime = function (obj, keys, bool) {
+export const handleTime = function (obj, keys, format = 'YYYY-MM-DD HH:mm:ss') {
   function time(t) {
     if (t) {
-      return dayjs(t).format(bool ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss');
+      return dayjs(t).format(format);
     }
     return '';
   }

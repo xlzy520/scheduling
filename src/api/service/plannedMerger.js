@@ -51,7 +51,7 @@ export default{
         // obj.childNum = (obj.childList || []).length;
         obj[orderKeys.materialSize] = getMaterialSize(obj);
         obj[orderKeys.productSize] = getProductSize(obj);
-        handleTime(obj, [orderKeys.deliveryTime, orderKeys.mergeTime]);
+        handleTime(obj, [orderKeys.deliveryTime, orderKeys.mergeTime], 'YYYY-MM-DD HH:mm');
         return obj;
       });
       let main = res;
