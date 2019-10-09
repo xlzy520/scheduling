@@ -88,7 +88,7 @@
             },
           },
         ],
-        formData: initFormData,
+        formData: this.$method.deepClone(initFormData),
         originFormData: {},
         pageTotal: 0,
         dialogTypeIsAdd: null,
@@ -296,7 +296,7 @@
         this.getWarehouse();
         this.$nextTick(()=>{
           this.$refs.dialog.open();
-          this.getWarehouse();
+          // this.getWarehouse();
         });
       },
       getList(page) {
@@ -384,7 +384,7 @@
         this.$refs.dialog.close();
         this.dialogVisible = false;
         this.getAllPaperCode();
-        this.formData = initFormData;
+        this.formData = this.$method.deepClone(initFormData);
         this.warehouseAreaList = [];
       }
     },
