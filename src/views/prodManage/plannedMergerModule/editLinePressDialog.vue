@@ -2,9 +2,6 @@
   <dj-dialog ref="dialog" @close="confirmClose" width="780px" title="调整压线方式" @confirm="confirm">
     <div v-loading="isLoading">
       <classify-form ref="form" :config="config" :form-data="formData" :column-num="2" :col-rule="colRule"></classify-form>
-      <!--<dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>-->
-      <!--<p class="font-subhead">原订单信息</p>-->
-      <!--<dj-form labelSuffix=":" :form-data="formData" :form-options="textOptions" :column-num="2"></dj-form>-->
     </div>
     <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
   </dj-dialog>

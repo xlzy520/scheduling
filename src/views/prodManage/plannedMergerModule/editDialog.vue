@@ -121,7 +121,6 @@
           }
           let post = {
             ...(this.$method.cloneData([orderKeys.productionNo, orderKeys.orderAmount], {}, this.formData)),
-            // ...this.formData
           };
           let materialSize = this.formData[orderKeys.materialSize] || [];
           post[orderKeys.materialLength] = materialSize[0];
@@ -152,9 +151,6 @@
           this.isLoading = false;
           this.saveDefaultData();
         });
-        // this.dj_api_extend(plannedMergerService.getOrderById, {produceOrderNumber: param[orderKeys.productionNo]}).then(({main}) => {
-        //   this.formData = main;
-        // }).finally(this.saveDefaultData);
       },
       close() {
         this.$refs.dialog.close();

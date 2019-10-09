@@ -3,12 +3,6 @@
     <el-tabs v-loading="isLoading" v-model="activeTab" @tab-click="handleClick">
         <el-tab-pane label="订单信息" name="1">
           <classify-form :config="config" :form-data="formData" :column-num="2"></classify-form>
-          <!--<dj-form :form-data="formData" :form-options="formOptions_header" :column-num="2"></dj-form>-->
-          <!--<p class="font-default">订单信息</p>-->
-          <!--<dj-form labelSuffix=":" :form-data="formData" :form-options="formOptions_order" :column-num="2"></dj-form>-->
-          <!--<p class="line"></p>-->
-          <!--<p class="font-default">产品信息</p>-->
-          <!--<dj-form labelSuffix=":" :form-data="formData" :form-options="formOptions_product" :column-num="2"></dj-form>-->
         </el-tab-pane>
         <el-tab-pane label="编辑记录" name="2">
           <base-table :data="recordData" :columns="recordColumns"></base-table>
@@ -251,12 +245,6 @@
       getOrderDetail(prodId) {
         this.isLoading = true;
         this.dj_api_extend(plannedMergerService.getOrderById, {produceOrderNumber: prodId}).then(({main, list})=>{
-          // let _res = main || {};
-          // let materialLength = main[orderKeys.materialLength];
-          // let materialWidth = main[orderKeys.materialWidth];
-          // if (materialLength && materialWidth) {
-          //   _res[orderKeys.materialSize] = `${materialLength}*${materialWidth}`;
-          // }
           this.order_arr = list;
           this.formData = {...main};
           this.updateHeight();
@@ -284,26 +272,7 @@
   };
 </script>
 <style lang="less" scoped>
-  /*.dialog-content{*/
-  /*height: 537px; //685*/
-  /*}*/
   /deep/ .status {
     color: #3654ea;
-  }
-  .line {
-    margin-top: 11px;
-    margin-bottom: 24px;
-    border-top: 1px solid #ebeef5;
-  }
-  .el-tab-pane {
-    .dj-form:not(:nth-of-type(1)) {
-      margin-bottom: 13px;
-      /deep/ .el-form-item {
-        margin-bottom: 0;
-      }
-    }
-  }
-  .font-subhead {
-    margin-top: 11px;
   }
 </style>

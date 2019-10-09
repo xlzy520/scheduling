@@ -22,7 +22,6 @@
           {
             formOptions: [
               {
-                // type: 'select',
                 type: 'custom',
                 formItem: {
                   prop: 'paperSize',
@@ -77,26 +76,6 @@
                   label: '原订单切数'
                 },
               },
-              // {
-              //   type: 'select',
-              //   formItem: {
-              //     prop: 'stack',
-              //     label: '叠单标记'
-              //   },
-              //   attrs: {
-              //     options: this.$enum.stackUpTip._arr
-              //   }
-              // },
-              // {
-              //   formItem: {
-              //     prop: 're-' + this.$method.getOriginKey(orderKeys.stackUp, 'old'),
-              //     label: '原叠单标记'
-              //   },
-              //   computed: () => {
-              //     let obj = this.$enum.stackUpTip._swap[this.formData[this.$method.getOriginKey(orderKeys.stackUp, 'old')]] || {};
-              //     return obj.label || ''
-              //   }
-              // },
             ]
           }
         ];
@@ -105,13 +84,6 @@
     created() {
     },
     methods: {
-      // colRule(item) {
-      //   let prop = item.formItem.prop;
-      //   if (prop === 'stack') {
-      //     return 24;
-      //   }
-      //   return 12;
-      // },
       getPaperSizes(params) {
         let { data, lineId} = params;
         this.dj_api_extend(planArrangeService.getOptimalSize, {lineId, orderList: this.$method.getOrderList([data])}).then(res => {
@@ -120,9 +92,6 @@
       },
       getOrderMsg(params) {
         this.dj_api_extend(planArrangeService.getOrder, params).then(res => {
-          // if (res[orderKeys.stackUp] === null) {
-          //   res['stack'] = res[orderKeys.stackUp];
-          // }
           this.formData = res || {};
         });
       },

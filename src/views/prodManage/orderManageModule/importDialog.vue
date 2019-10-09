@@ -70,8 +70,6 @@
     methods: {
       confirm() {
         this.$refs.form.validate(()=>{
-          //todo 发送新增订单接口
-          console.log('addOrder');
           this.importing = true;
           this.$refs.progress.start();
           let api;

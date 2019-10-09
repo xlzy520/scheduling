@@ -31,16 +31,6 @@
                   options: this.$enum.stackUpTip._arr
                 }
               },
-              // {
-              //   formItem: {
-              //     prop: 're-' + this.$method.getOriginKey(orderKeys.stackUp, 'old'),
-              //     label: '原叠单标记'
-              //   },
-              //   computed: () => {
-              //     let obj = this.$enum.stackUpTip._swap[this.formData[this.$method.getOriginKey(orderKeys.stackUp, 'old')]] || {};
-              //     return obj.label || ''
-              //   }
-              // },
             ]
           }
         ];
@@ -54,8 +44,6 @@
           if (res[orderKeys.stackUp] + '' === '0') {
             res[orderKeys.stackUp] = null;
           }
-          // if (res[orderKeys.stackUp] === null) {
-          // }
           this.formData = res || {};
         });
       },
