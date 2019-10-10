@@ -164,7 +164,7 @@
       printAll () {
         this.printLoading = true;
         this.dj_api_extend(prodTaskService.list, {
-          ...this.searchData,
+          search: this.searchData,
           pageNo: 1,
           pageSize: 999999,
         }).then(res => {
