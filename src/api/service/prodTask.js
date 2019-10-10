@@ -2,7 +2,7 @@ import {prodTask} from '../base-service/service';
 
 export default {
   list(data) {
-    return prodTask('/pageSearch.do', data, 'get');
+    return prodTask('/pageSearch.do', data);
   },
   removeOrder(data) {
     return prodTask('/removeOrder.do', data);

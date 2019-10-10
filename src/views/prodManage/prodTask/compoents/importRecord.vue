@@ -148,8 +148,7 @@
         ],
         pageTotal: 0,
         searchVisible: false,
-        isExporting: false,
-        exportConfig: {}
+        isExporting: false
       };
     },
     methods: {
@@ -167,19 +166,11 @@
       search(query) {
         const {timeRange, lineId} = query;
         let params = {
-          'search[lineId]': lineId,
-          // 'search[lineId]': 'c373e5c0-4931-4339-9b7a-3e71f472013d',
-          'search[affluxTimeStart]': timeRange[0],
-          'search[affluxTimeEnd]': timeRange[1],
+          lineId: lineId,
+          affluxTimeStart: timeRange[0],
+          affluxTimeEnd: timeRange[1],
         };
         this.searchData = params;
-        this.exportConfig = {
-          search: {
-            lineId: lineId,
-            affluxTimeStart: timeRange[0],
-            affluxTimeEnd: timeRange[1]
-          }
-        };
         this.$refs.table.changePage(1);
       },
       getTableData(data) {
@@ -206,7 +197,7 @@
       },
       exportRecord() {
         this.isExporting = true;
-        this.dj_api_extend(prodTaskService.exportExcel, this.exportConfig).then(res=>{
+        this.dj_api_extend(prodTaskService.exportExcel, {search: this.searchData}).then(res=>{
           this.$method.downloadExecl(res, `汇入生管记录`);
         }).finally(()=>{
           this.isExporting = false;

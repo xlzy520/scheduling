@@ -229,28 +229,27 @@
         this.checkedList = checkedList;
       },
       search(query) {
-        const {timeRange, guige, paperSize, produceOrderNumber, materialCode, customerName } = query;
+        const {timeRange, guige, paperSize, ...restQuery } = query;
         this.timeRange = timeRange;
         let params = {
-          'search[affluxTimeStart]': timeRange[0],
-          'search[affluxTimeEnd]': timeRange[1],
-          'search[isDeleted]': 0,
-          'search[materialCode]': materialCode || undefined,
-          'search[customerName]': customerName || undefined,
-          'search[produceOrderNumber]': produceOrderNumber || undefined,
+          affluxTimeStart:timeRange[0],
+          affluxTimeEnd: timeRange[1],
+          isDeleted: 0,
+          ...restQuery,
+          lineId: this.activeTab,
+
         };
-        params['search[lineId]'] = this.activeTab || undefined;
         if (guige !== undefined) {
           let guigeParams = {
-            'search[materialLength]': guige[0],
-            'search[materialWidth]': guige[1],
+            materialLength: guige[0],
+            materialWidth: guige[1],
           };
           Object.assign(params, guigeParams);
         }
         if (paperSize !== undefined && paperSize.some(v=>v)) {
           let paperSizeParams = {
-            'search[paperSizeStart]': Math.min.apply(null, paperSize),
-            'search[paperSizeEnd]': Math.max.apply(null, paperSize),
+            paperSizeStart: Math.min.apply(null, paperSize),
+            paperSizeEnd: Math.max.apply(null, paperSize),
           };
           Object.assign(params, paperSizeParams);
         }
