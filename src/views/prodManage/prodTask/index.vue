@@ -260,7 +260,7 @@
         this.loading = true;
         this.dj_api_extend(prodTaskService.list, {
           ...data,
-          ...this.searchData
+          search: this.searchData
         }).then(res => {
           const {list, total} = res;
           this.tableData = list;
