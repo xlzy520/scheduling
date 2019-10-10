@@ -259,6 +259,9 @@
         this.$emit('close');
       },
       open() {
+        if (!this.dialogTypeIsAdd) {
+          this.stackConditionFormData = [[]];
+        }
         this.$refs.dialog.open();
       },
       setLineOptions() {
@@ -273,6 +276,7 @@
         });
       },
       renderAllCondition(id) {
+        this.open();
         this.loading = true;
         ruleCustomizeService.getRuleDetail({
           ruleId: id
@@ -314,7 +318,6 @@
           this.stackConditionFormData = formatData;
           this.originStackConditionFormData = this.$method.deepClone(formatData);
           this.loading = false;
-          this.$refs.dialog.open();
         }).catch(() => {
           this.loading = false;
         });
@@ -405,13 +408,11 @@
       width: 100%;
     }
   }
-  .childCondition-enter-active {
-    transition: all 0.3s ease;
-  }
+
   .childCondition-leave-active {
     transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
   }
-  .childCondition-enter, .childCondition-leave-to {
+ .childCondition-leave-to {
     opacity: 0;
     transform: translateY(10px);
   }
