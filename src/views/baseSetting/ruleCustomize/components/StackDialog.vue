@@ -314,6 +314,7 @@
           this.stackConditionFormData = formatData;
           this.originStackConditionFormData = this.$method.deepClone(formatData);
           this.loading = false;
+          this.$refs.dialog.open();
         }).catch(() => {
           this.loading = false;
         });

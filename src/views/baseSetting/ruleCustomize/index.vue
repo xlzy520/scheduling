@@ -110,7 +110,6 @@
         this.dialogType = row.typeName === '叠单规则' ? 'stack' : 'pack';
         this.dialogTypeIsAdd = false;
         this.$nextTick(()=>{
-          this.$refs.dialog.open();
           this.$refs.dialog.renderAllCondition(row.id);
         });
       },
