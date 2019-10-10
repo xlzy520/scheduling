@@ -457,7 +457,7 @@
         const val = this.prodLineData.zqj.slimachNumbers;
         if (val === 1) {
           this.$nextTick(() => {
-            this.$refs.form2.clearValidate();
+            this.$refs.form2.clearValidate('slimachWdoubleMinLength');
             this.$set(this.formOptions.zqj[2].formItem, 'rules', [
               formRules.number5
             ]);
