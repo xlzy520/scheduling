@@ -249,12 +249,12 @@
                   label: '修边率'
                 },
               },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.stackUp, 'old'),
-                  label: '叠单标志'
-                },
-              },
+              // {
+              //   formItem: {
+              //     prop: this.$method.getOriginKey(orderKeys.stackUp, 'old'),
+              //     label: '叠单标志'
+              //   },
+              // },
             ]
           },
         ],

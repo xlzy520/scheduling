@@ -105,7 +105,7 @@
               {formItem: {prop: 'paperLength_original', label: '订单米数：'}},
               {formItem: {prop: 'wasteWidth_original', label: '修边(mm)：'}},
               {formItem: {prop: 'wasteRate_original', label: '修边率：'}},
-              {formItem: {prop: 'stackFlag_original', label: '叠单标志：'}},
+              // {formItem: {prop: 'stackFlag_original', label: '叠单标志：'}},
             ]
           },
         ],
