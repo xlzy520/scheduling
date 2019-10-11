@@ -22,36 +22,37 @@
           {
             formOptions: [
               {
-                type: 'custom',
+                // type: 'custom',
+                type: 'select',
                 formItem: {
                   prop: 'paperSize',
                   label: '最优门幅'
                 },
                 attrs: {
                   keyMap: {
-                    value: 'pageSize',
-                    label: 'pageSize'
+                    value: 'paperSize',
+                    label: 'paperSize'
                   },
                   options: this.paperSize_arr
                 },
-                component: {
-                  props: ['options', 'value'],
-                  render() {
-                    let _options = this.options.map(obj=>{
-                      return (
-                        <el-option value={obj['paperSize']}>
-                          <span>{obj['paperSize']}</span> |&nbsp;
-                          <span class="frr">修边率 {obj[orderKeys.trimRate]}</span>
-                        </el-option>
-                      );
-                    });
-                    return (
-                      <el-select value={this.value} on-input={(val)=>this.$emit('input', val)}>
-                        {_options}
-                      </el-select>
-                    );
-                  }
-                }
+                // component: {
+                //   props: ['options', 'value'],
+                //   render() {
+                //     let _options = this.options.map(obj=>{
+                //       return (
+                //         <el-option value={obj['paperSize']}>
+                //           <span>{obj['paperSize']}</span> |&nbsp;
+                //           <span class="frr">修边率 {obj[orderKeys.trimRate]}</span>
+                //         </el-option>
+                //       );
+                //     });
+                //     return (
+                //       <el-select value={this.value} on-input={(val)=>this.$emit('input', val)}>
+                //         {_options}
+                //       </el-select>
+                //     );
+                //   }
+                // }
               },
               {
                 formItem: {
