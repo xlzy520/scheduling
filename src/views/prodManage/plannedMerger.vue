@@ -40,6 +40,7 @@
   import {orderKeys} from "../../utils/system/constant/dataKeys";
   import plannedMergerService from "../../api/service/plannedMerger";
   import materialSizeInput from "../../components/materialSizeInput";
+  import fluteTypeSelect from "../../components/fluteTypeSelect";
   import editDialog from "./plannedMergerModule/editDialog";
   import editLinePressDialog from "./plannedMergerModule/editLinePressDialog";
   import lookDialog from "./plannedMergerModule/lookDialog";
@@ -70,34 +71,7 @@
             attrs: {
               default: ['all']
             },
-            component: {
-              props: ['value', 'default'],
-              render() {
-                // 全选逻辑
-                const input = (arr) => {
-                  let realArr;
-                  let lastValue = arr[arr.length - 1];
-                  if (lastValue === 'all') {
-                    realArr = [lastValue];
-                  } else {
-                    realArr = arr.filter(val => val !== 'all');
-                  }
-                  if (!arr.length) {
-                    realArr = ['all'];
-                  }
-                  this.$emit('input', realArr);
-                };
-                return (
-                  <dj-select value={this.value}
-                             collapse-tags
-                             type="multiple"
-                             default={this.default}
-                             options={this.$enum.fluteType}
-                             onInput={input}
-                  ></dj-select>
-                );
-              }
-            }
+            component: fluteTypeSelect
           },
           {
             type: 'custom',

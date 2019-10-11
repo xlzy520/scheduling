@@ -23,6 +23,7 @@
 <script>
   import dayjs from 'dayjs';
   import orderStatisticsService from '../../api/service/orderManage';
+  import fluteTypeSelect from '../../components/fluteTypeSelect';
   export default {
     name: 'orderManage',
     data: function () {
@@ -56,35 +57,7 @@
             attrs: {
               default: ['all']
             },
-            component: {
-              props: ['value', 'default'],
-              render() {
-                // 全选逻辑
-                const input = (arr) => {
-                  let realArr;
-                  let lastValue = arr[arr.length - 1];
-                  if (lastValue === 'all') {
-                    realArr = [lastValue];
-                  } else {
-                    realArr = arr.filter(val => val !== 'all');
-                  }
-                  if (!arr.length) {
-                    realArr = ['all'];
-                  }
-                  console.log(realArr);
-                  this.$emit('input', realArr);
-                };
-                return (
-                  <dj-select value={this.value}
-                             collapse-tags
-                             type="multiple"
-                             default={this.default}
-                             options={this.$enum.fluteType}
-                             onInput={input}
-                  ></dj-select>
-                );
-              }
-            }
+            component: fluteTypeSelect
           },
         ],
         tableData: [],

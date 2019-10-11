@@ -28,6 +28,7 @@
   import lookDialog from './orderManageModule/lookDialog';
   import importDialog from './orderManageModule/importDialog';
   import materialSizeInput from '../../components/materialSizeInput';
+  import fluteTypeSelect from '../../components/fluteTypeSelect';
   import addOrEditOrderDialog from './orderManageModule/addOrEditOrderDialog';
   import orderManageService from '../../api/service/orderManage';
   import { orderKeys } from "../../utils/system/constant/dataKeys";
@@ -143,34 +144,7 @@
             attrs: {
               default: ['all']
             },
-            component: {
-              props: ['value', 'default'],
-              render() {
-                // 全选逻辑
-                const input = (arr) => {
-                  let realArr;
-                  let lastValue = arr[arr.length - 1];
-                  if (lastValue === 'all') {
-                    realArr = [lastValue];
-                  } else {
-                    realArr = arr.filter(val => val !== 'all');
-                  }
-                  if (!arr.length) {
-                    realArr = ['all'];
-                  }
-                  this.$emit('input', realArr);
-                };
-                return (
-                  <dj-select value={this.value}
-                             collapse-tags
-                             type="multiple"
-                             default={this.default}
-                             options={this.$enum.fluteType}
-                             onInput={input}
-                  ></dj-select>
-                );
-              }
-            }
+            component: fluteTypeSelect,
           },
           {
             key: orderKeys.materialName,
