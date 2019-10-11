@@ -32,27 +32,7 @@
   import addOrEditOrderDialog from './orderManageModule/addOrEditOrderDialog';
   import orderManageService from '../../api/service/orderManage';
   import { orderKeys } from "../../utils/system/constant/dataKeys";
-  // const orderKeys = {
-  //   productionNo: 'productionNo',
-  //   orderId: 'orderId',
-  //   customerName: 'customerName',
-  //   productName: 'productName',
-  //   materialName: 'materialName',
-  //   fluteType: 'fluteType',
-  //   orderAmount: 'orderAmount',
-  //   materialSize: 'materialSize',
-  //   orderStatus: 'orderStatus',
-  //   productStatus: 'productStatus',
-  //   deliveryTime: 'deliveryTime',
-  // };
-  function getRange(type, startNum, startUnit = 'day', endNum = 0, endUnit = 'day') {
-    let end = new Date(dayjs().add(endNum + 1, endUnit).format('YYYY-MM-DD'));
-    let start = new Date(dayjs(end).subtract(startNum + endNum, startUnit).valueOf());
-    if (type === 'daterange') {
-      end = dayjs(end).subtract(1, 'day');
-    }
-    return [start, end];
-  }
+
   export default {
     name: 'orderManage',
     data: function () {
@@ -64,32 +44,20 @@
             type: 'date',
             attrs: {
               clearable: false,
-              default: [dayjs(new Date()).subtract(30, 'day').format('YYYY-MM-DD'), dayjs(new Date()).add(1, 'day').format('YYYY-MM-DD')],
-              beforeChange: (val) => {
-                let _val = val;
-                if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(91, 'day');
-                  if (towMonth.isBefore(dayjs(val[1]))) {
-                    this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], towMonth.toDate()];
-                  }
-                  val[0] = dayjs(val[0]).format('YYYY-MM-DD');
-                  val[1] = dayjs(val[1]).format('YYYY-MM-DD');
-                }
-                return _val;
-              },
+              default: this.$method.getDateRange('daterange', 31, 'day', 1),
+              beforeChange: this.$method.getLimitTime,
               pickerOptions: {
                 shortcuts: [
                   {
                     text: '今日',
                     onClick(picker) {
-                      picker.$emit('pick', getRange('daterange', 1));
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 1));
                     }
                   },
                   {
                     text: '明日',
                     onClick(picker) {
-                      picker.$emit('pick', getRange('daterange', 0, 'day', 1));
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 0, 'day', 1));
                     }
                   },
                   {
@@ -111,7 +79,7 @@
                   {
                     text: '近三月',
                     onClick(picker) {
-                      picker.$emit('pick', getRange('daterange', 3, 'month'));
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 3, 'month'));
                     }
                   }
                 ]
@@ -324,7 +292,7 @@
         this.searchData = {
           ...query,
           startArriveTime: query[orderKeys.deliveryTime][0],
-          endArriveTime: dayjs(query[orderKeys.deliveryTime][1]).add(1, 'day').format('YYYY-MM-DD'),
+          endArriveTime: query[orderKeys.deliveryTime][1],
         };
         this.$refs.table.changePage(1);
       },

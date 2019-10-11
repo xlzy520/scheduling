@@ -31,20 +31,9 @@
         searchConfig: [
           {
             label: '分发日期', key: 'timeRange', type: 'date', attrs: {
-              default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
-              beforeChange: (val) => {
-                let _val = val ? [...val] : [];
-                if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(91, 'day');
-                  if (towMonth.isBefore(dayjs(val[1]))) {
-                    this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], dayjs(towMonth).toDate()];
-                  }
-                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD');
-                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD');
-                }
-                return _val;
-              },
+              default: this.$method.getDateRange('daterange', 1),
+              // default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+              beforeChange: this.$method.getLimitTime,
               type: 'daterange',
               clearable: false
             }
@@ -94,8 +83,8 @@
         this.loading = true;
         const { timeRange, ...restSearchData } = this.searchData;
         let post = {
-          startTime: timeRange[0],
-          endTime: timeRange[1],
+          startTime: dayjs(timeRange[0]).format('YYYY-MM-DD'),
+          endTime: dayjs(timeRange[1]).add(1, 'day').format('YYYY-MM-DD'),
           ...restSearchData,
           ...page
         };

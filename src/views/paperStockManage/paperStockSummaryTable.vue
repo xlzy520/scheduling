@@ -20,19 +20,9 @@
             attrs: {
               clearable: false,
               type: 'daterange',
-              default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD HH:mm:ss')],
-              beforeChange: (val) => {
-                let _val = val ? [...val] : [];
-                if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(91, 'day');
-                  if (towMonth.isBefore(dayjs(val[1]))) {
-                    this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], dayjs(towMonth).toDate()];
-                  }
-                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
-                }
-                return _val;
-              }
+              default: this.$method.getDateRange('daterange', 1),
+              // default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD HH:mm:ss')],
+              beforeChange: this.$method.getLimitTime,
             }
             },
           {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},

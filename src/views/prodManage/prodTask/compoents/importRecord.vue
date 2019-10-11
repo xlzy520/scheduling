@@ -23,14 +23,6 @@
   import dayjs from 'dayjs';
   import prodTaskService from '../../../../api/service/prodTask';
   import productionLine from "../../../../api/service/productionLine";
-  function getRange(type, startNum, startUnit = 'day', endNum = 0, endUnit = 'day') {
-    let end = new Date(dayjs().add(endNum + 1, endUnit).format('YYYY-MM-DD'));
-    let start = new Date(dayjs(end).subtract(startNum + endNum, startUnit).valueOf());
-    if (type === 'daterange') {
-      end = dayjs(end).subtract(1, 'day');
-    }
-    return [start, end];
-  }
 
   export default {
     name: 'importRecord',
@@ -40,8 +32,8 @@
           {
             // 默认近三天
             label: '汇入日期', key: 'timeRange', type: 'date', attrs: {
-              default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'),
-                dayjs().format('YYYY-MM-DD 23:59:59')],
+              default: this.$method.getDateRange('daterange', 4, 'day'),
+              // default: [dayjs().subtract(3, 'day').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
               type: 'daterange',
               clearable: false,
               pickerOptions: {
@@ -49,36 +41,24 @@
                   {
                     text: '近7天',
                     onClick(picker) {
-                      picker.$emit('pick', getRange('daterange', 7, 'day'));
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 7, 'day'));
                     }
                   },
                   {
                     text: '近30天',
                     onClick(picker) {
-                      picker.$emit('pick', getRange('daterange', 30, 'day'));
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 30, 'day'));
                     }
                   },
                   {
                     text: '近三月',
                     onClick(picker) {
-                      picker.$emit('pick', getRange('daterange', 3, 'month'));
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 3, 'month'));
                     }
                   }
                 ]
               },
-              beforeChange: (val) => {
-                let _val = val ? [...val] : [];
-                if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(91, 'day');
-                  if (towMonth.isBefore(dayjs(val[1]))) {
-                    this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], dayjs(towMonth).toDate()];
-                  }
-                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
-                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD 23:59:59');
-                }
-                return _val;
-              }
+              beforeChange: this.$method.getLimitTime
             }
           },
           {

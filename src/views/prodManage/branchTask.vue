@@ -64,20 +64,9 @@
             label: '生成时间', key: 'timeRange', type: 'date', attrs: {
               type: 'daterange',
               clearable: false,
-              default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
-              beforeChange: (val) => {
-                let _val = val ? [...val] : [];
-                if (val[0] && val[1]) {
-                  let towMonth = dayjs(val[0]).add(91, 'day');
-                  if (towMonth.isBefore(dayjs(val[1]))) {
-                    this.$message('时间不能超过92天', 'error');
-                    _val = [val[0], dayjs(towMonth).toDate()];
-                  }
-                  _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
-                  _val[1] = dayjs(_val[1]).format('YYYY-MM-DD 23:59:59');
-                }
-                return _val;
-              }
+              default: this.$method.getDateRange('daterange', 1),
+              // default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
+              beforeChange: this.$method.getLimitTime
             }
           },
           {label: '分线状态', key: 'divideState', type: 'select', attrs: {options: branchStatusOptions, default: ''}},

@@ -278,3 +278,27 @@ export const equalsObjMessage = (oldData, newData, needMsg = true)=>{
 export const parseTime = (time, format = 'YYYY-MM-DD') => {
   return time ? dayjs(time).format(format) : '';
 };
+
+export function getDateRange(type, startNum, startUnit = 'day', endNum = 0, endUnit = 'day') {
+  let end = new Date(dayjs().add(endNum, endUnit).add(1, 'day').format('YYYY-MM-DD'));
+  let start = new Date(dayjs(end).subtract(startNum, startUnit).subtract(endNum, endUnit).valueOf());
+  if (type === 'daterange') {
+    start = dayjs(start).format('YYYY-MM-DD 00:00:00');
+    end = dayjs(end).subtract(1, 'day').format('YYYY-MM-DD 23:59:59');
+  }
+  return [start, end];
+}
+
+export function getLimitTime(val) {
+  let _val = val;
+  if (val[0] && val[1]) {
+    let towMonth = dayjs(val[0]).add(91, 'day');
+    if (towMonth.isBefore(dayjs(val[1]))) {
+      this.$message('时间不能超过92天', 'error');
+      _val = [val[0], towMonth.toDate()];
+    }
+    val[0] = dayjs(val[0]).format('YYYY-MM-DD 00:00:00');
+    val[1] = dayjs(val[1]).format('YYYY-MM-DD 23:59:59');
+  }
+  return _val;
+}
