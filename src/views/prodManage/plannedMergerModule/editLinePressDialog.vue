@@ -1,10 +1,10 @@
 <template>
-  <dj-dialog ref="dialog" @close="confirmClose" width="780px" title="调整压线方式" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="confirmClose" width="780px" title="调整压线方式" @confirm="confirm">
     <div v-loading="isLoading">
       <classify-form ref="form" :config="config" :form-data="formData" :column-num="2" :col-rule="colRule"></classify-form>
     </div>
-    <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
-  </dj-dialog>
+    <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
+  </lock-dialog>
 </template>
 <script>
   import plannedMergerService from '../../../api/service/plannedMerger';

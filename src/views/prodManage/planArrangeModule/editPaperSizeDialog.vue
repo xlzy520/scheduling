@@ -1,8 +1,8 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" title="修改门幅" width="400px" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="close" title="修改门幅" width="400px" @confirm="confirm">
     <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
-    <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
-  </dj-dialog>
+    <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
+  </lock-dialog>
 </template>
 <script>
   import { orderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";

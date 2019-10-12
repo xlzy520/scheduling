@@ -1,9 +1,9 @@
 <template>
-  <dj-dialog title="调整排序" ref="dialog" @close="close" @confirm="orderSort" >
+  <lock-dialog title="调整排序" ref="dialog" @close="close" @confirm="orderSort" >
     <div v-loading="loading">
       <dj-form :form-data="formData" ref="form" :form-options="formOptions" ></dj-form>
     </div>
-  </dj-dialog>
+  </lock-dialog>
 </template>
 
 <script>
@@ -35,7 +35,7 @@ export default {
     };
   },
   methods: {
-    orderSort() {
+    orderSort(cb) {
       this.$refs.form.validate(()=>{
         this.loading = true;
         this.dj_api_extend(prodTaskService.processe, this.formData).then(() => {
@@ -44,8 +44,9 @@ export default {
           this.$emit('confirm');
         }).finally(() => {
           this.loading = false;
+          cb();
         });
-      });
+      }, cb);
     },
     close () {
       this.$emit('close');

@@ -15,12 +15,12 @@
       </div>
     </dj-table>
     </page-pane>
-    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
+    <lock-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增原纸代码': '编辑原纸代码'">
       <div class="paper-kind-dialog" v-loading="dialogLoading">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="1"></dj-form>
       </div>
-    </dj-dialog>
+    </lock-dialog>
   </single-page>
 </template>
 
@@ -184,7 +184,7 @@
           this.$refs.dialog.open();
         });
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
             this.dialogLoading = true;
@@ -211,9 +211,11 @@
               this.dialogLoading = false;
             }).catch(() => {
               this.dialogLoading = false;
-            });
+            }).finally(cb);
+          } else {
+            cb();
           }
-        });
+        }, cb);
       },
       close() {
         this.$refs.form.resetFields();

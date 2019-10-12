@@ -16,7 +16,7 @@
         </div>
       </dj-table>
     </page-pane>
-    <dj-dialog width="832px" v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
+    <lock-dialog width="832px" v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增用料代码': '编辑用料代码'">
       <div class="material-code-dialog" v-loading="dialogLoading">
         <div class="optional">
@@ -28,7 +28,7 @@
         </div>
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
       </div>
-    </dj-dialog>
+    </lock-dialog>
   </single-page>
 </template>
 
@@ -210,7 +210,7 @@
         this.searchData = query;
         this.$refs.table.changePage(1);
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
             this.dialogLoading = true;
@@ -239,9 +239,11 @@
               this.dialogLoading = false;
             }).catch(() => {
               this.dialogLoading = false;
-            });
+            }).finally(cb);
+          } else {
+            cb()
           }
-        });
+        }, cb);
       },
       close() {
         this.$refs.dialog.close();

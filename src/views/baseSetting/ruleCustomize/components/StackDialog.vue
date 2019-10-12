@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
+  <lock-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
     <div class="stack-dialog" v-loading="loading">
       <dj-form ref="stackForm" :form-data="stackFormData" :form-options="stackFormOptions" :column-num="3"/>
       <div v-for="(condition, index) in stackConditionFormData" class="condition-item stack">
@@ -35,7 +35,7 @@
       </div>
       <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px;">添加条件</el-button>
     </div>
-  </dj-dialog>
+  </lock-dialog>
 </template>
 
 <script>
@@ -248,11 +248,13 @@
           targetArr[index].splice(childIndex, 1);
         }
       },
-      confirm() {
+      confirm(cb) {
         const old = [this.originStackFormData, this.originStackConditionFormData];
         const latest = [this.stackFormData, this.stackConditionFormData];
         if (!this.$method.equalsObjMessage(old, latest)) {
-          this.$emit('confirm');
+          this.$emit('confirm', cb);
+        } else {
+          cb();
         }
       },
       close() {

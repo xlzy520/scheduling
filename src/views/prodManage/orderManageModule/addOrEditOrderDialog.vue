@@ -1,8 +1,8 @@
 <template>
-    <dj-dialog ref="dialog" @close="close" width="780px" :title="`${isEdit ? '编辑' : '新增'}备料订单`" @confirm="confirm">
+    <lock-dialog ref="dialog" @close="close" width="780px" :title="`${isEdit ? '编辑' : '新增'}备料订单`" @confirm="confirm">
       <dj-form v-loading="isLoading" ref="form" :form-data="formData" :form-options="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
-      <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
-    </dj-dialog>
+      <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
+    </lock-dialog>
 </template>
 <script>
   import materialCodeService from '../../../api/service/materialCode';

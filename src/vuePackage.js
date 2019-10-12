@@ -5,6 +5,7 @@ import djweb, {httpPolicy, listenerPolicy, methods} from 'djweb';
 import page from './components/page';
 import formRules from './utils/system/constant/formRules';
 import classifyForm from './components/classifyForm';
+import lockDialog from './components/lockDialog';
 // import 'djweb/lib/djweb.common.css';
 import filters from './filters';
 import { regs, enumMap} from './utils';
@@ -18,6 +19,7 @@ Vue.use(ELEMENT);
 Vue.use(filters);
 Vue.use(page);
 Vue.use(classifyForm);
+Vue.use(lockDialog);
 
 Vue.prototype.$method = {...methods, ..._methods};
 Vue.prototype.$reg = regs;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dj-dialog ref="dialog" @close="confirmClose" width="1086px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+    <lock-dialog ref="dialog" @close="confirmClose" width="1086px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
       <div v-loading="isTableLoading">
         <p class="font-subhead">基础信息</p>
         <dj-form ref="form"
@@ -28,7 +28,7 @@
                     :column-type="['index']">
         </base-table>
       </div>
-    </dj-dialog>
+    </lock-dialog>
     <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @select-person="changeForkliftDriver"></select-use-person>
   </div>
 </template>
@@ -683,14 +683,16 @@
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           if (!this.effectiveTableData.length) {
             this.$message('纸筒信息不能为空', 'error');
+            cb();
             return;
           }
           if (!this.changeCheck(true)) {
             this.$message('未编辑数据，请确认', 'error');
+            cb();
             return;
           }
           let api;
@@ -717,7 +719,7 @@
             this.$emit('success');
             this.$message('操作成功');
             this.close();
-          });
+          }).finally(cb);
         });
       },
       open(param) {

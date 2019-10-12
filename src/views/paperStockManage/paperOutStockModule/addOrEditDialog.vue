@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dj-dialog ref="dialog" @close="confirmClose" width="1086px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
+    <lock-dialog ref="dialog" @close="confirmClose" width="1086px" :title="isEdit ? '编辑' : '新增'" @confirm="confirm">
       <div v-loading="isTableLoading">
         <!--<el-button @click="scannerAdd('sadasdsadasd')"></el-button>-->
         <p class="font-subhead">基础信息</p>
@@ -30,7 +30,7 @@
                     :column-type="['index']">
         </base-table>
       </div>
-    </dj-dialog>
+    </lock-dialog>
     <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" title="选择责任部门/责任人" @close="selectUsePersonFlag = false" @select-person="changeUserPerson"></select-use-person>
     <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @select-person="changeForkliftDriver"></select-use-person>
   </div>
@@ -529,14 +529,16 @@
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           if (!this.effectiveTableData.length) {
             this.$message('纸筒信息不能为空', 'error');
+            cb();
             return;
           }
           if (!this.changeCheck()) {
             this.$message('页面信息没有变化', 'error');
+            cb();
             return;
           }
           // let message;
@@ -586,8 +588,8 @@
                 this.$set(obj, 'isError', true);
               }
             });
-          });
-        });
+          }).finally(cb);
+        }, cb);
       },
       open(param) {
         this.$refs.dialog.open();

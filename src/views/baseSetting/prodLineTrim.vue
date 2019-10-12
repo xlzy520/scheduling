@@ -16,7 +16,7 @@
       </dj-table>
     </page-pane>
 
-    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" append-to-body
+    <lock-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" append-to-body
                :title="dialogTypeIsAdd?'新增生产线修边': '编辑生产线修边'">
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}" v-loading="dialogLoading">
         <dj-form  v-for="(formOption, index) in formOptions"
@@ -30,7 +30,7 @@
           <el-button type="primary" @click.prevent="addLayer">添加生产线</el-button>
         </div>
       </div>
-    </dj-dialog>
+    </lock-dialog>
   </single-page>
 </template>
 
@@ -289,8 +289,8 @@
           ...this.pageOptions,
         });
       },
-      confirm() {
-        const formValidate = new Promise((resolve) => {
+      confirm(cb) {
+        const formValidate = new Promise((resolve, reject) => {
           let allIsTrue = [];
           this.$refs.form.map((v, index)=>{
             v.validate((valid) => {
@@ -302,7 +302,7 @@
               if (index === this.addLayerNum - 1) {
                 resolve(allIsTrue);
               }
-            });
+            }, reject);
           });
         });
         formValidate.then(res=>{
@@ -332,7 +332,7 @@
                   ...post[0],
                 });
               this.dialogLoading = true;
-              request.then(() => {
+              return request.then(() => {
                 this.close();
                 const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
                 this.$message(message, 'success');
@@ -342,7 +342,7 @@
               });
             }
           }
-        });
+        }).finally(cb);
       },
       close() {
         this.addLayerNum = 1;

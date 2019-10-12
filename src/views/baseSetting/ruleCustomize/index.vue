@@ -147,7 +147,7 @@
         // });
       },
       formValidate(formType) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           let allIsTrue = [];
           this.$refs.dialog.$refs[formType + 'Form'].validate((valid) => {
             if (valid) {
@@ -165,7 +165,7 @@
                   resolve(true);
                 }
               }
-            });
+            }, reject);
           });
         });
       },
@@ -175,7 +175,7 @@
         this.$message(message, 'success');
         this.$refs.table.updateData();
       },
-      stackConfirm() {
+      stackConfirm(cb) {
         this.formValidate('stack').then(()=>{
           const flag = this.$refs.dialog.stackConditionFormData.every((v, index)=>{
             const cuts = v.reduce((pre, cur)=>pre.concat(cur.cut), []);
@@ -202,7 +202,7 @@
             const stackRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
             const stackFormData = this.$method.handleFormDataStartOrEndByZero(
               this.$refs.dialog.stackFormData, ['name', 'produceLineId'], false);
-            stackRequest({
+            return stackRequest({
               ...stackFormData,
               detailModels: detailModels.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['piece'], true))
             }).then(() => {
@@ -212,9 +212,9 @@
               this.$refs.dialog.loading = false;
             });
           }
-        });
+        }).finally(cb);
       },
-      packConfirm() {
+      packConfirm(cb) {
         this.formValidate('pack').then(()=>{
           let flag = true;
           const layers = this.$refs.dialog.getLayers();
@@ -246,7 +246,7 @@
             const packRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addPackRule : ruleCustomizeService.modifyPackRule;
             const packFormData = this.$method.handleFormDataStartOrEndByZero(
               this.$refs.dialog.packFormData, ['name'], false);
-            packRequest({
+            return packRequest({
               ...packFormData,
               packRuleDetails: packRuleDetails.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['packpiece', 'endUnitarea'], true))
             }).then(() => {
@@ -256,7 +256,7 @@
               this.$refs.dialog.loading = false;
             });
           }
-        });
+        }).finally(cb);
       },
       close() {
         this.dialogType = '';

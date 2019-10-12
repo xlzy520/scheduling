@@ -12,12 +12,12 @@
         <el-button type="primary" @click="add">新增</el-button>
       </div>
     </dj-table>
-    <dj-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
+    <lock-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"
                :title="dialogTypeIsAdd?'新增客户打包数量': '编辑客户打包数量'">
       <div class="cpqs-dialog">
         <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
       </div>
-    </dj-dialog>
+    </lock-dialog>
   </div>
 </template>
 
@@ -380,14 +380,14 @@
           ...this.pageOptions,
         });
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           cpqsService.list(this.formData).then(() => {
             this.close();
             const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
             this.$message(message, 'success');
-          });
-        });
+          }).finally(cb);
+        }, cb);
       },
       close() {
         this.$refs.dialog.close();

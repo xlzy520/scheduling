@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog ref="dialog" @close="confirmClose" width="1160px" title="设置单价" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="confirmClose" width="1160px" title="设置单价" @confirm="confirm">
     <div v-loading="isTableLoading">
       <p class="font-subhead">基础信息</p>
       <dj-form ref="form"
@@ -26,7 +26,7 @@
                   :column-type="['index']">
       </base-table>
     </div>
-  </dj-dialog>
+  </lock-dialog>
 </template>
 <script>
   import {djForm} from 'djweb';
@@ -238,10 +238,11 @@
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
-      confirm() {
+      confirm(cb) {
         this.$refs.form.validate(()=>{
           if (!this.changeCheck()) {
             this.$message('未编辑数据，请确认', 'error');
+            cb();
             return;
           }
           this.tableData.forEach(obj=>{
@@ -267,8 +268,8 @@
                 this.$set(obj, 'isError', true);
               }
             });
-          });
-        });
+          }).finally(cb);
+        }, cb);
       },
       open(param) {
         this.$refs.dialog.open();

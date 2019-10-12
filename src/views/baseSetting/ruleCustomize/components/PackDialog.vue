@@ -1,5 +1,5 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" @confirm="confirm"
+  <lock-dialog ref="dialog" @close="close" @confirm="confirm"
              :title="dialogTypeIsAdd?'新增打包规则': '编辑打包规则'">
     <div class="pack-dialog" v-loading="loading">
       <dj-form ref="packForm" :form-data="packFormData" :form-options="packFormOptions"
@@ -45,7 +45,7 @@
       </div>
       <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px;">添加条件</el-button>
     </div>
-  </dj-dialog>
+  </lock-dialog>
 </template>
 
 <script>
@@ -277,11 +277,13 @@
           });
         }
       },
-      confirm() {
+      confirm(cb) {
         const old = [this.originPackFormData, this.originPackConditionFormData];
         const latest = [this.packFormData, this.packConditionFormData];
         if (!this.$method.equalsObjMessage(old, latest)) {
-          this.$emit('confirm');
+          this.$emit('confirm', cb);
+        } else {
+          cb();
         }
       },
       close() {

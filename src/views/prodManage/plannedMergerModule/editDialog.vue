@@ -1,8 +1,8 @@
 <template>
-  <dj-dialog ref="dialog" @close="confirmClose" width="400px" title="编辑" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="confirmClose" width="400px" title="编辑" @confirm="confirm">
     <dj-form v-loading="isLoading" ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
-    <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
-  </dj-dialog>
+    <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
+  </lock-dialog>
 </template>
 <script>
   import {orderKeys} from '../../../utils/system/constant/dataKeys';

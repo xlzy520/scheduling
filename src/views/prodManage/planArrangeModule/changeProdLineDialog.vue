@@ -1,10 +1,10 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" width="780px" title="更换生产线" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="close" width="780px" title="更换生产线" @confirm="confirm">
     <div v-loading="isLoading">
       <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="2" :col-rule="colRule"></dj-form>
     </div>
-    <dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>
-  </dj-dialog>
+    <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
+  </lock-dialog>
 </template>
 <script>
   import productionLineService from '../../../api/service/productionLine';
