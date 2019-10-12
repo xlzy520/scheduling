@@ -157,7 +157,7 @@
         this.loading = true;
         this.dj_api_extend(prodTaskService.list, {
           ...data,
-          ...this.searchData
+          search: this.searchData
         }).then(res => {
           const {list, total} = res;
           // 拆解vformula，赋值压线1-7
