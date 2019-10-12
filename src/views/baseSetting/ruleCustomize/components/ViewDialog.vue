@@ -37,7 +37,7 @@
         stackDetail: [
           {prop: 'produceLineName', label: '生产线'},
           {prop: 'maxOrderCut', label: '订单最大片数'},
-          {prop: 'maxStackHeight', label: '最小订单刀数'},
+          {prop: 'maxStackHeight', label: '订单最小米数'},
           {prop: 'maxStackCount', label: '最大堆叠单数'},
         ],
         packDetail: [
