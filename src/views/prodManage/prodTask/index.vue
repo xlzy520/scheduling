@@ -23,7 +23,7 @@
           >
             <div slot="btn">
               <el-button type="primary" @click="removeOrder" :loading="removeLoading">移除订单</el-button>
-              <el-button type="primary" @click="adjustSort">调整排序</el-button>
+              <!--<el-button type="primary" @click="adjustSort">调整排序</el-button>-->
               <el-button type="primary" @click="printQRCode">打印二维码</el-button>
               <el-button type="primary" @click="printAll" :loading="printLoading">打印全部</el-button>
               <el-button type="primary" @click="ViewImportRecord">查看汇入记录</el-button>
