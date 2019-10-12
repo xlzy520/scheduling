@@ -288,6 +288,7 @@
         this.$emit('close');
       },
       renderAllCondition(id) {
+        this.open();
         this.loading = true;
         ruleCustomizeService.getRuleDetail({
           ruleId: id
