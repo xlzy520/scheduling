@@ -201,7 +201,8 @@
             this.removeLoading = true;
             const idList = this.checkedList.map(v=> v.produceOrderNumber);
             this.dj_api_extend(prodTaskService.removeOrder, {
-              produceOrderNumbers: idList
+              produceOrderNumbers: idList,
+              lineId: this.activeTab
             }).then(() => {
               this.$message('移除成功', 'success');
             }).finally(() => {
