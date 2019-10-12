@@ -179,7 +179,9 @@ const initProdLineData = {
         this.dialogVisible = true;
         this.dialogTypeIsAdd = false;
         let copyData = JSON.parse(JSON.stringify(this.prodLineData[this.activeTab - 1]));
-        copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
+        if (copyData.jccs.commonTilemodel) {
+          copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
+        }
         this.$nextTick(()=>{
           this.$refs.editAdd.prodLineData = JSON.parse(JSON.stringify(copyData));
           this.$refs.editAdd.lineId = this.idMap[this.activeTab - 1];
