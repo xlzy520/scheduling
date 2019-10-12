@@ -90,3 +90,10 @@ div:not(.under-table) > .base-table {
 //.el-message-box__wrapper .cancel-button.is-loading .el-icon-loading {
 //  display: none;
 //}
+// TODO 临时增加该样式解决表单bug, 组件库更新后删除
+.dj-form .el-form-item.is-empty.is-error .el-input__inner,
+.dj-form .el-form-item.is-empty.is-error .el-input__inner:focus,
+.dj-form .el-form-item.is-empty.is-error .el-textarea__inner,
+.dj-form .el-form-item.is-empty.is-error .el-textarea__inner:focus {
+  border-color: red;
+}
