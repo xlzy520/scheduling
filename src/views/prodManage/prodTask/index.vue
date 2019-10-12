@@ -194,13 +194,10 @@
           this.$message('请选择订单', 'error');
           return false;
         } else {
-          this.$confirm('请先将所选订单从生管系统移除，再从生产任务页面移除订单', '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
+          this.$method.tipBox(`请先将所选订单从生管系统移除，再从生产任务页面移除订单`, ()=>{
             this.removeLoading = true;
             const idList = this.checkedList.map(v=> v.produceOrderNumber);
-            this.dj_api_extend(prodTaskService.removeOrder, {
+            return this.dj_api_extend(prodTaskService.removeOrder, {
               produceOrderNumbers: idList,
               lineId: this.activeTab
             }).then(() => {
@@ -212,6 +209,23 @@
               }, 500);
             });
           });
+          // this.$confirm('请先将所选订单从生管系统移除，再从生产任务页面移除订单', '', {
+          //   type: 'warning',
+          //   showClose: false,
+          // }).then(() => {
+          //   this.removeLoading = true;
+          //   const idList = this.checkedList.map(v=> v.produceOrderNumber);
+          //   this.dj_api_extend(prodTaskService.removeOrder, {
+          //     produceOrderNumbers: idList
+          //   }).then(() => {
+          //     this.$message('移除成功', 'success');
+          //   }).finally(() => {
+          //     this.removeLoading = false;
+          //     setTimeout(()=>{
+          //       this.$refs.search.search();
+          //     }, 500);
+          //   });
+          // });
 
         }
       },

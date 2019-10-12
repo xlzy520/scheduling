@@ -118,12 +118,9 @@ const initProdLineData = {
           effected: val ? 0 : 1,
         };
         let text = val ? '禁用' : '启用';
-        this.$confirm(`确定${text}该条内容吗？`, '', {
-          type: 'warning',
-          showClose: false,
-        }).then(() => {
+        this.$method.tipBox(`确定${text}该条内容吗？`, ()=>{
           this.statusLoading = true;
-          this.dj_api_extend(productionLineService.changeLineEffected, post).then(() => {
+          return this.dj_api_extend(productionLineService.changeLineEffected, post).then(() => {
             // this.lineStatus = val;
             this.$message(`${text}成功`, 'success');
             this.tabsColumn[this.activeTab - 1].isEffected = val ? 0 : 1;
@@ -132,6 +129,20 @@ const initProdLineData = {
             this.statusLoading = false;
           });
         });
+        // this.$confirm(`确定${text}该条内容吗？`, '', {
+        //   type: 'warning',
+        //   showClose: false,
+        // }).then(() => {
+        //   this.statusLoading = true;
+        //   this.dj_api_extend(productionLineService.changeLineEffected, post).then(() => {
+        //     // this.lineStatus = val;
+        //     this.$message(`${text}成功`, 'success');
+        //     this.tabsColumn[this.activeTab - 1].isEffected = val ? 0 : 1;
+        //     this.tabClick();
+        //   }).finally(() => {
+        //     this.statusLoading = false;
+        //   });
+        // });
       },
 
       getData(activeTab) {

@@ -299,12 +299,13 @@
       },
       confirmClose() {
         if (this.changeCheck()) {
-          this.$confirm('信息未保存，确认是否关闭？', '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
-            this.close();
-          });
+          this.$method.tipBox('信息未保存，确认是否关闭？', this.close);
+          // this.$confirm('信息未保存，确认是否关闭？', '', {
+          //   type: 'warning',
+          //   showClose: false,
+          // }).then(() => {
+          //   this.close();
+          // });
         } else {
           this.close();
         }

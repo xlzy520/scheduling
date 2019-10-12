@@ -98,17 +98,20 @@ export function fromEntries(iterable) {
 //弹出提示框
 export const tipBox = (txt, fn1) => {
   return new Promise(((resolve, reject) => {
-    MessageBox.confirm(txt, '提示', {
+    MessageBox.confirm(txt, '', {
       confirmButtonText: '确 认',
       cancelButtonText: '取 消',
+      cancelButtonClass: 'cancel-button',
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      closeOnHashChange: false,
       type: 'warning',
       showClose: false,
       beforeClose: (action, instance, done) => {
         if (action === 'confirm') {
           if (fn1 && fn1.constructor === Function) {
-            // let oldConfirmButtonText = instance.confirmButtonText;
             instance.confirmButtonLoading = true;
-            // instance.confirmButtonText = '执行中...';
+            instance.cancelButtonLoading = true;
             let result = fn1();
             if (result && typeof result.then === 'function') {
               result.then(() => {
@@ -119,17 +122,21 @@ export const tipBox = (txt, fn1) => {
                 reject(e);
               }).finally(() => {
                 instance.confirmButtonLoading = false;
-                // instance.confirmButtonText = oldConfirmButtonText;
+                instance.cancelButtonLoading = false;
               });
             } else {
               done();
+              resolve();
               instance.confirmButtonLoading = false;
+              instance.cancelButtonLoading = false;
             }
           } else {
             done();
+            resolve();
           }
         } else {
           done();
+          resolve();
         }
       }
     });

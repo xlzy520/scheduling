@@ -345,17 +345,25 @@
         });
       },
       deleteRow(row) {
-        this.$confirm('确定删除该条内容？', '', {
-          type: 'warning',
-          showClose: false,
-        }).then(() => {
-          cpqsService.list({
+        this.$method.tipBox('确定删除该条内容？', ()=>{
+          return cpqsService.list({
             id: row.id
           }).then(() => {
             this.$message('禁用成功', 'success');
             this.getTableData();
           });
         });
+        // this.$confirm('确定删除该条内容？', '', {
+        //   type: 'warning',
+        //   showClose: false,
+        // }).then(() => {
+        //   cpqsService.list({
+        //     id: row.id
+        //   }).then(() => {
+        //     this.$message('禁用成功', 'success');
+        //     this.getTableData();
+        //   });
+        // });
       },
       edit(row) {
         this.dialogVisible = true;

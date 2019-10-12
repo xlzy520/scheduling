@@ -90,15 +90,21 @@
           effected: row.isEffected ? 0 : 1,
         };
         let text = row.isEffected ? '禁用' : '启用';
-        this.$confirm(`确定${text}该条内容吗？`, '', {
-          type: 'warning',
-          showClose: false,
-        }).then(() => {
-          this.dj_api_extend(ruleCustomizeService.changeEffected, post).then(() => {
+        this.$method.tipBox(`确定${text}该条内容吗？`, ()=>{
+          return this.dj_api_extend(ruleCustomizeService.changeEffected, post).then(() => {
             this.$message(`${text}成功`, 'success');
             this.$refs.table.updateData();
           });
         });
+        // this.$confirm(`确定${text}该条内容吗？`, '', {
+        //   type: 'warning',
+        //   showClose: false,
+        // }).then(() => {
+        //   this.dj_api_extend(ruleCustomizeService.changeEffected, post).then(() => {
+        //     this.$message(`${text}成功`, 'success');
+        //     this.$refs.table.updateData();
+        //   });
+        // });
       },
       view(row) {
         this.dialogType = (row.typeName === '叠单规则' ? 'stack' : 'pack') + '_view';
@@ -124,15 +130,21 @@
       },
       closeShrink() {
         const text = this.getShrinkText();
-        this.$confirm(`确定${text}缩边吗？`, '', {
-          type: 'warning',
-          showClose: false,
-        }).then(() => {
-          this.dj_api_extend(ruleCustomizeService.changeShrinkType).then(()=>{
+        this.$method.tipBox(`确定${text}缩边吗？`, ()=>{
+          return this.dj_api_extend(ruleCustomizeService.changeShrinkType).then(()=>{
             this.$message(`${text}成功`, 'success');
             this.getShrink();
           });
         });
+        // this.$confirm(`确定${text}缩边吗？`, '', {
+        //   type: 'warning',
+        //   showClose: false,
+        // }).then(() => {
+        //   this.dj_api_extend(ruleCustomizeService.changeShrinkType).then(()=>{
+        //     this.$message(`${text}成功`, 'success');
+        //     this.getShrink();
+        //   });
+        // });
       },
       formValidate(formType) {
         return new Promise((resolve) => {

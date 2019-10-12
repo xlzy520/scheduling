@@ -406,10 +406,7 @@
                 this.$message('请选择门幅范围', 'warning');
                 return false;
               }
-              this.$confirm('是否保存填写内容？', '', {
-                type: 'warning',
-                showClose: false,
-              }).then(() => {
+              this.$method.tipBox('是否保存填写内容？', () => {
                 this.loading = true;
                 let params = Object.keys(this.prodLineData).reduce((sum, val) => {
                   sum = Object.assign(sum, this.prodLineData[val]);
@@ -430,7 +427,7 @@
                 // 移除开头的0和结尾的.00
                 params = this.$method.handleFormDataStartOrEndByZero(params, ['id'], false);
                 const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
-                service(params).then(() => {
+                return service(params).then(() => {
                   this.loading = false;
                   this.$emit('close');
                   const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
@@ -440,6 +437,40 @@
                   this.loading = false;
                 });
               });
+              // this.$confirm('是否保存填写内容？', '', {
+              //   type: 'warning',
+              //   showClose: false,
+              // }).then(() => {
+              //   this.loading = true;
+              //   let params = Object.keys(this.prodLineData).reduce((sum, val) => {
+              //     sum = Object.assign(sum, this.prodLineData[val]);
+              //     return sum;
+              //   }, {});
+              //   params.commonTilemodel = params.commonTilemodel.join('、');
+              //   if (!this.dialogTypeIsAdd) {
+              //     params.id = this.lineId;
+              //     params.lineNum = this.lineNum;
+              //     params.isEffected = 0;
+              //   }
+              //   if (params.basketType === 1) {
+              //     delete params.stackCount;
+              //   }
+              //   if (params.slimachNumbers === 1 && params.slimachWdoubleMinLength === '') {
+              //     delete params.slimachWdoubleMinLength;
+              //   }
+              //   // 移除开头的0和结尾的.00
+              //   params = this.$method.handleFormDataStartOrEndByZero(params, ['id'], false);
+              //   const service = this.dialogTypeIsAdd ? productionLineService.addLine : productionLineService.modifyLine;
+              //   service(params).then(() => {
+              //     this.loading = false;
+              //     this.$emit('close');
+              //     const message = this.dialogTypeIsAdd ? '新增成功' : '编辑成功';
+              //     this.$message(message, 'success');
+              //     this.$emit('get-data', this.lineNum);
+              //   }).catch(() => {
+              //     this.loading = false;
+              //   });
+              // });
             }
           }
         });
@@ -495,12 +526,15 @@
       },
       close() {
         if (!this.isModify(false)) {
-          this.$confirm('生产线信息未保存，确认是否关闭？', '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
+          this.$method.tipBox('生产线信息未保存，确认是否关闭？', () => {
             this.$emit('close');
           });
+          // this.$confirm('生产线信息未保存，确认是否关闭？', '', {
+          //   type: 'warning',
+          //   showClose: false,
+          // }).then(() => {
+          //   this.$emit('close');
+          // });
         } else {
           this.$emit('close');
         }

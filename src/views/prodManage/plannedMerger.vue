@@ -525,12 +525,15 @@
             } else {
               tip = '所选合并单数超过8单，是否仍要继续合并？';
             }
-            return this.$confirm(tip, '', {
-              type: 'warning',
-              showClose: false,
-            }).then(() => {
+            return this.$method.tipBox(tip, ()=>{
               return this.mergeOrder(post.orderList);
             });
+            // return this.$confirm(tip, '', {
+            //   type: 'warning',
+            //   showClose: false,
+            // }).then(() => {
+            //   return this.mergeOrder(post.orderList);
+            // });
           }
         }).finally(cb);
       },
@@ -578,15 +581,21 @@
         };
         let obj = map[type];
         if (obj) {
-          this.$confirm(obj.tip, '', {
-            type: 'warning',
-            showClose: false,
-          }).then(() => {
+          this.$method.tipBox(obj.tip, ()=>{
             return this.dj_api_extend(obj.api, {orderList: this.selectList.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
               this.$message(obj.msg);
               this.refresh();
             });
           }).finally(cb);
+          // this.$confirm(obj.tip, '', {
+          //   type: 'warning',
+          //   showClose: false,
+          // }).then(() => {
+          //   return this.dj_api_extend(obj.api, {orderList: this.selectList.map(obj=>this.$method.cloneData([orderKeys.productionNo], {}, obj))}).then(()=>{
+          //     this.$message(obj.msg);
+          //     this.refresh();
+          //   });
+          // }).finally(cb);
         } else {
           cb();
         }

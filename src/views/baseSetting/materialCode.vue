@@ -171,15 +171,21 @@
           effected: row.isEffected ? 0 : 1,
         };
         let text = row.isEffected ? '禁用' : '启用';
-        this.$confirm(`确定${text}该条内容吗？`, '', {
-          type: 'warning',
-          showClose: false,
-        }).then(() => {
-          this.dj_api_extend(materialCodeService.changeEffected, post).then(() => {
-            this.$message(`${text}成功`, 'success');
+        this.$method.tipBox(`确定${text}该条内容吗？`, ()=>{
+          return this.dj_api_extend(materialCodeService.changeEffected, post).then(() => {
+            this.$message(`${text}成功`);
             row.isEffected = !row.isEffected;
           });
         });
+        // this.$confirm(`确定${text}该条内容吗？`, '', {
+        //   type: 'warning',
+        //   showClose: false,
+        // }).then(() => {
+        //   this.dj_api_extend(materialCodeService.changeEffected, post).then(() => {
+        //     this.$message(`${text}成功`, 'success');
+        //     row.isEffected = !row.isEffected;
+        //   });
+        // });
       },
       edit(row) {
         this.dialogVisible = true;
