@@ -2,7 +2,7 @@
   <dj-dialog ref="dialog" v-bind="$attrs" v-on="$listeners">
     <!--<slot></slot>-->
     <div v-if="!($slots.footer || $slots['footer-confirm'])" slot="footer">
-      <el-button :loading="isLoading" @click="closeCallback">取 消</el-button>
+      <el-button :disabled="isLoading" @click="closeCallback">取 消</el-button>
       <el-button :loading="isLoading" type="primary" @click="confirmCallback">确 认</el-button>
     </div>
     <template v-for="name in Object.keys($slots)" :slot="name">

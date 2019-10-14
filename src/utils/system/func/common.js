@@ -101,7 +101,6 @@ export const tipBox = (txt, fn1) => {
     MessageBox.confirm(txt, '', {
       confirmButtonText: '确 认',
       cancelButtonText: '取 消',
-      cancelButtonClass: 'cancel-button',
       closeOnClickModal: false,
       closeOnPressEscape: false,
       closeOnHashChange: false,
@@ -112,6 +111,7 @@ export const tipBox = (txt, fn1) => {
           if (fn1 && fn1.constructor === Function) {
             instance.confirmButtonLoading = true;
             instance.cancelButtonLoading = true;
+            instance.cancelButtonClass = 'is-disabled';
             let result = fn1();
             if (result && typeof result.then === 'function') {
               result.then(() => {
@@ -123,6 +123,7 @@ export const tipBox = (txt, fn1) => {
               }).finally(() => {
                 instance.confirmButtonLoading = false;
                 instance.cancelButtonLoading = false;
+                instance.cancelButtonClass = '';
               });
             } else {
               done();

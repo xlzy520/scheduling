@@ -87,9 +87,15 @@ div:not(.under-table) > .base-table {
 .dj-form .el-form-item__content {
   word-break: break-word;
 }
-//.el-message-box__wrapper .cancel-button.is-loading .el-icon-loading {
-//  display: none;
-//}
+// 提示框取消按钮不展示加载动画，只置灰
+.el-message-box__wrapper .el-button.is-disabled {
+  [class*=dj-common-] + span, [class*=el-icon-] + span {
+    margin-left: 0;
+  }
+  .el-icon-loading {
+    display: none;
+  }
+}
 // TODO 临时增加该样式解决表单bug, 组件库更新后删除
 .dj-form .el-form-item.is-empty.is-error .el-input__inner,
 .dj-form .el-form-item.is-empty.is-error .el-input__inner:focus,
