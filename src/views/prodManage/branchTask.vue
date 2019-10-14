@@ -83,7 +83,7 @@
         tableData: [],
         tableColumns: [
           {
-            label: '操作', prop: 'operation', fixed: 'right', width: '70',
+            label: '操作', prop: 'operation', fixed: 'right', width: '84',
             render: (h, {props: {row}}) => {
               return (
                 <a class={row.divideState === '已处理' ? 'divideState-completed' : ''}
