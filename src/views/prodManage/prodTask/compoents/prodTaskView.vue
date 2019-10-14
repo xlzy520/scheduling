@@ -33,7 +33,7 @@
                 }
               },
               {formItem: {prop: 'customerName', label: '客户名称：'}},
-              {formItem: {prop: 'sort', label: '订单排序：'}},
+              // {formItem: {prop: 'sort', label: '订单排序：'}},
               {
                 type: 'custom', isText: true, formItem: {prop: 'orderFlag', label: '订单标记：'},
                 render: (h) => {
