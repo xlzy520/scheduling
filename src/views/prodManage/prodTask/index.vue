@@ -12,7 +12,7 @@
             :data="tableData"
             scroll-load
             :columns="tableColumns"
-            :column-type="['selection']"
+            :column-type="['selection', 'index']"
             @selection-change="selectionChange"
             :total="pageTotal"
             height="100%"
@@ -236,7 +236,7 @@
         const {timeRange, guige, paperSize, ...restQuery } = query;
         this.timeRange = timeRange;
         let params = {
-          affluxTimeStart:timeRange[0],
+          affluxTimeStart: timeRange[0],
           affluxTimeEnd: timeRange[1],
           isDeleted: 0,
           ...restQuery,
@@ -286,6 +286,10 @@
     },
     mounted() {
       this.getLineData();
+      this.$nextTick(() => {
+        // 初始隐藏排序选择
+        this.$refs.table.filteredColumn.splice(0, 1);
+      });
     },
   };
 </script>
