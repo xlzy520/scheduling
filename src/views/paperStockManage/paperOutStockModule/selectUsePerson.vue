@@ -1,6 +1,6 @@
 <template>
   <dj-dialog ref="dialog" @close="close" width="556px" :title="title" @confirm="confirm">
-    <div class="dialog-wrap">
+    <div v-loading="isLoading" class="dialog-wrap">
       <el-tree @node-click="handleNodeClick"
                :props="props"
                :load="remote"
@@ -18,6 +18,7 @@
     data: function () {
       return {
         // data: [],
+        isLoading: false,
         props: {
           label: 'label',
           // children: 'zones',
@@ -74,7 +75,10 @@
       remote(node, resolve) {
         let {level, data} = node;
         if (level === 0) {
-          this.getDepartment().then(resolve);
+          this.isLoading = true;
+          this.getDepartment().then(resolve).finally(()=>{
+            this.isLoading = false;
+          });
         } else if (level === 1) {
           this.getRole(data.value).then(resolve);
         } else if (level === 2) {
