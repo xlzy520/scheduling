@@ -190,7 +190,7 @@
           {
             prop: orderKeys.productionNo,
             label: '生产编号',
-            width: 130
+            width: 160
           },
           {
             prop: orderKeys.customerName,
