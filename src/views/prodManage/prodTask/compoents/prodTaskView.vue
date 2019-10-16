@@ -96,7 +96,7 @@
             title: '原生产信息',
             hasLine: true,
             formOptions: [
-              {formItem: {prop: 'paperSize_original', label: '最优门幅：'}},
+              {formItem: {prop: 'calPaperSize_original', label: '最优门幅：'}},
               {formItem: {prop: 'cut_original', label: '切数：'}},
               {formItem: {prop: 'paperCount_original', label: '刀数：'}},
               {formItem: {prop: 'pieceAmount_original', label: '生产数量：'}},
