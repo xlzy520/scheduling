@@ -288,11 +288,15 @@
     },
     methods: {
       getSearchData(query) {
-        this.searchData = query;
+        // this.searchData = query;
+        let tileModel = query[orderKeys.fluteType].filter(str=>str !== 'all');
         this.searchData = {
           ...query,
           startArriveTime: query[orderKeys.deliveryTime][0],
           endArriveTime: query[orderKeys.deliveryTime][1],
+          materialLength: query[orderKeys.materialSize][0],
+          materialWidth: query[orderKeys.materialSize][1],
+          tileModel: tileModel.length ? tileModel : null
         };
         this.$refs.table.changePage(1);
       },
@@ -300,15 +304,15 @@
         this.$refs.table.updateData();
       },
       getList(page) {
-        let tileModel = this.searchData[orderKeys.fluteType].filter(str=>str !== 'all');
+        // let tileModel = this.searchData[orderKeys.fluteType].filter(str=>str !== 'all');
         let post = {
           ...page,
           ...this.searchData,
           // startArriveTime: this.searchData[orderKeys.deliveryTime][0],
           // endArriveTime: this.searchData[orderKeys.deliveryTime][1],
-          materialLength: this.searchData[orderKeys.materialSize][0],
-          materialWidth: this.searchData[orderKeys.materialSize][1],
-          tileModel: tileModel.length ? tileModel : null
+          // materialLength: this.searchData[orderKeys.materialSize][0],
+          // materialWidth: this.searchData[orderKeys.materialSize][1],
+          // tileModel: tileModel.length ? tileModel : null
         };
         this.isTableLoading = true;
         this.tableData = [];
@@ -331,7 +335,7 @@
         this.$nextTick(()=>{
           let params = this.checkedList;
           if (bool === true) {
-            params = bool;
+            params = this.searchData;
           }
           this.$refs.importDialog.open(params);
         });

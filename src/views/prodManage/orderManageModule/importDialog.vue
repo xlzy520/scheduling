@@ -62,6 +62,7 @@
         prodLine_arr: [],
         isImportAll: false,
         importing: false,
+        searchData: {}
       };
     },
     created() {
@@ -75,12 +76,13 @@
           let api;
           let post = {
             ...this.formData,
-            orderList: this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null
           };
           if (this.isImportAll) {
             api = orderManageService.importAllOrder;
+            Object.assign(post, this.searchData);
           } else {
             api = orderManageService.importOrder;
+            post.orderList = this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null;
           }
           this.dj_api_extend(api, post).then(()=>{
             this.$refs.progress.done(()=>{
@@ -104,13 +106,13 @@
           });
         });
       },
-      open(orders) {
-        console.log(orders);
+      open(params) {
         this.$refs.dialog.open();
-        if (orders === true) {
-          this.isImportAll = true;
+        if (Array.isArray(params)) {
+          this.orders = params;
         } else {
-          this.orders = orders;
+          this.searchData = params;
+          this.isImportAll = true;
         }
       },
       close() {
