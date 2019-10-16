@@ -62,7 +62,8 @@
   @media print {
     body {
       position: static !important;
-      min-width: auto !important;
+      // todo min-width原本应该设成auto，但是设成auto订单标签打印内容太大，所以暂时设成1280px以缩小打印内容
+      min-width: 1280px !important;
       min-height: auto !important;
       padding: 0 !important;
       //解决弹框打开状态打印时无法分页的问题
