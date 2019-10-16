@@ -29,14 +29,14 @@
                       @update-data="getList">
               <div slot="btn">
                 <div>
-                  <el-button v-if="selectList.length" type="primary" @click="openDialog('changeProdLineDialog', selectList, true)">更换生产线</el-button>
-                  <el-button v-if="selectList.length" type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
+                  <el-button v-show="selectList.length" type="primary" @click="openDialog('changeProdLineDialog', selectList, true)">更换生产线</el-button>
+                  <el-button v-show="selectList.length" type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
                   <dj-button type="primary" @click="sort">排序</dj-button>
-                  <dj-button v-if="selectList.length" type="primary" @click="calcPaperSize">计算门幅</dj-button>
-                  <dj-button v-if="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
-                  <el-button v-if="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
-                  <el-button v-if="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
-                  <el-button v-if="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
+                  <dj-button v-show="selectList.length" type="primary" @click="calcPaperSize">计算门幅</dj-button>
+                  <dj-button v-show="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
+                  <el-button v-show="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
+                  <el-button v-show="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
+                  <el-button v-show="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
                 </div>
                 <p class="font-total">总米数：{{totalMeter}}</p>
               </div>
@@ -455,13 +455,22 @@
         }).finally(cb);
       },
       stackUp(cb) {
+        if (this.$enum.basketType['big'].value !== this.prodLine_arr_map[this.lineId]['basketType']) {
+          this.$message('小吊篮无法叠单', 'error');
+          cb();
+          return;
+        }
         this.dj_api_extend(planArrangeService.stackUp, {lineId: this.lineId}).then(()=>{
           this.$message('叠单成功');
           this.refresh();
         }).finally(cb);
       },
       calcPaperSize(cb) {
-        this.$message('计算中', 'info');
+        if (!this.selectList.length) {
+          this.$message('请选择订单', 'error');
+          cb();
+          return;
+        }
         this.dj_api_extend(planArrangeService.calcPaperSize, {banList: this.banPaperSize_arr, orderList: this.$method.getOrderList(this.selectList), lineId: this.lineId}).then(()=>{
           this.$message('计算门幅成功');
         }).finally(()=>{
