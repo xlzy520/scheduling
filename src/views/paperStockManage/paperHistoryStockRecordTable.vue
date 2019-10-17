@@ -36,15 +36,7 @@
                 value: 'warehouseId'
               },
               options: [],
-            },
-            listeners: {
-              input: (val) => {
-                if (!['', undefined, null].includes(val)) {
-                  this.dj_api_extend(this.getWarehouseArea, val);
-                }
-              }
-            }
-          }
+            }}
         ],
         tableColumns: [
           {label: '入库时间', prop: 'createTime', width: 180,
@@ -79,22 +71,25 @@
         },
         totalQuantity: 0,
         totalQuality: 0,
+        auth: false
       };
     },
     methods: {
       getWarehouse() {
         return this.dj_api_extend(paperWarehouseService.getPaperWarehouse).then((res) => {
-          this.searchConfig[2].attrs.options = res.list || [];
+          this.searchConfig[5].attrs.options = res.list || [];
         });
-      },
-      getWarehouseArea(id) {
-        return this.dj_api_extend(paperWarehouseService.getAreaAllList, {warehouseId: id}).then((res) => {
-          this.searchConfig[3].attrs.options = res.list || [];
-        });
-      },
+      }
     },
     mounted() {
       this.getWarehouse();
+    },
+    created() {
+      paperWarehouseService.judgeAmountAuth().then(res=>{
+        if (!res) {
+          this.tableColumns.splice(10, 3);
+        }
+      });
     }
   };
 </script>

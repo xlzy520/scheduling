@@ -10,7 +10,6 @@ module.exports = [
   {name: 'ruleCustomize', url: '/rule'},
   {name: 'productionLine', url: '/line'},
   {name: 'paperInStock', url: '/paperInStock'},
-  {name: 'paperTable', url: '/report'},
   {name: 'warehouse', url: '/warehouse'},
   {name: 'paperWarehouse', url: '/paperWarehouse'},
   {name: 'innerUser', url: '/innerUser'},

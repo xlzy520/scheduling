@@ -26,33 +26,6 @@
                 value: 'warehouseId'
               },
               options: [],
-            },
-            listeners: {
-              input: (val) => {
-                if (!['', undefined, null].includes(val)) {
-                  this.dj_api_extend(this.getWarehouseArea, val);
-                }
-              },
-              'clear': ()=>{
-                this.searchConfig[3].attrs.options = [];
-              },
-            }
-          },
-          {label: '库区', key: 'warehouseAreaId', type: 'select', attrs: {
-              keyMap: {
-                label: 'name',
-                value: 'warehouseAreaId'
-              },
-              options: [],
-            },
-            linkListeners: {
-              warehouseId: {
-                input: (val, com) => {
-                  if (com) {
-                    com.$emit('input', '');
-                  }
-                }
-              }
             }},
           {label: '原纸供应商', key: 'supplierName', type: 'input'},
           {label: '纸筒编号', key: 'paperTubeNumber', type: 'input'},
@@ -64,7 +37,7 @@
             }},
           {label: '原纸供应商', prop: 'supplierName', width: 120},
           {label: '纸筒编号', prop: 'paperTubeNumber', width: 160},
-          // {label: '原纸代码', prop: 'paperCode', width: 120},
+          {label: '原纸代码', prop: 'paperCode', width: 120},
           // {label: '原纸类型', prop: 'paperType', width: 120,
           //   formatter: (row, index, cur) => {
           //     let obj = this.$enum.paperType._swap[cur] || {};
@@ -98,12 +71,7 @@
         return this.dj_api_extend(paperWarehouseService.getPaperWarehouse).then((res) => {
           this.searchConfig[2].attrs.options = res.list || [];
         });
-      },
-      getWarehouseArea(id) {
-        return this.dj_api_extend(paperWarehouseService.getAreaAllList, {warehouseId: id}).then((res) => {
-          this.searchConfig[3].attrs.options = res.list || [];
-        });
-      },
+      }
     },
     mounted() {
       this.getWarehouse();

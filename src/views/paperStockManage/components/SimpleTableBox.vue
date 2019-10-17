@@ -27,7 +27,6 @@
 </template>
 
 <script>
-  import paperTableService from '@/api/service/paperTable';
   import reportService from '@/api/service/report';
   import PagePane from "../../../components/page/pagePane";
   import dayjs from 'dayjs';
@@ -88,7 +87,7 @@
           data.endTime = _val[1];
         }
         this.searchData = data;
-        paperTableService[this.serviceUrl]({
+        reportService[this.serviceUrl]({
           ...data,
           ...this.pageOptions
         }).then((res) => {
