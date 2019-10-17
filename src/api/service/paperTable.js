@@ -13,5 +13,7 @@ export default {
   listInventory(data) {
     return paperTable('/listInventory.do', data);
   },
-
+  listInventoryRecord(data) {
+    return paperTable('/listInventoryRecord.do', data);
+  },
 };

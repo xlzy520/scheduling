@@ -37,6 +37,14 @@ export default {
       component: 'views/paperStockManage/paperStockSummaryTable',
     },
     {
+      path: 'paperHistoryStockRecordTable',
+      meta: {
+        title: '原纸历史库存记录表',
+      },
+      //组件路径
+      component: 'views/paperStockManage/paperHistoryStockRecordTable',
+    },
+    {
       path: 'paperStockTable',
       meta: {
         title: '原纸库存表',
