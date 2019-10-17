@@ -29,6 +29,7 @@
                   label: '最优门幅'
                 },
                 attrs: {
+                  clearable: false,
                   keyMap: {
                     value: 'paperSize',
                     label: 'paperSize'
@@ -67,6 +68,7 @@
                   label: '订单切数'
                 },
                 attrs: {
+                  clearable: false,
                   bindObject: true,
                   options: this.$enum.orderCutNumber
                 }
