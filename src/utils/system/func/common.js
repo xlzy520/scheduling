@@ -288,7 +288,7 @@ export const parseTime = (time, format = 'YYYY-MM-DD') => {
 };
 
 export function getDateRange(type, startNum, startUnit = 'day', endNum = 0, endUnit = 'day') {
-  let end = new Date(dayjs().add(endNum, endUnit).add(1, 'day').format('YYYY-MM-DD'));
+  let end = new Date(dayjs().add(endNum, endUnit).add(1, 'day').format('YYYY-MM-DD 00:00:00'));
   let start = new Date(dayjs(end).subtract(startNum, startUnit).subtract(endNum, endUnit).valueOf());
   if (type === 'daterange') {
     start = dayjs(start).format('YYYY-MM-DD 00:00:00');

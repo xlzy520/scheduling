@@ -41,12 +41,12 @@
             key: cylinderKeys.storageTime,
             label: '入库时间',
             attrs: {
-              clearable: false,
+              // clearable: false,
               // valueFormat: 'yyyy-MM-dd',
-              type: 'daterange',
-              default: this.$method.getDateRange('daterange', 1),
+              type: 'datetimerange',
+              default: this.$method.getDateRange('datetimerange', 1),
               // default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
-              beforeChange: this.$method.getLimitTime,
+              // beforeChange: this.$method.getLimitTime,
             }
           },
           {
