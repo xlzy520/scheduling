@@ -1,8 +1,7 @@
 /**
  * 用于固定弹框选项卡内的内容高度
  */
-import { methods } from "djweb";
-const { getStyle } = methods;
+import { getStyle } from 'djcpsweb-utils';
 function getElHeight(el) {
   if (el) {
     let height = parseFloat(getStyle(el, 'height'));

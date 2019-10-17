@@ -1,9 +1,8 @@
 import {orderKeys} from '../constant/dataKeys';
 import _enum from '../enum';
-import {methods} from "djweb";
+import {checkType, fileDownload} from "djcpsweb-utils";
 import {isObject} from '../../common/func/object';
 
-const {checkType, fileDownload} = methods;
 import dayjs from 'dayjs';
 import {MessageBox, Message} from 'element-ui';
 

@@ -1,7 +1,8 @@
 import router from './router';
 import { asyncRouter } from './router';
 // import { Loading } from 'element-ui';
-import { permission } from 'djweb';
+// import { permission } from 'djweb';
+import { permission } from 'djcpsweb-utils';
 // import { methods } from 'djweb';
 // import dayjs from 'dayjs';
 import permissionService from './api/service/permission';

@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import ELEMENT from 'element-ui';
 // 引入公司组件、方法库
-import djweb, {httpPolicy, listenerPolicy, methods} from 'djweb';
+import djweb from 'djweb';
+import {listenerPolicy} from 'djcpsweb-utils';
+import * as methods from 'djcpsweb-utils';
+import { HttpPolicy } from 'djcpsweb-httpFactory';
 import page from './components/page';
 import formRules from './utils/system/constant/formRules';
 import classifyForm from './components/classifyForm';
@@ -33,7 +36,7 @@ Vue.prototype.$message = (text, type)=>{
     'duration': 2000 //显示时间
   });
 };
-Vue.mixin(httpPolicy);
+Vue.mixin(HttpPolicy);
 Vue.mixin(listenerPolicy);
 // Vue.config.productionTip = false;
 

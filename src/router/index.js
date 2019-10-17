@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import permissionRouter from './permissionRouter';
 import store from '../store';
 const _import = require('./_import');
-const { setLocalStorageItem } = require('djweb').methods;
+import { setLocalStorageItem } from 'djcpsweb-utils';
 
 Vue.use(VueRouter);
 const viewsPath = 'views/';
@@ -32,7 +32,10 @@ let router = new VueRouter({
 });
 router.afterEach((to) => {
   let route = store.getters.permission[to.path];
-  setLocalStorageItem('activeRoute', route);
+  setLocalStorageItem('activeRoute', {
+    ...route,
+    ...to
+  });
   window.subject.trigger('route-change');
 });
 export default router;

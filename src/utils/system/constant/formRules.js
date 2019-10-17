@@ -2,10 +2,9 @@ import regexp from './regexp';
 import methods from '../../methods';
 const { judgeAllEmpty } = methods;
 // import { formRules } from 'djcpsweb-utils';
-import { djForm } from 'djweb';
-const { rules } = djForm;
+import { formRules } from 'djcpsweb-utils';
 export default {
-  ...rules,
+  ...formRules,
   number: {pattern: regexp.NONZERO_REGEXP, message: '请输入正整数', trigger: 'change'}, //正整数
   chinese: {pattern: /^[\u4e00-\u9fa5]+$/, message: '请输入汉字', trigger: 'change'},
   word_number: {pattern: /^\w+$/, message: '请输入字母、数字', trigger: 'change'},

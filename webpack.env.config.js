@@ -23,6 +23,8 @@ const production = {
       'axios': 'axios',
       // 组件库也会影响打包的大小，赞不去除
       'djweb': 'djweb',
+      'djcpsweb-httpFactory': 'DjcpswebHttpFactory',
+      'djcpsweb-utils': 'DjcpswebUtils',
     };
   }
 };
@@ -37,6 +39,8 @@ const development = {
       'vuex': 'Vuex',
       'axios': 'axios',
       'djweb': 'djweb',
+      'djcpsweb-httpFactory': 'DjcpswebHttpFactory',
+      'djcpsweb-utils': 'DjcpswebUtils',
     };
   },
 };
