@@ -54,4 +54,9 @@ export default{
   integratedMaterial(data) {
     return planArrange('/selectMaterialLength.do', data);
   },
+  exportExcel(data) {
+    data.pageNo = 1;
+    data.pageSize = 999999999;
+    return planArrange('/exportExcel.do', data, 'download_post');
+  },
 };

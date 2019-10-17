@@ -38,6 +38,7 @@
                   <el-button v-show="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
                   <el-button v-show="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
                   <el-button v-show="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
+                  <dj-button @click="exportExcel">导出</dj-button>
                 </div>
                 <p class="font-total">总米数：{{totalMeter}}</p>
               </div>
@@ -515,6 +516,11 @@
           cb();
           this.refresh();
         });
+      },
+      exportExcel(cb) {
+        this.dj_api_extend(planArrangeService.exportExcel, {lineId: this.lineId, ...this.searchData}).then(res=>{
+          this.$method.downloadExecl(res, '计划排单');
+        }).finally(cb);
       },
       refresh() {
         this.$refs.table.updateData();
