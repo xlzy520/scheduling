@@ -47,16 +47,16 @@
                   label: '客户名称'
                 },
               },
-              {
-                formItem: {
-                  prop: 're-' + orderKeys.sortIndex,
-                  label: '订单排序'
-                },
-                computed: ()=>{
-                  let index = this.formData[orderKeys.sortIndex];
-                  return index + '' === '0' ? '' : index;
-                }
-              },
+              // {
+              //   formItem: {
+              //     prop: 're-' + orderKeys.sortIndex,
+              //     label: '订单排序'
+              //   },
+              //   computed: ()=>{
+              //     let index = this.formData[orderKeys.sortIndex];
+              //     return index + '' === '0' ? '' : index;
+              //   }
+              // },
               {
                 formItem: {
                   prop: 're-orderTip',
