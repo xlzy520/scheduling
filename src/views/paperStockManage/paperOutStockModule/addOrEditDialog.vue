@@ -36,8 +36,6 @@
   </div>
 </template>
 <script>
-  import {djForm} from 'djweb';
-  const {rules} = djForm;
   import tableInput from '../paperInStockModule/tableInput.vue';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import selectUsePerson from './selectUsePerson';
@@ -290,7 +288,7 @@
             formItem: {
               prop: cylinderKeys.outStockType,
               label: '出库类型',
-              rules: [rules.required(' ')]
+              rules: [this.$rule.required(' ')]
             },
             attrs: {
               disabled: this.isEdit,

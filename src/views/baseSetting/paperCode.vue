@@ -27,7 +27,6 @@
 <script>
   import paperCodeService from '../../api/service/paperCode';
   import loadingMixins from '../../mixins/loading';
-  import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
 
@@ -81,7 +80,7 @@
               prop: 'paperCode',
               label: '原纸代码',
               rules: [
-                djForm.rules.required('请输入原纸代码'),
+                this.$rule.required('请输入原纸代码'),
                 formRules.word_number
               ],
             },
@@ -99,7 +98,7 @@
             formItem: {
               prop: 'paperType',
               label: '原纸类型',
-              rules: [djForm.rules.required('请选择原纸类型')],
+              rules: [this.$rule.required('请选择原纸类型')],
             },
             attrs: {
               options: this.$enum.paperType._arr
@@ -111,7 +110,7 @@
               prop: 'paperGram',
               label: '克重(g)',
               rules: [
-                djForm.rules.required('请输入克重'),
+                this.$rule.required('请输入克重'),
                 formRules.number,
                 formRules.number5
                 ],

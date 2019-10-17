@@ -36,7 +36,6 @@
   import materialCodeService from '../../api/service/materialCode';
   import paperCodeService from '../../api/service/paperCode';
   import loadingMixins from '../../mixins/loading';
-  import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
   import McDjSelect from "./materialCodeSelect/McDjSelect.vue";
@@ -94,7 +93,7 @@
               prop: 'materialCode',
               label: '用料代码',
               rules: [
-                djForm.rules.required('请选择用料代码'),
+                this.$rule.required('请选择用料代码'),
                 { validator: validateCode, trigger: 'change' }
                 ],
             },

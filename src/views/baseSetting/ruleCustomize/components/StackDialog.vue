@@ -39,7 +39,6 @@
 </template>
 
 <script>
-  import {djForm} from 'djweb';
   import ruleCustomizeService from '@/api/service/ruleCustomize';
   import formRules from "../../formRules";
 
@@ -72,7 +71,7 @@
               prop: 'name',
               label: '规则名称',
               rules: [
-                djForm.rules.required('请输入规则名称'),
+                this.$rule.required('请输入规则名称'),
                 formRules.word_number_chinese
               ],
             },
@@ -85,7 +84,7 @@
             formItem: {
               prop: 'produceLineId',
               label: '生产线',
-              rules: [djForm.rules.required('请选择生产线')],
+              rules: [this.$rule.required('请选择生产线')],
             },
             attrs: {
               options: [],
@@ -97,7 +96,7 @@
               prop: 'maxOrderCut',
               label: '订单最大片数',
               rules: [
-                djForm.rules.required('请输入订单最大片数'),
+                this.$rule.required('请输入订单最大片数'),
                 formRules.number
               ],
             },
@@ -111,7 +110,7 @@
               prop: 'maxStackCount',
               label: '最大堆叠单数',
               rules: [
-                djForm.rules.required('请输入最大堆叠单数'),
+                this.$rule.required('请输入最大堆叠单数'),
                 formRules.number
               ],
             },
@@ -125,7 +124,7 @@
               prop: 'maxStackHeight',
               label: '订单最小米数',
               rules: [
-                djForm.rules.required('请输入订单最小米数'),
+                this.$rule.required('请输入订单最小米数'),
                 formRules.number,
                 formRules.number5
               ],
@@ -148,13 +147,13 @@
         originStackConditionFormData: [],
         stackRules: {
           tilemodel: [
-            djForm.rules.required('请选择楞型'),
+            this.$rule.required('请选择楞型'),
           ],
           cut: [
-            djForm.rules.required('请选择切数'),
+            this.$rule.required('请选择切数'),
           ],
           piece: [
-            djForm.rules.required('请输入片数'),
+            this.$rule.required('请输入片数'),
             formRules.number
           ]
         },

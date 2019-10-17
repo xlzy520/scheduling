@@ -14,9 +14,6 @@
   import orderManageService from '../../../api/service/orderManage';
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
 
-  import {djForm} from 'djweb';
-  const {rules} = djForm;
-
   export default {
     name: 'importDialog',
     data: function () {
@@ -27,7 +24,7 @@
             formItem: {
               prop: 'lineId',
               label: '生产线',
-              rules: [rules.required('请选择生产线')]
+              rules: [this.$rule.required('请选择生产线')]
             },
             component: {
               computed: {

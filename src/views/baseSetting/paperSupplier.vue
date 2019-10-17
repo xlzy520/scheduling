@@ -30,7 +30,6 @@
 <script>
   import paperSupplierService from '../../api/service/paperSupplier';
   import loadingMixins from '../../mixins/loading';
-  import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
   const initFormData = {
@@ -87,7 +86,7 @@
               prop: 'supplierNumber',
               label: '供应商编号',
               rules: [
-                djForm.rules.required('请输入供应商编号'),
+                this.$rule.required('请输入供应商编号'),
                 formRules.word_number
               ],
             },
@@ -102,7 +101,7 @@
               prop: 'supplierName',
               label: '供应商名称',
               rules: [
-                djForm.rules.required('请输入供应商名称'),
+                this.$rule.required('请输入供应商名称'),
                 formRules.word_number_chinese
               ],
             },

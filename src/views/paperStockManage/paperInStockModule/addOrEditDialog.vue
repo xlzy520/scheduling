@@ -33,12 +33,10 @@
   </div>
 </template>
 <script>
-  import {djForm} from 'djweb';
   import paperKindService from '../../../api/service/paperKind';
   import paperWarehouseService from '../../../api/service/paperWarehouse';
   import selectUsePerson from '../paperOutStockModule/selectUsePerson';
 
-  const {rules} = djForm;
   import tableInput from './tableInput.vue';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   //更新面积
@@ -426,7 +424,7 @@
             formItem: {
               prop: cylinderKeys.storageType,
               label: '入库类型',
-              rules: [rules.required(' ')]
+              rules: [this.$rule.required(' ')]
             },
             attrs: {
               keyMap: {

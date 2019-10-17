@@ -29,7 +29,6 @@
   </lock-dialog>
 </template>
 <script>
-  import {djForm} from 'djweb';
   import {cylinderKeys, paperKeys} from "../../../utils/system/constant/dataKeys";
   import tableInput from './tableInput.vue';
   import paperWarehouseService from '../../../api/service/paperWarehouse';
@@ -38,7 +37,6 @@
     labelWidth: "",
     labelSuffix: ":"
   };
-  const {rules} = djForm;
   export default {
     name: 'setUnitPriceDialog',
     data: function () {
@@ -68,14 +66,13 @@
             formItem: {
               prop: cylinderKeys.storageType,
               label: '入库类型',
-              rules: [rules.required('')]
+              rules: [this.$rule.required('')]
             }
           },
           {
             formItem: {
               prop: cylinderKeys.forkliftDriverName,
               label: '叉车员',
-              // rules: [rules.required('')]
             }
           },
           {

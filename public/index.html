@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>东经智能管理平台</title>
+    <link rel=stylesheet href=/djcps_web/icons/index.css>
+    <link rel=stylesheet href=/djcps_web/lib/djweb/djweb@0.2.20/theme/index.css>
+    <link rel=stylesheet href=/djcps_web/lib/djweb/djweb@0.2.20/index.css>
+
+</head>
+<body>
+<script>
+  var globalVariable = {
+    appName: '<%= process.env.VUE_APP_APPNAME %>',
+    projectID: '<%= process.env.VUE_APP_PROJECT_ID %>',
+    projectName: '<%= process.env.VUE_APP_PROJECT_NAME %>',
+  };
+  // appName 本身就是给前端专用的
+  document.cookie = 'appName=' + globalVariable.appName;
+</script>
+<script src=/djcps_web/lib/window_public_addEventListener.js></script>
+<script src=/djcps_web/icons/common/iconfont.js></script>
+<script src=/djcps_web/lib/vue/vue@2.5.20.js></script>
+<script src=/djcps_web/lib/vue/vue-router.min.js></script>
+<script src=/djcps_web/lib/axios.min.js></script>
+<script src=/djcps_web/lib/vue/vuex.js></script>
+<script src=/djcps_web/lib/element/element-ui@2.9.2.min.js></script>
+<script src=/djcps_web/lib/promise.js></script>
+<script src=/djcps_web/lib/subject.js></script>
+<script src=/djcps_web/lib/djweb/djweb@0.2.20/index.js></script>
+<script src=/djcps_web/lib/dj-httpFactory.min.js></script>
+<script src=/djcps_web/lib/dj-utils.min.js></script>
+
+<div id=djweb-console></div>
+<div id=app></div>
+<script src=/djcps_web/lib/init.js></script>
+</body>
+</html>

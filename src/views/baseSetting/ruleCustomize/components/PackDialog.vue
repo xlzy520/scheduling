@@ -49,7 +49,6 @@
 </template>
 
 <script>
-  import {djForm} from 'djweb';
   import ruleCustomizeService from '@/api/service/ruleCustomize';
   import formRules from "../../formRules";
   const layerOptions = [
@@ -82,7 +81,7 @@
               prop: 'name',
               label: '规则名称',
               rules: [
-                djForm.rules.required('请输入规则名称'),
+                this.$rule.required('请输入规则名称'),
                 formRules.word_number_chinese
               ],
             },
@@ -96,7 +95,7 @@
               prop: 'eachPackWeight',
               label: '单批打包重量',
               rules: [
-                djForm.rules.required('请输入单批打包重量'),
+                this.$rule.required('请输入单批打包重量'),
                 formRules.float
               ],
             },
@@ -111,7 +110,7 @@
               prop: 'aTilemodelRate',
               label: 'A楞型楞率',
               rules: [
-                djForm.rules.required('请输入A楞型楞率'),
+                this.$rule.required('请输入A楞型楞率'),
                 formRules.float
               ],
             },
@@ -125,7 +124,7 @@
               prop: 'bTilemodelRate',
               label: 'B楞型楞率',
               rules: [
-                djForm.rules.required('请输入B楞型楞率'),
+                this.$rule.required('请输入B楞型楞率'),
                 formRules.float
               ],
             },
@@ -139,7 +138,7 @@
               prop: 'cTilemodelRate',
               label: 'C楞型楞率',
               rules: [
-                djForm.rules.required('请输入C楞型楞率'),
+                this.$rule.required('请输入C楞型楞率'),
                 formRules.float
               ],
             },
@@ -153,7 +152,7 @@
               prop: 'eTilemodelRate',
               label: 'E楞型楞率',
               rules: [
-                djForm.rules.required('请输入E楞型楞率'),
+                this.$rule.required('请输入E楞型楞率'),
                 formRules.float
               ],
             },
@@ -167,7 +166,7 @@
               prop: 'fTilemodelRate',
               label: 'F楞型楞率',
               rules: [
-                djForm.rules.required('请输入F楞型楞率'),
+                this.$rule.required('请输入F楞型楞率'),
                 formRules.float
               ],
             },
@@ -189,18 +188,18 @@
         originPackConditionFormData: [],
         packRules: {
           layer: [
-            djForm.rules.required('请选择层数'),
+            this.$rule.required('请选择层数'),
           ],
           packpiece: [
-            djForm.rules.required('请输入打包数量'),
+            this.$rule.required('请输入打包数量'),
             formRules.number
           ],
           startUnitarea: [
-            djForm.rules.required('请输入单位面积'),
+            this.$rule.required('请输入单位面积'),
             // formRules.float2
           ],
           endUnitarea: [
-            djForm.rules.required('请输入单位面积'),
+            this.$rule.required('请输入单位面积'),
             formRules.float2
           ]
         },

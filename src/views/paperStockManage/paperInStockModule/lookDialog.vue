@@ -32,12 +32,10 @@
     </dj-dialog>
 </template>
 <script>
-  import {djForm} from 'djweb';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import paperWarehouseService from '../../../api/service/paperWarehouse';
   import record from "../../../api/service/record";
   import dialogFixed from "../../../mixins/dialogFixed";
-  const {rules} = djForm;
   const formAttrs = {
     labelPosition: "left",
     labelWidth: "",
@@ -239,7 +237,7 @@
             formItem: {
               prop: cylinderKeys.storageType,
               label: '入库类型',
-              rules: [rules.required('入库类型不能为空')]
+              rules: [this.$rule.required('入库类型不能为空')]
             }
           },
           {

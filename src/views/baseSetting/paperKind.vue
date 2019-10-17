@@ -31,7 +31,6 @@
   import paperCodeService from '../../api/service/paperCode';
   import paperWarehouseService from '../../api/service/paperWarehouse';
   import loadingMixins from '../../mixins/loading';
-  import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
   const initFormData = {
@@ -109,7 +108,7 @@
               prop: 'paperNumber',
               label: '原纸编号',
               rules: [
-                djForm.rules.required('请输入原纸编号'),
+                this.$rule.required('请输入原纸编号'),
                 formRules.word_number
               ],
             },
@@ -128,7 +127,7 @@
               prop: 'paperCodeId',
               label: '原纸代码',
               rules: [
-                djForm.rules.required('请选择原纸代码'),
+                this.$rule.required('请选择原纸代码'),
               ],
             },
             attrs: {
@@ -157,7 +156,7 @@
             formItem: {
               prop: 'paperType',
               label: '原纸类型',
-              rules: [djForm.rules.required('请选择原纸类型')],
+              rules: [this.$rule.required('请选择原纸类型')],
             },
             attrs: {
               disabled: true,
@@ -170,7 +169,7 @@
               prop: 'paperGram',
               label: '克重(g)',
               rules: [
-                djForm.rules.required('请输入克重'),
+                this.$rule.required('请输入克重'),
                 formRules.number
               ],
             },
@@ -185,7 +184,7 @@
               prop: 'paperSize',
               label: '门幅',
               rules: [
-                djForm.rules.required('请输入门幅'),
+                this.$rule.required('请输入门幅'),
                 formRules.number,
                 formRules.number5
               ],
@@ -200,7 +199,7 @@
               prop: 'warehouseId',
               label: '仓库名称',
               rules: [
-                djForm.rules.required('请选择仓库名称'),
+                this.$rule.required('请选择仓库名称'),
               ],
             },
             attrs: {
@@ -229,7 +228,7 @@
               prop: 'warehouseAreaId',
               label: '库区名称',
               rules: [
-                djForm.rules.required('请选择库区名称'),
+                this.$rule.required('请选择库区名称'),
               ],
             },
             attrs: {

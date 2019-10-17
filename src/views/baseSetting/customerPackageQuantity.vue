@@ -23,7 +23,6 @@
 
 <script>
   import cpqsService from '../../api/service/customerPackageQuantitySetting';
-  import {djForm} from 'djweb';
 
   export default {
     name: 'CustomerPackageQuantitySetting',
@@ -70,7 +69,7 @@
               prop: 'name',
               label: '客户名称',
               rules: [
-                djForm.rules.required('客户名称不能为空')
+                this.$rule.required('客户名称不能为空')
               ],
             },
           },
@@ -80,7 +79,7 @@
               prop: 'code',
               label: '用料代码',
               rules: [
-                djForm.rules.required('请选择相应的用料代码'),
+                this.$rule.required('请选择相应的用料代码'),
                 ],
             },
             attrs: {
@@ -102,7 +101,7 @@
               prop: 'lengxing',
               label: '层数/楞型',
               rules: [
-                djForm.rules.required('请选择相应的层数/楞型'),
+                this.$rule.required('请选择相应的层数/楞型'),
                 ],
             },
             attrs: {
@@ -313,7 +312,7 @@
               prop: 'amount',
               label: '打包数量：',
               rules: [
-                djForm.rules.required('打包数量不能为空')
+                this.$rule.required('打包数量不能为空')
               ],
             },
             attrs: {

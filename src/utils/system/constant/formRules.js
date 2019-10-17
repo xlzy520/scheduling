@@ -1,5 +1,9 @@
 import regexp from './regexp';
+// import { formRules } from 'djcpsweb-utils';
+import { djForm } from 'djweb';
+const { rules } = djForm;
 export default {
+  ...rules,
   number: {pattern: regexp.NONZERO_REGEXP, message: '请输入正整数', trigger: 'change'}, //正整数
   materialSize_not_empty: {
     validator(rule, value, callback) {

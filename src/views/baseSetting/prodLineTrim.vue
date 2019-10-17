@@ -38,7 +38,6 @@
   import prodLineTrimService from '../../api/service/productionLineTrim';
   import prodLineService from '../.././api/service/productionLine';
   import loadingMixins from '../../mixins/loading';
-  import {djForm} from 'djweb';
   import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
 
@@ -62,7 +61,7 @@
             formItem: {
               prop: 'lineId',
               label: '生产线',
-              rules: [djForm.rules.required('请选择生产线')],
+              rules: [this.$rule.required('请选择生产线')],
             },
             attrs: {
               options: [],
@@ -81,7 +80,7 @@
               prop: 'layer',
               label: '层数',
               rules: [
-                djForm.rules.required('请选择层数'),
+                this.$rule.required('请选择层数'),
               ],
             },
             attrs: {
@@ -94,7 +93,7 @@
               prop: 'wasteSize',
               label: '修边',
               rules: [
-                djForm.rules.required('请输入修边'),
+                this.$rule.required('请输入修边'),
                 formRules.number,
                 formRules.number5
               ],

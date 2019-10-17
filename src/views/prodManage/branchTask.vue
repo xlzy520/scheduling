@@ -29,7 +29,6 @@
 <script>
   import dayjs from 'dayjs';
   import branchTaskService from '../../api/service/branchTask';
-  import {djForm} from 'djweb';
   import formRules from "../baseSetting/formRules";
   import orderTag from '../../components/printTag/orderTag';
   import materialSizeInput from "../../components/materialSizeInput";
@@ -172,7 +171,7 @@
                   prop: 'processeAmount',
                   label: '处理数量',
                   rules: [
-                    djForm.rules.required('请输入处理数量'),
+                    this.$rule.required('请输入处理数量'),
                     formRules.number,
                     {validator: handleNum}
                   ],

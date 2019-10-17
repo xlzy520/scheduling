@@ -10,10 +10,8 @@
   import materialSizeInput from '../../../components/materialSizeInput';
   import longitudinalPressureInput from '../../../components/longitudinalPressureInput';
   import dayjs from 'dayjs';
-  import {djForm} from 'djweb';
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
   import formRules from '../../baseSetting/formRules';
-  const {rules} = djForm;
   export default {
     name: 'addOrderDialog',
     data: function () {
@@ -44,7 +42,7 @@
             formItem: {
               prop: orderKeys.deliveryTime,
               label: '订单交期',
-              rules: [rules.required('请选择订单交期')]
+              rules: [this.$rule.required('请选择订单交期')]
             },
             attrs: {
               type: 'date',
@@ -57,7 +55,7 @@
             formItem: {
               prop: orderKeys.materialName,
               label: '材料名称',
-              rules: [rules.required('请输入材料名称'), formRules.word_number]
+              rules: [this.$rule.required('请输入材料名称'), formRules.word_number]
             },
             attrs: {
               maxlength: 20,
@@ -73,7 +71,7 @@
             formItem: {
               prop: 'fluteTypeAndLayers',
               label: '瓦楞楞型',
-              rules: [rules.required('请选择瓦楞楞型')]
+              rules: [this.$rule.required('请选择瓦楞楞型')]
             },
             attrs: {
               props: {
@@ -91,7 +89,7 @@
             formItem: {
               prop: orderKeys.materialSize,
               label: '下料规格',
-              rules: [rules.required('请输入下料规格'), this.$rule.materialSize_not_empty, this.$rule.materialSize_range]
+              rules: [this.$rule.required('请输入下料规格'), this.$rule.materialSize_not_empty, this.$rule.materialSize_range]
             },
             attrs: {
               default: []
@@ -110,7 +108,7 @@
             formItem: {
               prop: orderKeys.orderAmount,
               label: '订单数量',
-              rules: [rules.required('请输入订单数量'), this.$rule.orderAmount_range]
+              rules: [this.$rule.required('请输入订单数量'), this.$rule.orderAmount_range]
             },
             attrs: {
               placeholder: '请输入订单数量（片）',
@@ -122,7 +120,7 @@
             formItem: {
               prop: orderKeys.linePressingMethod,
               label: '压线方式',
-              rules: [rules.required('压线方式不可为空')]
+              rules: [this.$rule.required('压线方式不可为空')]
             },
             attrs: {
               keyMap: {

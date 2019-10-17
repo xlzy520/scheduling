@@ -7,7 +7,6 @@
 </template>
 
 <script>
-  import {djForm} from 'djweb';
   import formRules from "../../../baseSetting/formRules";
   import prodTaskService from '@/api/service/prodTask';
 export default {
@@ -24,7 +23,7 @@ export default {
             prop: 'paperGram',
             label: '订单排序',
             rules: [
-              djForm.rules.required('请输入订单排序'),
+              this.$rule.required('请输入订单排序'),
               formRules.number,
               formRules.number5
             ],

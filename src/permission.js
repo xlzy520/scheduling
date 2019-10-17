@@ -1,5 +1,5 @@
 import router from './router';
-import {asyncRouter} from './router';
+import { asyncRouter } from './router';
 // import { Loading } from 'element-ui';
 import { permission } from 'djweb';
 // import { methods } from 'djweb';
