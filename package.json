@@ -42,6 +42,7 @@
     "@vue/cli-plugin-eslint": "^3.8.0",
     "@vue/cli-plugin-unit-mocha": "^3.8.0",
     "@vue/test-utils": "1.0.0-beta.29",
+    "dj-script": "^1.0.4",
     "djweb-cli": "^1.2.10",
     "lint-staged": "^8.1.5",
     "shelljs": "^0.8.3",

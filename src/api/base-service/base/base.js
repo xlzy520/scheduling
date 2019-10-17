@@ -1,7 +1,7 @@
-import { HttpFactory, methods } from 'djweb';
+import { checkType, getObjectType, coerceBoolean } from 'djcpsweb-utils';
+import { HttpFactory } from 'djcpsweb-httpFactory';
 import httpConfig from '../http/httpConfig';
 const apiService = new HttpFactory(httpConfig);
-const { checkType, getObjectType, coerceBoolean } = methods;
 /**
  * 循环传参对象，删除空字段
  * 移除值为‘’或 null 的数据

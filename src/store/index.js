@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { DjStore } from 'djweb';
-import tagsView from './modules/tagsView';
+import { DjStore } from 'djcpsweb-utils';
 import permission from './modules/permission';
 import user from './modules/user';
 Vue.use(Vuex);
@@ -10,7 +9,6 @@ Vue.use(Vuex);
  */
 const store = new DjStore(Vuex, {
   modules: {
-    tagsView,
     permission,
     user
   }
