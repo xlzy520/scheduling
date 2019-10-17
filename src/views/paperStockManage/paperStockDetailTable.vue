@@ -18,9 +18,9 @@
     data() {
       return {
         searchConfig: [
-          {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'paperSize', type: 'input'},
-          {label: '仓库：', type: 'select', key: 'warehouseId', attrs: {
+          {label: '原纸代码', key: 'paperCode', type: 'input', reg: /^\w+$/g},
+          {label: '门幅', key: 'paperSize', type: 'input'},
+          {label: '仓库', type: 'select', key: 'warehouseId', attrs: {
               keyMap: {
                 label: 'name',
                 value: 'warehouseId'
@@ -38,7 +38,7 @@
               },
             }
           },
-          {label: '库区：', key: 'warehouseAreaId', type: 'select', attrs: {
+          {label: '库区', key: 'warehouseAreaId', type: 'select', attrs: {
               keyMap: {
                 label: 'name',
                 value: 'warehouseAreaId'
@@ -54,7 +54,8 @@
                 }
               }
             }},
-          {label: '原纸供应商：', key: 'supplierName', type: 'input'},
+          {label: '原纸供应商', key: 'supplierName', type: 'input'},
+          {label: '纸筒编号', key: 'paperTubeNumber', type: 'input'},
         ],
         tableColumns: [
           {label: '入库时间', prop: 'createTime', width: 180,
@@ -63,11 +64,17 @@
             }},
           {label: '原纸供应商', prop: 'supplierName', width: 120},
           {label: '纸筒编号', prop: 'paperTubeNumber', width: 160},
-          {label: '原纸代码', prop: 'paperCode', width: 120},
-          {label: '原纸类型', prop: 'paperType', width: 120,
+          // {label: '原纸代码', prop: 'paperCode', width: 120},
+          // {label: '原纸类型', prop: 'paperType', width: 120,
+          //   formatter: (row, index, cur) => {
+          //     let obj = this.$enum.paperType._swap[cur] || {};
+          //     return obj.label || '';
+          //   }
+          // },
+          {label: '原纸名称', prop: 'paperName', width: 120,
             formatter: (row, index, cur) => {
-              let obj = this.$enum.paperType._swap[cur] || {};
-              return obj.label || '';
+              let obj = this.$enum.paperType._swap[row.paperType] || {};
+              return obj.label + row.paperCode || '';
             }
           },
           {label: '克重（g）', prop: 'gram', width: 120},

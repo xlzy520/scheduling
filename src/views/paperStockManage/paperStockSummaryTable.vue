@@ -16,7 +16,7 @@
     data() {
       return {
         searchConfig: [
-          {label: '选择日期：', key: 'timeRange', type: 'date',
+          {label: '选择日期', key: 'timeRange', type: 'date',
             attrs: {
               clearable: false,
               type: 'daterange',
@@ -25,9 +25,9 @@
               beforeChange: this.$method.getLimitTime,
             }
             },
-          {label: '原纸代码：', key: 'paperCode', type: 'input', reg: /^\w+$/g},
-          {label: '门幅：', key: 'paperSize', type: 'input'},
-          {label: '原纸供应商：', key: 'supplierName', type: 'input'},
+          {label: '原纸代码', key: 'paperCode', type: 'input', reg: /^\w+$/g},
+          {label: '门幅', key: 'paperSize', type: 'input'},
+          {label: '原纸供应商', key: 'supplierName', type: 'input'},
         ],
         tableColumns: [
           {label: '原纸供应商', prop: 'supplierName'},
