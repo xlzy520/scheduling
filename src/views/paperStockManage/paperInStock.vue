@@ -55,7 +55,7 @@
             key: cylinderKeys.cylinderNo,
             label: '纸筒编号',
             attrs: {
-              reg: /^\d*$/,
+              reg: /^[0-9a-zA-Z]*$/,
             }
           },
           {
