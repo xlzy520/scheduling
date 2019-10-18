@@ -644,11 +644,16 @@
         data[cylinderKeys.usePersonName] = arr[1]['label'];
         data[cylinderKeys.useDepartment] = arr[0]['value'];
         data[cylinderKeys.useDepartmentName] = arr[0]['label'];
-        data['department-person-name'] = arr.reduce((str, obj, index)=>{
+        // data['department-person-name'] = arr.reduce((str, obj, index)=>{
+        //   str += (index ? ' / ' : '') + obj.label;
+        //   return str;
+        // }, '');
+        Object.assign(this.formData, data);
+        // 必须用this.$set设置department-person-name的值，否则会出现表单校验异常的问题
+        this.$set(this.formData, 'department-person-name', arr.reduce((str, obj, index)=>{
           str += (index ? ' / ' : '') + obj.label;
           return str;
-        }, '');
-        Object.assign(this.formData, data);
+        }, ''));
       },
       changeForkliftDriver(arr) {
         let data = {};
