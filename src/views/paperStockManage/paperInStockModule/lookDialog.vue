@@ -8,8 +8,10 @@
             纸筒信息
             <span class="sub-title">
               <span>总重量：{{formData[cylinderKeys.totalWeight]}}kg</span>
+              <span>破损总重量：{{formData['totalDamagedWeight']}}kg</span>
               <span>总件数：{{formData[cylinderKeys.totalAmount]}}件</span>
               <span v-if="isShowMoney">总金额：{{formData[cylinderKeys.totalMoney] || 0}}元</span>
+              <span v-if="isShowMoney">折扣总金额：{{formData['totalDiscount'] || 0}}元</span>
             </span>
           </p>
           <base-table ref="table"
@@ -288,7 +290,7 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 117
+            width: 137
           },
           {
             prop: paperKeys.paperNumber,
@@ -304,6 +306,11 @@
             prop: cylinderKeys.weight,
             label: '重量(kg)',
             width: 104,
+          },
+          {
+            prop: cylinderKeys.damagedWeight,
+            label: '破损总重量(kg)',
+            width: 139,
           },
           {
             prop: paperKeys.warehouseName,
@@ -326,6 +333,16 @@
             width: 88
           },
           {
+            prop: cylinderKeys.discountMoney,
+            label: '折扣金额',
+            width: 88
+          },
+          {
+            prop: paperKeys.paperName,
+            label: '原纸名称',
+            width: 127,
+          },
+          {
             prop: paperKeys.paperCode,
             label: '原纸代码',
             width: 127,
@@ -342,6 +359,11 @@
           {
             prop: paperKeys.paperSize,
             label: '门幅(mm)',
+            width: 95,
+          },
+          {
+            prop: cylinderKeys.netWeight,
+            label: '净重(kg)',
             width: 95,
           },
           {

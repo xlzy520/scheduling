@@ -26,7 +26,7 @@ const permission = {
     judgeAmountPermission({commit, state}) {
       if (state.amountPermission === undefined) {
         return paperWarehouseService.judgeAmountAuth().then((res)=>{
-          commit('SET_AMOUNTPERMISSION', res);
+          return commit('SET_AMOUNTPERMISSION', res);
         });
       }
     },

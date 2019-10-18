@@ -13,6 +13,7 @@
           纸筒信息
           <span class="sub-title">
             <span>总重量：{{totalWeight}}kg</span>
+            <span>破损总重量：{{damagedWeight}}kg</span>
           <span>总件数：{{effectiveTableData.length}}件</span>
           </span>
         </p>
@@ -77,7 +78,7 @@
           {
             prop: cylinderKeys.cylinderNo,
             label: '纸筒编号',
-            width: 117,
+            width: 137,
             className: 'is-change',
             renderHeader() {
               return (
@@ -121,7 +122,7 @@
                 //   cb();
                 // }
               };
-              return {...props, beforeEnter, reg: /^\d*$/, 'class': {'is-error': props.row['isError']}, maxlength: 12};
+              return {...props, beforeEnter, reg: /^[0-9a-zA-Z]*$/, 'class': {'is-error': props.row['isError']}, maxlength: 13};
             },
             component: tableInput,
             listeners: {
@@ -132,19 +133,24 @@
             }
           },
           {
-            prop: paperKeys.paperCode,
-            label: '原纸代码',
+            prop: paperKeys.paperName,
+            label: '原纸名称',
             width: 127,
           },
-          {
-            prop: paperKeys.paperType,
-            label: '原纸类型',
-            width: 89,
-            formatter: (row, index, cur) => {
-              let obj = this.$enum.paperType._swap[cur] || {};
-              return obj.label || '';
-            }
-          },
+          // {
+          //   prop: paperKeys.paperCode,
+          //   label: '原纸代码',
+          //   width: 127,
+          // },
+          // {
+          //   prop: paperKeys.paperType,
+          //   label: '原纸类型',
+          //   width: 89,
+          //   formatter: (row, index, cur) => {
+          //     let obj = this.$enum.paperType._swap[cur] || {};
+          //     return obj.label || '';
+          //   }
+          // },
           {
             prop: paperKeys.paperSize,
             label: '门幅(mm)',
@@ -158,6 +164,16 @@
           {
             prop: cylinderKeys.weight,
             label: '重量(kg)',
+            width: 104,
+          },
+          {
+            prop: cylinderKeys.damagedWeight,
+            label: '破损重量(kg)',
+            width: 124,
+          },
+          {
+            prop: cylinderKeys.netWeight,
+            label: '净重(kg)',
             width: 104,
           },
           {
@@ -205,6 +221,14 @@
       };
     },
     computed: {
+      damagedWeight() {
+        return this.effectiveTableData.reduce((sum, obj) => {
+          let weight = Number(obj[cylinderKeys.damagedWeight]) || 0;
+          // sum += weight;
+          // return sum;
+          return this.$method.accuracyCompute(sum, weight, '+');
+        }, 0).toFixed(3);
+      },
       totalWeight() {
         return this.effectiveTableData.reduce((sum, obj) => {
           let weight = Number(obj[cylinderKeys.weight]) || 0;
@@ -231,7 +255,8 @@
             formItem: {
               // prop: this.isEdit ? 'department-person-name' : 'department-person',
               prop: 'department-person-name',
-              label: '领用部门/领用人'
+              label: '领用部门/领用人',
+              rules: [this.$rule.required(' ')]
             },
             attrs: {
               // props: {
@@ -396,7 +421,7 @@
           let arr = [cylinderKeys.cylinderNo, paperKeys.paperGram, cylinderKeys.weight, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
           return arr.every(key=>{
             return !['', undefined, null].includes(obj[key]);
-});
+          });
         });
       }
     },

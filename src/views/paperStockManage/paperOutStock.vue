@@ -3,6 +3,7 @@
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table ref="table"
+                v-if="isTableReady"
                 :loading="isTableLoading"
                 :data="tableData"
                 height="100%"
@@ -38,11 +39,11 @@
             key: cylinderKeys.outStockTime,
             label: '出库时间',
             attrs: {
-              clearable: false,
-              type: 'daterange',
-              default: this.$method.getDateRange('daterange', 1),
+              // clearable: false,
+              type: 'datetimerange',
+              default: this.$method.getDateRange('datetimerange', 1),
               // default: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
-              beforeChange: this.$method.getLimitTime,
+              // beforeChange: this.$method.getLimitTime,
             }
           },
           {
@@ -50,8 +51,8 @@
             key: cylinderKeys.cylinderNo,
             label: '纸筒编号',
             attrs: {
-              reg: /^\d{0,12}$/,
-              maxlength: 12
+              reg: /^[0-9a-zA-Z]*$/,
+              maxlength: 13
             }
           },
           {
@@ -153,6 +154,7 @@
         lookDialogFlag: false,
 
         isTableLoading: false,
+        isTableReady: false,
         isExporting: false,
       };
     },
@@ -237,6 +239,23 @@
             }
           },
           {
+            prop: 'totalDiscount',
+            label: '折扣总金额',
+            width: 140,
+            formatter: (row, index, cur) => {
+              if (this.isShowMoney) {
+                return cur;
+              } else {
+                return '****';
+              }
+            }
+          },
+          {
+            prop: 'totalDamagedWeight',
+            label: '破损总重量(Kg)',
+            width: 150
+          },
+          {
             prop: cylinderKeys.remark,
             label: '备注信息',
             width: 225,
@@ -250,10 +269,15 @@
       }
     },
     created() {
-      this.$store.dispatch('judgeAmountPermission');
+      this.$store.dispatch('judgeAmountPermission').finally(()=>{
+        this.isTableReady = true;
+        this.$nextTick(()=>{
+          this.$refs.search.search();
+        })
+      });
     },
     mounted() {
-      this.$refs.search.search();
+      // this.$refs.search.search();
     },
     methods: {
       refresh() {

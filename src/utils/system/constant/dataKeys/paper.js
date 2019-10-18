@@ -11,4 +11,5 @@ export default {
   warehouseAreaName: 'warehouseAreaName', // 	仓库库区名
   isEffected: 'isEffected', // 	是否禁用
   paperStatus: 'paperState', // 	原纸状态
+  paperName: 'paperName', // 	原纸名称
 };

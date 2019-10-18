@@ -19,10 +19,13 @@ export default {
   forkliftDriverId: 'forkliftWorker', //叉车员
   forkliftDriverName: 'forkliftWorkerName', //叉车员姓名
   weight: 'weight', //重量
+  damagedWeight: 'damagedWeight', //破损总重量
+  netWeight: 'suttle', //净重
   length: 'length', //长度
   area: 'area', //面积
   unitPrice: 'unitPrice', //单价
   money: 'amount', //金额
+  discountMoney: 'discount', //折扣金额
   usePerson: 'recipient', //领用人
   usePersonName: 'recipientName', //领用人名称
   useDepartment: 'receiveDepartment', //领用部门

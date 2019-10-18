@@ -19,6 +19,9 @@
       col: {},
       service: {},
       beforeEnter: {},
+      beforeInput: {
+        type: Function
+      },
       disabledShortcut: {
         type: Array,
         default: ()=>[]
@@ -58,6 +61,9 @@
         // if (this.reg && this.reg.test(val) || !this.reg) {
           let {row, index, col, reg} = this;
           let oldValue = row[col.prop];
+          if (this.beforeInput) {
+            val = this.beforeInput(val, oldValue, this);
+          }
           this.$set(row, this.col.prop, val);
           if (val !== oldValue) {
             this.$emit('change', val, {row, index, col, reg});

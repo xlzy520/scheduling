@@ -310,3 +310,7 @@ export function getLimitTime(val) {
   }
   return _val;
 }
+
+export function judgeEmpty(valArr) {
+  return valArr.some(val=> ['', null, undefined].includes(val));
+}

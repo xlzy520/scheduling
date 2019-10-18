@@ -3,6 +3,7 @@
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table ref="table"
+                v-if="isTableReady"
                 :loading="isTableLoad"
                 :data="tableData"
                 :total="total"
@@ -165,11 +166,17 @@
         setUnitPriceDialogFlag: false,
         printTagDialogFlag: false,
         isTableLoad: false,
+        isTableReady: false,
         isExporting: false
       };
     },
     created() {
-      this.$store.dispatch('judgeAmountPermission');
+      this.$store.dispatch('judgeAmountPermission').finally(()=>{
+        this.isTableReady = true;
+        this.$nextTick(()=>{
+          this.$refs.search.search();
+        })
+      });
     },
     computed: {
       isShowMoney() {
@@ -198,7 +205,7 @@
           {
             prop: cylinderKeys.documentNo,
             label: '单据编号',
-            width: 155
+            width: 165
           },
           {
             prop: cylinderKeys.storageTime,
@@ -255,6 +262,23 @@
             }
           },
           {
+            prop: 'totalDiscount',
+            label: '折扣总金额',
+            width: 140,
+            formatter: (row, index, cur) => {
+              if (this.isShowMoney) {
+                return cur;
+              } else {
+                return '****';
+              }
+            }
+          },
+          {
+            prop: 'totalDamagedWeight',
+            label: '破损总重量(Kg)',
+            width: 150
+          },
+          {
             prop: cylinderKeys.remark,
             label: '备注信息',
             width: 203
@@ -262,13 +286,13 @@
         ];
         let hidden_arr = [];
         if (!this.isShowMoney) {
-          hidden_arr = [cylinderKeys.totalMoney];
+          hidden_arr = [cylinderKeys.totalMoney, cylinderKeys.discountMoney];
         }
         return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
     },
     mounted() {
-      this.$refs.search.search();
+      // this.$refs.search.search();
     },
     methods: {
       refresh() {

@@ -12,8 +12,10 @@
         纸筒信息
         <span class="sub-title">
           <span>总重量：{{formData[cylinderKeys.totalWeight]}}kg</span>
+          <span>破损总重量：{{formData['totalDamagedWeight']}}kg</span>
           <span>总件数：{{formData[cylinderKeys.totalAmount]}}件</span>
           <span>总金额：{{totalMoney}}元</span>
+          <span>折扣总金额：{{discountMoney}}元</span>
         </span>
       </p>
       <base-table ref="table"
@@ -136,6 +138,11 @@
             width: 139,
           },
           {
+            prop: cylinderKeys.damagedWeight,
+            label: '破损总重量(kg)',
+            width: 139,
+          },
+          {
             prop: paperKeys.warehouseName,
             label: '仓库',
             width: 139,
@@ -151,16 +158,17 @@
             width: 96,
             className: 'is-change',
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}, disabledShortcut: ['right', 'left']};
+              return {...props, reg: this.$reg.getFloatReg(3), maxlength: 6, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError']}};
             },
             component: tableInput,
             listeners: {
               input: (val, {row}) => {
-                let _val = parseFloat(val) * parseFloat(row[cylinderKeys.weight]);
+                let _val = parseFloat(val) * parseFloat(row[cylinderKeys.netWeight]);
                 this.$set(row, cylinderKeys.money, isNaN(_val) || _val === 0 ? '' : _val);
                 if (row['isError']) {
                   this.$set(row, 'isError', false);
                 }
+                this.judgeMoneySize(row)
               }
             }
           },
@@ -177,22 +185,47 @@
             }
           },
           {
-            prop: paperKeys.paperCode,
-            label: '原纸代码',
-            width: 129,
-          },
-          {
-            prop: paperKeys.paperType,
-            label: '原纸类型',
-            width: 90,
-            formatter: (row, index, cur) => {
-              let obj = this.$enum.paperType._swap[cur] || {};
-              return obj.label || '';
+            prop: cylinderKeys.discountMoney,
+            label: '折扣金额',
+            width: 96,
+            className: 'is-change',
+            propsHandler: (props) => {
+              return {...props, reg: this.$reg.getFloatReg(2), maxlength: 9, disabled: props.row['disabled'], 'class': {'is-error': props.row['isError'] || props.row['isError_discount']}};
+            },
+            component: tableInput,
+            listeners: {
+              input: (val, {row}) => {
+                this.judgeMoneySize(row)
+              }
             }
           },
           {
+            prop: paperKeys.paperName,
+            label: '原纸名称',
+            width: 127,
+          },
+          // {
+          //   prop: paperKeys.paperCode,
+          //   label: '原纸代码',
+          //   width: 129,
+          // },
+          // {
+          //   prop: paperKeys.paperType,
+          //   label: '原纸类型',
+          //   width: 90,
+          //   formatter: (row, index, cur) => {
+          //     let obj = this.$enum.paperType._swap[cur] || {};
+          //     return obj.label || '';
+          //   }
+          // },
+          {
             prop: paperKeys.paperSize,
             label: '门幅(mm)',
+            width: 97,
+          },
+          {
+            prop: cylinderKeys.netWeight,
+            label: '净重(kg)',
             width: 97,
           },
           {
@@ -229,13 +262,31 @@
           return this.$method.accuracyCompute(sum, Number(obj[cylinderKeys.money]) || 0, '+');
         }, 0).toFixed(2);
       },
+      discountMoney() {
+        return this.tableData.reduce((sum, obj) => {
+          return this.$method.accuracyCompute(sum, Number(obj[cylinderKeys.discountMoney]) || 0, '+');
+        }, 0).toFixed(2);
+      },
     },
     created() {},
     methods: {
+      judgeMoneySize(row) {
+        let discountMoney = row[cylinderKeys.discountMoney] || 0;
+        let money = row[cylinderKeys.money];
+        if (!this.$method.judgeEmpty([money]) && Number(discountMoney) > Number(money)) {
+          this.$set(row, 'isError_discount', true);
+        } else {
+          this.$set(row, 'isError_discount', false);
+        }
+      },
       colRule(item) {
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       confirm(cb) {
+        if (this.tableData.some(row => row['isError'] || row['isError_discount'])) {
+          cb();
+          return;
+        }
         this.$refs.form.validate(()=>{
           if (!this.changeCheck()) {
             this.$message('未编辑数据，请确认', 'error');
@@ -273,10 +324,11 @@
         this.isTableLoading = true;
         this.dj_api_extend(paperWarehouseService.getPaperInStorage, param).then(res=>{
           this.formData = res;
-          this.tableData = res.tubeList.map(obj=>{
-            obj['disabled'] = Boolean(Number(obj[cylinderKeys.unitPrice]));
-            return obj;
-          });
+          this.tableData = res.tubeList;
+          // this.tableData = res.tubeList.map(obj=>{
+          //   obj['disabled'] = Boolean(Number(obj[cylinderKeys.unitPrice]));
+          //   return obj;
+          // });
           this.saveDefaultData();
         }).finally(()=>{
           this.isTableLoading = false;
@@ -286,7 +338,7 @@
         this.defaultTableData = this.$method.deepClone(this.tableData);
       },
       changeCheck() {
-        let tableKeys = [cylinderKeys.unitPrice];
+        let tableKeys = [cylinderKeys.unitPrice, cylinderKeys.discountMoney];
         let longTable = this.tableData;
         let shortTable = this.defaultTableData;
         if (this.defaultTableData.length > this.tableData.length) {
