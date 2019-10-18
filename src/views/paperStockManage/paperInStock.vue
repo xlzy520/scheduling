@@ -286,7 +286,7 @@
         ];
         let hidden_arr = [];
         if (!this.isShowMoney) {
-          hidden_arr = [cylinderKeys.totalMoney, cylinderKeys.discountMoney];
+          hidden_arr = [cylinderKeys.totalMoney, 'totalDiscount'];
         }
         return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }

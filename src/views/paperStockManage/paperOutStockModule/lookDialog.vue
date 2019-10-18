@@ -177,7 +177,7 @@
           {
             prop: paperKeys.paperSize,
             label: '门幅(mm)',
-            width: 84,
+            width: 100,
           },
           {
             prop: paperKeys.paperGram,
@@ -242,7 +242,7 @@
         ];
         let hidden_arr = [];
         if (!this.isShowMoney) {
-          hidden_arr = [cylinderKeys.money];
+          hidden_arr = [cylinderKeys.money, cylinderKeys.unitPrice, cylinderKeys.discountMoney];
         }
         return total_arr.filter(obj=>!hidden_arr.includes(obj.prop));
       }
