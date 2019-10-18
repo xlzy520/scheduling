@@ -293,6 +293,9 @@ export function getDateRange(type, startNum, startUnit = 'day', endNum = 0, endU
   if (type === 'daterange') {
     start = dayjs(start).format('YYYY-MM-DD 00:00:00');
     end = dayjs(end).subtract(1, 'day').format('YYYY-MM-DD 23:59:59');
+  } else {
+    start = dayjs(start).format('YYYY-MM-DD HH:mm:ss');
+    end = dayjs(end).format('YYYY-MM-DD HH:mm:ss');
   }
   return [start, end];
 }
