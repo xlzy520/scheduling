@@ -755,7 +755,7 @@
             let row = this.tableData[this.activeIndex];
             if (row) {
               if (this.activeIndex < this.tableMaxLength - 1) {
-                let columnsProps = ['paperVarietyId', paperKeys.paperCode, paperKeys.paperType].concat(getColumnsProps(this.tableColumns));
+                let columnsProps = ['paperVarietyId', paperKeys.paperCode, paperKeys.paperType].concat(getColumnsProps(this.tableColumns, obj=>obj.prop !== paperKeys.paperStatus));
                 let cloneObj = this.$method.cloneData(columnsProps, {}, this.tableData[this.activeIndex]);
                 const insetRow = () => {
                   this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
