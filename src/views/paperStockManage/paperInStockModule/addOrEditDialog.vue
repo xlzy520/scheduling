@@ -40,12 +40,11 @@
 
   import tableInput from './tableInput.vue';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
-  function judgeEmpty(valArr) {
-    return valArr.some(val=> ['', null, undefined].includes(val));
-  }
-  function getColumnsProps(columns) {
-    return columns.reduce((arr, obj) => {
-      arr.push(obj.prop);
+  function getColumnsProps(columns, filterFn) {
+    return columns.reduce((arr, obj, index) => {
+      if (!filterFn || filterFn(obj, index)) {
+        arr.push(obj.prop);
+      }
       return arr;
     }, []);
   }
@@ -79,7 +78,7 @@
     let value;
     let weight = row[cylinderKeys.weight];
     let damagedWeight = row[cylinderKeys.damagedWeight] || 0;
-    if (judgeEmpty([weight])) {
+    if (this.$method.judgeEmpty([weight])) {
       value = '';
     } else {
       value = weight - damagedWeight;
@@ -208,6 +207,7 @@
             formItem: {
               prop: 'supplier',
               label: '原纸供应商',
+              // 原纸供应商为不必填时，也需要传一个必过的规则否则表单的校验状态不会再更新
               rules: this.formData[cylinderKeys.storageType] === '采购入库' ? [this.$rule.required(' ')] : [{validator: (a, b, cb)=>cb()}]
             },
             attrs: {
@@ -360,8 +360,8 @@
       },
       effectiveTableData() {
         return this.tableData.filter(obj=>{
+          let arr = getColumnsProps(this.tableColumns, obj => obj.className === 'is-change' && obj.prop !== cylinderKeys.damagedWeight);
           // let arr = [cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
-          let arr = [paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
           if (this.isEdit) {
             arr.push(cylinderKeys.cylinderNo);
           }
@@ -415,28 +415,19 @@
               };
               const beforeEnter = (val, cb) => {
                 if (val) {
-                  if (this.isEdit) {
-                    Promise.all([this.getPaperDetail(val), this.getCylinderId(props.row)]).then(result=>{
-                      result[0][cylinderKeys.cylinderNo] = result[1];
-                      Object.assign(props.row, result[0]);
-                      updateLength.bind(this)(props.row);
-                    }).finally(cb);
-                  } else {
-                    this.getPaperDetail(val).then(res=>{
-                      Object.assign(props.row, res);
-                      updateLength.bind(this)(props.row);
-                    }).finally(cb);
-                  }
-                  // Promise.all([this.getPaperDetail(val), this.getCylinderId(props.row)]).then(result=>{
-                  //   let _obj = cloneData([paperKeys.warehouseAreaId], {}, result[0]);
-                  //   delete result[0][paperKeys.warehouseAreaId];
-                  //   result[0][cylinderKeys.cylinderNo] = result[1];
-                  //   Object.assign(props.row, result[0]);
-                  //   updateLength.bind(this)(props.row);
-                  //   this.$nextTick(()=>{
-                  //     Object.assign(props.row, _obj);
-                  //   });
-                  // }).finally(cb);
+                  this.addRowMsg(val, props.row).finally(cb);
+                  // if (this.isEdit) {
+                  //   Promise.all([this.getPaperDetail(val), this.getCylinderId(props.row)]).then(result=>{
+                  //     result[0][cylinderKeys.cylinderNo] = result[1];
+                  //     Object.assign(props.row, result[0]);
+                  //     updateLength.bind(this)(props.row);
+                  //   }).finally(cb);
+                  // } else {
+                  //   this.getPaperDetail(val).then(res=>{
+                  //     Object.assign(props.row, res);
+                  //     updateLength.bind(this)(props.row);
+                  //   }).finally(cb);
+                  // }
                 } else {
                   cb();
                 }
@@ -448,8 +439,8 @@
               input: (val, {index, row}) => {
                 // 当前输入框内容变化时需要清空原纸代码等有原纸编号带出的数据
                 if (row[paperKeys.paperCode]) {
+                  let cloneKey = ['id', cylinderKeys.netWeight].concat(getColumnsProps(this.tableColumns, obj => obj.className === 'is-change' && ![paperKeys.warehouseId, paperKeys.warehouseAreaId].includes(obj.prop)));
                   // let obj = this.$method.cloneData(['id', cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight], {}, row);
-                  let cloneKey = ['id', paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight];
                   if (this.isEdit) {
                     cloneKey.push(cylinderKeys.cylinderNo);
                   }
@@ -461,18 +452,19 @@
                 if (obj) {
                   //为避免input事件中将当前行的对象修改了，导致当前方法的赋值效果失效
                   let row = this.tableData[props.index];
-                  if (this.isEdit) {
-                    Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId(props.row)]).then(result=>{
-                      result[0][cylinderKeys.cylinderNo] = result[1];
-                      Object.assign(row, result[0]);
-                      updateLength.bind(this)(row);
-                    });
-                  } else {
-                    this.getPaperDetail(obj[paperKeys.paperNumber]).then(res=>{
-                      Object.assign(row, res);
-                      updateLength.bind(this)(row);
-                    });
-                  }
+                  this.addRowMsg(obj[paperKeys.paperNumber], row);
+                  // if (this.isEdit) {
+                  //   Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId(props.row)]).then(result=>{
+                  //     result[0][cylinderKeys.cylinderNo] = result[1];
+                  //     Object.assign(row, result[0]);
+                  //     updateLength.bind(this)(row);
+                  //   });
+                  // } else {
+                  //   this.getPaperDetail(obj[paperKeys.paperNumber]).then(res=>{
+                  //     Object.assign(row, res);
+                  //     updateLength.bind(this)(row);
+                  //   });
+                  // }
                   // Promise.all([this.getPaperDetail(obj[paperKeys.paperNumber]), this.getCylinderId(props.row)]).then(result=>{
                   //   result[0][cylinderKeys.cylinderNo] = result[1];
                   //   Object.assign(row, result[0]);
@@ -533,11 +525,6 @@
             label: '破损重量(kg)',
             width: 130,
             className: 'is-change',
-            // renderHeader() {
-            //   return (
-            //     <span><i class="icon-require">*</i>重量(kg)</span>
-            //   );
-            // },
             propsHandler: (props) => {
               return {
                 ...props,
@@ -615,6 +602,14 @@
             prop: cylinderKeys.netWeight,
             label: '净重(kg)',
             width: 95,
+            formatter(row, index, cur) {
+              if (cur) {
+                cur = Number(cur).toFixed(3);
+              } else {
+                cur = '';
+              }
+              return cur;
+            }
           },
           {
             prop: cylinderKeys.length,
@@ -680,6 +675,23 @@
       // });
     },
     methods: {
+      // 根据新增编辑的不同获取不同的数据并绑定到表格中
+      addRowMsg(val, row) {
+        let promise;
+        if (this.isEdit) {
+          promise = Promise.all([this.getPaperDetail(val), this.getCylinderId(row)]).then(result=>{
+            result[0][cylinderKeys.cylinderNo] = result[1];
+            return result[0];
+          });
+        } else {
+          promise = this.getPaperDetail(val)
+        }
+        return promise.then(res=>{
+          Object.assign(row, res);
+          updateLength.bind(this)(row);
+        })
+      },
+      // 判断破损重量是否小于重量
       judgeWeightSize(row) {
         let damagedWeight = row[cylinderKeys.damagedWeight] || 0;
         let weight = row[cylinderKeys.weight];
@@ -720,8 +732,8 @@
       },
       //根据原纸编号获取相关原纸信息
       getPaperDetail(num) {
-        let { paperCode, paperType, paperSize, warehouseAreaId, warehouseId } = paperKeys;
-        let keyList = [paperCode, paperType, paperSize, warehouseAreaId, warehouseId];
+        let { paperCode, paperType, paperSize, warehouseAreaId, warehouseId, paperName } = paperKeys;
+        let keyList = [paperCode, paperType, paperSize, warehouseAreaId, warehouseId, paperName];
         return paperKindService.list({pageNo: 1, pageSize: 10000000, paperNumber: num}).then(res=>{
           let list = res.list || [];
           let data = list.filter(obj=>obj[paperKeys.paperNumber] === num)[0];
@@ -743,26 +755,35 @@
             let row = this.tableData[this.activeIndex];
             if (row) {
               if (this.activeIndex < this.tableMaxLength - 1) {
-                let columnsProps = getColumnsProps(this.tableColumns);
-                columnsProps.push(...['paperVarietyId', paperKeys.paperCode, paperKeys.paperType]);
+                let columnsProps = ['paperVarietyId', paperKeys.paperCode, paperKeys.paperType].concat(getColumnsProps(this.tableColumns));
                 let cloneObj = this.$method.cloneData(columnsProps, {}, this.tableData[this.activeIndex]);
-                if (this.tableData.length < this.tableMaxLength) {
+                const insetRow = () => {
                   this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
                   if (this.isEdit && row[cylinderKeys.cylinderNo]) {
                     this.getCylinderId().then(res=>{
                       this.$set(cloneObj, cylinderKeys.cylinderNo, res);
                     });
                   }
+                };
+                if (this.tableData.length < this.tableMaxLength) {
+                  insetRow();
+                  // this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
+                  // if (this.isEdit && row[cylinderKeys.cylinderNo]) {
+                  //   this.getCylinderId().then(res=>{
+                  //     this.$set(cloneObj, cylinderKeys.cylinderNo, res);
+                  //   });
+                  // }
                 } else {
                   let lastObj = this.tableData[this.tableData.length - 1];
                   if (!Object.keys(lastObj).length || Object.keys(lastObj).every(key=>['', undefined, null].includes(lastObj[key]))) {
                     this.tableData.pop();
-                    this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
-                    if (this.isEdit && row[cylinderKeys.cylinderNo]) {
-                      this.getCylinderId().then(res=>{
-                        this.$set(cloneObj, cylinderKeys.cylinderNo, res);
-                      });
-                    }
+                    insetRow();
+                    // this.tableData.splice(this.activeIndex + 1, 0, cloneObj);
+                    // if (this.isEdit && row[cylinderKeys.cylinderNo]) {
+                    //   this.getCylinderId().then(res=>{
+                    //     this.$set(cloneObj, cylinderKeys.cylinderNo, res);
+                    //   });
+                    // }
                   }
                 }
               }
