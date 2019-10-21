@@ -185,7 +185,7 @@
               let text = obj.omit || '';
               let key = obj.value || '';
               return (
-                <span class={key ? key : '' }>{text}</span>
+                <span class={[key ? key : '' , 'tip-txt']}>{text}</span>
               );
             }
           },

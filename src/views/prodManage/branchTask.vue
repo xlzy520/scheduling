@@ -91,11 +91,13 @@
             },
           },
           {
-            label: '订单标记', prop: 'grouponOrderFlag', render: (h, {props: {row}}) => {
-              const markMap = ['', 'urgent', 'delay'];
-              const markTextMap = ['', '急', '延'];
+            label: '订单标记', prop: 'grouponOrderFlag',
+            render: (h, {props: {row, col}}) => {
+              let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
+              let text = obj.omit || '';
+              let key = obj.value || '';
               return (
-                <div class={markMap[row.grouponOrderFlag]}>{markTextMap[row.grouponOrderFlag]}</div>
+                <span class={[key ? key : '' , 'tip-txt']}>{text}</span>
               );
             }
           },
