@@ -8,7 +8,7 @@
 
 <script>
   import prodTaskService from '@/api/service/prodTask';
-  import dayjs from 'dayjs'
+  import dayjs from 'dayjs';
 
   export default {
     name: 'prodTaskView',
@@ -53,7 +53,14 @@
               {formItem: {prop: 'grouponProductName', label: '产品名称：'}},
               {formItem: {prop: 'pieceAmount', label: '订单数量：'}},
               {formItem: {prop: 'materialCode', label: '用料代码：'}},
-              {formItem: {prop: 'tileModel', label: '瓦楞楞型：'}},
+              {formItem: {prop: 'tileModel', label: '瓦楞楞型：'},
+                render: (h) => {
+                  let fluteType = this.formData.tileModel || '';
+                  let layer = this.formData.layers;
+                  return (
+                    <span>{`${layer}${fluteType}`}</span>
+                  );
+                }},
               {
                 type: 'custom', isText: true, formItem: {prop: 'chanpingguige', label: '产品规格：'},
                 render: (h) => {
