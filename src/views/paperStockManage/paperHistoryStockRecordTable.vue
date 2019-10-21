@@ -39,31 +39,36 @@
             }}
         ],
         tableColumns: [
-          {label: '入库时间', prop: 'createTime', width: 180,
+          {label: '入库时间', prop: 'createTime', width: 180, sortable: true,
             formatter(row, index, cur) {
               return dayjs(cur).format('YYYY-MM-DD HH:mm:ss');
             }},
-          {label: '原纸供应商', prop: 'supplierName', width: 120},
-          {label: '纸筒编号', prop: 'paperTubeNumber', width: 160},
-          {label: '原纸代码', prop: 'paperCode', width: 120},
-          {label: '原纸名称', prop: 'paperName', width: 120,
+          {label: '原纸供应商', prop: 'supplierName', width: 140, sortable: true,
+            sortMethod: (a, b)=>this.sort(a, b, 'supplierName')},
+          {label: '纸筒编号', prop: 'paperTubeNumber', width: 160, sortable: true},
+          {label: '原纸代码', prop: 'paperCode', width: 140, sortable: true},
+          {label: '原纸名称', prop: 'paperName', width: 140, sortable: true,
+            sortMethod: (a, b)=>this.sort(a, b, 'paperName'),
             formatter: (row, index, cur) => {
               let obj = this.$enum.paperType._swap[row.paperType] || {};
               return obj.label + row.paperCode || '';
             }
           },
-          {label: '克重（g）', prop: 'gram', width: 120},
-          {label: '门幅（mm）', prop: 'paperSize', width: 120},
-          {label: '重量（Kg）', prop: 'weight', width: 120},
-          {label: '破损重量（Kg）', prop: 'damagedWeight', width: 120},
-          {label: '净重（Kg）', prop: 'suttle', width: 120},
-          {label: '单价', prop: 'unitPrice', width: 120},
-          {label: '金额', prop: 'amount', width: 120},
-          {label: '折扣金额', prop: 'discount', width: 120},
-          {label: '长度（m）', prop: 'length', width: 120},
-          {label: '仓库', prop: 'warehouseName', width: 120},
-          {label: '库区', prop: 'warehouseAreaName', width: 120},
-          {label: '入库类型', prop: 'storageType', width: 120},
+          {label: '克重（g）', prop: 'gram', width: 140, sortable: true},
+          {label: '门幅（mm）', prop: 'paperSize', width: 140, sortable: true},
+          {label: '重量（Kg）', prop: 'weight', width: 140, sortable: true},
+          {label: '破损重量（Kg）', prop: 'damagedWeight', width: 160, sortable: true},
+          {label: '净重（Kg）', prop: 'suttle', width: 140, sortable: true},
+          {label: '单价', prop: 'unitPrice', width: 140, sortable: true},
+          {label: '金额', prop: 'amount', width: 140, sortable: true},
+          {label: '折扣金额', prop: 'discount', width: 140, sortable: true},
+          {label: '长度（m）', prop: 'length', width: 140, sortable: true},
+          {label: '仓库', prop: 'warehouseName', width: 140, sortable: true,
+            sortMethod: (a, b)=>this.sort(a, b, 'warehouseName')},
+          {label: '库区', prop: 'warehouseAreaName', width: 140, sortable: true,
+            sortMethod: (a, b)=>this.sort(a, b, 'warehouseAreaName')},
+          {label: '入库类型', prop: 'storageType', width: 140, sortable: true,
+            sortMethod: (a, b)=>this.sort(a, b, 'storageType')},
         ],
         downloadConfig: {
           url: 'printInventoryRecord',
@@ -75,6 +80,11 @@
       };
     },
     methods: {
+      sort(a, b, prop) {
+        if (a[prop] && b[prop]) {
+          return a[prop].localeCompare(b[prop]);
+        }
+      },
       getWarehouse() {
         return this.dj_api_extend(paperWarehouseService.getPaperWarehouse).then((res) => {
           this.searchConfig[5].attrs.options = res.list || [];
