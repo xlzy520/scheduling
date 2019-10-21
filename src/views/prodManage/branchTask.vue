@@ -107,7 +107,7 @@
           {label: '订单编号', prop: 'grouponOrderNumber', width: 240},
           {label: '生产编号', prop: 'produceOrderNumber', width: 180},
           {label: '用料代码', prop: 'materialCode'},
-          {label: '瓦楞楞型', prop: 'tileModel'},
+          {label: '瓦楞楞型', prop: 'tileModel', formatter: row=>row.layers + row.tileModel},
           {label: '订单数量', prop: 'pieceAmount'},
           {label: '处理数量', prop: 'processeAmount'},
           {label: '下料规格(cm)', prop: 'xialiaoguige', width: 150,
