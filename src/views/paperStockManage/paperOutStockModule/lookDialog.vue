@@ -22,6 +22,8 @@
                       :data="tableData"
                       class="input-table"
                       border
+                      fixed-scrollbar
+                      :container="container"
                       :column-type-props="columnsTypeProps"
                       height="500"
                       :columns="tableColumns"
@@ -71,7 +73,8 @@
         // isShowMoney: false,
         isTableLoading: false,
         id: '',
-        cylinderKeys
+        cylinderKeys,
+        container: undefined
       };
     },
     computed: {
@@ -265,6 +268,7 @@
           this.formData = res;
           this.tableData = res.tubeList;
           this.updateHeight();
+          this.container = this.elTabsContent;
         }).finally(()=>{
           this.isTableLoading = false;
         });

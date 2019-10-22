@@ -19,6 +19,8 @@
                       class="input-table"
                       border
                       height="370"
+                      fixed-scrollbar
+                      :container="container"
                       :column-type-props="columnsTypeProps"
                       :columns="tableColumns"
                       :column-type="['index']">
@@ -206,7 +208,8 @@
         // isShowMoney: true,
         isTableLoading: true,
         id: '',
-        cylinderKeys
+        cylinderKeys,
+        container: undefined,
       };
     },
     mixins: [dialogFixed],
@@ -406,6 +409,7 @@
           this.formData = res;
           this.tableData = res.tubeList;
           this.updateHeight();
+          this.container = this.elTabsContent;
         }).finally(()=>{
           this.isTableLoading = false;
         });
