@@ -139,7 +139,7 @@
           },
           {
             prop: cylinderKeys.damagedWeight,
-            label: '破损总重量(kg)',
+            label: '破损重量(kg)',
             width: 139,
           },
           {
