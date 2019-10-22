@@ -490,6 +490,7 @@
       sort(cb) {
         this.dj_api_extend(planArrangeService.sort, {lineId: this.lineId}).then(()=>{
           this.$message('排序成功');
+          this.$refs.table.childComponents.reTable.clearSort();
           this.refresh();
         }).finally(cb);
       },
