@@ -23,7 +23,9 @@
               clearable: false,
               type: 'datetime',
               default: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-              // beforeChange: this.$method.getLimitTime,
+              beforeChange: (val)=>{
+                return dayjs(val).format('YYYY-MM-DD HH:mm:ss');
+              },
             }
           },
           {label: '原纸代码', key: 'paperCode', type: 'input', reg: /^\w+$/g},
