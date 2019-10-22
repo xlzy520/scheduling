@@ -12,8 +12,8 @@
                 @selection-change="selectionChange"
                 @update-data="getList">
         <div slot="btn">
-          <el-button type="primary" @click="openImportDialog()">导入计划</el-button>
-          <el-button type="primary" @click="openImportDialog(true)">导入全部</el-button>
+          <el-button type="primary" @click="openImportDialog()">选中导入</el-button>
+          <el-button type="primary" @click="openImportDialog(true)">全部导入</el-button>
           <el-button type="primary" @click="openAddOrderDialog()">备料订单</el-button>
         </div>
       </dj-table>
