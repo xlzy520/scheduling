@@ -4,7 +4,7 @@ const baseConfig = {
   // service_ip: 'http://192.168.2.199:8080', //作鑫
   // service_ip: 'http://192.168.2.171:8080', //宏权
   // service_ip: 'http://172.17.0.134', //dev
-  // service_ip: 'http://192.168.23.10:9011',
+  service_ip: 'http://192.168.23.10:9011',
   proxyRouter: ['/djsupplier'],
 };
 

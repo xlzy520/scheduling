@@ -6,6 +6,7 @@
           ref="table"
           :data="tableData"
           :columns="tableColumns"
+          :column-type="['index']"
           :total="pageTotal"
           :height="height"
           :loading="loading"
@@ -1065,6 +1066,7 @@
         this.$refs.dialog.open();
         this.getAllLine();
         this.$nextTick(() => {
+          this.$refs.table.filteredColumn.splice(0, 1);// 初始隐藏排序选择
           this.$refs.search.search();
         });
       },
@@ -1082,7 +1084,6 @@
     },
     mounted() {
       window.addEventListener('resize', ()=>{
-        console.log(2);
         this.heightCompute();
       });
     },
