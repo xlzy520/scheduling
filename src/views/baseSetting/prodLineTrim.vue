@@ -132,7 +132,7 @@
               const chnNumChar = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
               return chnNumChar[row.layer] + '层';
             }},
-          {label: '修边', prop: 'wasteSize'},
+          {label: '修边(mm)', prop: 'wasteSize'},
           {label: '操作人', prop: 'operator'},
           {label: '操作时间', prop: 'updateTime'},
           {label: '启用状态', prop: 'isEffected',
