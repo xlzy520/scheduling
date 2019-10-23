@@ -4,6 +4,7 @@
     :search-config="searchConfig"
     :table-columns="tableColumns"
     :download="downloadConfig"
+    @before-reset="beforeReset"
     service-url="listInventoryRecord">
   </simple-table-box>
 </template>
@@ -82,6 +83,11 @@
       };
     },
     methods: {
+      beforeReset() {
+        this.$nextTick(() => {
+          this.$refs.table.$refs.search.query.endTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+        });
+      },
       sort(a, b, prop) {
         if (a[prop] && b[prop]) {
           return a[prop].localeCompare(b[prop]);

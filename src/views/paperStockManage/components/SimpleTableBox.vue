@@ -1,6 +1,6 @@
 <template>
   <single-page class="table-page">
-    <dj-search ref="search" :config="searchConfig" @search="getTableData"></dj-search>
+    <dj-search ref="search" :config="searchConfig" @search="getTableData" @before-reset="beforeReset"></dj-search>
     <page-pane>
       <dj-table
         :data="tableData"
@@ -105,6 +105,9 @@
         this.pageOptions = option;
         this.$refs.search.search();
       },
+      beforeReset() {
+        this.$emit('before-reset');
+      }
     },
     mounted() {
       this.$refs.search.search();
