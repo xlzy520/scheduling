@@ -301,15 +301,15 @@ export function getDateRange(type, startNum, startUnit = 'day', endNum = 0, endU
 }
 
 export function getLimitTime(val) {
-  let _val = val;
+  let _val = [...val];
   if (val[0] && val[1]) {
     let towMonth = dayjs(val[0]).add(91, 'day');
     if (towMonth.isBefore(dayjs(val[1]))) {
       this.$message('时间不能超过92天', 'error');
       _val = [val[0], towMonth.toDate()];
     }
-    _val[0] = dayjs(val[0]).format('YYYY-MM-DD 00:00:00');
-    _val[1] = dayjs(val[1]).format('YYYY-MM-DD 23:59:59');
+    _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
+    _val[1] = dayjs(_val[1]).format('YYYY-MM-DD 23:59:59');
   }
   return _val;
 }
