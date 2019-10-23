@@ -249,7 +249,11 @@ export default {
     'regenerate': {
       label: '再生',
       value: 4,
-    }
+    },
+    'white_card': {
+      label: '白卡',
+      value: 5,
+    },
   }),
   mergeStatus: new MapObject({
     'wait': {
