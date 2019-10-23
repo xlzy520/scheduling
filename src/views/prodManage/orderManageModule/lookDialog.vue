@@ -51,6 +51,12 @@
               }
             },
             {
+              formItem: {
+                prop: orderKeys.address,
+                label: '地址',
+              },
+            },
+            {
               type: 'custom',
               isText: true,
               formItem: {
@@ -62,16 +68,6 @@
                 return (
                   <span>{obj.label || ''}</span>
                 );
-              },
-              // formatter: (cur) => {
-              //   let obj = this.$enum.orderTip._swap[cur] || {};
-              //   return obj.label || ''
-              // }
-            },
-            {
-              formItem: {
-                prop: orderKeys.address,
-                label: '地址',
               },
             },
             {
