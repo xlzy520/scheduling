@@ -262,9 +262,9 @@
         activeTab: '1',
         recordData: [],
         recordColumns: [
-          {label: '操作时间', prop: 'operateTime', width: 100},
-          {label: '操作人', prop: 'operator', width: 80},
-          {label: '操作内容', prop: 'operateDetail', width: 200}
+          {label: '操作时间', prop: 'operateTime', width: 200},
+          {label: '操作人', prop: 'operator', width: 100},
+          {label: '操作内容', prop: 'operateDetail', width: 4400}
         ],
         isTableLoading: false,
         id: ''

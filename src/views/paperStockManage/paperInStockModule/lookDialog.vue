@@ -194,9 +194,9 @@
         // ],
         recordData: [],
         recordColumns: [
-          {label: '操作时间', prop: 'operateTime', width: 226},
-          {label: '操作人', prop: 'operator', width: 136},
-          {label: '操作内容', prop: 'operateDetail', width: 454}
+          {label: '操作时间', prop: 'operateTime', width: 200},
+          {label: '操作人', prop: 'operator', width: 100},
+          {label: '操作内容', prop: 'operateDetail', width: 532}
         ],
         columnsTypeProps: {
           index: {
