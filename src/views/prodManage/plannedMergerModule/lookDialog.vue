@@ -203,12 +203,6 @@
             },
           },
           {
-            formItem: {
-              prop: orderKeys.mergeTime,
-              label: '合并时间'
-            },
-          },
-          {
             type: 'custom',
             formItem: {
               prop: orderKeys.orderTip,
@@ -219,6 +213,12 @@
               let obj = this.$enum.orderTip._swap[this.formData[orderKeys.orderTip]] || {};
               return (<span>{obj.label || ''}</span>);
             }
+          },
+          {
+            formItem: {
+              prop: orderKeys.mergeTime,
+              label: '合并时间'
+            },
           },
         ];
         let hidden_arr = [];
