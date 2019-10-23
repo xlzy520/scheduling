@@ -111,7 +111,7 @@
               label: 'A楞型楞率',
               rules: [
                 this.$rule.required('请输入A楞型楞率'),
-                formRules.float
+                formRules.float3
               ],
             },
             attrs: {
@@ -125,7 +125,7 @@
               label: 'B楞型楞率',
               rules: [
                 this.$rule.required('请输入B楞型楞率'),
-                formRules.float
+                formRules.float3
               ],
             },
             attrs: {
@@ -139,7 +139,7 @@
               label: 'C楞型楞率',
               rules: [
                 this.$rule.required('请输入C楞型楞率'),
-                formRules.float
+                formRules.float3
               ],
             },
             attrs: {
@@ -153,7 +153,7 @@
               label: 'E楞型楞率',
               rules: [
                 this.$rule.required('请输入E楞型楞率'),
-                formRules.float
+                formRules.float3
               ],
             },
             attrs: {
@@ -167,7 +167,7 @@
               label: 'F楞型楞率',
               rules: [
                 this.$rule.required('请输入F楞型楞率'),
-                formRules.float
+                formRules.float3
               ],
             },
             attrs: {
