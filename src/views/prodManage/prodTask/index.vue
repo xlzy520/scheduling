@@ -122,7 +122,8 @@
         printAllList: [],
         extOrderKeys: {
           consignee: 'linkMan',
-          packageAmount: 'packCount'
+          packageAmount: 'packCount',
+          layer: 'layer'
         },
         contentLoading: false,
         timeRange: [],

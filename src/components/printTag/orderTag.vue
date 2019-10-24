@@ -102,7 +102,12 @@
         },
         {
           prop: this.orderKeys.fluteType,
-          label: '瓦楞楞型'
+          label: '瓦楞楞型',
+          formatter: (row) => {
+            let layer = row[this.orderKeys.layer] || '';
+            let fluteType = row[this.orderKeys.fluteType] || '';
+            return `${layer}${fluteType}`;
+          }
         },
         {
           prop: this.orderKeys.materialSize,
