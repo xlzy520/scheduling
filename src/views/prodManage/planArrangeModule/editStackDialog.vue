@@ -1,5 +1,5 @@
 <template>
-  <lock-dialog ref="dialog" @close="close" width="400px" title="叠单标记" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="close" width="400px" title="调整叠单" @confirm="confirm">
     <classify-form ref="form" :form-data="formData" :config="config"></classify-form>
     <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
   </lock-dialog>
@@ -12,7 +12,8 @@
     data: function () {
       return {
         formData: {},
-        lineId: undefined
+        lineId: undefined,
+        order: undefined
       };
     },
     computed: {
@@ -39,19 +40,19 @@
     created() {
     },
     methods: {
-      getOrderMsg(params) {
-        this.dj_api_extend(planArrangeService.getOrder, params).then(res => {
-          if (res[orderKeys.stackUp] + '' === '0') {
-            res[orderKeys.stackUp] = null;
-          }
-          this.formData = res || {};
-        });
-      },
+      // getOrderMsg(params) {
+      //   this.dj_api_extend(planArrangeService.getOrder, params).then(res => {
+      //     if (res[orderKeys.stackUp] + '' === '0') {
+      //       res[orderKeys.stackUp] = null;
+      //     }
+      //     this.formData = res || {};
+      //   });
+      // },
       confirm(cb) {
         this.$refs.form.validate(() => {
           let post = {
             ...this.$method.getFormDataChangeableValue(this.formData, this.config),
-            order: this.formData[orderKeys.productionNo]
+            order: this.$method.getOrderList(this.order)
           };
           this.dj_api_extend(planArrangeService.editStack, post).then(() => {
             this.$emit('success');
@@ -65,7 +66,8 @@
       open(param = {}) {
         this.$refs.dialog.open();
         this.lineId = param.lineId;
-        this.getOrderMsg(param.data);
+        this.order = param.data;
+        // this.getOrderMsg(param.data);
       },
       close() {
         this.$refs.dialog.close();

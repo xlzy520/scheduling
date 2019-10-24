@@ -37,6 +37,7 @@
                   <dj-button v-show="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
                   <el-button v-show="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
                   <el-button v-show="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
+                  <el-button v-show="selectList.length" @click="openDialog('editStackDialog', selectList, true)">调整叠单</el-button>
                   <el-button v-show="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
                   <dj-button @click="exportExcel">导出</dj-button>
                 </div>
@@ -148,7 +149,7 @@
             prop: 'operate',
             label: '操作',
             fixed: 'right',
-            width: 175,
+            width: 105,
             render: (h, {props: {row}}) => {
               // let arr = [];
               // let obj = this.$enum.mergeStatus._swap[this.lineId] || {};
@@ -160,8 +161,6 @@
               return (
                 <div class="td-btn-group">
                   <a on-click={()=>{this.openDialog('editDialog', row);}}>编辑</a>
-                  <span></span>
-                  <a on-click={()=>{this.openDialog('editStackDialog', row);}}>叠单标记</a>
                   <span></span>
                   <a on-click={()=>{this.openDialog('lookDialog', row);}}>查看</a>
                 </div>
