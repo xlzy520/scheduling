@@ -1,7 +1,7 @@
 import {planArrange} from '../base-service/service';
-// import methods from "../../utils/methods";
-// import { orderKeys } from "../../utils/system/constant/dataKeys";
-// const { getMaterialSize, getProductSize, getOrderTip, handleTime, getOriginKey } = methods;
+import methods from "../../utils/methods";
+import { orderKeys } from "../../utils/system/constant/dataKeys";
+const { getMaterialSize, getOriginKey } = methods;
 export default{
   list(data) {
     return planArrange('/selectArrangeOrder.do', data);
@@ -37,7 +37,10 @@ export default{
     return planArrange('/remove.do', data);
   },
   getOrder(data) {
-    return planArrange('/selectAllInfo.do', data);
+    return planArrange('/selectAllInfo.do', data).then(res=>{
+      res[getOriginKey(orderKeys.materialSize, 'old')] = getMaterialSize(res, false, ['oldMaterialLength', 'oldMaterialWidth']);
+      return res;
+    });
   },
   editOrder(data) {
     return planArrange('/updateEditOrder.do', data);
@@ -58,5 +61,8 @@ export default{
     data.pageNo = 1;
     data.pageSize = 999999999;
     return planArrange('/exportExcel.do', data, 'download_post');
+  },
+  getCalcResult(data) {
+    return planArrange('/getUpdateValue.do', data);
   },
 };

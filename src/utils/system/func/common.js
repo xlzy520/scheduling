@@ -14,9 +14,12 @@ export const cloneData = function (arr = [], obj1 = {}, obj2 = {}) {
   return obj1;
 };
 
-export const getMaterialSize = function (obj = {}, bool) {
-  let length = obj[orderKeys.materialLength] || '';
-  let width = obj[orderKeys.materialWidth] || '';
+export const getMaterialSize = function (obj = {}, bool, option = []) {
+  let defaultOption = [orderKeys.materialLength, orderKeys.materialWidth];
+  let lengthKey = option[0] || defaultOption[0];
+  let widthKey = option[1] || defaultOption[1];
+  let length = obj[lengthKey] || '';
+  let width = obj[widthKey] || '';
   if (bool) {
     return [length, width];
   } else {

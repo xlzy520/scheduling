@@ -1,6 +1,6 @@
 <template>
-  <lock-dialog ref="dialog" @close="close" width="400px" title="编辑" @confirm="confirm">
-    <classify-form ref="form" :form-data="formData" :config="config"></classify-form>
+  <lock-dialog ref="dialog" @close="close" title="编辑" @confirm="confirm">
+    <classify-form v-loading="isLoading" ref="form" :form-data="formData" :config="config" :column-num="2" has-line></classify-form>
     <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
   </lock-dialog>
 </template>
@@ -13,7 +13,8 @@
       return {
         formData: {},
         paperSize_arr: [],
-        lineId: undefined
+        lineId: undefined,
+        isLoading: false,
       };
     },
     computed: {
@@ -36,6 +37,11 @@
                   },
                   options: this.paperSize_arr
                 },
+                listeners: {
+                  input: () => {
+                    this.getCalcResult();
+                  }
+                }
                 // component: {
                 //   props: ['options', 'value'],
                 //   render() {
@@ -56,12 +62,6 @@
                 // }
               },
               {
-                formItem: {
-                  prop: this.$method.getOriginKey('paperSize', 'old'),
-                  label: '原最优门幅'
-                },
-              },
-              {
                 type: 'select',
                 formItem: {
                   prop: orderKeys.cutNumber,
@@ -71,12 +71,63 @@
                   clearable: false,
                   bindObject: true,
                   options: this.$enum.orderCutNumber
+                },
+                listeners: {
+                  input: () => {
+                    this.getCalcResult();
+                  }
                 }
+              },
+            ]
+          },
+          {
+            title: '原订单信息',
+            formOptions: [
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey('paperSize', 'old'),
+                  label: '最优门幅'
+                },
               },
               {
                 formItem: {
                   prop: this.$method.getOriginKey(orderKeys.cutNumber, 'old'),
-                  label: '原订单切数'
+                  label: '订单切数'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.materialSize, 'old'),
+                  label: '下料规格'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.orderMetres, 'old'),
+                  label: '订单米数'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.trimRate, 'old'),
+                  label: '修边率'
+                },
+              },
+            ]
+          },
+          {
+            title: '计算结果',
+            formOptions: [
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.orderMetres, 'calc'),
+                  label: '订单米数'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.trimRate, 'calc'),
+                  label: '修边率'
                 },
               },
             ]
@@ -87,6 +138,28 @@
     created() {
     },
     methods: {
+      clearCalcResult() {
+        let _res = {};
+        _res[this.$method.getOriginKey(orderKeys.orderMetres, 'calc')] = '';
+        _res[this.$method.getOriginKey(orderKeys.trimRate, 'calc')] = '';
+        Object.assign(this.formData, _res);
+      },
+      getCalcResult() {
+        if (this.formData[orderKeys.productionNo]) {
+          let post = {
+            ...this.$method.getFormDataChangeableValue(this.formData, this.config),
+            lineId: this.lineId,
+            order: this.formData[orderKeys.productionNo]
+          };
+          this.clearCalcResult();
+          this.dj_api_extend(planArrangeService.getCalcResult, post).then(res => {
+            let _res = {};
+            _res[this.$method.getOriginKey(orderKeys.orderMetres, 'calc')] = res['length'];
+            _res[this.$method.getOriginKey(orderKeys.trimRate, 'calc')] = res[orderKeys.trimRate];
+            Object.assign(this.formData, _res);
+          });
+        }
+      },
       getPaperSizes(params) {
         let { data, lineId} = params;
         this.dj_api_extend(planArrangeService.getOptimalSize, {lineId, orderList: this.$method.getOrderList([data])}).then(res => {
@@ -94,8 +167,13 @@
         });
       },
       getOrderMsg(params) {
+        this.isLoading = true;
         this.dj_api_extend(planArrangeService.getOrder, params).then(res => {
+          res[this.$method.getOriginKey(orderKeys.orderMetres, 'calc')] = res[orderKeys.orderMetres];
+          res[this.$method.getOriginKey(orderKeys.trimRate, 'calc')] = res[orderKeys.trimRate];
           this.formData = res || {};
+        }).finally(()=>{
+          this.isLoading = false;
         });
       },
       confirm(cb) {
