@@ -1,10 +1,10 @@
 <template>
-  <div class="classifyForm">
+  <div class="classify-form">
     <template v-for="(item, index) in _config">
       <p v-if="item.title" class="bold">{{item.title}}</p>
       <dj-form ref="form" :class="{'text-form': hasSuffix[index]}"
                :form-options="item.formOptions" v-bind="$attrs"></dj-form>
-      <p v-if="(hasLine || item.hasLine) && index !== config.length - 1" class="line"></p>
+      <p v-if="(hasLine || item.hasLine) && index !== config.length - 1" class="classify-form__line"></p>
     </template>
   </div>
 </template>
@@ -74,17 +74,20 @@
     margin-bottom: 10px;
     font-weight: bold;
   }
-  .line {
+  .classify-form__line {
     margin-top: 18px;
     margin-bottom: 24px;
     border-top: 1px solid #ebeef5;
   }
-  .classifyForm {
+  .classify-form {
     .dj-form:not(:nth-last-of-type(1)) {
       margin-bottom: 13px;
     }
     .dj-form.text-form /deep/ .el-form-item {
       margin-bottom: 0;
+    }
+    .dj-form:not(.text-form) + .classify-form__line {
+      margin-top: 3px
     }
   }
 </style>
