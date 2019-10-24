@@ -1,6 +1,12 @@
 <template>
   <single-page>
-    <div class="production-line" v-loading="loading">
+    <div v-if="isEmpty" class="empty-area">
+      <span class="production-line__empty-text">
+        <i class="cl-common- dj-common-Nodata"></i><span class="empty-text">暂无数据</span>
+      </span>
+      <el-button type="primary" @click="addProdLine" class="add-btn">立即新增</el-button>
+    </div>
+    <div class="production-line" v-else v-loading="loading">
       <el-button type="primary" @click="addProdLine">新增</el-button>
       <el-tabs v-model="activeTab" @tab-click="tabClick">
         <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
@@ -15,8 +21,9 @@
       <prod-line-content :line-id="idMap[Number(activeTab)-1]" ref="content"
                          :prod-line-data="prodLineData[Number(activeTab)-1]"
                          :prod-line-label="prodLineLabel"></prod-line-content>
-      <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd" @close="close" @get-data="getData"></edit-add>
     </div>
+    <edit-add ref="editAdd" v-if="dialogVisible" :dialog-type-is-add="dialogTypeIsAdd"
+              @close="close" @get-data="getData"></edit-add>
   </single-page>
 </template>
 
@@ -26,38 +33,41 @@
   import ProdLineContent from './components/ProdLineContent';
   import EditAdd from './components/EditAdd';
   import SinglePage from "../../../components/page/singlePage";
-const initProdLineData = {
-  jccs: {
-    commonTilemodel: [],
-    lineSpeed: '',
-    changeorderMinLength: '',
-    firstorderWasteWith: '',
-    lastorderMinLength: '',
-    linePaperSizeModels: '',
-  },
-  zqj: {
-    slimachNumbers: '',
-    slimachWheelRows: '',
-    slimachWheelCount: '',
-    slimachWheelSamesideSpace: '',
-    slimachWdoubleMinLength: '',
-    slimachKnifeCount: '',
-    slimachKnifeSpace: '',
-    slimachKnifeChangetime: '',
-  },
-  fxj: {
-    partlineMachineWidth: '',
-    minCutLength: '',
-    basketType: '',
-    basketLength: '',
-    stackCount: ''
-  }
-};
+
+  const initProdLineData = {
+    jccs: {
+      commonTilemodel: [],
+      lineSpeed: '',
+      changeorderMinLength: '',
+      firstorderWasteWith: '',
+      lastorderMinLength: '',
+      linePaperSizeModels: '',
+    },
+    zqj: {
+      slimachNumbers: '',
+      slimachWheelRows: '',
+      slimachWheelCount: '',
+      slimachWheelSamesideSpace: '',
+      slimachWdoubleMinLength: '',
+      slimachKnifeCount: '',
+      slimachKnifeSpace: '',
+      slimachKnifeChangetime: '',
+    },
+    fxj: {
+      partlineMachineWidth: '',
+      minCutLength: '',
+      basketType: '',
+      basketLength: '',
+      stackCount: ''
+    }
+  };
   export default {
     name: 'productionLine',
     components: {SinglePage, EditAdd, ProdLineContent},
     data() {
       return {
+        isEmpty: true,
+
         loading: false,
         statusLoading: false,
 
@@ -108,8 +118,6 @@ const initProdLineData = {
       },
       tabClick() {
         this.lineStatus = this.tabsColumn[this.activeTab - 1].isEffected;
-        console.log(this.activeTab);
-        console.log(this.idMap[Number(this.activeTab) - 1]);
         this.$refs.content.getOperationRecord();
       },
       changeLineStatus(val) {
@@ -118,7 +126,7 @@ const initProdLineData = {
           effected: val ? 0 : 1,
         };
         let text = val ? '禁用' : '启用';
-        this.$method.tipBox(`确定${text}该条内容吗？`, ()=>{
+        this.$method.tipBox(`确定${text}该条内容吗？`, () => {
           this.statusLoading = true;
           return this.dj_api_extend(productionLineService.changeLineEffected, post).then(() => {
             // this.lineStatus = val;
@@ -129,32 +137,19 @@ const initProdLineData = {
             this.statusLoading = false;
           });
         });
-        // this.$confirm(`确定${text}该条内容吗？`, '', {
-        //   type: 'warning',
-        //   showClose: false,
-        // }).then(() => {
-        //   this.statusLoading = true;
-        //   this.dj_api_extend(productionLineService.changeLineEffected, post).then(() => {
-        //     // this.lineStatus = val;
-        //     this.$message(`${text}成功`, 'success');
-        //     this.tabsColumn[this.activeTab - 1].isEffected = val ? 0 : 1;
-        //     this.tabClick();
-        //   }).finally(() => {
-        //     this.statusLoading = false;
-        //   });
-        // });
       },
 
       getData(activeTab) {
         this.loading = true;
         productionLineService.list().then((res) => {
           let data = res.list;
-          this.idMap = data.map(v=>v.id);
-          this.prodLineData = [];
-          this.tabsColumn = [];
-          if (data.length > 0) {
+          this.isEmpty = res.total === 0;
+          if (!this.isEmpty) {
+            this.idMap = data.map(v => v.id);
+            this.prodLineData = [];
+            this.tabsColumn = [];
             this.activeTab = activeTab || data[0].lineNum;
-            data.map((v, index)=>{
+            data.map((v, index) => {
               this.tabsColumn.push({
                 label: v.lineNum + '号线',
                 value: v.lineNum,
@@ -162,12 +157,12 @@ const initProdLineData = {
                 isEffected: v.isEffected
               });
               this.prodLineData.push(this.$method.deepClone(initProdLineData));
-                for (const item of Object.keys(this.prodLineLabel)) {
+              for (const item of Object.keys(this.prodLineLabel)) {
                 const module = this.prodLineLabel[item];
                 for (let i = 0; i < module.length; i++) {
                   const prop = module[i].prop;
                   if (item === 'jccs' && prop === 'linePaperSizeModels') {
-                    this.prodLineData[index][item][prop] = v[prop].map(v=>{
+                    this.prodLineData[index][item][prop] = v[prop].map(v => {
                       return {
                         paperSize: v.paperSize,
                         id: v.id
@@ -179,10 +174,11 @@ const initProdLineData = {
                 }
               }
             });
+            this.$nextTick(() => {
+              this.tabClick();
+            });
           }
-          this.tabClick();
-          this.loading = false;
-        }).catch(() => {
+        }).finally(() => {
           this.loading = false;
         });
       },
@@ -193,7 +189,7 @@ const initProdLineData = {
         if (copyData.jccs.commonTilemodel) {
           copyData.jccs.commonTilemodel = copyData.jccs.commonTilemodel.split('、');
         }
-        this.$nextTick(()=>{
+        this.$nextTick(() => {
           this.$refs.editAdd.prodLineData = JSON.parse(JSON.stringify(copyData));
           this.$refs.editAdd.lineId = this.idMap[this.activeTab - 1];
           this.$refs.editAdd.lineNum = this.activeTab;
@@ -211,20 +207,60 @@ const initProdLineData = {
 
 <style lang="less" scoped>
   @deep: ~'>>>';
+  @{deep} .el-button {
+    width: 112px;
+    height: 36px;
+    padding: 0 8px;
+  }
+
   .production-line {
     padding: 24px 32px 0;
+
     @{deep} .el-tabs {
       margin-top: 12px;
+
       .el-tabs__header {
         margin: 0 0 16px;
       }
     }
+
     .tab-right-btns {
       float: right;
       transform: translateY(-54px);
+
       .el-button {
         padding: 10px 41px;
         margin-right: 8px;
+      }
+    }
+  }
+
+  .empty-area {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+
+    .production-line__empty-text {
+      display: flex;
+      margin-bottom: 16px;
+      color: #909399;
+
+      i {
+        display: block;
+        width: 25.43px;
+        height: 25.43px;
+        font-size: 25.43px;
+        color: #C0C4CC;
+      }
+
+      .empty-text {
+        margin-left: 9px;
+        width: 80px;
+        height: 28px;
+        font-size: 20px;
+        font-weight: 500;
+        color: rgba(192, 196, 204, 1);
+        line-height: 28px;
       }
     }
   }
