@@ -581,5 +581,13 @@
         font-size: 25px;
       }
     }
+    .dj-table-container /deep/ .over-table {
+      position: relative;
+      .right-item{
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+    }
   }
 </style>
