@@ -138,7 +138,7 @@
         tableData_index_map: {},
         columnsTypeProps: {
           selection: {
-            width: 50,
+            width: 45,
             // fixed: false
           }
         },
@@ -171,7 +171,7 @@
           {
             prop: orderKeys.sortIndex,
             label: '排序',
-            width: 85,
+            width: 55,
             formatter(row, index, cur) {
               return cur + '' === '0' ? '' : cur;
             }
@@ -179,7 +179,7 @@
           {
             prop: orderKeys.orderTip,
             label: '订单标记',
-            width: 114,
+            width: 80,
             render: (h, {props: {row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
@@ -202,13 +202,13 @@
           {
             prop: orderKeys.produceMaterial,
             label: '用料代码',
-            width: 114,
+            width: 105,
             sortable: true
           },
           {
             prop: orderKeys.fluteType,
             label: '瓦楞楞型',
-            width: 114,
+            width: 80,
             formatter(row, index, cur) {
               let layer = row[orderKeys.layer] || '';
               let fluteType = cur || '';
@@ -216,29 +216,39 @@
             }
           },
           {
-            prop: orderKeys.materialSize,
-            label: '下料规格(cm)',
-            width: 144,
-            formatter(row) {
-              let materialLength = row[orderKeys.materialLength] || '';
-              let materialWidth = row[orderKeys.materialWidth] || '';
-              return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
-            }
+            prop: orderKeys.materialLength,
+            label: '切长(cm)',
+            width: 80
           },
           {
-            prop: orderKeys.orderAmount,
-            label: '订单数量',
-            width: 114
+            prop: orderKeys.materialWidth,
+            label: '切宽(cm)',
+            width: 80
           },
+          {
+            prop: orderKeys.longitudinalPressure,
+            label: '纵压公式',
+            width: 120
+          },
+          // {
+          //   prop: orderKeys.materialSize,
+          //   label: '下料规格(cm)',
+          //   width: 118,
+          //   formatter(row) {
+          //     let materialLength = row[orderKeys.materialLength] || '';
+          //     let materialWidth = row[orderKeys.materialWidth] || '';
+          //     return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
+          //   }
+          // },
           {
             prop: orderKeys.productAmount,
             label: '生产数量',
-            width: 114
+            width: 80
           },
           {
             prop: orderKeys.optimalSize,
             label: '最优门幅',
-            width: 114,
+            width: 100,
             sortable: true,
             sortMethod: (a, b) => {
               const table = this.$refs.table.childComponents.reTable;
@@ -275,36 +285,51 @@
           {
             prop: orderKeys.cutNumber,
             label: '切数',
-            width: 86,
+            width: 50,
           },
           {
             prop: orderKeys.cutterNumber,
             label: '刀数',
-            width: 86,
+            width: 55,
           },
           {
             prop: orderKeys.orderMetres,
             label: '订单米数',
-            width: 114,
+            width: 80,
           },
           {
             prop: orderKeys.trim,
             label: '修边',
-            width: 86,
+            width: 50,
           },
           {
             prop: orderKeys.trimRate,
             label: '修边率',
-            width: 100,
+            width: 70,
           },
           {
             prop: orderKeys.stackUp,
             label: '叠单',
-            width: 86,
+            width: 50,
             formatter(row, index, cur) {
               return cur + '' === '0' ? '' : cur;
             }
-          }
+          },
+          {
+            prop: orderKeys.orderAmount,
+            label: '订单数量',
+            width: 80
+          },
+          {
+            prop: this.$method.getOriginKey(orderKeys.materialWidth, 'source'),
+            label: '原切宽',
+            width: 70,
+          },
+          {
+            prop: this.$method.getOriginKey(orderKeys.longitudinalPressure, 'source'),
+            label: '原纵压公式',
+            width: 120,
+          },
         ],
         total: 0,
         totalMeter: 0,
