@@ -7,6 +7,7 @@
                 :loading="isTableLoading"
                 :columns="tableColumns"
                 :column-type="['selection']"
+                :column-type-props="{selection: {width: 45}}"
                 :total="total"
                 height="100%"
                 @selection-change="selectionChange"
@@ -176,7 +177,7 @@
           {
             prop: orderKeys.orderTip,
             label: '订单标记',
-            width: 116,
+            width: 80,
             render: (h, {props: {row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
@@ -189,7 +190,7 @@
           {
             prop: orderKeys.productionNo,
             label: '生产编号',
-            width: 220
+            width: 150
           },
           {
             prop: orderKeys.orderId,
@@ -202,7 +203,7 @@
           {
             prop: orderKeys.customerName,
             label: '客户名称',
-            width: 116,
+            width: 80,
           },
           {
             prop: orderKeys.productName,
@@ -215,12 +216,12 @@
           {
             prop: orderKeys.materialName,
             label: '材料名称',
-            width: 116,
+            width: 90,
           },
           {
             prop: orderKeys.fluteType,
             label: '瓦楞楞型',
-            width: 116,
+            width: 80,
             formatter(row, index, cur) {
               return row[orderKeys.layer] + cur;
             }
@@ -228,12 +229,12 @@
           {
             prop: orderKeys.orderAmount,
             label: '订单数量',
-            width: 116,
+            width: 80,
           },
           {
             prop: orderKeys.materialSize,
             label: '下料规格(cm)',
-            width: 146,
+            width: 118,
             formatter(row) {
               return row[orderKeys.materialLength] + '*' + row[orderKeys.materialWidth];
             }
@@ -241,7 +242,7 @@
           {
             prop: orderKeys.orderStatus,
             label: '订单状态',
-            width: 116,
+            width: 80,
             // formatter: (row, index, cur) => {
             //   let obj = this.$enum.orderStatus._swap[cur] || {};
             //   return obj.label || '';
@@ -250,7 +251,7 @@
           {
             prop: orderKeys.productStatus,
             label: '生产状态',
-            width: 116,
+            width: 80,
             formatter: (row, index, cur) => {
               let obj = this.$enum.productStatus._swap[cur] || {};
               return obj.label || '';
@@ -259,7 +260,7 @@
           {
             prop: orderKeys.deliveryTime,
             label: '订单交期',
-            width: 163,
+            width: 95,
             formatter(row, index, cur) {
               return dayjs(cur).format('YYYY-MM-DD');
             }
