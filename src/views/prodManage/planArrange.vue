@@ -371,11 +371,11 @@
           return a_index - b_index;
         });
       },
-      getTotalMeters() {
-        this.dj_api_extend(planArrangeService.getTotalMeters, {lineId: this.lineId}).then(res=>{
-          this.totalMeter = res || 0;
-        });
-      },
+      // getTotalMeters() {
+      //   this.dj_api_extend(planArrangeService.getTotalMeters, {lineId: this.lineId}).then(res=>{
+      //     this.totalMeter = res || 0;
+      //   });
+      // },
       getList(page) {
         this.selectList = [];
         let post = {
@@ -384,9 +384,10 @@
         };
         post['lineId'] = this.lineId;
         this.isTableLoading = true;
-        this.getTotalMeters();
+        // this.getTotalMeters();
         this.dj_api_extend(planArrangeService.list, post).then(res=>{
           this.total = res.total || 0;
+          this.totalMeter = res.allLength || 0;
           this.tableData = res.list || [];
           this.tableData_index_map = this.tableData.reduce((map, obj, index)=>{
             map[obj[orderKeys.productionNo]] = index;
