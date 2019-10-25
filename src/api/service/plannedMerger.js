@@ -11,6 +11,8 @@ export default{
           obj.childList.forEach(item=>{
             item.isChild = true;
             item['table_level'] = 1;
+            item[orderKeys.productSize] = getProductSize(item);
+            item[orderKeys.materialSize] = getMaterialSize(item);
           });
         }
         obj.childNum = (obj.childList || []).length;

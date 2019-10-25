@@ -411,16 +411,16 @@
             //   let materialWidth = row[orderKeys.materialWidth] || '';
             //   return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
             // },
-            render: (h, {props: {row}}) => {
-              let materialLength = row[orderKeys.materialLength] || '';
-              let materialWidth = row[orderKeys.materialWidth] || '';
-              let materialSize = materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
-              return (
-                <span class={{'illegal': !row['judgeSpecification'], 'edited': !row['judgeSpecificationUpdate']}}>
-                  {materialSize}
-                </span>
-              );
-            }
+            // render: (h, {props: {row}}) => {
+            //   let materialLength = row[orderKeys.materialLength] || '';
+            //   let materialWidth = row[orderKeys.materialWidth] || '';
+            //   let materialSize = materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
+            //   return (
+            //     <span class={{'illegal': !row['judgeSpecification'], 'edited': !row['judgeSpecificationUpdate']}}>
+            //       {materialSize}
+            //     </span>
+            //   );
+            // }
           },
           {
             prop: orderKeys.optimalSize,
