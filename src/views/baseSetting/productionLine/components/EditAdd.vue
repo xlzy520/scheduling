@@ -202,6 +202,7 @@
               },
               attrs: {
                 placeholder: '请输入最小上机米数',
+                suffixIcon: "m"
               }
             },
             {

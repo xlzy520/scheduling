@@ -1,12 +1,12 @@
 <template>
-  <single-page>
+  <single-page v-loading="loading">
     <div v-if="isEmpty" class="empty-area">
       <span class="production-line__empty-text">
         <i class="cl-common- dj-common-Nodata"></i><span class="empty-text">暂无数据</span>
       </span>
       <el-button type="primary" @click="addProdLine" class="add-btn">立即新增</el-button>
     </div>
-    <div class="production-line" v-else v-loading="loading">
+    <div class="production-line" v-else>
       <el-button type="primary" @click="addProdLine">新增</el-button>
       <el-tabs v-model="activeTab" @tab-click="tabClick">
         <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
@@ -138,7 +138,14 @@
           });
         });
       },
-
+      changeTabsScrollWidth() {
+        const ele = document.querySelector('.el-tabs__nav-wrap');
+        const cardWidth = document.querySelector('.left-content').getBoundingClientRect().width;
+        ele.style.width = cardWidth + 'px';
+      },
+      bindResize() {
+        window.addEventListener('resize', ()=>this.changeTabsScrollWidth());
+      },
       getData(activeTab) {
         this.loading = true;
         productionLineService.list().then((res) => {
@@ -176,6 +183,7 @@
             });
             this.$nextTick(() => {
               this.tabClick();
+              this.changeTabsScrollWidth();
             });
           }
         }).finally(() => {
@@ -202,6 +210,12 @@
     created() {
       this.getData();
     },
+    mounted() {
+      this.bindResize();
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize', ()=>this.changeTabsScrollWidth());
+    }
   };
 </script>
 
@@ -219,7 +233,7 @@
     @{deep} .el-tabs {
       margin-top: 12px;
 
-      .el-tabs__header {
+      &__header {
         margin: 0 0 16px;
       }
     }
