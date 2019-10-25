@@ -96,6 +96,9 @@
                 formRules.number,
                 formRules.number5
               ],
+            },
+            attrs: {
+              suffixIcon: "mm"
             }
           },
           {

@@ -108,7 +108,7 @@
             type: 'input',
             formItem: {
               prop: 'paperGram',
-              label: '克重(g)',
+              label: '克重',
               rules: [
                 this.$rule.required('请输入克重'),
                 formRules.number,
@@ -116,7 +116,8 @@
                 ],
             },
             attrs: {
-              placeholder: '请输入该原纸品种对应最大克重'
+              placeholder: '请输入该原纸最大克重',
+              suffixIcon: "g"
             },
           },
         ],
