@@ -1,5 +1,5 @@
 <template>
-  <div class="page-pane">
+  <div :class="['page-pane', isMargin ? 'is-margin' : '']">
     <div class="page-pane_absolute">
       <slot></slot>
     </div>
@@ -7,14 +7,22 @@
 </template>
 <script>
   export default {
-    name: 'pagePane'
+    name: 'pagePane',
+    props: {
+      isMargin: {
+        type: Boolean,
+        default: true
+      }
+    }
   };
 </script>
 <style lang="less" scoped>
   .page-pane {
     position: relative;
-    margin: 14px 32px;
     flex: 1 1;
+    &.is-margin {
+      margin: 0 32px 14px;
+    }
     .page-pane_absolute {
       position: absolute;
       width: 100%;
