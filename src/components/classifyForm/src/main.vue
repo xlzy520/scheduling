@@ -71,12 +71,13 @@
 </script>
 <style lang="less" scoped>
   .bold {
-    margin-bottom: 10px;
+    line-height: 22px;
+    margin-bottom: 16px;
     font-weight: bold;
   }
   .classify-form__line {
-    margin-top: 18px;
-    margin-bottom: 24px;
+    margin-top: 4px;
+    margin-bottom: 20px;
     border-top: 1px solid #ebeef5;
   }
   .classify-form {
@@ -95,10 +96,10 @@
       }
     }
     .dj-form:not(:nth-last-of-type(1)) {
-      margin-bottom: 13px;
+      /*margin-bottom: 13px;*/
     }
     .dj-form:not(.text-form) + .classify-form__line {
-      margin-top: 3px
+      margin-top: 4px
     }
   }
 </style>
