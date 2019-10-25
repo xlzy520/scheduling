@@ -80,11 +80,24 @@
     border-top: 1px solid #ebeef5;
   }
   .classify-form {
+    /deep/ .dj-form{
+      .el-form-item{
+        line-height: 22px;
+        &__label{
+          line-height: 22px;
+        }
+        &__content{
+          word-break: break-all;
+          line-height: 22px;
+        }
+      }
+    }
     .dj-form:not(:nth-last-of-type(1)) {
       margin-bottom: 13px;
     }
     .dj-form.text-form /deep/ .el-form-item {
-      margin-bottom: 0;
+      margin-bottom: 16px;
+      margin-top: 0;
     }
     .dj-form:not(.text-form) + .classify-form__line {
       margin-top: 3px

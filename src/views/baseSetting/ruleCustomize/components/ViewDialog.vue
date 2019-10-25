@@ -1,10 +1,14 @@
 <template>
-  <dj-dialog ref="dialog" @close="close" :title="dialogType==='stack_view'?'查看叠单规则': '查看打包规则'">
+  <dj-dialog ref="dialog" @close="close" :has-footer="false" width="780px"
+             :title="dialogType==='stack_view'?'查看叠单规则': '查看打包规则'">
     <div class="rule-view" v-loading="viewLoading">
       <dj-grid-box :data="dialogType==='stack_view'?stackDetail: packDetail" :column-num="2"
                    :col-rule="()=>12" class="rule-view-header">
         <template slot-scope="{item}">
-          <div class="rule-view-header-label">{{item.label}}： {{viewData[item.prop]}}</div>
+          <div class="rule-view-header-item">
+            <div class="header-item-label">{{item.label}}：</div>
+            <div class="header-item-content">{{viewData[item.prop]}}</div>
+          </div>
         </template>
       </dj-grid-box>
       <div class="rule-view-content">
@@ -16,9 +20,6 @@
           :is-need-page="false"
         ></dj-table>
       </div>
-    </div>
-    <div slot="footer">
-      <el-button @click="close">关闭查看</el-button>
     </div>
   </dj-dialog>
 </template>
@@ -41,7 +42,7 @@
           {prop: 'maxStackCount', label: '最大堆叠单数'},
         ],
         packDetail: [
-          {prop: 'eachPackWeight', label: '单批打包重量(Kg)'},
+          {prop: 'eachPackWeight', label: '单批打包重量'},
           {prop: 'aTilemodelRate', label: 'A楞型楞率'},
           {prop: 'bTilemodelRate', label: 'B楞型楞率'},
           {prop: 'cTilemodelRate', label: 'C楞型楞率'},
@@ -101,23 +102,6 @@
           }
         }
       },
-      // objectSpanMethod({row, column, rowIndex, columnIndex}) {
-      //   if (columnIndex === 0) {
-      //     let num = this.kind[row.tilemodel || row.layer];
-      //     console.log(rowIndex, num);
-      //     if (rowIndex % num === 0) {
-      //       return {
-      //         rowspan: num,
-      //         colspan: 1
-      //       };
-      //     } else {
-      //       return {
-      //         rowspan: 0,
-      //         colspan: 0
-      //       };
-      //     }
-      //   }
-      // },
       view(row) {
         this.$refs.dialog.open();
         this.viewLoading = true;
@@ -161,24 +145,45 @@
 </script>
 
 <style lang="less" scoped>
+  @deep: ~'>>>';
   .rule-view {
     width: 40vw;
+    padding-top: 4px;//与距离scroll相加16px为20px
     &-header {
       padding: 0 10px;
       font-weight: bold;
       color: #000;
-      &-label {
-        padding: 5px 20px;
-        padding-left: 0;
+      &-item {
+        display: flex;
+        margin-bottom: 16px;
+        line-height:22px;
+        font-weight:400;
+        .header-item-label{
+          color:rgba(48,49,51,1);
+          text-align: right;
+          width: 98px;
+        }
+        .header-item-content{
+          color:rgba(96,98,102,1);
+          margin-left: 8px;
+        }
       }
       &.stack {
         display: flex;
         justify-content: space-between;
       }
+      @{deep} .el-row{
+        .el-col.el-col-12:last-child{
+          padding-left: 50px;
+        }
+      }
     }
     &-content {
       padding-right: 20px;
       box-sizing: border-box;
+      @{deep} .over-table{
+        display: none;
+      }
     }
   }
 </style>

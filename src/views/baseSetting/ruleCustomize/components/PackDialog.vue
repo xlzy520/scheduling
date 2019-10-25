@@ -23,7 +23,7 @@
                     <dj-input v-model="child.startUnitarea" placeholder="请输入" maxlength="10"
                               disabled suffix-icon="m²"></dj-input>
                   </el-form-item>
-                  <div style="margin: 0 5px;">至</div>
+                  <div class="unit-area-text">至</div>
                   <el-form-item prop="endUnitarea">
                     <dj-input v-model="child.endUnitarea" placeholder="请输入" suffix-icon="m²"
                               maxlength="10" @change="val=>changeNextInput(val,index, childIndex)"></dj-input>
@@ -43,7 +43,7 @@
           </transition-group>
         </div>
       </div>
-      <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px;">添加条件</el-button>
+      <el-button type="primary" class="add-btn" @click.prevent="addCondition">添加条件</el-button>
     </div>
   </lock-dialog>
 </template>
@@ -336,6 +336,9 @@
   .pack-dialog {
     width: 1196px;
     height: 711px;
+    .add-btn{
+      margin-left: 121px;
+    }
   }
 
   @media screen and (max-width: 1601px) {
@@ -361,12 +364,12 @@
         width: 30.8%;
         &.unit-area {
           .el-form-item__label {
-            width: 78px;
+            width: 81px;
           }
         }
         &.packpiece {
           .el-form-item__label {
-            width: 109px;
+            width: 115px;
           }
           .el-input {
             width: 232px;
@@ -382,10 +385,11 @@
     }
     .condition-index-label {
       width: 50px;
-      padding-left: 20px;
+      padding-left: 15px;
       font-family: "PingFang SC", sans-serif;
       font-weight: 500;
       box-sizing: content-box;
+      padding-right: 0;
     }
     .button-col {
       display: flex;
@@ -407,10 +411,18 @@
       width: 100%;
     }
     @{deep} .unit-area {
+      .unit-area-text{
+        margin: 0 5px;
+        width:14px;
+        height:20px;
+        font-size:14px;
+        font-family:PingFangSC;
+        color:rgba(48,49,51,1);
+      }
       .el-form-item__content {
         display: flex;
         .el-input {
-          width: 106px;
+          width: 104px;
         }
       }
     }

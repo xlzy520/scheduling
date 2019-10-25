@@ -27,10 +27,10 @@ export default {
     line-height: 20px;
     &-header {
       padding: 17px;
-      font-family: PingFangSC;
-      font-weight: 500;
       color: #606266;
       background: #fafafa;
+      font-weight:600;
+      line-height:20px;
     }
     &-content {
       padding: 24px 0 30px 16px;

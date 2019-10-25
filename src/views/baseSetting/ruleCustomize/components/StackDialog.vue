@@ -33,7 +33,7 @@
           </transition-group>
         </div>
       </div>
-      <el-button type="primary" @click.prevent="addCondition" style="margin-left: 130px;">添加条件</el-button>
+      <el-button type="primary" class="add-btn" @click.prevent="addCondition">添加条件</el-button>
     </div>
   </lock-dialog>
 </template>
@@ -332,9 +332,13 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
+
   .stack-dialog {
     width: 1196px;
     height: 711px;
+    .add-btn{
+      margin-left: 121px;
+    }
   }
 
   @media screen and (max-width: 1601px) {
@@ -369,12 +373,12 @@
         }
         &.cut {
           .el-form-item__label {
-            width: 78px;
+            width: 82.5px;
           }
         }
         &.piece {
           .el-form-item__label {
-            width: 109px;
+            width: 115px;
           }
           .dj-input {
             width: 232px;
@@ -384,10 +388,11 @@
     }
     .condition-index-label {
       width: 50px;
-      padding-left: 20px;
+      padding-left: 14px;
       font-family: "PingFang SC", sans-serif;
       font-weight: 500;
       box-sizing: content-box;
+      padding-right: 0;
     }
     .button-col {
       display: flex;

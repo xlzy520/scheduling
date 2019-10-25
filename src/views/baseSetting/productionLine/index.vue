@@ -221,11 +221,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .el-button {
-    width: 112px;
-    height: 36px;
-    padding: 0 8px;
-  }
 
   .production-line {
     padding: 24px 32px 0;

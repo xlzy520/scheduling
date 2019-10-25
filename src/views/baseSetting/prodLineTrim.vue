@@ -17,7 +17,7 @@
     </page-pane>
 
     <lock-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" append-to-body
-               :title="dialogTypeIsAdd?'新增生产线修边': '编辑生产线修边'">
+               :title="dialogTypeIsAdd?'新增生产线修边': '编辑生产线修边'" :width="dialogWidth">
       <div class="plts-dialog" :class="{'edit': !dialogTypeIsAdd}" v-loading="dialogLoading">
         <dj-form  v-for="(formOption, index) in formOptions"
                   ref="form"
@@ -26,9 +26,8 @@
                   :col-rule="(item,ruleIndex)=>colRule(item,ruleIndex)"
                   :form-data="formData[index]"
                   :form-options="formOption"></dj-form>
-        <div class="plts-dialog-aside" v-if="dialogTypeIsAdd">
-          <el-button type="primary" @click.prevent="addLayer">添加生产线</el-button>
-        </div>
+        <el-button v-if="dialogTypeIsAdd" type="primary" class="add-btn"
+                   @click.prevent="addLayer">添加生产线</el-button>
       </div>
     </lock-dialog>
   </single-page>
@@ -110,6 +109,9 @@
             }
           }
         ];
+      },
+      dialogWidth() {
+        return this.dialogTypeIsAdd ? '1184px' : '400px';
       }
     },
     data() {
@@ -377,6 +379,9 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
+  .add-btn{
+    margin-left: 121px;
+  }
   @{deep} .status-off {
     color: #909399;
   }
@@ -401,15 +406,11 @@
     }
   }
   .plts-dialog {
-    width: 1164px;
     height: 417px;
     margin-top: 4px;
     overflow-y: auto;
-    &-aside {
-      margin-left: 130px;
-    }
+    overflow-x: hidden;
     &.edit {
-      width: 400px;
       height: auto;
       @{deep} .el-col-delete {
         .el-form-item__content {
