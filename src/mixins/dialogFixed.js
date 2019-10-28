@@ -14,11 +14,12 @@ function getElHeight(el) {
 export default {
   data() {
     return {
-      // max_map: {},
       content_height: undefined,
-      scrollbar: undefined,
-      scrollbarWrap: undefined,
-      scrollbarView: undefined,
+      /* dialog有djScrollBox的时候的逻辑 */
+      // scrollbar: undefined,
+      // scrollbarWrap: undefined,
+      // scrollbarView: undefined,
+      wrapEl: undefined,
       elTabsContent: undefined,
       elTabsHeader: undefined,
     };
@@ -45,29 +46,35 @@ export default {
         this.updateContentHeight();
       }
       let height_v = this.content_height;
-      let bottom_v = Math.abs(parseFloat(getStyle(this.scrollbarWrap, 'margin-bottom')));
-      let maxHeight_w = parseFloat(getStyle(this.scrollbarWrap, 'max-height'));
-      let height_content;
-      if (maxHeight_w > height_v) {
-        height_content = height_v;
-        // this.scrollbarWrap.style.height = (height_v - bottom_v) + 'px';
-      } else {
-        height_content = maxHeight_w - bottom_v;
-        // this.scrollbarWrap.style.height = maxHeight_w + 'px';
-      }
+      /* dialog有djScrollBox的时候的逻辑 */
+      // let bottom_v = Math.abs(parseFloat(getStyle(this.scrollbarWrap, 'margin-bottom')));
+      // let maxHeight_w = parseFloat(getStyle(this.scrollbarWrap, 'max-height'));
+      // let height_content;
+      // if (maxHeight_w > height_v) {
+      //   height_content = height_v;
+      // } else {
+      //   height_content = maxHeight_w - bottom_v;
+      // }
+
+      let maxHeight_w = parseFloat(getStyle(this.wrapEl, 'max-height'));
+      let height_content = maxHeight_w > height_v ? height_v : maxHeight_w;
+
       this.elTabsContent.style.height = (height_content - getElHeight(this.elTabsHeader)) + 'px';
       this.elTabsContent.style.overflow = 'auto';
-      // elTabsContent.style.marginBottom = Math.abs(bottom_v) + 'px';
-      // this.scrollbarWrap.style.overflow = 'auto';
-      // this.scrollbar.resize();
     },
     fixedDialog() {
       setTimeout(() => {
-        this.scrollbar = this.$children[0].$children[0].$children.filter(obj => obj.$options._componentTag === 'dj-scroll-box')[0];
-        this.scrollbarWrap = this.scrollbar.$el.querySelector('.el-scrollbar__wrap');
-        this.scrollbarView = this.scrollbar.$el.querySelector('.el-scrollbar__view');
-        this.elTabsContent = this.scrollbarView.querySelector('.el-tabs__content');
-        this.elTabsHeader = this.scrollbarView.querySelector('.el-tabs__header');
+        /* dialog有djScrollBox的时候的逻辑 */
+        // this.scrollbar = this.$children[0].$children[0].$children.filter(obj => obj.$options._componentTag === 'dj-scroll-box')[0];
+        // this.scrollbarWrap = this.scrollbar.$el.querySelector('.el-scrollbar__wrap');
+        // this.scrollbarView = this.scrollbar.$el.querySelector('.el-scrollbar__view');
+        // this.elTabsContent = this.scrollbarView.querySelector('.el-tabs__content');
+        // this.elTabsHeader = this.scrollbarView.querySelector('.el-tabs__header');
+
+        this.wrapEl = this.$children[0].$children[0].$el.querySelector('.dj-dialog-content');
+        this.elTabsContent = this.wrapEl.querySelector('.el-tabs__content');
+        this.elTabsHeader = this.wrapEl.querySelector('.el-tabs__header');
+
         this.calcHeight();
         this.addListener(window, 'resize', this.calcHeight, 500);
       });
