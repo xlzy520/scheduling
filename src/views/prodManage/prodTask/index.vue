@@ -41,7 +41,6 @@
 </template>
 
 <script>
-  import dayjs from 'dayjs';
   import prodTaskService from '../../../api/service/prodTask';
   import productionLineService from '../../../api/service/productionLine';
   import AdjustSort from "./compoents/adjustSort";
