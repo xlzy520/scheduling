@@ -603,7 +603,6 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .production-line-dialog {
-    padding: 0 18px 0 10px;
     h4 {
       padding: 4px 0 16px;
     }
