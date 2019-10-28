@@ -283,4 +283,7 @@
   @{deep} .rule-status-off {
     color: #909399;
   }
+  .rule-customize{
+    padding-top: 24px;
+  }
 </style>

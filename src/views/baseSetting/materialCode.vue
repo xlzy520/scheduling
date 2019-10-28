@@ -315,7 +315,7 @@
         &-item {
           height: 24px;
           min-width: 50px;
-          padding: 6px 14px;
+          padding: 0 11px;
           margin-top: 12px;
           margin-left: 10px;
           font-size: 12px;

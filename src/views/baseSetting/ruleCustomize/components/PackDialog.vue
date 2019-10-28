@@ -364,12 +364,12 @@
         width: 30.8%;
         &.unit-area {
           .el-form-item__label {
-            width: 81px;
+            width: 75.5px;
           }
         }
         &.packpiece {
           .el-form-item__label {
-            width: 115px;
+            width: 102px;
           }
           .el-input {
             width: 232px;

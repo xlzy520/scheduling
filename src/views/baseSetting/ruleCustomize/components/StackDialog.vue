@@ -1,5 +1,6 @@
 <template>
-  <lock-dialog ref="dialog" @close="close" @confirm="confirm" :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
+  <lock-dialog ref="dialog" @close="close" @confirm="confirm" width="1216px"
+               :title="dialogTypeIsAdd?'新增叠单规则': '编辑叠单规则'">
     <div class="stack-dialog" v-loading="loading">
       <dj-form ref="stackForm" :form-data="stackFormData" :form-options="stackFormOptions" :column-num="3"/>
       <div v-for="(condition, index) in stackConditionFormData" class="condition-item stack">
@@ -334,8 +335,7 @@
   @deep: ~'>>>';
 
   .stack-dialog {
-    width: 1196px;
-    height: 711px;
+    height: 573px;
     .add-btn{
       margin-left: 121px;
     }
@@ -373,12 +373,12 @@
         }
         &.cut {
           .el-form-item__label {
-            width: 82.5px;
+            width: 75.5px;
           }
         }
         &.piece {
           .el-form-item__label {
-            width: 115px;
+            width: 102px;
           }
           .dj-input {
             width: 232px;
@@ -388,7 +388,7 @@
     }
     .condition-index-label {
       width: 50px;
-      padding-left: 14px;
+      padding-left: 15px;
       font-family: "PingFang SC", sans-serif;
       font-weight: 500;
       box-sizing: content-box;

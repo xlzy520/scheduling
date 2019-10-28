@@ -232,6 +232,9 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
+  .paper-kind{
+    padding-top: 24px;
+  }
   @{deep} .status-off {
     color: #909399;
   }

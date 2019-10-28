@@ -8,15 +8,17 @@
     </div>
     <div class="production-line" v-else>
       <el-button type="primary" @click="addProdLine">新增</el-button>
-      <el-tabs v-model="activeTab" @tab-click="tabClick">
-        <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
-      </el-tabs>
-      <div class="tab-right-btns">
-        <el-button type="primary" @click="edit">编辑</el-button>
-        <el-radio-group :value="lineStatus" @change="changeLineStatus" v-loading="statusLoading">
-          <el-radio-button :label="1">启用</el-radio-button>
-          <el-radio-button :label="0">禁用</el-radio-button>
-        </el-radio-group>
+      <div class="header-tab">
+        <el-tabs v-model="activeTab" @tab-click="tabClick">
+          <el-tab-pane v-for="tab in tabsColumn" :key="tab.value" :label="tab.label" :name="tab.value"></el-tab-pane>
+        </el-tabs>
+        <div class="tab-right-btns">
+          <el-button type="primary" @click="edit">编辑</el-button>
+          <el-radio-group :value="lineStatus" @change="changeLineStatus" v-loading="statusLoading">
+            <el-radio-button :label="1">启用</el-radio-button>
+            <el-radio-button :label="0">禁用</el-radio-button>
+          </el-radio-group>
+        </div>
       </div>
       <prod-line-content :line-id="idMap[Number(activeTab)-1]" ref="content"
                          :prod-line-data="prodLineData[Number(activeTab)-1]"
@@ -224,7 +226,10 @@
 
   .production-line {
     padding: 24px 32px 0;
-
+    .header-tab{
+      display: flex;
+      justify-content: space-between;
+    }
     @{deep} .el-tabs {
       margin-top: 12px;
 
@@ -234,9 +239,7 @@
     }
 
     .tab-right-btns {
-      float: right;
-      transform: translateY(-54px);
-
+      margin-top: 15px;
       .el-button {
         padding: 10px 41px;
         margin-right: 8px;

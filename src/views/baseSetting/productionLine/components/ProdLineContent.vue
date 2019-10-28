@@ -194,7 +194,6 @@
 <style lang="less" scoped>
   .tab-content {
     position: relative;
-    top: -36px;
     display: flex;
     width: 100%;
     flex-direction: column;
@@ -250,7 +249,7 @@
       margin-left: 80px;
       flex-grow: 1;
       .record {
-        height: 400px;
+        max-height: 340px;
         overflow: auto;
         .record-item {
           display: flex;
