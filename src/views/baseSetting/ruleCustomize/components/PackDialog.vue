@@ -353,7 +353,7 @@
     }
   }
   .dj-form {
-    padding-right: 65px;
+    padding-right: 55px;
   }
   .condition-item {
     display: flex;
@@ -364,12 +364,12 @@
         width: 30.8%;
         &.unit-area {
           .el-form-item__label {
-            width: 75.5px;
+            width: 77.5px;
           }
         }
         &.packpiece {
           .el-form-item__label {
-            width: 102px;
+            width: 108px;
           }
           .el-input {
             width: 232px;
@@ -384,8 +384,10 @@
       }
     }
     .condition-index-label {
-      width: 50px;
-      padding-left: 15px;
+      position: relative;
+      left: 5px;
+      width: 39px;
+      padding-left: 5px;
       font-family: "PingFang SC", sans-serif;
       font-weight: 500;
       box-sizing: content-box;
@@ -393,9 +395,9 @@
     }
     .button-col {
       display: flex;
-      width: 65px;
+      width: 55px;
       margin-top: 8px;
-      margin-right: 10px;
+      justify-content: flex-end;
       i.el-icon-delete, i.el-icon-circle-plus {
         font-size: 18px;
         cursor: pointer;
