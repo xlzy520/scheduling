@@ -37,7 +37,7 @@
                   <dj-button v-show="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
                   <el-button v-show="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
                   <el-button v-show="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
-                  <el-button v-show="selectList.length" @click="openDialog('editStackDialog', selectList, true)">调整叠单</el-button>
+                  <el-button v-show="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType'] && selectList.length" @click="openDialog('editStackDialog', selectList, true)">调整叠单</el-button>
                   <el-button v-show="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
                   <dj-button @click="exportExcel">导出</dj-button>
                 </div>
