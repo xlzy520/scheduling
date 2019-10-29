@@ -504,8 +504,8 @@
       },
       scannerAdd(text) {
         if (text && !this.gettingMap[text]) {
-          let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === text)[0];
-          if (sameRow && sameRow[paperKeys.paperCode]) {
+          let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === text && obj[paperKeys.paperCode])[0];
+          if (sameRow) {
             this.$message('纸筒已录入', 'error');
             return;
           }
