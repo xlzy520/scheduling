@@ -223,6 +223,7 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .content {
+    position: relative;
     width: 1140px;
     /*height: 700px;*/
     @media screen and (max-width: 1400px){
