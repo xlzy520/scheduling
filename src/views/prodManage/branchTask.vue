@@ -3,15 +3,15 @@
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table
-        ref="table"
-        :data="tableData"
-        :loading="loading"
-        :columns="tableColumns"
-        :column-type="['selection', 'index']"
-        @selection-change="selectionChange"
-        :total="pageTotal"
-        height="100%"
-        @update-data="getTableData"
+          ref="table"
+          :data="tableData"
+          :loading="loading"
+          :columns="tableColumns"
+          :column-type="['selection', 'index']"
+          @selection-change="selectionChange"
+          :total="pageTotal"
+          height="100%"
+          @update-data="getTableData"
       >
         <div slot="btn">
           <el-button type="primary" @click="printTag">打印标签</el-button>
@@ -32,6 +32,7 @@
   import formRules from "../baseSetting/formRules";
   import orderTag from '../../components/printTag/orderTag';
   import materialSizeInput from "../../components/materialSizeInput";
+
   const branchStatusOptions = [
     {label: '待处理', value: '0'},
     {label: '处理中', value: '1'},
@@ -85,46 +86,56 @@
             label: '操作', prop: 'operation', fixed: 'right', width: '84',
             render: (h, {props: {row}}) => {
               return (
-                <a class={row.divideState === '已处理' ? 'divideState-completed' : ''}
-                   onClick={() => this.handle(row)}>处理</a>
+                <div class="td-btn-group">
+                  <a class={row.divideState === '已处理' ? 'divideState-completed' : ''}
+                     onClick={() => this.handle(row)}>处理</a>
+                </div>
               );
             },
           },
           {
-            label: '订单标记', prop: 'grouponOrderFlag',
+            label: '订单标记', prop: 'grouponOrderFlag', width: 80,
             render: (h, {props: {row, col}}) => {
               let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
               let text = obj.omit || '';
               let key = obj.value || '';
               return (
-                <span class={[key ? key : '' , 'tip-txt']}>{text}</span>
+                <span class={[key ? key : '', 'tip-txt']}>{text}</span>
               );
             }
           },
-          {label: '分线状态', prop: 'divideState', formatter: row=>{
-            const textMap = ['待处理', '处理中', '已处理'];
-            return textMap[row.divideState];
-            }},
+          {
+            label: '分线状态', prop: 'divideState', width: 80, formatter: row => {
+              const textMap = ['待处理', '处理中', '已处理'];
+              return textMap[row.divideState];
+            }
+          },
           {label: '合并编号', prop: 'combineId', width: 160},
-          {label: '订单编号', prop: 'grouponOrderNumber', width: 240},
-          {label: '生产编号', prop: 'produceOrderNumber', width: 180},
-          {label: '用料代码', prop: 'materialCode'},
-          {label: '瓦楞楞型', prop: 'tileModel', formatter: row=>row.layers + row.tileModel},
-          {label: '订单数量', prop: 'pieceAmount'},
-          {label: '处理数量', prop: 'processeAmount'},
-          {label: '下料规格(cm)', prop: 'xialiaoguige', width: 150,
-            formatter: row=>row.materialLength + '*' + row.materialWidth},
-          {label: '产品规格', prop: 'prodGuige', width: 160, formatter: row=>{
+          {label: '订单编号', prop: 'grouponOrderNumber', width: 220},
+          {label: '生产编号', prop: 'produceOrderNumber', width: 160},
+          {label: '用料代码', prop: 'materialCode', width: 80},
+          {label: '瓦楞楞型', prop: 'tileModel', formatter: row => row.layers + row.tileModel, width: 80},
+          {label: '订单数量', prop: 'pieceAmount', width: 80},
+          {label: '处理数量', prop: 'processeAmount', width: 80},
+          {
+            label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
+            formatter: row => row.materialLength + '*' + row.materialWidth
+          },
+          {
+            label: '产品规格', prop: 'prodGuige', width: 110, formatter: row => {
               return row.productLength + '*' + row.productWidth + '*' + row.productHeight;
+            }
+          },
+          {label: '压线方式', prop: 'staveType', width: 80},
+          {label: '纵压公式', prop: 'vformula', width: 200},
+          {label: '横压公式', prop: 'hformula', width: 160},
+          {label: '订单交期', prop: 'arriveTime', width: 110, formatter: row => {
+              return row.arriveTime.split(' ')[0];
             }},
-          {label: '压线方式', prop: 'staveType'},
-          {label: '纵压公式', prop: 'vformula', width: 180},
-          {label: '横压公式', prop: 'hformula', width: 180},
-          {label: '订单交期', prop: 'arriveTime', width: 180},
-          {label: '客户名称', prop: 'customerName', width: 180},
-          {label: '产品名称', prop: 'grouponProductName', width: 160},
+          {label: '客户名称', prop: 'customerName', width: 120},
+          {label: '产品名称', prop: 'grouponProductName', width: 100},
           {label: '生成时间', prop: 'createTime', width: 180},
-          {label: '处理人', prop: 'operator', width: 180},
+          {label: '处理人', prop: 'operator', width: 85},
           {label: '处理时间', prop: 'updateTime', width: 180},
         ],
         pageTotal: 0,
@@ -223,7 +234,7 @@
         this.$refs.multiForm.$refs.form[0].validate((valid) => {
           if (valid) {
             this.dialogLoading = true;
-            let {id, processeAmount, divideState } = this.formData;
+            let {id, processeAmount, divideState} = this.formData;
             processeAmount = processeAmount.replace(/^[0]*/g, '');
             this.dj_api_extend(branchTaskService.processe, {
               id: id,
@@ -248,7 +259,7 @@
         this.$refs.printTag.print();
       },
       removeOrder() {
-        const { length } = this.checkedList;
+        const {length} = this.checkedList;
         if (length === 0) {
           this.$message('请选择订单', 'error');
           return false;
@@ -256,12 +267,12 @@
           const h = this.$createElement;
           //如果不存在合并编号数据
           let message = '';
-          if (this.checkedList.every(v=>!v.combineId)) {
+          if (this.checkedList.every(v => !v.combineId)) {
             message = h('p', null, `确定移除${length}条订单？`);
           } else {
-            const msgContentItem = (content = '')=>h('span', {class: 'msg-content-item'}, content);
+            const msgContentItem = (content = '') => h('span', {class: 'msg-content-item'}, content);
             let content = [];
-            this.checkedList.filter(v=>v.combineId).map((v, index)=>{
+            this.checkedList.filter(v => v.combineId).map((v, index) => {
               if (index < 8) {
                 content.push(msgContentItem(v.combineId));
               } else if (index === 8) {
@@ -285,9 +296,9 @@
             showClose: false,
             showCancelButton: true,
             message: message
-          }).then(()=>{
+          }).then(() => {
             this.loading = true;
-            const idList = this.checkedList.map(v=>{
+            const idList = this.checkedList.map(v => {
               return {
                 id: v.id
               };
@@ -312,7 +323,7 @@
           startTime: timeRange[0],
           endTime: timeRange[1],
         };
-        guige = guige.map(v=>{
+        guige = guige.map(v => {
           if (v) {
             return v.replace(/\.$/g, '');
           }
@@ -342,7 +353,7 @@
           this.loading = false;
         });
       },
-      getDivideMsg (id) {
+      getDivideMsg(id) {
         this.dj_api_extend(branchTaskService.getDivideMsg, {
           id: id
         }).then(res => {
@@ -365,24 +376,30 @@
   @deep: ~'>>>';
   @{deep} .xialiaoguige {
     display: flex;
+
     .text {
       margin: auto 5px;
     }
   }
+
   @{deep} .operation {
     line-height: 1;
+
     a {
       padding: 2px 10px;
       color: #3654ea;
       cursor: pointer;
     }
+
     .divideState-completed {
       color: #909399;
       pointer-events: none;
     }
   }
+
   .dialog {
     width: 1100px;
+
     .order-info-text {
       width: 105px;
       padding: 15px 8px 15px 0;
@@ -392,6 +409,7 @@
       text-align: right;
     }
   }
+
   .msg-header {
     margin-bottom: 20px;
     font-size: 16px;
@@ -399,20 +417,24 @@
     line-height: 22px;
     color: rgba(48, 49, 51, 1);
   }
+
   .msg-content {
     font-size: 14px;
     font-weight: 400;
     line-height: 22px;
     color: rgba(96, 98, 102, 1);
+
     &-label {
       width: 80px;
       margin-bottom: 16px;
     }
+
     &-detail {
       display: flex;
       margin-bottom: 24px;
       flex-wrap: wrap;
     }
+
     &-item {
       margin-right: 16px;
       margin-bottom: 8px;
@@ -422,6 +444,7 @@
 <style lang="less">
   .branch-task {
     width: 442px;
+
     &.el-message-box {
       .el-message-box__content {
         .el-message-box__status {
