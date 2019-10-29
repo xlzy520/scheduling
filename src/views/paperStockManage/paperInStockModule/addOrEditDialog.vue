@@ -360,7 +360,7 @@
       },
       effectiveTableData() {
         return this.tableData.filter(obj=>{
-          let arr = getColumnsProps(this.tableColumns, obj => obj.className === 'is-change' && obj.prop !== cylinderKeys.damagedWeight);
+          let arr = getColumnsProps(this.tableColumns, obj => (obj.className === 'is-change' && obj.prop !== cylinderKeys.damagedWeight) || [cylinderKeys.area].includes(obj.prop));
           // let arr = [cylinderKeys.cylinderNo, paperKeys.paperNumber, paperKeys.paperGram, cylinderKeys.weight, cylinderKeys.length, cylinderKeys.area, paperKeys.paperCode, paperKeys.paperType, paperKeys.paperSize, paperKeys.warehouseId, paperKeys.warehouseAreaId];
           if (this.isEdit) {
             arr.push(cylinderKeys.cylinderNo);
