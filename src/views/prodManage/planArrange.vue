@@ -34,10 +34,10 @@
                   <el-button v-show="selectList.length" type="primary" @click="openDialog('editPaperSizeDialog', selectList, true)">修改门幅</el-button>
                   <dj-button type="primary" @click="sort">排序</dj-button>
                   <dj-button v-show="selectList.length" type="primary" @click="calcPaperSize">计算门幅</dj-button>
-                  <dj-button v-show="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType']" type="primary" @click="stackUp">叠单</dj-button>
+                  <dj-button v-show="isBigBasket" type="primary" @click="stackUp">叠单</dj-button>
                   <el-button v-show="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
                   <el-button v-show="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
-                  <el-button v-show="$enum.basketType['big'].value === prodLine_arr_map[lineId]['basketType'] && selectList.length" @click="openDialog('editStackDialog', selectList, true)">调整叠单</el-button>
+                  <el-button v-show="isBigBasket && selectList.length" @click="openDialog('editStackDialog', selectList, true)">调整叠单</el-button>
                   <el-button v-show="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
                   <dj-button @click="exportExcel">导出</dj-button>
                 </div>
@@ -355,6 +355,11 @@
         });
       });
     },
+    computed: {
+      isBigBasket() {
+        return this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'];
+      }
+    },
     activated() {
       this.getAllLine().then(()=>{
         this.$nextTick(()=>{
@@ -439,7 +444,7 @@
           this.$message('请选择订单', 'error');
           return;
         }
-        if (type === 'importProd' && this.$enum.basketType['big'].value === this.prodLine_arr_map[this.lineId]['basketType'] && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
+        if (type === 'importProd' && this.isBigBasket && this.selectList.some(obj=>['', undefined, null].includes(obj[orderKeys.stackUp]))) {
           this.$message('请先进行排序叠单', 'error');
           return;
         }
