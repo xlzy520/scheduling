@@ -84,9 +84,7 @@
     },
     methods: {
       beforeReset() {
-        this.$nextTick(() => {
-          this.$refs.table.$refs.search.query.endTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
-        });
+        this.searchConfig[0].attrs.default = dayjs().format('YYYY-MM-DD HH:mm:ss');
       },
       sort(a, b, prop) {
         if (a[prop] && b[prop]) {
@@ -105,7 +103,7 @@
     created() {
       paperWarehouseService.judgeAmountAuth().then(res=>{
         if (!res) {
-          this.tableColumns.splice(10, 3);
+          // this.tableColumns.splice(10, 3);
         }
       });
     }
