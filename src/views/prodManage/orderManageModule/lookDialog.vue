@@ -353,7 +353,7 @@
   };
 </script>
 <style lang="less" scoped>
-  .classifyForm {
+  .classify-form {
     /deep/ .dj-form:nth-of-type(1) {
       font-weight: bold;
       .status {
