@@ -108,3 +108,7 @@ div:not(.under-table) > .base-table {
 .dj-form .el-form-item.is-empty.is-error .el-textarea__inner:focus {
   border-color: red;
 }
+// 表格开启border时，第一列的padding-left与其他列不同
+.el-table--border td:first-child .cell, .el-table--border th:first-child .cell {
+  padding-left: 16px;
+}
