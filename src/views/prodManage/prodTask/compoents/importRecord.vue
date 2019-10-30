@@ -96,7 +96,7 @@
           },
           {label: '操作人', prop: 'operator'},
           {label: '生产线', prop: 'line', formatter: row => row.lineNum + '号线'},
-          {label: '楞型', prop: 'tileModel'},
+          {label: '楞型', prop: 'tileModel', formatter: row => row.layer + row.tileModel},
           {label: '用料代码', prop: 'materialCode'},
           {label: '贴合面纸', prop: 'topSheet'},
           {label: '1车芯纸', prop: 'corePaper1'},
