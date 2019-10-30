@@ -32,7 +32,7 @@
 </template>
 <script>
   import {cylinderKeys, paperKeys} from "../../../utils/system/constant/dataKeys";
-  import tableInput from './tableInput.vue';
+  import tableInput from './tableControls/tableInput.vue';
   import paperWarehouseService from '../../../api/service/paperWarehouse';
   const formAttrs = {
     labelPosition: "left",
