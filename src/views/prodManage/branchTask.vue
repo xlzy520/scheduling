@@ -22,7 +22,7 @@
     <dj-dialog v-if="visible" ref="dialog" @close="close" @confirm="confirm" title="处理" v-loading="dialogLoading">
       <classify-form ref="multiForm" :config="multiFormOptions" :column-num="2" :form-data="formData"></classify-form>
     </dj-dialog>
-    <order-tag ref="printTag" :data="checkedList"></order-tag>
+    <order-tag ref="printTag" :data="checkedList" :ext-order-keys="extOrderKeys"></order-tag>
   </single-page>
 </template>
 
@@ -213,6 +213,10 @@
           }
         ],
         visible: false,
+        extOrderKeys: {
+          packageAmount: 'packNumber',
+          consignee: 'reciver',
+        },
       };
     },
     methods: {

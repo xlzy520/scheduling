@@ -290,6 +290,9 @@
     font-size: 14px;
     .notice-text {
       font-weight: bold;
+      .address {
+        margin-left: 16px;
+      }
     }
     .item-box {
       margin-bottom: 11px;
