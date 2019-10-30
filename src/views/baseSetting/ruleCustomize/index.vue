@@ -163,9 +163,13 @@
               if (index === childConditionForms.length - 1) {
                 if (allIsTrue.length === childConditionForms.length + 1) {
                   resolve(true);
+                } else {
+                  reject();
                 }
+              } else {
+                reject();
               }
-            }, reject);
+            });
           });
         });
       },
