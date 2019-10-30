@@ -298,8 +298,8 @@
           for (let restKey in rest) {
             if (Object.prototype.hasOwnProperty.call(rest, restKey)) {
               if (rest[restKey]) {
-                if (rest[restKey].includes('.00')) {
-                  rest[restKey] = rest[restKey].replace('.00', '');
+                if (rest[restKey].includes('.000')) {
+                  rest[restKey] = rest[restKey].replace('.000', '');
                 }
               }
             }
