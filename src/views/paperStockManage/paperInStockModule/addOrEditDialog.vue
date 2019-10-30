@@ -509,7 +509,13 @@
               );
             },
             propsHandler: (props) => {
-              return {...props, reg: this.$reg.getFloatReg(3), disabled: checkDisabled(props.row), maxlength: 8};
+              return {
+                ...props,
+                reg: this.$reg.getFloatReg(3),
+                disabled: checkDisabled(props.row),
+                maxlength: 8,
+                'class': {'is-error': props.row['isError_weight']}
+              };
             },
             component: tableInput,
             listeners: {
@@ -538,7 +544,7 @@
                     return val;
                   }
                 },
-                'class': {'is-error': props.row['isError_weight']}
+                'class': {'is-error': props.row['isError_damagedWeight']}
               };
             },
             component: tableInput,
@@ -696,6 +702,11 @@
         let damagedWeight = row[cylinderKeys.damagedWeight] || 0;
         let weight = row[cylinderKeys.weight];
         if (this.$method.judgeEmpty([weight]) || Number(damagedWeight) >= Number(weight)) {
+          this.$set(row, 'isError_damagedWeight', true);
+        } else {
+          this.$set(row, 'isError_damagedWeight', false);
+        }
+        if (weight + '' === '0') {
           this.$set(row, 'isError_weight', true);
         } else {
           this.$set(row, 'isError_weight', false);
@@ -840,7 +851,7 @@
         return item.formItem.prop === cylinderKeys.remark ? 24 : 8;
       },
       confirm(cb) {
-        if (this.tableData.some(row => row['isError_weight'])) {
+        if (this.effectiveTableData.some(row => row['isError_damagedWeight'])) {
           cb();
           return;
         }
