@@ -147,7 +147,6 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .rule-view {
-    width: 40vw;
     padding-top: 4px;//与距离scroll相加16px为20px
     &-header {
       padding: 0 10px;
@@ -179,7 +178,6 @@
       }
     }
     &-content {
-      padding-right: 20px;
       box-sizing: border-box;
       @{deep} .over-table{
         display: none;
