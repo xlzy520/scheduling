@@ -162,7 +162,7 @@
               },
               {
                 formItem: {
-                  prop: orderKeys.materialWidth,
+                  prop: this.$method.getOriginKey(orderKeys.materialWidth, 'plan'),
                   label: '切宽'
                 },
               },
