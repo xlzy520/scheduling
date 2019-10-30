@@ -605,6 +605,7 @@
   .production-line-dialog {
     h4 {
       padding: 4px 0 16px;
+      color: #303133;
     }
   }
   @{deep} .optional {
