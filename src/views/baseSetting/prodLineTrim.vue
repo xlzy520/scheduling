@@ -87,7 +87,7 @@
             },
           },
           {
-            type: 'input',
+            type: 'custom',
             formItem: {
               prop: 'wasteSize',
               label: '修边',
@@ -99,18 +99,31 @@
             },
             attrs: {
               suffixIcon: "mm"
-            }
-          },
-          {
-            type: 'i',
-            formItem: {
-              prop: '',
-              label: '',
             },
-            attrs: {
-              class: 'el-icon-delete'
-            }
-          }
+            render: (h) => {
+              return (
+                <div class="waste-size-delete">
+                  <dj-input></dj-input>
+                  <i class="el-icon-delete"></i>
+                </div>
+              );
+            },
+          },
+          // {
+          //   type: 'input',
+          //   formItem: {
+          //     prop: 'wasteSize',
+          //     label: '修边',
+          //     rules: [
+          //       this.$rule.required('请输入修边'),
+          //       formRules.number,
+          //       formRules.number5
+          //     ],
+          //   },
+          //   attrs: {
+          //     suffixIcon: "mm"
+          //   }
+          // },
         ];
       },
       dialogWidth() {
@@ -385,34 +398,22 @@
   .add-btn{
     margin-left: 121px;
   }
+  @{deep} .waste-size-delete{
+    display: flex;
+    align-items: center;
+    .el-icon-delete{
+      margin-left: 10px;
+    }
+  }
   @{deep} .status-off {
     color: #909399;
   }
   @{deep} .el-col-8 {
-    width: 380px;
-  }
-  @{deep} .dj-form {
-    .el-col-0 {
-      position: relative;
-      right: 26px;
-      display: block;
-      .el-icon-delete {
-        &::before {
-          font-size: 20px;
-          line-height: 36px;
-        }
-      }
-      .el-form-item__content {
-        margin-left: 12px !important;
-        cursor: pointer;
-      }
-    }
+    /*width: 370px;*/
   }
   .plts-dialog {
     height: 417px;
     margin-top: 4px;
-    overflow-y: auto;
-    overflow-x: hidden;
     &.edit {
       height: auto;
       @{deep} .el-col-delete {
