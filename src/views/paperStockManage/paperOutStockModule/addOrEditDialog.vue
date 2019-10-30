@@ -37,7 +37,7 @@
   </div>
 </template>
 <script>
-  import tableInput from '../paperInStockModule/tableInput.vue';
+  import tableInput from '../paperInStockModule/tableControls/tableInput.vue';
   import { cylinderKeys, paperKeys } from "../../../utils/system/constant/dataKeys";
   import selectUsePerson from './selectUsePerson';
   import {Scanner} from "../../../utils";
