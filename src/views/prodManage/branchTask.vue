@@ -118,13 +118,10 @@
           {label: '订单数量', prop: 'pieceAmount', width: 80},
           {label: '处理数量', prop: 'processeAmount', width: 80},
           {
-            label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
-            formatter: row => row.materialLength + '*' + row.materialWidth
+            label: '下料规格(cm)', prop: 'materialSize', width: 120,
           },
           {
-            label: '产品规格', prop: 'prodGuige', width: 110, formatter: row => {
-              return row.productLength + '*' + row.productWidth + '*' + row.productHeight;
-            }
+            label: '产品规格', prop: 'productSize', width: 110
           },
           {label: '压线方式', prop: 'staveType', width: 80},
           {label: '纵压公式', prop: 'vformula', width: 200},
