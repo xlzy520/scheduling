@@ -1,15 +1,16 @@
 <template>
   <single-page class="table-page">
-    <dj-search ref="search" :config="searchConfig" @search="getTableData" @before-reset="beforeReset"></dj-search>
+    <dj-search ref="search" :config="searchConfig" @search="search" @before-reset="beforeReset"></dj-search>
     <page-pane>
       <dj-table
         :data="tableData"
+        ref="table"
         :columns="tableColumns"
         :column-type="['index']"
         :total="pageTotal"
         :loading="loading"
         height="100%"
-        @update-data="pageChange"
+        @update-data="getTableData"
       >
         <div slot="btn">
           <div class="ext-content">
@@ -52,10 +53,6 @@
     data() {
       return {
         tableData: [],
-        pageOptions: {
-          pageNo: 1,
-          pageSize: 15
-        },
         pageTotal: 0,
         searchData: {},
         totalCount: '',
@@ -67,29 +64,31 @@
     methods: {
       exportRecord() {
         this.exportLoading = true;
-        reportService.exportFile(this.download.url, {...this.searchData, ...this.pageOptions}).then(res=>{
-          // const filename = this.download.filename + this.$method.timeFormat(new Date(), 'yyyy-MM-dd HH:mm:ss') + '.xlsx';
+        reportService.exportFile(this.download.url, this.searchData).then(res=>{
           this.$method.downloadExecl(res, this.download.filename);
         }).finally(()=>{
           this.exportLoading = false;
         });
       },
-      getTableData(data) {
-        this.loading = true;
-        if (data && data.timeRange) {
-          const _val = data.timeRange;
-          data.startTime = _val[0];
+      search(query) {
+        if (query && query.timeRange) {
+          const _val = query.timeRange;
+          query.startTime = _val[0];
           if (dayjs(_val[1]).isSame(dayjs(), 'day')) {
             _val[1] = dayjs().format('YYYY-MM-DD HH:mm:ss');
           } else {
             _val[1] = dayjs(_val[1]).format('YYYY-MM-DD') + ' 23:59:59';
           }
-          data.endTime = _val[1];
+          query.endTime = _val[1];
         }
-        this.searchData = data;
+        this.searchData = query;
+        this.$refs.table.changePage(1);
+      },
+      getTableData(page) {
+        this.loading = true;
         reportService[this.serviceUrl]({
-          ...data,
-          ...this.pageOptions
+          ...page,
+          ...this.searchData,
         }).then((res) => {
           // 没有额外数据的在list里，有额外数据的在data.list里
           res.data = res.data ? res.data : {};
@@ -100,10 +99,6 @@
         }).finally(() => {
           this.loading = false;
         });
-      },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
       },
       beforeReset() {
         this.$emit('before-reset');

@@ -103,7 +103,7 @@
     created() {
       paperWarehouseService.judgeAmountAuth().then(res=>{
         if (!res) {
-          // this.tableColumns.splice(10, 3);
+          this.tableColumns.splice(10, 3);
         }
       });
     }
