@@ -93,6 +93,8 @@
           {label: '产品名称', prop: 'grouponProductName'},
           {label: '用料代码', prop: 'materialCode'},
           {label: '瓦楞楞型', prop: 'tileModel', formatter: row => row.layer + row.tileModel},
+          {label: '生产数量', prop: 'produceAmount'},
+          {label: '订单数量', prop: 'pieceAmount'},
           {label: '门幅宽度', prop: 'paperSize'},
           {label: '订单米数', prop: 'orderMeter'},
           {
