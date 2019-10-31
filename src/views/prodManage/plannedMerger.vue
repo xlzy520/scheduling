@@ -14,6 +14,7 @@
                     :data="tableData"
                     height="100%"
                     :total="total"
+                    :row-key="orderKeys.productionNo"
                     :loading="isTableLoading"
                     @selection-change="selectionChange"
                     :columns="tableColumns"
@@ -48,6 +49,7 @@
     name: 'plannedMerger',
     data: function () {
       return {
+        orderKeys,
         mergeStatus_arr: [...this.$enum.mergeStatus._arr, {label: '全部', value: 'all'}],
         searchConfig: [
           {
@@ -616,6 +618,7 @@
       },
       getList(page) {
         this.selectList = [];
+        this.$refs.table.childComponents.reTable.clearSelection();
         let post = {
           ...this.searchData,
           ...page,
