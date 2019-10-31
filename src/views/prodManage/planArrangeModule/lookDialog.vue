@@ -1,7 +1,7 @@
 <template>
   <dj-dialog ref="dialog" @close="close" width="1160px" title="查看">
-    <el-tabs v-model="activeTab" @tab-click="handleClick">
-      <el-tab-pane v-loading="isTableLoading" label="订单信息" name="1">
+    <el-tabs v-loading="isTableLoading" v-model="activeTab" @tab-click="handleClick">
+      <el-tab-pane label="订单信息" name="1">
         <classify-form ref="form" has-line :form-data="formData" :config="config" :column-num="3"></classify-form>
       </el-tab-pane>
       <el-tab-pane label="编辑记录" name="2">
@@ -264,7 +264,7 @@
         recordColumns: [
           {label: '操作时间', prop: 'operateTime', width: 200},
           {label: '操作人', prop: 'operator', width: 100},
-          {label: '操作内容', prop: 'operateDetail', width: 4400}
+          {label: '操作内容', prop: 'operateDetail', width: 700}
         ],
         isTableLoading: false,
         id: ''
@@ -288,6 +288,7 @@
         }
       },
       getOrderMsg(params) {
+        this.isTableLoading = true;
         this.dj_api_extend(planArrangeService.getOrder, params).then((res = {})=>{
           res['tip'] = this.$method.getOrderTip(res, true);
           res[orderKeys.materialSize] = this.$method.getMaterialSize(res);
@@ -295,6 +296,8 @@
           this.formData = res || {};
           this.id = res.produceOrderNumber;
           this.updateHeight();
+        }).finally(()=>{
+          this.isTableLoading = false;
         });
       },
       open(param = {}) {
