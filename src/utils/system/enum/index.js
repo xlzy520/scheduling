@@ -236,23 +236,23 @@ export default {
   paperType: new MapObject({
     'normal': {
       label: '普通瓦楞',
-      value: 1,
+      value: '1',
     },
     'height': {
       label: '高强瓦楞',
-      value: 2,
+      value: '2',
     },
     'cow': {
       label: '牛卡',
-      value: 3,
+      value: '3',
     },
     'regenerate': {
       label: '再生',
-      value: 4,
+      value: '4',
     },
     'white_card': {
       label: '白卡',
-      value: 5,
+      value: '5',
     },
   }),
   mergeStatus: new MapObject({
