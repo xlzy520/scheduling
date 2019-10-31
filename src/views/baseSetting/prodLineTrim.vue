@@ -4,11 +4,13 @@
     <page-pane>
       <dj-table
         :data="tableData"
+        ref="table"
         :columns="tableColumns"
         :loading="loading"
         :column-type="['index']"
-        :total="pageTotal" height="100%"
-        @update-data="pageChange"
+        :total="pageTotal"
+        height="100%"
+        @update-data="getTableData"
       >
         <div slot="btn">
           <el-button type="primary" @click="add">新增</el-button>
@@ -67,6 +69,7 @@
             },
             listeners: {
               'visible-change': (val)=>{
+                console.log(val);
                 if (val) {
                   this.showAllLine();
                 }
@@ -98,16 +101,28 @@
               ],
             },
             attrs: {
-              suffixIcon: "mm"
+              suffixIcon: "mm",
             },
-            render: (h) => {
-              return (
-                <div class="waste-size-delete">
-                  <dj-input></dj-input>
-                  <i class="el-icon-delete"></i>
-                </div>
-              );
-            },
+            component: {
+              props: ['value'],
+              computed: {
+                dialogTypeIsAdd: ()=> {
+                  return this.dialogTypeIsAdd;
+                }
+              },
+              render() {
+                const input = (val) => {
+                  this.$emit('input', val);
+                };
+                return (
+                  <div class="waste-size-delete">
+                    <dj-input value={this.value} onInput={input} suffixIcon='mm' label="修边"></dj-input>
+                    {this.dialogTypeIsAdd ? (<i class="el-icon-delete"></i>) : null}
+                  </div>
+                );
+              },
+            }
+
           },
           // {
           //   type: 'input',
@@ -128,7 +143,7 @@
       },
       dialogWidth() {
         return this.dialogTypeIsAdd ? '1184px' : '400px';
-      }
+      },
     },
     data() {
       return {
@@ -237,7 +252,10 @@
       },
       getTableData(data) {
         this.loading = true;
-        prodLineTrimService.list(data).then((res) => {
+        prodLineTrimService.list({
+          ...data,
+          ...this.searchData,
+        }).then((res) => {
           this.tableData = res.list;
           this.pageTotal = res.total;
         }).finally(() => {
@@ -296,20 +314,18 @@
             wasteSize: res.wasteSize
           }];
           this.formOptions = [this.$method.deepClone(this.baseOption).splice(0, 3)];
+          this.$nextTick(()=>{
+            this.$refs.dialog.open();
+          });
         }).catch(()=>{
           this.$message('获取信息失败', 'error');
         }).finally(() => {
           this.dialogLoading = false;
         });
-        this.$nextTick(()=>{
-          this.$refs.dialog.open();
-        });
       },
-      search(data) {
-        this.getTableData({
-          ...data,
-          ...this.pageOptions,
-        });
+      search(query) {
+        this.searchData = query;
+        this.$refs.table.changePage(1);
       },
       confirm(cb) {
         const formValidate = new Promise((resolve, reject) => {
@@ -373,10 +389,6 @@
         this.dialogVisible = false;
         this.formReset();
       },
-      pageChange(option) {
-        this.pageOptions = option;
-        this.$refs.search.search();
-      },
       showAllLine () {
         prodLineService.showAllLine().then(res=>{
           const lineOptions = res.list.map(v=>{
@@ -385,15 +397,15 @@
               value: v.id
             };
           });
+          console.log(lineOptions);
           this.baseOption[0].attrs.options = lineOptions;
           this.searchConfig[0].attrs.options = lineOptions;
         });
       },
-
     },
-    created() {
+    mounted() {
       this.showAllLine();
-      this.search();
+      this.$refs.search.search();
     },
   };
 </script>
