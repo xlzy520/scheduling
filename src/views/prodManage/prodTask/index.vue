@@ -125,7 +125,8 @@
         extOrderKeys: {
           consignee: 'linkMan',
           packageAmount: 'packCount',
-          layer: 'layer'
+          layer: 'layer',
+          address: 'addressArea',
         },
         contentLoading: false,
         timeRange: [],
