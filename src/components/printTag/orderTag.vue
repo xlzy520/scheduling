@@ -2,7 +2,7 @@
   <print-template ref="print" @end="end">
     <template v-if="isPrinting" v-for="(item, index) in data">
       <print-page v-for="i in getPrintNum(item)">
-        <div class="wrap">
+        <div :class="[judgeOrderType(item), 'wrap']">
           <p class="font-subhead notice-text">{{getTitle(item)+'标签'}}<span v-if="judgeOrderType(item) === 'group'" class="font-default address">{{item[orderKeys.address]}}</span></p>
           <el-row>
             <el-col :span="13">
@@ -193,7 +193,14 @@
     },
     methods: {
       splitAssociatedOrders(str) {
-        return str ? str.split(',') : '';
+        if (str) {
+          let arr = str.split(',');
+          if (arr.length > 2) {
+            return arr.slice(0, 2).concat(['. . .']);
+          }
+          return arr;
+        }
+        return [];
       },
       getTitle(item) {
         let obj = this.$enum.orderType._swap[item[this.orderKeys.orderType]] || {};
@@ -309,6 +316,9 @@
     }
     .col-box {
       min-height: 180px;
+    }
+    &.store .item-box {
+      margin-bottom: 27px;
     }
   }
 </style>
