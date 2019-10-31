@@ -229,6 +229,11 @@
           wasteSize: ''
         });
         this.formOptions.push(this.baseOption);
+        this.$nextTick(() => {
+          const dialogContent = document.querySelector('.dj-dialog-content');
+          const mainContent = document.querySelector('.plts-dialog');
+          dialogContent.scrollTop = mainContent.scrollHeight;
+        });
       },
       getTableData(data) {
         this.loading = true;
@@ -408,11 +413,8 @@
   @{deep} .status-off {
     color: #909399;
   }
-  @{deep} .el-col-8 {
-    /*width: 370px;*/
-  }
   .plts-dialog {
-    height: 417px;
+    height: 434px;
     margin-top: 4px;
     &.edit {
       height: auto;
@@ -421,6 +423,11 @@
           display: none;
         }
       }
+    }
+  }
+  @media screen and (max-width: 1920px) and (min-width: 1601px){
+    .plts-dialog {
+      height: 734px;
     }
   }
 </style>
