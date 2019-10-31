@@ -41,7 +41,7 @@ export default {
   orderMetres: 'paperLength', //订单米数
   trim: 'wasteWidth', //修边
   trimRate: 'wasterRate', //修边率
-  cartonRemarks: 'cartonRemarks', //纸箱备注
+  cartonRemarks: 'remark', //纸箱备注
   associatedOrders: 'associatedOrders', //关联单号
   stackUp: 'isStack', //叠单
   sortIndex: 'sort', //订单排序
