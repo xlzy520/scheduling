@@ -1,24 +1,27 @@
 <template>
   <table-controls-box v-model="isShow" :disabled="disabled" :label="row[col.prop]" @focus="changeState(true)">
-    <el-autocomplete ref="input"
-                     v-if="service"
-                     :fetch-suggestions="(val, cb) => service(val, cb, {row, index, col, ...$attrs})"
-                     trigger-on-focus
-                     :value-key="col.prop"
-                     :disabled="disabled"
-                     v-bind="getBind()"
-                     @select="select"
-                     @blur="handleBlur"
-                     @input="input"></el-autocomplete>
-    <dj-input ref="input" v-if="!service" v-bind="getBind()" @input="input" @blur="changeState(false)"></dj-input>
+    <div v-clickoutside="handleBlur">
+      <el-autocomplete ref="input"
+                       v-if="service"
+                       :fetch-suggestions="(val, cb) => service(val, cb, {row, index, col, ...$attrs})"
+                       trigger-on-focus
+                       :value-key="col.prop"
+                       :disabled="disabled"
+                       v-bind="getBind()"
+                       @select="select"
+                       @input="input"></el-autocomplete>
+      <dj-input ref="input" v-if="!service" v-bind="getBind()" @input="input"></dj-input>
+    </div>
   </table-controls-box>
 </template>
 <script>
+  import Clickoutside from 'element-ui/src/utils/clickoutside';
   import tableControlsBox from './tableControlsBox';
   import shortCut from './shortCut';
   export default {
     name: 'tableInput',
     components: {tableControlsBox},
+    directives: { Clickoutside },
     mixins: [shortCut],
     props: {
       row: {},
@@ -40,6 +43,7 @@
     },
     methods: {
       focus() {
+        console.log(this.$refs.input);
         this.$refs.input.$el.querySelector('input').focus({
           preventScroll: true
         });

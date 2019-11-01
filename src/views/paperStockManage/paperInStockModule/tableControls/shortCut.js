@@ -87,13 +87,13 @@ export default {
         this.removeListener(window, 'keyup', this.handleKeyUp);
         this.hiddening = true;
         setTimeout(()=>{
-          this.$nextTick(()=>{
+          // this.$nextTick(()=>{
             if (this.hiddening) {
               this.isShow = bool;
               this.hiddening = false;
             }
-          });
-        }, 100);
+          // });
+        });
       }
     },
     handleKeyUp (e) {
@@ -166,6 +166,7 @@ export default {
         } else {
           target.changeState(true);
         }
+        this.changeState(false);
         // target.changeState(true);
       }
     },
