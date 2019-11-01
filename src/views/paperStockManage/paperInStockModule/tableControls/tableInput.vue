@@ -43,7 +43,6 @@
     },
     methods: {
       focus() {
-        console.log(this.$refs.input);
         this.$refs.input.$el.querySelector('input').focus({
           preventScroll: true
         });
