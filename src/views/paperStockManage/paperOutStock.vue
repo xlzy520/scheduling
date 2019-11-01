@@ -66,87 +66,6 @@
           },
         ],
         tableData: [],
-        // tableColumns: [
-        //   {
-        //     prop: 'operate',
-        //     label: '操作',
-        //     width: 101,
-        //     render: (h, {props: {row}}) => {
-        //       return (
-        //         <span class="td-btn-group">
-        //           <a on-click={()=>this.openDialog('lookDialog', {...row, isShowMoney: this.isShowMoney})}>查看</a>
-        //           <span></span>
-        //           <a on-click={()=>this.openDialog('addOrEditDialog', row)}>编辑</a>
-        //         </span>
-        //       );
-        //     }
-        //   },
-        //   {
-        //     prop: cylinderKeys.documentNo,
-        //     label: '单据编号',
-        //     width: 177,
-        //   },
-        //   {
-        //     prop: cylinderKeys.storageTime,
-        //     label: '出库时间',
-        //     width: 224,
-        //     formatter(row, index, cur) {
-        //       return dayjs(cur).format('YYYY-MM-DD HH:mm:ss');
-        //     }
-        //   },
-        //   {
-        //     prop: cylinderKeys.usePersonName,
-        //     label: '领用人',
-        //     width: 118,
-        //   },
-        //   {
-        //     prop: cylinderKeys.useDepartmentName,
-        //     label: '领用部门',
-        //     width: 145,
-        //   },
-        //   {
-        //     prop: cylinderKeys.useGroup,
-        //     label: '领用单元',
-        //     width: 132,
-        //   },
-        //   {
-        //     prop: cylinderKeys.forkliftDriverName,
-        //     label: '叉车员',
-        //     width: 131
-        //   },
-        //   {
-        //     prop: cylinderKeys.storageType,
-        //     label: '出库类型',
-        //     width: 131
-        //   },
-        //   {
-        //     prop: cylinderKeys.totalWeight,
-        //     label: '总重量',
-        //     width: 118
-        //   },
-        //   {
-        //     prop: cylinderKeys.totalAmount,
-        //     label: '总件数',
-        //     width: 117
-        //   },
-        //   {
-        //     prop: cylinderKeys.totalMoney,
-        //     label: '总金额',
-        //     width: 108,
-        //     formatter: (row, index, cur) => {
-        //       if (this.isShowMoney) {
-        //         return cur;
-        //       } else {
-        //         return '****'
-        //       }
-        //     }
-        //   },
-        //   {
-        //     prop: cylinderKeys.remark,
-        //     label: '备注信息',
-        //     width: 225,
-        //   },
-        // ],
         searchData: {},
         total: 0,
         // isShowMoney: true,
@@ -218,7 +137,7 @@
           },
           {
             prop: cylinderKeys.totalWeight,
-            label: '总重量',
+            label: '总重量(Kg)',
             width: 118
           },
           {
