@@ -17,9 +17,12 @@
   import shortCut from './shortCut';
   import tableControlsBox from './tableControlsBox';
   import Clickoutside from 'element-ui/src/utils/clickoutside';
+  import { Select } from 'element-ui';
   export default {
     name: 'tableSelect',
-    components: {tableControlsBox},
+    components: {
+      tableControlsBox
+    },
     directives: { Clickoutside },
     mixins: [shortCut],
     props: {
@@ -83,7 +86,7 @@
             this.getOptions(this.row[key], key);
           });
         }
-        this.$refs.select.$children[0].toggleMenu();
+        this.$refs.select && (this.$refs.select.$children[0].visible = true);
       },
       input(val) {
         // if (this.reg && this.reg.test(val) || !this.reg) {

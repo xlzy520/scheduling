@@ -37,21 +37,18 @@ export default {
     }
   },
   created() {
-    // if (!this.tableBody.isOnScroll) {
-    //   this.tableBody.isOnScroll = true;
-    //   this.tableBody.$on('scroll-render', ()=>{
-    //     let {focusKey, inputMap} = this.tableBody;
-    //     if (focusKey && inputMap[focusKey]) {
-    //       let taget = inputMap[focusKey];
-    //       setTimeout(()=>{
-    //         this.$nextTick(()=>{
-    //           taget.changeState(true);
-    //         });
-    //       });
-    //     }
-    //     console.log('scroll-render');
-    //   })
-    // }
+    if (!this.tableBody.isOnScroll) {
+      // console.log('$watch');
+      this.tableBody.isOnScroll = true;
+      this.tableBody.$watch('store.states.indexList', ()=>{
+        let {focusKey, inputMap} = this.tableBody;
+        // console.log('focusKey', focusKey);
+        if (focusKey && inputMap[focusKey]) {
+          let target = inputMap[focusKey];
+          target.changeState(true);
+        }
+      })
+    }
   },
   mounted() {
     if (!this.$parent.fixed) {
@@ -61,11 +58,9 @@ export default {
       }
       this.$parent.inputMap[`${this.index}-${this.col.prop}`] = this;
       this.$parent.inputKeys.add(this.col.prop);
-      // console.log(this.$parent.focusKey);
-      // console.log(`${this.index}-${this.col.prop}`);
-      // if (this.$parent.focusKey === `${this.index}-${this.col.prop}`) {
-      //   this.changeState(true);
-      // }
+      if (this.$parent.focusKey === `${this.index}-${this.col.prop}`) {
+        this.changeState(true);
+      }
     }
   },
   methods: {
@@ -77,6 +72,7 @@ export default {
         if (!this.disabled) {
           // this.tableBody.focusKey = `${this.index}-${this.col.prop}`;
           this.isShow = bool;
+          this.setFocusKey(`${this.index}-${this.col.prop}`);
           this.hiddening = false;
           this.$nextTick(()=>{
             this.focusFn && this.focusFn();
@@ -90,6 +86,7 @@ export default {
           // this.$nextTick(()=>{
             if (this.hiddening) {
               this.isShow = bool;
+              this.setFocusKey();
               this.hiddening = false;
             }
           // });
@@ -140,15 +137,13 @@ export default {
       }
       let target = this.$parent.inputMap[`${index}-${willGoProp}`];
       if (target) {
+        // this.setFocusKey(`${index}-${willGoProp}`);
         let cell_rect = target.$el.getBoundingClientRect();
         let wrap = this.$parent.$parent.$el.querySelector('.el-table__body-wrapper');
         let wrap_rect = wrap.getBoundingClientRect();
         if (wrap_rect.top > cell_rect.top) {
           wrap.scrollTop -= this.$parent.rowHeight;
           target.changeState(true);
-          // console.log(this);
-          // console.log(this.$parent.rowHeight);
-          // console.log('上线')
         } else if (wrap_rect.bottom < cell_rect.bottom) {
           let scrollTop = wrap.scrollTop + this.$parent.rowHeight;
           if (this.judgeIndexListChange(scrollTop)) {
@@ -162,22 +157,23 @@ export default {
             wrap.scrollTop = scrollTop;
             target.changeState(true);
           }
-          // console.log('下线')
         } else {
           target.changeState(true);
         }
         this.changeState(false);
-        // target.changeState(true);
       }
     },
     judgeIndexListChange(scrollTop) {
       let {startIndex, totalRowNum, rowHeight, visualHeight} = this.$parent;
       return (startIndex + totalRowNum) * rowHeight <= scrollTop + visualHeight || scrollTop <= (startIndex + 2) * rowHeight;
+    },
+    setFocusKey(key) {
+      this.tableBody.focusKey = key;
     }
   },
   // watch: {
   //   '$parent.store.states.indexList': function() {
-  //     if (this.$parent.focusKey === `${this.index}-${this.col.prop}`) {
+  //     if (this.tableBody.focusKey === `${this.index}-${this.col.prop}`) {
   //       this.changeState(true);
   //     }
   //   }
