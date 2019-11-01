@@ -6,6 +6,7 @@
                  :key-map="keyMap"
                  :value="row[col.prop]"
                  placeholder="请选择"
+                 :loading="isLoading"
                  :disabled="disabled"
                  @input="input"
       ></dj-select>
@@ -45,7 +46,8 @@
     },
     data: function () {
       return {
-        realOptions: []
+        realOptions: [],
+        isLoading: false
       };
     },
     created() {
@@ -62,8 +64,11 @@
     methods: {
       getOptions(val, key) {
         if (![null, undefined, ''].includes(val)) {
+          this.isLoading = true;
           this.service(val, key).then(res=>{
             this.realOptions = res;
+          }).finally(()=>{
+            this.isLoading = false;
           });
         } else {
           this.realOptions = [];
