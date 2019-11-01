@@ -5,11 +5,8 @@
   </div>
 </template>
 <script>
-  import Clickoutside from 'element-ui/src/utils/clickoutside';
-
   export default {
     name: 'tableControlsBox',
-    directives: { Clickoutside },
     props: {
       disabled: {},
       label: {},
@@ -18,16 +15,7 @@
         default: false
       }
     },
-    data: function () {
-      return {};
-    },
-    created() {
-    },
     methods: {
-      handleClose() {
-        console.log('blur');
-        this.$emit('blur');
-      },
       handleClick() {
         if (!this.disabled) {
           this.$emit('focus');

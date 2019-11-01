@@ -549,8 +549,10 @@
             component: tableSelect,
             listeners: {
               input: (val, {row}) => {
-                this.$set(row, paperKeys.warehouseAreaId, undefined);
-                this.$set(row, paperKeys.warehouseAreaName, undefined);
+                Object.assign(row, this.$method.cloneData([paperKeys.warehouseAreaId, paperKeys.warehouseAreaName]));
+                this.$forceUpdate();
+                // this.$set(row, paperKeys.warehouseAreaId, undefined);
+                // this.$set(row, paperKeys.warehouseAreaName, undefined);
                 // row[paperKeys.warehouseAreaId] = undefined;
               }
             }

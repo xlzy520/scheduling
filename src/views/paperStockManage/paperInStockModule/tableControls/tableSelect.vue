@@ -1,23 +1,25 @@
 <template>
   <table-controls-box v-model="isShow" :disabled="disabled" :label="row[labelKey || col.prop]" @focus="changeState(true)">
-    <dj-select ref="select"
-               :options="_options"
-               :key-map="keyMap"
-               :value="row[col.prop]"
-               placeholder="请选择"
-               :disabled="disabled"
-               @input="input"
-               @blur="handleBlur"
-    ></dj-select>
+    <div v-clickoutside="handleBlur">
+      <dj-select ref="select"
+                 :options="_options"
+                 :key-map="keyMap"
+                 :value="row[col.prop]"
+                 placeholder="请选择"
+                 :disabled="disabled"
+                 @input="input"
+      ></dj-select>
+    </div>
   </table-controls-box>
 </template>
 <script>
   import shortCut from './shortCut';
   import tableControlsBox from './tableControlsBox';
-
+  import Clickoutside from 'element-ui/src/utils/clickoutside';
   export default {
     name: 'tableSelect',
     components: {tableControlsBox},
+    directives: { Clickoutside },
     mixins: [shortCut],
     props: {
       keyMap: {
