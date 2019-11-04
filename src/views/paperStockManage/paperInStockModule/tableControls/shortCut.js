@@ -113,14 +113,15 @@ export default {
           this.shortCutFocus(index, col.prop);
         }
       }
-      if (map[e.keyCode]) {
-        this.shortCutFocus(index, col.prop, map[e.keyCode]);
+      let arrow = map[e.keyCode];
+      if (arrow && !this.disabledShortcut.includes(arrow)) {
+        this.shortCutFocus(index, col.prop, arrow);
       }
     },
     getFocusTarget(index, prop, arrow = 'right') {
-      if (this.disabledShortcut.includes(arrow)) {
-        return;
-      }
+      // if (this.disabledShortcut.includes(arrow)) {
+      //   return;
+      // }
       let arr = Array.from(this.$parent.inputKeys);
       let map = this.propMap;
       let willGoProp = prop;
