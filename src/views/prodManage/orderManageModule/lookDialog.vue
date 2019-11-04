@@ -21,6 +21,113 @@
     name: 'lookDialog',
     mixins: [dialogFixed],
     data: function () {
+      let optionsMap = {
+        customerName: {
+          formItem: {
+            prop: orderKeys.customerName,
+            label: '客户名称',
+          }
+        },
+        contacts: {
+          formItem: {
+            prop: orderKeys.contacts,
+            label: '收货人',
+          }
+        },
+        contactWay: {
+          formItem: {
+            prop: orderKeys.contactWay,
+            label: '联系方式',
+          }
+        },
+        address: {
+          formItem: {
+            prop: orderKeys.address,
+            label: '地址',
+          },
+        },
+        orderTip: {
+          type: 'custom',
+          isText: true,
+          formItem: {
+            prop: orderKeys.orderTip,
+            label: '订单标记',
+          },
+          render: (h) => {
+            let obj = this.$enum.orderTip._swap[this.order[orderKeys.orderTip]] || {};
+            return (
+              <span>{obj.label || ''}</span>
+            );
+          },
+        },
+        deliveryTime: {
+          formItem: {
+            prop: orderKeys.deliveryTime,
+            label: '订单交期',
+          },
+        },
+
+        productName: {
+          formItem: {
+            prop: orderKeys.productName,
+            label: '产品名称',
+          }
+        },
+        orderAmount: {
+          formItem: {
+            prop: orderKeys.orderAmount,
+            label: '订单数量',
+          }
+        },
+        materialName: {
+          formItem: {
+            prop: orderKeys.materialName,
+            label: '材料名称',
+          },
+        },
+        fluteTypeAndLayers: {
+          formItem: {
+            prop: 'fluteTypeAndLayers',
+            label: '瓦楞楞型',
+          },
+          formatter: ({cur = []}) => {
+            return cur.join('');
+          }
+        },
+        productSize: {
+          formItem: {
+            prop: orderKeys.productSize,
+            label: '产品规格',
+          },
+        },
+        materialSize: {
+          formItem: {
+            prop: orderKeys.materialSize,
+            label: '下料规格',
+          },
+          formatter: ({cur = []}) => {
+            return cur.join('*');
+          }
+        },
+        linePressingMethod: {
+          formItem: {
+            prop: orderKeys.linePressingMethod,
+            label: '压线方式',
+          }
+        },
+        longitudinalPressure: {
+          formItem: {
+            prop: orderKeys.longitudinalPressure,
+            label: '纵压公式',
+          }
+        },
+        transversePressure: {
+          formItem: {
+            prop: orderKeys.transversePressure,
+            label: '横压公式',
+          }
+        },
+      };
       return {
         recordData: [],
         recordColumns: [
@@ -32,244 +139,41 @@
         order: {},
         orderOptions: {
           false: [
-            {
-              formItem: {
-                prop: orderKeys.customerName,
-                label: '客户名称',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.contacts,
-                label: '收货人',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.contactWay,
-                label: '联系方式',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.address,
-                label: '地址',
-              },
-            },
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.orderTip,
-                label: '订单标记',
-              },
-              render: (h) => {
-                let obj = this.$enum.orderTip._swap[this.order[orderKeys.orderTip]] || {};
-                return (
-                  <span>{obj.label || ''}</span>
-                );
-              },
-            },
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.deliveryTime,
-                label: '订单交期',
-              },
-              render: (h) => {
-                let time = this.order[orderKeys.deliveryTime];
-                return (
-                  <span>{time ? dayjs(time).format('YYYY-MM-DD') : ''}</span>
-                );
-              },
-              // formatter(cur) {
-              //   return dayjs(cur).format('YYYY-MM-DD');
-              // }
-            },
+            optionsMap.customerName,
+            optionsMap.contacts,
+            optionsMap.contactWay,
+            optionsMap.address,
+            optionsMap.orderTip,
+            optionsMap.deliveryTime,
           ],
           true: [
-            // {
-            //   prop: orderKeys.orderTip,
-            //   label: '订单标记',
-            //   formatter: (cur) => {
-            //     let obj = this.$enum.orderTip._swap[cur] || {};
-            //     return obj.label || ''
-            //   }
-            // },
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.deliveryTime,
-                label: '订单交期',
-              },
-              render: (h) => {
-                let time = this.order[orderKeys.deliveryTime];
-                return (
-                  <span>{time ? dayjs(time).format('YYYY-MM-DD') : ''}</span>
-                );
-              },
-              // formatter(cur) {
-              //   return dayjs(cur).format('YYYY-MM-DD');
-              // }
-            },
+            optionsMap.deliveryTime,
           ]
         },
         messageOptions: {
           false: [
-            {
-              formItem: {
-                prop: orderKeys.productName,
-                label: '产品名称',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.orderAmount,
-                label: '订单数量',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.materialName,
-                label: '材料名称',
-              },
-            },
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.fluteType,
-                label: '瓦楞楞型',
-              },
-              render: (h) => {
-                let fluteType = this.order[orderKeys.fluteType] || '';
-                let layer = this.order[orderKeys.layer] || '';
-                return (
-                  <span>{`${layer}${fluteType}`}</span>
-                );
-              },
-            },
-            // todo 暂时没有，等待后端更新
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.productSize,
-                label: '产品规格',
-              },
-              render: (h) => {
-                return (
-                  <span>{this.$method.getProductSize(this.order)}</span>
-                );
-              },
-            },
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.materialSize,
-                label: '下料规格',
-              },
-              render: (h) => {
-                let length = this.order[orderKeys.materialLength];
-                let width = this.order[orderKeys.materialWidth];
-                return (
-                  <span>{length && width ? `${length}*${width}` : ''}</span>
-                );
-              },
-              // formatter: () => {
-              //   return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
-              // }
-            },
-            {
-              formItem: {
-                prop: orderKeys.linePressingMethod,
-                label: '压线方式',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.longitudinalPressure,
-                label: '纵压公式',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.transversePressure,
-                label: '横压公式',
-              }
-            },
+            optionsMap.productName,
+            optionsMap.orderAmount,
+            optionsMap.materialName,
+            optionsMap.fluteTypeAndLayers,
+            optionsMap.productSize,
+            optionsMap.materialSize,
+            optionsMap.linePressingMethod,
+            optionsMap.longitudinalPressure,
+            optionsMap.transversePressure,
           ],
           true: [
-            {
-              formItem: {
-                prop: orderKeys.materialName,
-                label: '材料名称',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.orderAmount,
-                label: '订单数量',
-              }
-            },
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.materialSize,
-                label: '下料规格',
-              },
-              render: (h) => {
-                let length = this.order[orderKeys.materialLength];
-                let width = this.order[orderKeys.materialWidth];
-                return (
-                  <span>{length && width ? `${length}*${width}` : ''}</span>
-                );
-              },
-              // formatter: () => {
-              //   return this.order[orderKeys.materialLength] + '*' + this.order[orderKeys.materialWidth];
-              // }
-            },
-            {
-              type: 'custom',
-              isText: true,
-              formItem: {
-                prop: orderKeys.fluteType,
-                label: '瓦楞楞型',
-              },
-              render: (h) => {
-                let fluteType = this.order[orderKeys.fluteType] || '';
-                let layer = this.order[orderKeys.layer] || '';
-                return (
-                  <span>{`${layer}${fluteType}`}</span>
-                );
-              },
-            },
-            {
-              formItem: {
-                prop: orderKeys.linePressingMethod,
-                label: '压线方式',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.longitudinalPressure,
-                label: '纵压公式',
-              }
-            },
-            {
-              formItem: {
-                prop: orderKeys.transversePressure,
-                label: '横压公式',
-              }
-            },
+            optionsMap.materialName,
+            optionsMap.orderAmount,
+            optionsMap.materialSize,
+            optionsMap.fluteTypeAndLayers,
+            optionsMap.linePressingMethod,
+            optionsMap.longitudinalPressure,
+            optionsMap.transversePressure,
           ]
         },
         isStore: true, // 是否是备料订单
-        isLoading: false, // 是否是备料订单
+        isLoading: false,
         orderKeys,
         id: ''
       };
