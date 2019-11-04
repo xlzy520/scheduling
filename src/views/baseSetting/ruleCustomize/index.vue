@@ -286,5 +286,6 @@
   }
   .rule-customize{
     padding-top: 24px;
+    box-sizing: border-box;
   }
 </style>
