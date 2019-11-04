@@ -127,6 +127,7 @@
   @deep: ~'>>>';
   .paper-kind{
     padding-top: 24px;
+    box-sizing: border-box;
   }
   @{deep} .status-off {
     color: #909399;
