@@ -202,7 +202,7 @@
             }, []);
             const stackRequest = this.dialogTypeIsAdd ? ruleCustomizeService.addStackRule : ruleCustomizeService.modifyStackRule;
             const stackFormData = this.$method.handleFormDataStartOrEndByZero(
-              this.$refs.dialog.stackFormData, ['name', 'produceLineId'], false);
+              this.$refs.dialog.stackFormData, ['name', 'produceLineId', 'id'], false);
             return stackRequest({
               ...stackFormData,
               detailModels: detailModels.map(v=>this.$method.handleFormDataStartOrEndByZero(v, ['piece'], true))
