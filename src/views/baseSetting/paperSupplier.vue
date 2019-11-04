@@ -99,17 +99,5 @@
 </script>
 
 <style lang="less" scoped>
-  @deep: ~'>>>';
-  .paper-supplier-dialog {
-    @{deep} .dj-form .el-form-item {
-      .el-form-item__content {
-        width: auto;
-      }
-    }
-    @{deep} .el-col-24 {
-      .dj-input-content {
-        width: auto;
-      }
-    }
-  }
+
 </style>
