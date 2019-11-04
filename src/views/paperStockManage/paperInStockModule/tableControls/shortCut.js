@@ -63,6 +63,11 @@ export default {
       }
     }
   },
+  destroyed() {
+    if (!this.$parent.fixed) {
+      this.$parent.inputMap[`${this.index}-${this.col.prop}`] = undefined;
+    }
+  },
   methods: {
     setFocus(fn) {
       this.focusFn = fn;
@@ -112,7 +117,7 @@ export default {
         this.shortCutFocus(index, col.prop, map[e.keyCode]);
       }
     },
-    shortCutFocus(index, prop, arrow = 'right') {
+    getFocusTarget(index, prop, arrow = 'right') {
       if (this.disabledShortcut.includes(arrow)) {
         return;
       }
@@ -135,17 +140,54 @@ export default {
       if (arrow === 'up' || (arrow === 'left' && prop === arr[0])) {
         index--;
       }
+      if (index >= this.tableBody.data.length || index < 0) {
+        return;
+      }
       let target = this.$parent.inputMap[`${index}-${willGoProp}`];
+      if (target.disabled) {
+        return this.getFocusTarget(index, willGoProp, arrow);
+      } else {
+        return target;
+      }
+    },
+    shortCutFocus(index, prop, arrow = 'right') {
+      // if (this.disabledShortcut.includes(arrow)) {
+      //   return;
+      // }
+      // let arr = Array.from(this.$parent.inputKeys);
+      // let map = this.propMap;
+      // let willGoProp = prop;
+      // if (arrow === 'left') {
+      //   let _map = {};
+      //   Object.keys(map).forEach(key=>{
+      //     _map[map[key]] = key;
+      //   });
+      //   map = _map;
+      // }
+      // if (['left', 'right'].includes(arrow)) {
+      //   willGoProp = map[prop];
+      // }
+      // if (arrow === 'down' || (arrow === 'right' && prop === arr[arr.length - 1])) {
+      //   index++;
+      // }
+      // if (arrow === 'up' || (arrow === 'left' && prop === arr[0])) {
+      //   index--;
+      // }
+      // let target = this.$parent.inputMap[`${index}-${willGoProp}`];
+      let target = this.getFocusTarget(index, prop, arrow);
       if (target) {
         // this.setFocusKey(`${index}-${willGoProp}`);
         let cell_rect = target.$el.getBoundingClientRect();
         let wrap = this.$parent.$parent.$el.querySelector('.el-table__body-wrapper');
         let wrap_rect = wrap.getBoundingClientRect();
         if (wrap_rect.top > cell_rect.top) {
-          wrap.scrollTop -= this.$parent.rowHeight;
+          // wrap.scrollTop -= this.$parent.rowHeight;
+          wrap.scrollTop = this.tableBody.rowHeight * target.index;
           target.changeState(true);
         } else if (wrap_rect.bottom < cell_rect.bottom) {
-          let scrollTop = wrap.scrollTop + this.$parent.rowHeight;
+          // let scrollTop = wrap.scrollTop + this.$parent.rowHeight;
+          let scrollTop = (this.tableBody.rowHeight * (target.index + 1)) - wrap.clientHeight;
+          console.log(scrollTop);
           if (this.judgeIndexListChange(scrollTop)) {
             wrap.scrollTop = scrollTop;
             setTimeout(()=>{
