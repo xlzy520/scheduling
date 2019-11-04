@@ -56,4 +56,22 @@ export default {
     },
     trigger: 'change'
   }, //排序校验
+  getVformulaToWidthRule(materialWidth) {
+    return { validator: (rule, value, callback) => {
+        if (value && value.length) {
+          let sum = value.reduce((sum, cur) => {
+            sum += Number(cur || 0);
+            return sum;
+          }, 0);
+          if (sum !== Number(materialWidth) && sum !== 0) {
+            callback(new Error('请输入正确的压线公式'));
+          } else {
+            callback();
+          }
+        } else {
+          callback();
+        }
+      }
+    };
+  }
 };

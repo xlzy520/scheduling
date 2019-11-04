@@ -79,7 +79,7 @@
             Object.assign(post, this.searchData);
           } else {
             api = orderManageService.importOrder;
-            post.orderList = this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null;
+            post.orderList = this.$method.getOrderList(this.orders);
           }
           this.dj_api_extend(api, post).then(()=>{
             this.$refs.progress.done(()=>{
