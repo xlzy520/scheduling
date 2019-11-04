@@ -122,7 +122,14 @@
                 //   cb();
                 // }
               };
-              return {...props, beforeEnter, reg: /^[0-9a-zA-Z]*$/, 'class': {'is-error': props.row['isError']}, maxlength: 13};
+              return {
+                ...props,
+                beforeEnter,
+                reg: /^[0-9a-zA-Z]*$/,
+                'class': {'is-error': props.row['isError']},
+                maxlength: 13,
+                disabledShortcut: ['left', 'right']
+              };
             },
             component: tableInput,
             listeners: {
