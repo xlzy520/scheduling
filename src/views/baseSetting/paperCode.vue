@@ -11,33 +11,23 @@
       @update-data="getList"
     >
       <div slot="btn">
-        <el-button type="primary" @click="add">新增</el-button>
+        <el-button type="primary" @click="open(true)">新增</el-button>
       </div>
     </dj-table>
     </page-pane>
-    <lock-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm" width="400px"
-               :title="dialogTypeIsAdd?'新增原纸代码': '编辑原纸代码'">
-      <div class="paper-kind-dialog" v-loading="dialogLoading">
-        <dj-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="1"></dj-form>
-      </div>
-    </lock-dialog>
+    <look-dialog v-if="dialogVisible" ref="dialog" @close="close" @confirm="confirm"></look-dialog>
   </single-page>
 </template>
 
 <script>
+  import lookDialog from "./paperCodeModule/lookDialog";
   import paperCodeService from '../../api/service/paperCode';
   import loadingMixins from '../../mixins/loading';
-  import formRules from "./formRules";
   import PagePane from "../../components/page/pagePane";
 
-  const initFormData = {
-    paperCode: null,
-    paperType: null,
-    paperGram: null,
-  };
   export default {
     name: 'paperCode',
-    components: {PagePane},
+    components: {PagePane,lookDialog},
     mixins: [loadingMixins],
     data() {
       return {
@@ -65,73 +55,21 @@
                   <a onClick={() => this.changeStatus(row)}>
                     {row.isEffected ? '禁用' : '启用'}</a>
                   <span></span>
-                  <a onClick={() => this.edit(row)}>编辑</a>
+                  <a onClick={() => this.open(false,row)}>编辑</a>
                 </div>
               );
             },
           },
         ],
-        formData: initFormData,
-        originFormData: {},
-        formOptions: [
-          {
-            type: 'input',
-            formItem: {
-              prop: 'paperCode',
-              label: '原纸代码',
-              rules: [
-                this.$rule.required('请输入原纸代码'),
-                formRules.word_number
-              ],
-            },
-            attrs: {
-              maxlength: 10,
-            },
-            listeners: {
-              'input': (val) => {
-                this.formData.paperCode = val.toUpperCase();
-              },
-            },
-          },
-          {
-            type: 'select',
-            formItem: {
-              prop: 'paperType',
-              label: '原纸类型',
-              rules: [this.$rule.required('请选择原纸类型')],
-            },
-            attrs: {
-              options: this.$enum.paperType._arr
-            },
-          },
-          {
-            type: 'input',
-            formItem: {
-              prop: 'paperGram',
-              label: '克重',
-              rules: [
-                this.$rule.required('请输入克重'),
-                formRules.number,
-                formRules.number5
-                ],
-            },
-            attrs: {
-              placeholder: '请输入该原纸最大克重',
-              suffixIcon: "g"
-            },
-          },
-        ],
         pageTotal: 0,
-        dialogTypeIsAdd: null,
         dialogVisible: false
       };
     },
     methods: {
-      add() {
-        this.dialogTypeIsAdd = true;
+      open(isAdd, row) {
         this.dialogVisible = true;
         this.$nextTick(()=>{
-          this.$refs.dialog.open();
+          this.$refs.dialog.open(isAdd, row);
         });
       },
       getList(page) {
@@ -170,62 +108,15 @@
         //   });
         // });
       },
-      edit(row) {
-        this.dialogVisible = true;
-        this.dialogTypeIsAdd = false;
-        this.dialogLoading = true;
-        this.dj_api_extend(paperCodeService.getPaperCodeByid, {id: row.id}).then(res=>{
-          this.formData = res;
-          this.originFormData = this.$method.deepClone(res);
-        }).finally(() => {
-          this.dialogLoading = false;
-        });
-        this.$nextTick(()=>{
-          this.$refs.dialog.open();
-        });
-      },
-      confirm(cb) {
-        this.$refs.form.validate(()=>{
-          if (!this.$method.equalsObjMessage(this.originFormData, this.formData)) {
-            this.dialogLoading = true;
-            let message;
-            let api;
-            let post = {
-              paperCode: this.formData.paperCode,
-              paperType: this.formData.paperType,
-              paperGram: this.formData.paperGram,
-            };
-            if (this.dialogTypeIsAdd) {
-              message = '新增成功';
-              api = paperCodeService.add;
-            } else {
-              message = '编辑成功';
-              api = paperCodeService.edit;
-              post.id = this.formData.id;
-            }
-            post = this.$method.handleFormDataStartOrEndByZero(post, ['paperGram'], true);
-            this.dj_api_extend(api, post).then(() => {
-              this.close();
-              this.$refs.table.updateData();
-              this.$message(message, 'success');
-              this.dialogLoading = false;
-            }).catch(() => {
-              this.dialogLoading = false;
-            }).finally(cb);
-          } else {
-            cb();
-          }
-        }, cb);
-      },
       close() {
-        this.$refs.form.resetFields();
-        this.$refs.dialog.close();
         this.dialogVisible = false;
-        this.formData = initFormData;
       },
+      confirm() {
+        this.$refs.table.changePage(1);
+      }
     },
     mounted() {
-      this.$refs.table.changePage(1);
+      this.confirm();
     },
   };
 </script>
