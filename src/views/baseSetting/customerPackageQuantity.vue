@@ -4,6 +4,8 @@
     <dj-table
       :data="tableData"
       :columns="tableColumns"
+      is-cache-columns
+      :cache-columns-name="$store.getters.uids+'-'+ $route.name"
       :column-type="['index']"
       :total="pageTotal" height="100%"
       @update-data="pageChange"

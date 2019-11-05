@@ -7,6 +7,8 @@
           :data="tableData"
           :loading="loading"
           :columns="tableColumns"
+          is-cache-columns
+          :cache-columns-name="$store.getters.uids+'-'+ $route.name"
           :column-type="['selection', 'index']"
           row-select
           @selection-change="selectionChange"

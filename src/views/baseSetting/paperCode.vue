@@ -3,6 +3,8 @@
     <page-pane>
       <dj-table
       ref="table"
+      is-cache-columns
+      :cache-columns-name="$store.getters.uids+'-'+ $route.name"
       :data="tableData"
       :loading="loading"
       :columns="tableColumns"

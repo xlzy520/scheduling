@@ -7,6 +7,8 @@
                 :loading="isTableLoading"
                 :columns="tableColumns"
                 :column-type="['selection']"
+                is-cache-columns
+                :cache-columns-name="$store.getters.uids+'-'+ $route.name"
                 row-select
                 :column-type-props="{selection: {width: 45}}"
                 :total="total"

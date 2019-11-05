@@ -14,6 +14,8 @@
                     :data="tableData"
                     height="100%"
                     :total="total"
+                    is-cache-columns
+                    :cache-columns-name="$store.getters.uids+'-'+ $route.name"
                     :row-key="orderKeys.productionNo"
                     :loading="isTableLoading"
                     @selection-change="selectionChange"

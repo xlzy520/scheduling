@@ -6,6 +6,8 @@
         :data="tableData"
         ref="table"
         :columns="tableColumns"
+        is-cache-columns
+        :cache-columns-name="$store.getters.uids+'-'+ $route.name"
         :loading="loading"
         :column-type="['index']"
         :total="pageTotal"

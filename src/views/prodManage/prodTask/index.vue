@@ -11,6 +11,8 @@
               ref="table"
               :data="tableData"
               scroll-load
+              is-cache-columns
+              :cache-columns-name="$store.getters.uids+'-'+ $route.name"
               :columns="tableColumns"
               :column-type="['selection', 'index']"
               row-select
