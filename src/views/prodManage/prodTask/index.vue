@@ -24,7 +24,7 @@
             <div slot="btn">
               <el-button type="primary" @click="removeOrder" :loading="removeLoading">移除订单</el-button>
               <!--<el-button type="primary" @click="adjustSort">调整排序</el-button>-->
-              <el-button type="primary" @click="printQRCode">打印二维码</el-button>
+              <el-button type="primary" @click="printTag">打印标签</el-button>
               <el-button type="primary" @click="printAll" :loading="printLoading">打印全部</el-button>
               <el-button type="primary" @click="ViewImportRecord">查看汇入记录</el-button>
             </div>
@@ -50,6 +50,8 @@
   import paperSizeRange from "../../../components/paperSizeRange";
   import orderTag from '../../../components/printTag/orderTag';
   import {orderKeys} from "../../../utils/system/constant/dataKeys";
+  import dayjs from 'dayjs';
+
   export default {
     name: 'ProdTask',
     components: {ImportRecord, ProdTaskView, AdjustSort, orderTag, materialSizeInput, paperSizeRange},
@@ -104,6 +106,10 @@
           {label: '压线方式', prop: orderKeys.linePressingMethod},
           {label: '压线公式', prop: orderKeys.longitudinalPressure, width: 120},
           {label: '叠单', prop: 'stackFlag', formatter: (row, index, cur) => cur === 0 ? '' : cur},
+          {label: '订单交期', prop: 'arriveTime', width: 115,
+            formatter(row, index, cur) {
+              return dayjs(cur).format('YYYY-MM-DD');
+            }},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
@@ -142,7 +148,7 @@
           this.$refs.view.open();
         });
       },
-      printQRCode() {
+      printTag() {
         const {length} = this.checkedList;
         if (length === 0) {
           this.$message('请选择订单', 'error');
