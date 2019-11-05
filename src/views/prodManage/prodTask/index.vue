@@ -13,6 +13,7 @@
               scroll-load
               :columns="tableColumns"
               :column-type="['selection', 'index']"
+              row-select
               @selection-change="selectionChange"
               :total="pageTotal"
               height="100%"

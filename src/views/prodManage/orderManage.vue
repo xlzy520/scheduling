@@ -7,6 +7,7 @@
                 :loading="isTableLoading"
                 :columns="tableColumns"
                 :column-type="['selection']"
+                row-select
                 :column-type-props="{selection: {width: 45}}"
                 :total="total"
                 height="100%"
