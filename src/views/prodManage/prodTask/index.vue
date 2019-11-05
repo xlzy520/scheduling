@@ -24,7 +24,7 @@
             <div slot="btn">
               <el-button type="primary" @click="removeOrder" :loading="removeLoading">移除订单</el-button>
               <!--<el-button type="primary" @click="adjustSort">调整排序</el-button>-->
-              <el-button type="primary" @click="printQRCode">打印二维码</el-button>
+              <el-button type="primary" @click="printTag">打印标签</el-button>
               <el-button type="primary" @click="printAll" :loading="printLoading">打印全部</el-button>
               <el-button type="primary" @click="ViewImportRecord">查看汇入记录</el-button>
             </div>
@@ -49,7 +49,8 @@
   import materialSizeInput from "../../../components/materialSizeInput";
   import paperSizeRange from "../../../components/paperSizeRange";
   import orderTag from '../../../components/printTag/orderTag';
-  import {orderKeys} from "../../../utils/system/constant/dataKeys";
+  import dayjs from 'dayjs';
+
   export default {
     name: 'ProdTask',
     components: {ImportRecord, ProdTaskView, AdjustSort, orderTag, materialSizeInput, paperSizeRange},
@@ -69,13 +70,13 @@
               beforeChange: this.$method.getLimitTime
             }
           },
-          {label: '生产编号', key: orderKeys.productionNo, type: 'input', attrs: {reg: /^\w*$/}},
+          {label: '生产编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /^\w*$/}},
           {
             label: '下料规格', key: 'guige', type: 'custom',
             component: materialSizeInput
           },
-          {label: '用料代码', key: orderKeys.materialCode, type: 'input'},
-          {label: '客户名称', key: orderKeys.customerName, type: 'input'},
+          {label: '用料代码', key: 'materialCode', type: 'input'},
+          {label: '客户名称', key: 'customerName', type: 'input'},
           {
             label: '门幅范围', key: 'paperSize', type: 'custom',
             component: paperSizeRange,
@@ -84,26 +85,82 @@
               reg: /^\d*$/
             }
           },
+          {
+            key: 'arriveTime',
+            label: '订单交期',
+            type: 'date',
+            attrs: {
+              clearable: false,
+              default: this.$method.getDateRange('daterange', 31, 'day', 1),
+              beforeChange: this.$method.getLimitTime,
+              pickerOptions: {
+                shortcuts: [
+                  {
+                    text: '今日',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 1));
+                    }
+                  },
+                  {
+                    text: '明日',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 0, 'day', 1));
+                    }
+                  },
+                  {
+                    text: '本周',
+                    onClick(picker) {
+                      let start = dayjs().day(1).format('YYYY-MM-DD');
+                      let end = dayjs().day(6).add(1, 'day').format('YYYY-MM-DD');
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '本月',
+                    onClick(picker) {
+                      let start = dayjs().startOf('month').format('YYYY-MM-DD');
+                      let end = dayjs().endOf('month').format('YYYY-MM-DD');
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '近三月',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 3, 'month'));
+                    }
+                  }
+                ]
+              },
+              type: 'daterange'
+            },
+          }
         ],
         tableData: [],
         tableColumns: [
           {label: '排序', prop: 'listNumber', width: 160},
-          {label: '生产编号', prop: orderKeys.productionNo, width: 160},
-          {label: '客户名称', prop: orderKeys.customerName},
-          {label: '产品名称', prop: orderKeys.productName},
-          {label: '用料代码', prop: orderKeys.materialCode},
-          {label: '瓦楞楞型', prop: 'fluteTypeAndLayers'},
-          {label: '生产数量', prop: orderKeys.productAmount},
-          {label: '订单数量', prop: orderKeys.orderAmount},
+          {label: '生产编号', prop: 'produceOrderNumber', width: 160},
+          {label: '客户名称', prop: 'customerName'},
+          {label: '产品名称', prop: 'grouponProductName'},
+          {label: '用料代码', prop: 'materialCode'},
+          {label: '瓦楞楞型', prop: 'tileModel', formatter: row => row.layer + row.tileModel},
+          {label: '生产数量', prop: 'produceAmount'},
+          {label: '订单数量', prop: 'pieceAmount'},
           {label: '门幅宽度', prop: 'paperSize'},
           {label: '订单米数', prop: 'orderMeter'},
-          {label: '下料规格(cm)', prop: orderKeys.materialSize, width: 120},
+          {
+            label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
+            formatter: row => row.materialLength + '*' + row.materialWidth
+          },
           {label: '切数', prop: 'cutCount', width: 120},
-          {label: '切宽', prop: orderKeys.materialWidth, width: 120},
+          {label: '切宽', prop: 'materialWidth', width: 120},
           {label: '修边', prop: 'trimming'},
-          {label: '压线方式', prop: orderKeys.linePressingMethod},
-          {label: '压线公式', prop: orderKeys.longitudinalPressure, width: 120},
-          {label: '叠单', prop: 'stackFlag', formatter: (row, index, cur) => cur === 0 ? '' : cur},
+          {label: '压线方式', prop: 'staveType'},
+          {label: '压线公式', prop: 'vformula', width: 120},
+          {label: '叠单', prop: 'stackFlag', formatter: row => row.stackFlag === 0 ? '' : row.stackFlag},
+          {label: '订单交期', prop: 'arriveTime', width: 115,
+            formatter(row, index, cur) {
+              return dayjs(cur).format('YYYY-MM-DD');
+            }},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
@@ -142,7 +199,7 @@
           this.$refs.view.open();
         });
       },
-      printQRCode() {
+      printTag() {
         const {length} = this.checkedList;
         if (length === 0) {
           this.$message('请选择订单', 'error');
