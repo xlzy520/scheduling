@@ -1,5 +1,6 @@
 <template>
-  <lock-dialog ref="dialog" @close="close" title="调整排序" width="400px" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="close" title="调整排序" width="400px"
+               @confirm="confirm" custom-class="sort-dialog">
     <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
     <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
   </lock-dialog>
@@ -37,7 +38,10 @@
                 },
                 this.$rule.orderSort_range
               ]
-            }
+            },
+            attrs: {
+              ref: 'focus'
+            },
           }
         ];
       }
@@ -66,6 +70,10 @@
         this.$refs.dialog.open();
         this.orders = params.data || [];
         this.lineId = params.lineId || [];
+        this.$nextTick(() => {
+          const focusInput = document.querySelector('.sort-dialog .el-input>input');
+          focusInput.focus();
+        });
       },
       close() {
         this.$refs.dialog.close();
