@@ -24,6 +24,7 @@
                       :total="total"
                       :row-class-name="rowClassName"
                       :column-type-props="columnsTypeProps"
+                      row-select
                       :loading="isTableLoading"
                       @selection-change="selectionChange"
                       @sort-change="sortChange"
