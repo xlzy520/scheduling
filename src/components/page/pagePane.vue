@@ -21,7 +21,7 @@
     position: relative;
     flex: 1 1;
     &.is-margin {
-      margin: 0 32px 14px;
+      margin: 0 32px;
     }
     .page-pane_absolute {
       position: absolute;
