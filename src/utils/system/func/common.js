@@ -61,6 +61,11 @@ export const getOrderTip = function (obj = {}, bool) {
   return (bool ? orderTip.omit : orderTip.label) || '';
 };
 
+export const getMergeStatus = function (obj = {}) {
+  let orderTip = _enum.mergeStatus._swap[obj[orderKeys.mergeStatus]] || {};
+  return orderTip.label || '';
+};
+
 export const handleTime = function (obj, keys, format = 'YYYY-MM-DD HH:mm:ss') {
   function time(t) {
     if (t) {

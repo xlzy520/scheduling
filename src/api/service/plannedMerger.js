@@ -1,23 +1,30 @@
 import {plannedMerger} from '../base-service/service';
 import methods from "../../utils/methods";
 import { orderKeys } from "../../utils/system/constant/dataKeys";
-const { getMaterialSize, getProductSize, handleTime, getOriginKey } = methods;
+const { getMaterialSize, getProductSize, handleTime, getOriginKey, getLayerFluteType, getOrderTip, getMergeStatus } = methods;
 export default{
   list(params) {
     return plannedMerger('/getMergeList.do', params).then(res=>{
       let list = res.list || [];
+      function handleData(obj) {
+        obj['fluteTypeAndLayers'] = getLayerFluteType(obj);
+        obj['orderTipLabel'] = getOrderTip(obj, true);
+        obj['mergeStatusLabel'] = getMergeStatus(obj);
+        obj[orderKeys.productSize] = getProductSize(obj);
+        obj[orderKeys.materialSize] = getMaterialSize(obj);
+      }
       list.forEach((obj)=>{
         if (Array.isArray(obj.childList)) {
           obj.childList.forEach(item=>{
             item.isChild = true;
             item['table_level'] = 1;
-            item[orderKeys.productSize] = getProductSize(item);
-            item[orderKeys.materialSize] = getMaterialSize(item);
+            handleData(item);
           });
         }
         obj.childNum = (obj.childList || []).length;
-        obj[orderKeys.materialSize] = getMaterialSize(obj);
-        obj[orderKeys.productSize] = getProductSize(obj);
+        handleData(obj);
+        // obj[orderKeys.materialSize] = getMaterialSize(obj);
+        // obj[orderKeys.productSize] = getProductSize(obj);
         return obj;
       });
       return res;
@@ -53,6 +60,8 @@ export default{
         // obj.childNum = (obj.childList || []).length;
         obj[orderKeys.materialSize] = getMaterialSize(obj);
         obj[orderKeys.productSize] = getProductSize(obj);
+        obj['fluteTypeAndLayers'] = getLayerFluteType(res);
+        res['orderTipLabel'] = getOrderTip(res);
         handleTime(obj, [orderKeys.deliveryTime, orderKeys.mergeTime], 'YYYY-MM-DD');
         return obj;
       });
