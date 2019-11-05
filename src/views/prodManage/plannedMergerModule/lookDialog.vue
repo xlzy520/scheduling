@@ -40,7 +40,7 @@
           },
           {
             formItem: {
-              prop: 'produceMaterial',
+              prop: orderKeys.produceMaterial,
               label: '用料代码'
             }
           },
@@ -87,18 +87,9 @@
             }
           },
           {
-            type: 'custom',
-            isText: true,
             formItem: {
-              prop: orderKeys.fluteType,
+              prop: 'fluteTypeAndLayers',
               label: '瓦楞楞型'
-            },
-            render: (h) => {
-              let fluteType = this.formData[orderKeys.fluteType] || '';
-              let layer = this.formData[orderKeys.layer] || '';
-              return (
-                <span>{`${layer}${fluteType}`}</span>
-              );
             },
           },
           {
@@ -203,16 +194,10 @@
             },
           },
           {
-            type: 'custom',
             formItem: {
-              prop: orderKeys.orderTip,
+              prop: 'orderTipLabel',
               label: '订单标记'
             },
-            isText: true,
-            render: (h)=>{
-              let obj = this.$enum.orderTip._swap[this.formData[orderKeys.orderTip]] || {};
-              return (<span>{obj.label || ''}</span>);
-            }
           },
           {
             formItem: {

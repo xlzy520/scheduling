@@ -19,16 +19,7 @@
               prop: orderKeys.orderAmount,
               label: '订单数量',
               rules: [
-                {pattern: /^\d+$/, message: '请输入正整数'},
-                {
-                  validator: (rule, value, callback) => {
-                    if (!(value && Number(value) <= 999999 && Number(value) >= 1)) {
-                      callback(new Error('请输入范围1~999999'));
-                    } else {
-                      callback();
-                    }
-                  }
-                },
+                this.$rule.orderAmount_range,
               ]
             },
           },

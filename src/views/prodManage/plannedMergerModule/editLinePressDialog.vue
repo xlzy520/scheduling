@@ -22,15 +22,7 @@
               label: '压线方式',
               rules: [
                 // rules.required('请选择压线方式'),
-                {
-                  validator: (rule, value, callback) => {
-                    if (!value) {
-                      callback(new Error('请选择压线方式'));
-                    } else {
-                      callback();
-                    }
-                  }
-                }
+                this.$rule.getEmptyRule('请选择压线方式')
               ]
             },
             attrs: {
@@ -47,7 +39,6 @@
               label: '纵压公式',
               rules: [
                 this.$rule.vformula_range,
-                // {validator: checkValue},
                 {
                   validator: (rule, value, callback) => {
                     let materialWidth = this.formData[orderKeys.materialWidth];
@@ -74,19 +65,19 @@
         textOptions: [
           {
             formItem: {
-              prop: 'originalProduceOrderNumber',
+              prop: this.$method.getOriginKey(orderKeys.productionNo, 'original'),
               label: '生产编号'
             }
           },
           {
             formItem: {
-              prop: 'originalMaterialSize',
+              prop: this.$method.getOriginKey(orderKeys.materialSize, 'original'),
               label: '下料规格'
             }
           },
           {
             formItem: {
-              prop: 'originalStaveType',
+              prop: this.$method.getOriginKey(orderKeys.linePressingMethod, 'original'),
               label: '压线方式'
             }
           },
@@ -155,8 +146,7 @@
       },
       getOrderById(post) {
         return this.dj_api_extend(plannedMergerService.getOrderById, post).then(({ main }) => {
-          let longitudinalPressure = main[orderKeys.longitudinalPressure];
-          main[orderKeys.longitudinalPressure] = longitudinalPressure ? longitudinalPressure.split('+') : [];
+          main[orderKeys.longitudinalPressure] = this.$method.getVFormula(main, orderKeys.longitudinalPressure) || [];
           return main;
         });
       },

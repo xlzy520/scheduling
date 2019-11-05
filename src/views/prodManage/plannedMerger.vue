@@ -90,7 +90,7 @@
           },
           {
             type: 'input',
-            key: 'produceMaterial',
+            key: orderKeys.produceMaterial,
             label: '用料代码',
           },
           {
@@ -128,176 +128,6 @@
             // }
           }
         },
-        // tableColumns: [
-        //   {
-        //     prop: 'operate',
-        //     label: '操作',
-        //     fixed: 'right',
-        //     width: 180,
-        //     render: (h, {props: {row}}) => {
-        //       let arr = [];
-        //       let obj = this.$enum.mergeStatus._swap[this.activeIndex] || {};
-        //       if (obj.value === 'wait' && !row.isChild) {
-        //         arr.push((<a on-click={()=>{this.openDialog('editDialog', row)}}>编辑</a>));
-        //         arr.push((<span></span>));
-        //       }
-        //       if (obj.value === 'already' && !row.isChild && !(row.childNum > 1)) {
-        //         arr.push((<a on-click={()=>{this.openDialog('editLinePressDialog', row)}}>编辑压线方式</a>));
-        //         arr.push((<span></span>));
-        //       }
-        //       if (!row.isChild) {
-        //         arr.push((<a on-click={()=>{this.openDialog('lookDialog', row)}}>查看</a>));
-        //       }
-        //       return (
-        //         <div class="td-btn-group">
-        //           {arr}
-        //         </div>
-        //       );
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.orderTip,
-        //     label: '订单标记',
-        //     width: 110,
-        //     render: (h, {props:{row, col}}) => {
-        //       let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
-        //       let text = obj.omit || '';
-        //       let key = obj.value || '';
-        //       return (
-        //         <span class={key? key : '' }>{text}</span>
-        //       )
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.productionNo,
-        //     label: '生产编号',
-        //     width: 150
-        //   },
-        //   {
-        //     prop: orderKeys.customerName,
-        //     label: '客户名称',
-        //     width: 97
-        //   },
-        //   {
-        //     prop: 'produceMaterial',
-        //     label: '用料代码',
-        //     width: 97
-        //   },
-        //   {
-        //     prop: orderKeys.fluteType,
-        //     label: '瓦楞楞型',
-        //     width: 97,
-        //     formatter(row, index, cur) {
-        //       let layer = row[orderKeys.layer] || '';
-        //       let fluteType = cur || '';
-        //       return layer + fluteType;
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.orderAmount,
-        //     label: '订单数量',
-        //     width: 97,
-        //     render: (h, {props: {row, col}}) => {
-        //       return (
-        //         <span class={{'edited': !row['judgePieceAmountUpdate']}}>
-        //           {row[col.prop]}
-        //         </span>
-        //       );
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.productAmount,
-        //     label: '生产数量',
-        //     width: 97
-        //   },
-        //   {
-        //     prop: orderKeys.productSize,
-        //     label: '产品规格',
-        //     width: 170
-        //   },
-        //   {
-        //     prop: orderKeys.materialSize,
-        //     label: '下料规格(cm)',
-        //     width: 150,
-        //     // formatter(row) {
-        //     //   let materialLength = row[orderKeys.materialLength] || '';
-        //     //   let materialWidth = row[orderKeys.materialWidth] || '';
-        //     //   return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
-        //     // },
-        //     render: (h, {props: {row, col}}) => {
-        //       let materialLength = row[orderKeys.materialLength] || '';
-        //       let materialWidth = row[orderKeys.materialWidth] || '';
-        //       let materialSize = materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
-        //       return (
-        //         <span class={{'illegal': !row['judgeSpecification'], 'edited': !row['judgeSpecificationUpdate']}}>
-        //           {materialSize}
-        //         </span>
-        //       );
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.optimalSize,
-        //     label: '最优门幅',
-        //     width: 97,
-        //   },
-        //   {
-        //     prop: orderKeys.cutNumber,
-        //     label: '切数',
-        //   },
-        //   {
-        //     prop: orderKeys.orderMetres,
-        //     label: '订单米数',
-        //     width: 97,
-        //     render: (h, {props: {row, col}}) => {
-        //       return (
-        //         <span class={{'illegal': !row['judgePaperLength']}}>
-        //           {row[col.prop]}
-        //         </span>
-        //       );
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.trim,
-        //     label: '修边'
-        //   },
-        //   {
-        //     prop: orderKeys.trimRate,
-        //     label: '修边率',
-        //   },
-        //   {
-        //     prop: orderKeys.linePressingMethod,
-        //     label: '压线方式',
-        //     width: 97,
-        //     render: (h, {props: {row, col}}) => {
-        //       return (
-        //         <span class={{'edited': !row['judgeStaveType']}}>
-        //           {row[col.prop]}
-        //         </span>
-        //       );
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.longitudinalPressure,
-        //     label: '纵压公式',
-        //     width: 120,
-        //     render: (h, {props: {row, col}}) => {
-        //       return (
-        //         <span class={{'illegal': !row['judgePressLine'], 'edited': !row['judgePressLineUpdate']}}>
-        //           {row[col.prop]}
-        //         </span>
-        //       );
-        //     }
-        //   },
-        //   {
-        //     prop: orderKeys.mergeStatus,
-        //     label: '合并状态',
-        //     width: 97,
-        //     formatter: (row, index, cur) => {
-        //       let obj = this.$enum.mergeStatus._swap[cur] || {};
-        //       return obj.label || '';
-        //     }
-        //   }
-        // ],
         total: 0,
         searchData: {},
         activeIndex: this.$enum.mergeStatus['wait'].value,
@@ -371,19 +201,14 @@
             width: 101
           },
           {
-            prop: 'produceMaterial',
+            prop: orderKeys.produceMaterial,
             label: '用料代码',
             width: 100
           },
           {
-            prop: orderKeys.fluteType,
+            prop: 'fluteTypeAndLayers',
             label: '瓦楞楞型',
             width: 100,
-            formatter(row, index, cur) {
-              let layer = row[orderKeys.layer] || '';
-              let fluteType = cur || '';
-              return layer + fluteType;
-            }
           },
           {
             prop: orderKeys.orderAmount,
@@ -411,18 +236,10 @@
             prop: orderKeys.materialSize,
             label: '下料规格(cm)',
             width: 130,
-            // formatter(row) {
-            //   let materialLength = row[orderKeys.materialLength] || '';
-            //   let materialWidth = row[orderKeys.materialWidth] || '';
-            //   return materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
-            // },
-            render: (h, {props: {row}}) => {
-              let materialLength = row[orderKeys.materialLength] || '';
-              let materialWidth = row[orderKeys.materialWidth] || '';
-              let materialSize = materialLength && materialWidth ? materialLength + '*' + materialWidth : '';
+            render: (h, {props: {row, cur}}) => {
               return (
                 <span class={{'illegal': !row['judgeSpecification'], 'edited': !row['judgeSpecificationUpdate']}}>
-                  {materialSize}
+                  {cur}
                 </span>
               );
             }
@@ -441,10 +258,10 @@
             prop: orderKeys.orderMetres,
             label: '订单米数',
             width: 100,
-            render: (h, {props: {row, col}}) => {
+            render: (h, {props: {row, cur}}) => {
               return (
                 <span class={{'illegal': !row['judgePaperLength']}}>
-                  {row[col.prop]}
+                  {cur}
                 </span>
               );
             }
@@ -463,10 +280,10 @@
             prop: orderKeys.linePressingMethod,
             label: '压线方式',
             width: 100,
-            render: (h, {props: {row, col}}) => {
+            render: (h, {props: {row, cur}}) => {
               return (
                 <span class={{'edited': !row['judgeStaveType']}}>
-                  {row[col.prop]}
+                  {cur}
                 </span>
               );
             }
@@ -475,22 +292,18 @@
             prop: orderKeys.longitudinalPressure,
             label: '纵压公式',
             width: 100,
-            render: (h, {props: {row, col}}) => {
+            render: (h, {props: {row, cur}}) => {
               return (
                 <span class={{'illegal': !row['judgePressLine'], 'edited': !row['judgePressLineUpdate']}}>
-                  {row[col.prop]}
+                  {cur}
                 </span>
               );
             }
           },
           {
-            prop: orderKeys.mergeStatus,
+            prop: 'mergeStatusLabel',
             label: '合并状态',
             width: 100,
-            formatter: (row, index, cur) => {
-              let obj = this.$enum.mergeStatus._swap[cur] || {};
-              return obj.label || '';
-            }
           }
         ];
       }
