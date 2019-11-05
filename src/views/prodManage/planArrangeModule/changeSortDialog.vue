@@ -26,17 +26,21 @@
               prop: 'newPosition',
               label: '订单排序',
               rules: [
-                {
-                  validator(rule, value, cb) {
-                    if (!value) {
-                      cb(new Error('请输入订单排序'));
-                    } else {
-                      cb();
-                    }
-                  }
-                },
+                this.$rule.getEmptyRule('请输入订单排序'),
+                // {
+                //   validator(rule, value, cb) {
+                //     if (!value) {
+                //       cb(new Error('请输入订单排序'));
+                //     } else {
+                //       cb();
+                //     }
+                //   }
+                // },
                 this.$rule.orderSort_range
               ]
+            },
+            attrs: {
+              autofocus: true,
             }
           }
         ];
@@ -48,7 +52,7 @@
           let post = {
             ...this.formData,
             lineId: this.lineId,
-            orderList: this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null
+            orderList: this.$method.getOrderList(this.orders)
           };
           this.dj_api_extend(planArrangeService.changeSort, post).then(()=>{
             this.$message('调整排序成功');

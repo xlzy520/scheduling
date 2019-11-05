@@ -1,10 +1,16 @@
 import {planArrange} from '../base-service/service';
 import methods from "../../utils/methods";
 import { orderKeys } from "../../utils/system/constant/dataKeys";
-const { getMaterialSize, getOriginKey } = methods;
+const { getMaterialSize, getOriginKey, handleTime, getProductSize, getOrderTip, getLayerFluteType } = methods;
 export default{
   list(data) {
-    return planArrange('/selectArrangeOrder.do', data);
+    return planArrange('/selectArrangeOrder.do', data).then((res = {})=>{
+      let list = res.list || [];
+      list.map(obj=>{
+        obj['fluteTypeAndLayers'] = getLayerFluteType(obj);
+      });
+      return res;
+    });
   },
   changeProdLine(data) {
     return planArrange('/changeLine.do', data);
@@ -39,6 +45,11 @@ export default{
   getOrder(data) {
     return planArrange('/selectAllInfo.do', data).then(res=>{
       res[getOriginKey(orderKeys.materialSize, 'old')] = getMaterialSize(res, false, ['oldMaterialLength', 'oldMaterialWidth']);
+      res[orderKeys.materialSize] = getMaterialSize(res);
+      res['fluteTypeAndLayers'] = getLayerFluteType(res);
+      res['orderTipLabel'] = getOrderTip(res);
+      res[orderKeys.productSize] = getProductSize(res);
+      handleTime(res, orderKeys.deliveryTime, 'YYYY-MM-DD');
       return res;
     });
   },

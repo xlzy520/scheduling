@@ -38,9 +38,7 @@
                   options: this.paperSize_arr
                 },
                 listeners: {
-                  input: () => {
-                    this.getCalcResult();
-                  }
+                  input: this.getCalcResult
                 }
                 // component: {
                 //   props: ['options', 'value'],
@@ -73,9 +71,7 @@
                   options: this.$enum.orderCutNumber
                 },
                 listeners: {
-                  input: () => {
-                    this.getCalcResult();
-                  }
+                  input: this.getCalcResult
                 }
               },
             ]
@@ -138,11 +134,11 @@
     created() {
     },
     methods: {
-      clearCalcResult() {
+      setCalcResult(orderMetres, trimRate, res) {
         let _res = {};
-        _res[this.$method.getOriginKey(orderKeys.orderMetres, 'calc')] = '';
-        _res[this.$method.getOriginKey(orderKeys.trimRate, 'calc')] = '';
-        Object.assign(this.formData, _res);
+        _res[this.$method.getOriginKey(orderKeys.orderMetres, 'calc')] = orderMetres;
+        _res[this.$method.getOriginKey(orderKeys.trimRate, 'calc')] = trimRate;
+        Object.assign(res || this.formData, _res);
       },
       getCalcResult() {
         if (this.formData[orderKeys.productionNo]) {
@@ -151,12 +147,9 @@
             lineId: this.lineId,
             order: this.formData[orderKeys.productionNo]
           };
-          this.clearCalcResult();
+          this.setCalcResult();
           this.dj_api_extend(planArrangeService.getCalcResult, post).then(res => {
-            let _res = {};
-            _res[this.$method.getOriginKey(orderKeys.orderMetres, 'calc')] = res['length'];
-            _res[this.$method.getOriginKey(orderKeys.trimRate, 'calc')] = res[orderKeys.trimRate];
-            Object.assign(this.formData, _res);
+            this.setCalcResult(res['length'], res[orderKeys.trimRate]);
           });
         }
       },
@@ -168,10 +161,9 @@
       },
       getOrderMsg(params) {
         this.isLoading = true;
-        this.dj_api_extend(planArrangeService.getOrder, params).then(res => {
-          res[this.$method.getOriginKey(orderKeys.orderMetres, 'calc')] = res[orderKeys.orderMetres];
-          res[this.$method.getOriginKey(orderKeys.trimRate, 'calc')] = res[orderKeys.trimRate];
-          this.formData = res || {};
+        this.dj_api_extend(planArrangeService.getOrder, params).then((res = {}) => {
+          this.setCalcResult(res[orderKeys.orderMetres], res[orderKeys.trimRate], res);
+          this.formData = res;
         }).finally(()=>{
           this.isLoading = false;
         });
@@ -187,9 +179,7 @@
             this.$emit('success');
             this.$message('编辑成功');
             this.close();
-          }).finally(() => {
-            cb && cb();
-          });
+          }).finally(cb);
         }, cb);
       },
       open(param = {}) {

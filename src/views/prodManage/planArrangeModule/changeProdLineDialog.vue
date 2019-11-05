@@ -35,22 +35,14 @@
               prop: 'newLine',
               label: '生产线',
               rules: [
-                {
-                  validator: (rule, value, callback) => {
-                    if (!value) {
-                      callback(new Error('请选择生产线'));
-                    } else {
-                      callback();
-                    }
-                  }
-                }
+                this.$rule.getEmptyRule('请选择生产线')
               ]
             },
             attrs: {
-              keyMap: {
-                // label: 'lineNum',
-                // value: 'lineNum'
-              },
+              // keyMap: {
+              //   label: 'lineNum',
+              //   value: 'lineNum'
+              // },
               options: this.prodLine_arr
             }
           },
@@ -60,16 +52,7 @@
               prop: 'list',
               // label: '生产线',
               rules: [
-                {
-                  validator: (rule, value, callback) => {
-                    if (!value || !value.length) {
-                      callback(new Error('请选择订单'));
-                    } else {
-                      callback();
-                    }
-                  },
-                  // trigger: 'input'
-                }
+                this.$rule.getEmptyRule('请选择订单')
               ]
             },
             attrs: {
@@ -90,18 +73,6 @@
         }
         return 12;
       },
-      calcMeters(arr = [], keyMap, sum = 0) {
-        arr.forEach(obj=>{
-          let children = obj[keyMap.childKey];
-          if (Array.isArray(children) && children.length) {
-            sum = this.calcMeters(children, keyMap, sum);
-          } else {
-            sum += Number(obj['paperLength']);
-          }
-        });
-        return sum;
-      },
-      change() {},
       getAllLine() {
         this.dj_api_extend(productionLineService.list).then(res => {
           this.prodLine_arr = (res.list || []).filter(obj=>obj.isEffected && obj.id !== this.oldLine).map(obj => {
