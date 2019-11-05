@@ -25,7 +25,7 @@
             <div slot="btn">
               <el-button type="primary" @click="removeOrder" :loading="removeLoading">移除订单</el-button>
               <!--<el-button type="primary" @click="adjustSort">调整排序</el-button>-->
-              <el-button type="primary" @click="printQRCode">打印二维码</el-button>
+              <el-button type="primary" @click="printTag">打印标签</el-button>
               <el-button type="primary" @click="printAll" :loading="printLoading">打印全部</el-button>
               <el-button type="primary" @click="ViewImportRecord">查看汇入记录</el-button>
             </div>
@@ -50,6 +50,7 @@
   import materialSizeInput from "../../../components/materialSizeInput";
   import paperSizeRange from "../../../components/paperSizeRange";
   import orderTag from '../../../components/printTag/orderTag';
+  import dayjs from 'dayjs';
 
   export default {
     name: 'ProdTask',
@@ -85,6 +86,55 @@
               reg: /^\d*$/
             }
           },
+          {
+            key: 'arriveTime',
+            label: '订单交期',
+            type: 'date',
+            attrs: {
+              clearable: false,
+              default: this.$method.getDateRange('daterange', 31, 'day', 1),
+              beforeChange: this.$method.getLimitTime,
+              pickerOptions: {
+                shortcuts: [
+                  {
+                    text: '今日',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 1));
+                    }
+                  },
+                  {
+                    text: '明日',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 0, 'day', 1));
+                    }
+                  },
+                  {
+                    text: '本周',
+                    onClick(picker) {
+                      let start = dayjs().day(1).format('YYYY-MM-DD');
+                      let end = dayjs().day(6).add(1, 'day').format('YYYY-MM-DD');
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '本月',
+                    onClick(picker) {
+                      let start = dayjs().startOf('month').format('YYYY-MM-DD');
+                      let end = dayjs().endOf('month').format('YYYY-MM-DD');
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '近三月',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 3, 'month'));
+                    }
+                  }
+                ]
+              },
+              type: 'daterange'
+            },
+          }
         ],
         tableData: [],
         tableColumns: [
@@ -108,6 +158,10 @@
           {label: '压线方式', prop: 'staveType'},
           {label: '压线公式', prop: 'vformula', width: 120},
           {label: '叠单', prop: 'stackFlag', formatter: row => row.stackFlag === 0 ? '' : row.stackFlag},
+          {label: '订单交期', prop: 'arriveTime', width: 115,
+            formatter(row, index, cur) {
+              return dayjs(cur).format('YYYY-MM-DD');
+            }},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
@@ -146,7 +200,7 @@
           this.$refs.view.open();
         });
       },
-      printQRCode() {
+      printTag() {
         const {length} = this.checkedList;
         if (length === 0) {
           this.$message('请选择订单', 'error');

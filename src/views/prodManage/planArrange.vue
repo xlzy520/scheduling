@@ -74,6 +74,7 @@
   import paperButton from "./planArrangeModule/paperButton";
   import changeProdLineDialog from "./planArrangeModule/changeProdLineDialog";
   import editStackDialog from "./planArrangeModule/editStackDialog";
+  import dayjs from 'dayjs';
   export default {
     name: 'planArrange',
     data: function () {
@@ -134,6 +135,55 @@
               reg: /^\d*$/
             }
           },
+          {
+            key: 'arriveTime',
+            label: '订单交期',
+            type: 'date',
+            attrs: {
+              clearable: false,
+              default: this.$method.getDateRange('daterange', 31, 'day', 1),
+              beforeChange: this.$method.getLimitTime,
+              pickerOptions: {
+                shortcuts: [
+                  {
+                    text: '今日',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 1));
+                    }
+                  },
+                  {
+                    text: '明日',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 0, 'day', 1));
+                    }
+                  },
+                  {
+                    text: '本周',
+                    onClick(picker) {
+                      let start = dayjs().day(1).format('YYYY-MM-DD');
+                      let end = dayjs().day(6).add(1, 'day').format('YYYY-MM-DD');
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '本月',
+                    onClick(picker) {
+                      let start = dayjs().startOf('month').format('YYYY-MM-DD');
+                      let end = dayjs().endOf('month').format('YYYY-MM-DD');
+                      picker.$emit('pick', [start, end]);
+                    }
+                  },
+                  {
+                    text: '近三月',
+                    onClick(picker) {
+                      picker.$emit('pick', picker.$method.getDateRange('daterange', 3, 'month'));
+                    }
+                  }
+                ]
+              },
+              type: 'daterange'
+            },
+          }
         ],
         tableData: [],
         tableData_index_map: {},
@@ -329,6 +379,10 @@
             label: '原纵压公式',
             width: 120,
           },
+          {label: '订单交期', prop: 'arriveTime', width: 115,
+            formatter(row, index, cur) {
+              return dayjs(cur).format('YYYY-MM-DD');
+            }},
         ],
         total: 0,
         totalMeter: 0,
