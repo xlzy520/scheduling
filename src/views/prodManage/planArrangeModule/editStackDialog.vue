@@ -1,7 +1,6 @@
 <template>
   <lock-dialog ref="dialog" @close="close" width="400px" title="调整叠单" @confirm="confirm">
     <classify-form ref="form" :form-data="formData" :config="config"></classify-form>
-    <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
   </lock-dialog>
 </template>
 <script>
@@ -58,9 +57,7 @@
             this.$emit('success');
             this.$message('编辑成功');
             this.close();
-          }).finally(() => {
-            cb && cb();
-          });
+          }).finally(cb);
         }, cb);
       },
       open(param = {}) {

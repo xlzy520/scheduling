@@ -1,4 +1,6 @@
 import regexp from './regexp';
+import methods from '../../methods';
+const { judgeAllEmpty } = methods;
 // import { formRules } from 'djcpsweb-utils';
 import { djForm } from 'djweb';
 const { rules } = djForm;
@@ -73,5 +75,16 @@ export default {
         }
       }
     };
+  },
+  getEmptyRule(msg) {
+    return {
+      validator: (rule, value, callback) => {
+        if (judgeAllEmpty(value)) {
+          callback(new Error(msg));
+        } else {
+          callback();
+        }
+      }
+    }
   }
 };

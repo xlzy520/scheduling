@@ -258,14 +258,9 @@
             sortable: true
           },
           {
-            prop: orderKeys.fluteType,
+            prop: 'fluteTypeAndLayers',
             label: '瓦楞楞型',
             width: 80,
-            formatter(row, index, cur) {
-              let layer = row[orderKeys.layer] || '';
-              let fluteType = cur || '';
-              return layer + fluteType;
-            }
           },
           {
             prop: orderKeys.materialLength,

@@ -28,15 +28,7 @@
               prop: orderKeys.optimalSize,
               label: '最优门幅',
               rules: [
-                {
-                  validator(rule, value, cb) {
-                    if (!value) {
-                      cb(new Error('请选择最优门幅'));
-                    } else {
-                      cb();
-                    }
-                  }
-                }
+                this.$rule.getEmptyRule('请选择最优门幅')
               ]
             },
             attrs: {
@@ -63,7 +55,7 @@
         this.$refs.form.validate(()=>{
           let post = {
             ...this.formData,
-            orderList: this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null,
+            orderList: this.$method.getOrderList(this.orders),
             lineId: this.lineId
           };
           this.dj_api_extend(planArrangeService.editPaperSize, post).then(()=>{
@@ -73,13 +65,10 @@
           }).catch(()=>{
             this.$emit('success');
             this.close();
-          }).finally(()=>{
-            cb && cb();
-          });
+          }).finally(cb);
         }, cb);
       },
       open(params) {
-        console.log(params);
         this.$refs.dialog.open();
         this.orders = params.data || [];
         this.lineId = params.lineId;

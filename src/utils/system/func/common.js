@@ -27,6 +27,19 @@ export const getMaterialSize = function (obj = {}, bool, option = []) {
   }
 };
 
+export const getLayerFluteType = function (obj = {}, bool, option = []) {
+  let defaultOption = [orderKeys.layer, orderKeys.fluteType];
+  let layerKey = option[0] || defaultOption[0];
+  let fluteTypeKey = option[1] || defaultOption[1];
+  let layer = obj[layerKey] || '';
+  let fluteType = obj[fluteTypeKey] || '';
+  if (bool) {
+    return [layer + '', fluteType + ''];
+  } else {
+    return `${layer}${fluteType}`;
+  }
+};
+
 export const getProductSize = function (obj = {}) {
   let length = obj[orderKeys.productLength] || '';
   let width = obj[orderKeys.productWidth] || '';
@@ -319,4 +332,10 @@ export function getLimitTime(val) {
 
 export function judgeEmpty(valArr) {
   return valArr.some(val=> ['', null, undefined].includes(val));
+}
+
+export function judgeAllEmpty(val) {
+  return ['', undefined, null].includes(val) ||
+    (Array.isArray(val) && val.every(v=>['', undefined, null].includes(v)) ||
+      (checkType(val, 'Object') && Object.keys(val).every(key=>['', undefined, null].includes(val[key]))));
 }
