@@ -96,10 +96,10 @@
           prop: this.orderKeys.productName,
           label: '产品名称'
         },
-        {
-          prop: this.orderKeys.materialCode,
-          label: '用料代码'
-        },
+        // {
+        //   prop: this.orderKeys.materialCode,
+        //   label: '用料代码'
+        // },
         {
           prop: this.orderKeys.fluteType,
           label: '瓦楞楞型',
