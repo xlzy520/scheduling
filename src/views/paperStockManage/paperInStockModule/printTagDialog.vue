@@ -7,6 +7,7 @@
                   :data="tableData"
                   height="500px"
                   :columns="tableColumns"
+                  row-select
                   @selection-change="selectionChange"
                   :column-type="['selection', 'index']">
       </base-table>

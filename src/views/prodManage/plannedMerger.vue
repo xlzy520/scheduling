@@ -20,6 +20,7 @@
                     :columns="tableColumns"
                     :column-type="columnType[mergeValue]"
                     :column-type-props="columnTypeProps"
+                    :row-select="columnType[mergeValue].includes('selection')"
                     @update-data="getList">
             <div slot="btn">
               <dj-button v-if="['wait'].includes(mergeValue)" type="primary" @click="handleMerge">合并</dj-button>
