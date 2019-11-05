@@ -1,5 +1,6 @@
 <template>
-  <lock-dialog ref="dialog" @close="close" title="调整排序" width="400px" @confirm="confirm">
+  <lock-dialog ref="dialog" @close="close" title="调整排序" width="400px"
+               @confirm="confirm" custom-class="sort-dialog">
     <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
     <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
   </lock-dialog>
@@ -26,22 +27,21 @@
               prop: 'newPosition',
               label: '订单排序',
               rules: [
-                this.$rule.getEmptyRule('请输入订单排序'),
-                // {
-                //   validator(rule, value, cb) {
-                //     if (!value) {
-                //       cb(new Error('请输入订单排序'));
-                //     } else {
-                //       cb();
-                //     }
-                //   }
-                // },
+                {
+                  validator(rule, value, cb) {
+                    if (!value) {
+                      cb(new Error('请输入订单排序'));
+                    } else {
+                      cb();
+                    }
+                  }
+                },
                 this.$rule.orderSort_range
               ]
             },
             attrs: {
-              autofocus: true,
-            }
+              ref: 'focus'
+            },
           }
         ];
       }
@@ -52,7 +52,7 @@
           let post = {
             ...this.formData,
             lineId: this.lineId,
-            orderList: this.$method.getOrderList(this.orders)
+            orderList: this.orders.length ? this.orders.map(obj=>obj[orderKeys.productionNo]) : null
           };
           this.dj_api_extend(planArrangeService.changeSort, post).then(()=>{
             this.$message('调整排序成功');
@@ -70,6 +70,10 @@
         this.$refs.dialog.open();
         this.orders = params.data || [];
         this.lineId = params.lineId || [];
+        this.$nextTick(() => {
+          const focusInput = document.querySelector('.sort-dialog .el-input>input');
+          focusInput.focus();
+        });
       },
       close() {
         this.$refs.dialog.close();
