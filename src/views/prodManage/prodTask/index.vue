@@ -49,7 +49,7 @@
   import materialSizeInput from "../../../components/materialSizeInput";
   import paperSizeRange from "../../../components/paperSizeRange";
   import orderTag from '../../../components/printTag/orderTag';
-
+  import {orderKeys} from "../../../utils/system/constant/dataKeys";
   export default {
     name: 'ProdTask',
     components: {ImportRecord, ProdTaskView, AdjustSort, orderTag, materialSizeInput, paperSizeRange},
@@ -69,13 +69,13 @@
               beforeChange: this.$method.getLimitTime
             }
           },
-          {label: '生产编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /^\w*$/}},
+          {label: '生产编号', key: orderKeys.productionNo, type: 'input', attrs: {reg: /^\w*$/}},
           {
             label: '下料规格', key: 'guige', type: 'custom',
             component: materialSizeInput
           },
-          {label: '用料代码', key: 'materialCode', type: 'input'},
-          {label: '客户名称', key: 'customerName', type: 'input'},
+          {label: '用料代码', key: orderKeys.materialCode, type: 'input'},
+          {label: '客户名称', key: orderKeys.customerName, type: 'input'},
           {
             label: '门幅范围', key: 'paperSize', type: 'custom',
             component: paperSizeRange,
@@ -88,25 +88,22 @@
         tableData: [],
         tableColumns: [
           {label: '排序', prop: 'listNumber', width: 160},
-          {label: '生产编号', prop: 'produceOrderNumber', width: 160},
-          {label: '客户名称', prop: 'customerName'},
-          {label: '产品名称', prop: 'grouponProductName'},
-          {label: '用料代码', prop: 'materialCode'},
-          {label: '瓦楞楞型', prop: 'tileModel', formatter: row => row.layer + row.tileModel},
-          {label: '生产数量', prop: 'produceAmount'},
-          {label: '订单数量', prop: 'pieceAmount'},
+          {label: '生产编号', prop: orderKeys.productionNo, width: 160},
+          {label: '客户名称', prop: orderKeys.customerName},
+          {label: '产品名称', prop: orderKeys.productName},
+          {label: '用料代码', prop: orderKeys.materialCode},
+          {label: '瓦楞楞型', prop: 'fluteTypeAndLayers'},
+          {label: '生产数量', prop: orderKeys.productAmount},
+          {label: '订单数量', prop: orderKeys.orderAmount},
           {label: '门幅宽度', prop: 'paperSize'},
           {label: '订单米数', prop: 'orderMeter'},
-          {
-            label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
-            formatter: row => row.materialLength + '*' + row.materialWidth
-          },
+          {label: '下料规格(cm)', prop: orderKeys.materialSize, width: 120},
           {label: '切数', prop: 'cutCount', width: 120},
-          {label: '切宽', prop: 'materialWidth', width: 120},
+          {label: '切宽', prop: orderKeys.materialWidth, width: 120},
           {label: '修边', prop: 'trimming'},
-          {label: '压线方式', prop: 'staveType'},
-          {label: '压线公式', prop: 'vformula', width: 120},
-          {label: '叠单', prop: 'stackFlag', formatter: row => row.stackFlag === 0 ? '' : row.stackFlag},
+          {label: '压线方式', prop: orderKeys.linePressingMethod},
+          {label: '压线公式', prop: orderKeys.longitudinalPressure, width: 120},
+          {label: '叠单', prop: 'stackFlag', formatter: (row, index, cur) => cur === 0 ? '' : cur},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {

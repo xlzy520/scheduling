@@ -24,6 +24,7 @@
   import dayjs from 'dayjs';
   import prodTaskService from '../../../../api/service/prodTask';
   import productionLine from "../../../../api/service/productionLine";
+  import {orderKeys} from "../../../../utils/system/constant/dataKeys";
 
   export default {
     name: 'importRecord',
@@ -89,31 +90,25 @@
         tableData: [],
         tableColumns: [
           {label: '排序', prop: 'listNumber', width: 160},
-          {label: '生产编号', prop: 'produceOrderNumber', width: 160},
-          {
-            label: '汇入日期', prop: 'affluxTime', width: 180,
-            formatter: row => this.$method.timeFormat(row.affluxTime, 'yyyy-MM-dd')
-          },
-          {label: '操作人', prop: 'operator'},
+          {label: '生产编号', prop: orderKeys.productionNo, width: 160},
+          {label: '汇入日期', prop: orderKeys.affluxTime, width: 180},
+          {label: '操作人', prop: orderKeys.operator},
           {label: '生产线', prop: 'line', formatter: row => row.lineNum + '号线'},
-          {label: '楞型', prop: 'tileModel', formatter: row => row.layer + row.tileModel},
-          {label: '用料代码', prop: 'materialCode'},
-          {label: '贴合面纸', prop: 'topSheet'},
-          {label: '1车芯纸', prop: 'corePaper1'},
-          {label: '1车面纸', prop: 'facePaper1'},
-          {label: '2车芯纸', prop: 'corePaper2'},
-          {label: '2车面纸', prop: 'facePaper2'},
-          {label: '3车芯纸', prop: 'corePaper3'},
-          {label: '3车面纸', prop: 'facePaper3'},
+          {label: '楞型', prop: 'fluteTypeAndLayers'},
+          {label: '用料代码', prop: orderKeys.materialCode},
+          {label: '贴合面纸', prop: orderKeys.topSheet},
+          {label: '1车芯纸', prop: orderKeys.corePaper1},
+          {label: '1车面纸', prop: orderKeys.facePaper1},
+          {label: '2车芯纸', prop: orderKeys.corePaper2},
+          {label: '2车面纸', prop: orderKeys.facePaper2},
+          {label: '3车芯纸', prop: orderKeys.corePaper3},
+          {label: '3车面纸', prop: orderKeys.facePaper3},
           {label: '门幅', prop: 'paperSize'},
           {label: '订单米数', prop: 'orderMeter'},
-          {label: '订单数量', prop: 'pieceAmount'},
-          {label: '生产数量', prop: 'produceAmount'},
-          {
-            label: '下料规格(cm)', prop: 'xialiaoguige', width: 120,
-            formatter: row => row.materialLength + '*' + row.materialWidth
-          },
-          {label: '压线方式', prop: 'staveType'},
+          {label: '订单数量', prop: orderKeys.orderAmount},
+          {label: '生产数量', prop: orderKeys.productAmount},
+          {label: '下料规格(cm)', prop: orderKeys.materialSize, width: 120},
+          {label: '压线方式', prop: orderKeys.linePressingMethod},
           {label: '压线1', prop: 'stave1'},
           {label: '压线2', prop: 'stave2'},
           {label: '压线3', prop: 'stave3'},
@@ -124,7 +119,7 @@
           {label: '修边', prop: 'trimming'},
           {label: '切数', prop: 'cutCount'},
           {label: '刀数', prop: 'knifeCount'},
-          {label: '客户名称', prop: 'customerName'},
+          {label: '客户名称', prop: orderKeys.customerName},
           {label: '打包数量', prop: 'packCount'},
         ],
         pageTotal: 0,
@@ -164,8 +159,8 @@
           const {list, total} = res;
           // 拆解vformula，赋值压线1-7
           list.map(row => {
-            if (row.vformula) {
-              const formulaList = row.vformula.split('+') || [];
+            if (row[orderKeys.longitudinalPressure]) {
+              const formulaList = row[orderKeys.longitudinalPressure].split('+') || [];
               formulaList.map((v, index) => {
                 row['stave' + (index + 1)] = v;
               });

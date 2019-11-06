@@ -14,6 +14,7 @@ export default {
   orderStatus: 'orderState', //订单状态
   productStatus: 'state', //生产状态
   deliveryTime: 'arriveTime', //订单交期
+  affluxTime: 'affluxTime', //汇入日期
   layer: 'layers', //层数
   orderType: 'orderType', //订单类型
   contacts: 'contact', //收货人
@@ -47,4 +48,13 @@ export default {
   sortIndex: 'sort', //订单排序
   produceMaterial: 'produceMaterial', //生产用料、用料代码
   produceMaterialId: 'produceMaterialId', //生产用料、用料代码Id
+
+  topSheet: 'topSheet', //贴合面纸
+  corePaper1: 'corePaper1', //一车芯纸
+  facePaper1: 'facePaper1', //一车面纸
+  corePaper2: 'corePaper2', //二车芯纸
+  facePaper2: 'facePaper2', //二车面纸
+  corePaper3: 'corePaper3', //三车芯纸
+  facePaper3: 'facePaper3', //三车面纸
+  operator: 'operator', //操作人
 };
