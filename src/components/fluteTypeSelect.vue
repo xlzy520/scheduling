@@ -2,6 +2,7 @@
   <dj-select :value="value"
              collapse-tags
              type="multiple"
+             :filterable="true"
              :options="$enum.fluteType"
              v-bind="$attrs"
              @input="input"
@@ -34,5 +35,11 @@
   };
 </script>
 <style lang="less" scoped>
+  /deep/ .el-select__tags{
+    display: flex;
+    &>span{
+      width: auto;
+    }
 
+  }
 </style>
