@@ -96,10 +96,10 @@
           prop: this.orderKeys.productName,
           label: '产品名称'
         },
-        // {
-        //   prop: this.orderKeys.materialCode,
-        //   label: '用料代码'
-        // },
+        {
+          prop: this.orderKeys.materialCode,
+          label: '用料代码'
+        },
         {
           prop: this.orderKeys.fluteType,
           label: '瓦楞楞型',
@@ -215,13 +215,20 @@
         return this.orderTypeMap[obj.value];
       },
       getColLeft(item) {
-        return this.col_left_map[this.judgeOrderType(item)];
+        const orderType = this.judgeOrderType(item);
+        const col_left_map = this.$method.deepClone(this.col_left_map[this.judgeOrderType(item)]);
+        if (orderType === 'group') {
+          col_left_map.splice(3, 1);
+        }
+        console.log(orderType, col_left_map);
+        return col_left_map;
       },
       getColRight(item) {
         return this.col_right_map[this.judgeOrderType(item)];
       },
       getColLeftMap() {
         let arr = this.all_col_left;
+
         let hiddenType = {
           group: [this.orderKeys.associatedOrders, this.orderKeys.cartonRemarks, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
           carton: [this.orderKeys.productSize, this.orderKeys.orderId, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
