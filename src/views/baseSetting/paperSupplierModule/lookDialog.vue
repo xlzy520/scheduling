@@ -9,7 +9,6 @@
 </template>
 <script>
   import paperSupplierService from '@/api/service/paperSupplier';
-  import formRules from "../formRules";
 
   export default {
     name: 'lookDialog',
@@ -31,7 +30,7 @@
               label: '供应商编号',
               rules: [
                 this.$rule.required('请输入供应商编号'),
-                formRules.word_number
+                this.$rule.word_number
               ],
             },
             attrs: {
@@ -46,7 +45,7 @@
               label: '供应商名称',
               rules: [
                 this.$rule.required('请输入供应商名称'),
-                formRules.word_number_chinese
+                this.$rule.word_number_chinese
               ],
             },
             attrs: {
@@ -59,7 +58,7 @@
               prop: 'socialCreditCode',
               label: '社会信用代码',
               rules: [
-                formRules.word_number
+                this.$rule.word_number
               ],
             },
             attrs: {
@@ -72,7 +71,7 @@
               prop: 'legalRepresentative',
               label: '法人代表',
               rules: [
-                formRules.chinese
+                this.$rule.chinese
               ],
             },
             attrs: {
@@ -85,7 +84,7 @@
               prop: 'address',
               label: '地址',
               rules: [
-                formRules.word_number_chinese
+                this.$rule.word_number_chinese
               ],
             },
             attrs: {

@@ -50,7 +50,6 @@
 
 <script>
   import ruleCustomizeService from '@/api/service/ruleCustomize';
-  import formRules from "../../formRules";
   const layerOptions = [
     {label: '二层', value: '2', disabled: false},
     {label: '三层', value: '3', disabled: false},
@@ -82,7 +81,7 @@
               label: '规则名称',
               rules: [
                 this.$rule.required('请输入规则名称'),
-                formRules.word_number_chinese
+                this.$rule.word_number_chinese
               ],
             },
             attrs: {
@@ -96,7 +95,7 @@
               label: '单批打包重量',
               rules: [
                 this.$rule.required('请输入单批打包重量'),
-                formRules.float
+                this.$rule.float
               ],
             },
             attrs: {
@@ -111,7 +110,7 @@
               label: 'A楞型楞率',
               rules: [
                 this.$rule.required('请输入A楞型楞率'),
-                formRules.float3
+                this.$rule.float3
               ],
             },
             attrs: {
@@ -125,7 +124,7 @@
               label: 'B楞型楞率',
               rules: [
                 this.$rule.required('请输入B楞型楞率'),
-                formRules.float3
+                this.$rule.float3
               ],
             },
             attrs: {
@@ -139,7 +138,7 @@
               label: 'C楞型楞率',
               rules: [
                 this.$rule.required('请输入C楞型楞率'),
-                formRules.float3
+                this.$rule.float3
               ],
             },
             attrs: {
@@ -153,7 +152,7 @@
               label: 'E楞型楞率',
               rules: [
                 this.$rule.required('请输入E楞型楞率'),
-                formRules.float3
+                this.$rule.float3
               ],
             },
             attrs: {
@@ -167,7 +166,7 @@
               label: 'F楞型楞率',
               rules: [
                 this.$rule.required('请输入F楞型楞率'),
-                formRules.float3
+                this.$rule.float3
               ],
             },
             attrs: {
@@ -192,15 +191,15 @@
           ],
           packpiece: [
             this.$rule.required('请输入打包数量'),
-            formRules.number
+            this.$rule.number
           ],
           startUnitarea: [
             this.$rule.required('请输入单位面积'),
-            // formRules.float2
+            // this.$rule.float2
           ],
           endUnitarea: [
             this.$rule.required('请输入单位面积'),
-            formRules.float2
+            this.$rule.float2
           ]
         },
         layerOptions: layerOptions,

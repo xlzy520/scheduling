@@ -8,7 +8,6 @@
 </template>
 <script>
   import paperCodeService from '@/api/service/paperCode';
-  import formRules from "../formRules";
 
   const initFormData = {
     paperCode: null,
@@ -31,7 +30,7 @@
               label: '原纸代码',
               rules: [
                 this.$rule.required('请输入原纸代码'),
-                formRules.word_number
+                this.$rule.word_number
               ],
             },
             attrs: {
@@ -61,8 +60,8 @@
               label: '克重',
               rules: [
                 this.$rule.required('请输入克重'),
-                formRules.number,
-                formRules.number5
+                this.$rule.number,
+                this.$rule.number5
               ],
             },
             attrs: {

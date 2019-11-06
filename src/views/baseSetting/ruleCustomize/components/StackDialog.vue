@@ -41,8 +41,6 @@
 
 <script>
   import ruleCustomizeService from '@/api/service/ruleCustomize';
-  import formRules from "../../formRules";
-
   const qieshuOptions = [
     {label: '1', value: '1', disabled: false},
     {label: '2', value: '2', disabled: false},
@@ -73,7 +71,7 @@
               label: '规则名称',
               rules: [
                 this.$rule.required('请输入规则名称'),
-                formRules.word_number_chinese
+                this.$rule.word_number_chinese
               ],
             },
             attrs: {
@@ -98,7 +96,7 @@
               label: '订单最大片数',
               rules: [
                 this.$rule.required('请输入订单最大片数'),
-                formRules.number
+                this.$rule.number
               ],
             },
             attrs: {
@@ -112,7 +110,7 @@
               label: '最大堆叠单数',
               rules: [
                 this.$rule.required('请输入最大堆叠单数'),
-                formRules.number
+                this.$rule.number
               ],
             },
             attrs: {
@@ -126,8 +124,8 @@
               label: '订单最小米数',
               rules: [
                 this.$rule.required('请输入订单最小米数'),
-                formRules.number,
-                formRules.number5
+                this.$rule.number,
+                this.$rule.number5
               ],
             },
             attrs: {
@@ -155,7 +153,7 @@
           ],
           piece: [
             this.$rule.required('请输入片数'),
-            formRules.number
+            this.$rule.number
           ]
         },
 

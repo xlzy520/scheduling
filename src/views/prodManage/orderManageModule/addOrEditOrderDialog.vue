@@ -11,7 +11,6 @@
   import longitudinalPressureInput from '../../../components/longitudinalPressureInput';
   import dayjs from 'dayjs';
   import { orderKeys } from "../../../utils/system/constant/dataKeys";
-  import formRules from '../../baseSetting/formRules';
   export default {
     name: 'addOrderDialog',
     data: function () {
@@ -55,7 +54,7 @@
             formItem: {
               prop: orderKeys.materialName,
               label: '材料名称',
-              rules: [this.$rule.required('请输入材料名称'), formRules.word_number]
+              rules: [this.$rule.required('请输入材料名称'), this.$rule.word_number]
             },
             attrs: {
               maxlength: 20,

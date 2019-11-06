@@ -7,7 +7,6 @@
 </template>
 
 <script>
-  import formRules from "../../../baseSetting/formRules";
   import prodTaskService from '@/api/service/prodTask';
 export default {
   name: 'adjustSort',
@@ -24,8 +23,8 @@ export default {
             label: '订单排序',
             rules: [
               this.$rule.required('请输入订单排序'),
-              formRules.number,
-              formRules.number5
+              this.$rule.number,
+              this.$rule.number5
             ],
           }
         },
