@@ -1,7 +1,7 @@
 <template>
   <dj-dialog title="查看" ref="dialog" @close="close" :has-footer="false" width="1180px">
     <div class="content" v-loading="loading">
-      <classify-form :form-data="formData" ref="form" :config="formConfig" :column-num="3"></classify-form>
+      <classify-form :form-data="formData" has-line ref="form" :config="formConfig" :column-num="3"></classify-form>
     </div>
   </dj-dialog>
 </template>
@@ -133,12 +133,9 @@
               },
               {
                 formItem: {
-                  prop: 're-deliveryTime',
+                  prop: orderKeys.deliveryTime,
                   label: '订单交期'
                 },
-                computed: ()=>{
-                  return dayjs(this.formData[orderKeys.deliveryTime]).format('YYYY-MM-DD');
-                }
               },
               {
                 formItem: {
@@ -146,25 +143,11 @@
                   label: '客户名称'
                 },
               },
-              // {
-              //   formItem: {
-              //     prop: 're-' + orderKeys.sortIndex,
-              //     label: '订单排序'
-              //   },
-              //   computed: ()=>{
-              //     let index = this.formData[orderKeys.sortIndex];
-              //     return index + '' === '0' ? '' : index;
-              //   }
-              // },
               {
                 formItem: {
-                  prop: 're-orderTip',
+                  prop: 'orderTipLabel',
                   label: '订单标记'
                 },
-                computed: ()=>{
-                  let obj = this.$enum.orderTip._swap[this.formData[orderKeys.orderTip]] || {};
-                  return obj.label || '';
-                }
               },
             ]
           },
@@ -191,14 +174,9 @@
               },
               {
                 formItem: {
-                  prop: 're-fluteType',
+                  prop: 'fluteTypeAndLayers',
                   label: '瓦楞楞型'
                 },
-                computed: () => {
-                  let layer = this.formData[orderKeys.layer] || '';
-                  let fluteType = this.formData[orderKeys.fluteType] || '';
-                  return layer + fluteType;
-                }
               },
               {
                 formItem: {
@@ -348,12 +326,6 @@
                   label: '修边率'
                 },
               },
-              // {
-              //   formItem: {
-              //     prop: this.$method.getOriginKey(orderKeys.stackUp, 'old'),
-              //     label: '叠单标志'
-              //   },
-              // },
             ]
           },
         ],
@@ -370,9 +342,9 @@
         this.dj_api_extend(planArrangeService.getOrder, {
           produceOrderNumber: id
         }).then(res => {
-          res['tip'] = this.$method.getOrderTip(res, true);
-          res[orderKeys.materialSize] = this.$method.getMaterialSize(res);
-          res[orderKeys.productSize] = this.$method.getProductSize(res);
+          // res['tip'] = this.$method.getOrderTip(res, true);
+          // res[orderKeys.materialSize] = this.$method.getMaterialSize(res);
+          // res[orderKeys.productSize] = this.$method.getProductSize(res);
           this.formData = res || {};
 
           // res['arriveTime'] = this.$method.parseTime(res['arriveTime']);
