@@ -29,7 +29,6 @@
 <script>
   import dayjs from 'dayjs';
   import branchTaskService from '../../api/service/branchTask';
-  import formRules from "../baseSetting/formRules";
   import orderTag from '../../components/printTag/orderTag';
   import materialSizeInput from "../../components/materialSizeInput";
 
@@ -182,7 +181,7 @@
                   label: '处理数量',
                   rules: [
                     this.$rule.required('请输入处理数量'),
-                    formRules.number,
+                    this.$rule.number,
                     {validator: handleNum}
                   ],
                 },

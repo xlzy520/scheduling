@@ -16,7 +16,6 @@
 <script>
   import materialCodeService from '@/api/service/materialCode';
   import paperCodeService from '@/api/service/paperCode';
-  import formRules from "../formRules";
   import McDjSelect from "../materialCodeModule/materialCodeSelect/McDjSelect.vue";
   export default {
     name: 'lookDialog',
@@ -65,7 +64,7 @@
               prop: 'platformMaterialCode',
               label: '平台材料名称',
               rules: [
-                formRules.word_number
+                this.$rule.word_number
               ],
             },
             attrs: {

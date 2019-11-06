@@ -10,7 +10,6 @@
   import paperKindService from '@/api/service/paperKind';
   import paperCodeService from '@/api/service/paperCode';
   import paperWarehouseService from '@/api/service/paperWarehouse';
-  import formRules from "../formRules";
 
   export default {
     name: 'lookDialog',
@@ -37,7 +36,7 @@
               label: '原纸编号',
               rules: [
                 this.$rule.required('请输入原纸编号'),
-                formRules.word_number
+                this.$rule.word_number
               ],
             },
             attrs: {
@@ -98,7 +97,7 @@
               label: '克重',
               rules: [
                 this.$rule.required('请输入该原纸最大克重'),
-                formRules.number
+                this.$rule.number
               ],
             },
             attrs: {
@@ -114,8 +113,8 @@
               label: '门幅',
               rules: [
                 this.$rule.required('请输入门幅'),
-                formRules.number,
-                formRules.number5
+                this.$rule.number,
+                this.$rule.number5
               ],
             },
             attrs: {

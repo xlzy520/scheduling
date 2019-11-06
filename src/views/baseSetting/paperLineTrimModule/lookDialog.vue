@@ -17,7 +17,6 @@
 <script>
   import prodLineTrimService from '@/api/service/productionLineTrim';
   import prodLineService from '@/api/service/productionLine';
-  import formRules from "../formRules";
   const cengshuOption = [
     {label: '二层', value: 2},
     {label: '三层', value: 3},
@@ -90,8 +89,8 @@
               label: '修边',
               rules: [
                 this.$rule.required('请输入修边'),
-                formRules.number,
-                formRules.number5
+                this.$rule.number,
+                this.$rule.number5
               ],
             },
             attrs: {

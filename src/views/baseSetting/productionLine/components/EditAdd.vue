@@ -23,7 +23,6 @@
 
 <script>
   import productionLineService from '../../../../api/service/productionLine';
-  import formRules from "../../formRules";
 
   export default {
     name: 'EditAdd',
@@ -110,7 +109,7 @@
                 label: '生产车速',
                 rules: [
                   this.$rule.required('请输入生产车速'),
-                  formRules.float,
+                  this.$rule.float,
                 ],
               },
               attrs: {
@@ -125,7 +124,7 @@
                 label: '换纸最小米数',
                 rules: [
                   this.$rule.required('请输入换纸最小米数'),
-                  formRules.number
+                  this.$rule.number
                 ],
               },
               attrs: {
@@ -140,7 +139,7 @@
                 label: '首单最小修边',
                 rules: [
                   this.$rule.required('请输入首单最小修边'),
-                  formRules.number
+                  this.$rule.number
                 ],
               },
               attrs: {
@@ -155,7 +154,7 @@
                 label: '尾单最小米数',
                 rules: [
                   this.$rule.required('请输入尾单最小米数'),
-                  formRules.number
+                  this.$rule.number
                 ],
               },
               attrs: {
@@ -172,7 +171,7 @@
                 label: '单台压轮数',
                 rules: [
                   this.$rule.required('请输入单台压轮数'),
-                  formRules.number5
+                  this.$rule.number5
                 ],
               }
             },
@@ -183,7 +182,7 @@
                 label: '压轮最小间距',
                 rules: [
                   this.$rule.required('请输入压轮最小间距'),
-                  formRules.number5
+                  this.$rule.number5
                 ],
               },
               attrs: {
@@ -197,7 +196,7 @@
                 prop: 'slimachWdoubleMinLength',
                 label: '双机压订单',
                 rules: [
-                  formRules.number5
+                  this.$rule.number5
                 ],
               },
               attrs: {
@@ -212,7 +211,7 @@
                 label: '单台纵切刀数',
                 rules: [
                   this.$rule.required('请输入单台纵切刀数'),
-                  formRules.number5
+                  this.$rule.number5
                 ],
               },
             },
@@ -266,7 +265,7 @@
                 label: '纵切刀间距',
                 rules: [
                   this.$rule.required('请输入纵切刀间距'),
-                  formRules.number5
+                  this.$rule.number5
                 ],
               },
               attrs: {
@@ -280,7 +279,7 @@
                 label: '换单排刀时间',
                 rules: [
                   this.$rule.required('请输入换单排刀时间'),
-                  formRules.number5
+                  this.$rule.number5
                 ],
               },
               attrs: {
@@ -296,8 +295,8 @@
                 label: '分线机宽度',
                 rules: [
                   this.$rule.required('请输入分线机宽度'),
-                  formRules.float,
-                  formRules.float5,
+                  this.$rule.float,
+                  this.$rule.float5,
                 ],
               },
               attrs: {
@@ -311,7 +310,7 @@
                 label: '最小切长',
                 rules: [
                   this.$rule.required('请输入最小切长'),
-                  formRules.number5
+                  this.$rule.number5
                 ],
               },
               attrs: {
@@ -344,8 +343,8 @@
                       label: '堆叠数',
                       rules: [
                         this.$rule.required('请输入最小叠单米数'),
-                        formRules.number,
-                        formRules.number5
+                        this.$rule.number,
+                        this.$rule.number5
                       ],
                       attrs: {
                         suffixIcon: "m"
@@ -368,8 +367,8 @@
                 label: '吊篮长度',
                 rules: [
                   this.$rule.required('请输入吊篮长度'),
-                  formRules.float,
-                  formRules.float5
+                  this.$rule.float,
+                  this.$rule.float5
                 ],
               },
               attrs: {
@@ -490,13 +489,13 @@
           this.$nextTick(() => {
             this.$refs.form2.clearValidate('slimachWdoubleMinLength');
             this.$set(this.formOptions.zqj[2].formItem, 'rules', [
-              formRules.number5
+              this.$rule.number5
             ]);
           });
         } else {
           this.$set(this.formOptions.zqj[2].formItem, 'rules', [
             this.$rule.required('请输入双机压订单'),
-            formRules.number5
+            this.$rule.number5
           ]);
         }
       },
@@ -509,8 +508,8 @@
             label: '堆叠数',
             rules: [
               this.$rule.required('请输入最小叠单米数'),
-              formRules.number,
-              formRules.number5
+              this.$rule.number,
+              this.$rule.number5
             ],
             attrs: {
               suffixIcon: "m"
