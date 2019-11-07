@@ -3,16 +3,16 @@
     <template v-if="isPrinting" v-for="(item, index) in data">
       <print-page v-for="i in getPrintNum(item)">
         <div :class="[judgeOrderType(item), 'wrap']">
-          <p class="font-subhead notice-text">{{getTitle(item)+'标签'}}<span v-if="judgeOrderType(item) === 'group'" class="font-default address">{{item[orderKeys.address]}}</span></p>
+          <p class="font-head notice-text">{{getTitle(item)+'标签'}}<span v-if="judgeOrderType(item) === 'group'" class="font-subhead address">{{item[orderKeys.address]}}</span></p>
           <el-row>
-            <el-col :span="13">
+            <el-col :span="15">
               <div v-for="col in getColLeft(item)" class="item-box clearfix">
                 <label class="fl">{{col.label}}：</label>
                 <span v-if="col.label !== '关联订单'">{{col.formatter ? col.formatter(item, index, item[col.prop]) : item[col.prop]}}</span>
                 <span v-else v-for="span in splitAssociatedOrders(item[col.prop])">{{span}}</span>
               </div>
             </el-col>
-            <el-col :span="11">
+            <el-col :span="9">
               <div class="col-box">
                 <div v-for="col in getColRight(item)" class="item-box clearfix">
                   <label class="fl">{{col.label}}：</label>
@@ -66,7 +66,7 @@
         // },
         orderTypeMap: {
           'groupPurchase': 'group',
-          'abnormal': 'carton',
+          'abnormal': 'group',
           'preparingMaterials': 'store',
           'paperBoard': 'group',
           'paperBoardSupplement': 'group',
@@ -98,7 +98,12 @@
         },
         {
           prop: this.orderKeys.materialCode,
-          label: '用料代码'
+          label: '用料代码',
+          formatter: (row, index, cur) => {
+            let layer = row[this.orderKeys.layer] || '';
+            let fluteType = row[this.orderKeys.fluteType] || '';
+            return `${cur}，${layer}${fluteType}`;
+          }
         },
         {
           prop: this.orderKeys.fluteType,
@@ -161,10 +166,10 @@
           prop: this.orderKeys.customerName,
           label: '客户名称'
         },
-        {
-          prop: this.orderKeys.consignee,
-          label: '收货人'
-        },
+        // {
+        //   prop: this.orderKeys.consignee,
+        //   label: '收货人'
+        // },
         {
           prop: this.orderKeys.deliveryTime,
           label: '订单交期',
@@ -195,8 +200,8 @@
       splitAssociatedOrders(str) {
         if (str) {
           let arr = str.split(',');
-          if (arr.length > 2) {
-            return arr.slice(0, 2).concat(['. . .']);
+          if (arr.length > 3) {
+            return arr.slice(0, 3).concat(['. . .']);
           }
           return arr;
         }
@@ -223,10 +228,10 @@
       getColLeftMap() {
         let arr = this.all_col_left;
         let hiddenType = {
-          group: [this.orderKeys.associatedOrders, this.orderKeys.cartonRemarks, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
-          carton: [this.orderKeys.productSize, this.orderKeys.orderId, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
-          merge: [this.orderKeys.orderId, this.orderKeys.cartonRemarks, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
-          store: [this.orderKeys.associatedOrders, this.orderKeys.orderId, this.orderKeys.productName, this.orderKeys.productSize, this.orderKeys.linePressingMethod, this.orderKeys.longitudinalPressure, this.orderKeys.transversePressure, this.orderKeys.cartonRemarks],
+          group: [this.orderKeys.associatedOrders, this.orderKeys.cartonRemarks, this.orderKeys.materialCode, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
+          carton: [this.orderKeys.productSize, this.orderKeys.fluteType, this.orderKeys.orderId, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
+          merge: [this.orderKeys.orderId, this.orderKeys.cartonRemarks, this.orderKeys.fluteType, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
+          store: [this.orderKeys.associatedOrders, this.orderKeys.orderId, this.orderKeys.fluteType, this.orderKeys.productName, this.orderKeys.productSize, this.orderKeys.linePressingMethod, this.orderKeys.longitudinalPressure, this.orderKeys.transversePressure, this.orderKeys.cartonRemarks],
         };
         return Object.keys(hiddenType).reduce((map, key)=>{
           map[key] = arr.filter(obj=>!hiddenType[key].includes(obj.prop));
@@ -237,8 +242,8 @@
         let arr = this.all_col_right;
         let hiddenType = {
           group: [this.orderKeys.productAmount],
-          carton: [this.orderKeys.packageAmount],
-          merge: [this.orderKeys.customerName, this.orderKeys.consignee, this.orderKeys.packageAmount],
+          carton: [this.orderKeys.packageAmount, this.orderKeys.orderAmount],
+          merge: [this.orderKeys.customerName, this.orderKeys.consignee, this.orderKeys.packageAmount, this.orderKeys.orderAmount],
           store: arr.map(obj=>obj.prop),
         };
         return Object.keys(hiddenType).reduce((map, key)=>{
@@ -290,13 +295,17 @@
   };
 </script>
 <style lang="less" scoped>
-  @lineHeight: 19px;
+  @lineHeight: 20px;
+  @labelWidth: 90px;
   .wrap {
-    width: 85%;
+    width: 90%;
     height: 90%;
-    font-size: 14px;
+    font-size: 18px;
+    font-weight: bold;
     .notice-text {
-      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 23px;
+      /*font-weight: bold;*/
       .address {
         margin-left: 16px;
       }
@@ -304,13 +313,13 @@
     .item-box {
       margin-bottom: 11px;
       label {
-        width: 70px;
+        width: @labelWidth;
         line-height: @lineHeight;
         text-align: right;
       }
       span {
         display: block;
-        margin-left: 70px;
+        margin-left: @labelWidth;
         line-height: @lineHeight;
       }
     }
