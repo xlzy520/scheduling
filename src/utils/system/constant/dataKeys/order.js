@@ -57,4 +57,6 @@ export default {
   corePaper3: 'corePaper3', //三车芯纸
   facePaper3: 'facePaper3', //三车面纸
   operator: 'operator', //操作人
+  branchStatus: 'divideState', //分线状态
+  combineId: 'combineId', //合并编号
 };

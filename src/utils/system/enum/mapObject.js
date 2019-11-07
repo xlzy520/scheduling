@@ -44,3 +44,22 @@ MapObject.prototype.changeList = function() {
   });
   return arr;
 };
+
+MapObject.prototype.getMsg = function(val) {
+  return this._swap[val] || {};
+};
+
+MapObject.prototype.getKey = function(val) {
+  return this.getMsg(val).value;
+};
+
+MapObject.prototype.getLabel = function(val) {
+  return this.getMsg(val).label;
+};
+
+MapObject.prototype.isInclude = function(val, keyArr) {
+  if (!Array.isArray(keyArr)) {
+    keyArr = [keyArr];
+  }
+  return keyArr.includes(this.getKey(val));
+};

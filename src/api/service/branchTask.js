@@ -1,7 +1,7 @@
 import {branchTask} from '../base-service/service';
 import methods from "../../utils/methods";
 import { orderKeys } from "../../utils/system/constant/dataKeys";
-const { getMaterialSize, getProductSize, handleTime, getOriginKey } = methods;
+const { getMaterialSize, getProductSize, handleTime, getOriginKey, getLayerFluteType } = methods;
 
 export default {
   list(data) {
@@ -9,6 +9,8 @@ export default {
       res.list.forEach(item=>{
         item[orderKeys.productSize] = getProductSize(item);
         item[orderKeys.materialSize] = getMaterialSize(item);
+        item['fluteTypeAndLayers'] = getLayerFluteType(item);
+        handleTime(item, orderKeys.deliveryTime, 'YYYY-MM-DD');
       });
       return res;
     });
@@ -20,6 +22,12 @@ export default {
     return branchTask('/processe.do', data);
   },
   getDivideMsg(data) {
-    return branchTask('/getDivideMsg.do', data);
+    return branchTask('/getDivideMsg.do', data).then(res=>{
+      res[orderKeys.productSize] = getProductSize(res);
+      res[orderKeys.materialSize] = getMaterialSize(res);
+      res['fluteTypeAndLayers'] = getLayerFluteType(res);
+      handleTime(res, orderKeys.deliveryTime, 'YYYY-MM-DD');
+      return res;
+    });
   },
 };

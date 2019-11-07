@@ -34,19 +34,7 @@
   import branchTaskService from '../../api/service/branchTask';
   import orderTag from '../../components/printTag/orderTag';
   import materialSizeInput from "../../components/materialSizeInput";
-
-  const branchStatusOptions = [
-    {label: '待处理', value: '0'},
-    {label: '处理中', value: '1'},
-    {label: '已处理', value: '2'},
-    {label: '全部', value: ''},
-  ];
-  const initFormData = {
-    mergeOrderNumber: '',
-    produceOrderNumber: '',
-    waitHandleNum: '',
-    handledNum: '',
-  };
+  import {orderKeys} from "../../utils/system/constant/dataKeys";
   export default {
     name: 'branchTask',
     data() {
@@ -71,8 +59,8 @@
               beforeChange: this.$method.getLimitTime
             }
           },
-          {label: '分线状态', key: 'divideState', type: 'select', attrs: {options: branchStatusOptions, default: ''}},
-          {label: '用料代码', key: 'materialCode', type: 'input'},
+          {label: '分线状态', key: orderKeys.branchStatus, type: 'select', attrs: {options: this.$enum.branchStatus._arr, default: ''}},
+          {label: '用料代码', key: orderKeys.materialCode, type: 'input'},
           {label: '订单编号', key: 'produceOrderNumber', type: 'input'},
           {
             label: '下料规格', key: 'guige', type: 'custom', attrs: {
@@ -87,18 +75,19 @@
           {
             label: '操作', prop: 'operation', fixed: 'right', width: '84',
             render: (h, {props: {row}}) => {
+              let disabled = this.$enum.branchStatus.isInclude(row[orderKeys.branchStatus], 'already');
               return (
                 <div class="td-btn-group">
-                  <a class={row.divideState === '已处理' ? 'divideState-completed' : ''}
-                     onClick={() => this.handle(row)}>处理</a>
+                  <a class={disabled ? 'disabled' : ''}
+                     onClick={() => !disabled && this.handle(row)}>处理</a>
                 </div>
               );
             },
           },
           {
-            label: '订单标记', prop: 'grouponOrderFlag', width: 80,
-            render: (h, {props: {row, col}}) => {
-              let obj = this.$enum.orderTip._swap[row[col.prop]] || {};
+            label: '订单标记', prop: orderKeys.orderTip, width: 80,
+            render: (h, {props: {cur}}) => {
+              let obj = this.$enum.orderTip.getMsg(cur);
               let text = obj.omit || '';
               let key = obj.value || '';
               return (
@@ -107,34 +96,31 @@
             }
           },
           {
-            label: '分线状态', prop: 'divideState', width: 80, formatter: row => {
-              const textMap = ['待处理', '处理中', '已处理'];
-              return textMap[row.divideState];
+            label: '分线状态', prop: orderKeys.branchStatus, width: 80, formatter: (row, index, cur) => {
+              return this.$enum.branchStatus.getLabel(cur);
             }
           },
-          {label: '合并编号', prop: 'combineId', width: 160},
-          {label: '订单编号', prop: 'grouponOrderNumber', width: 220},
-          {label: '生产编号', prop: 'produceOrderNumber', width: 160},
-          {label: '用料代码', prop: 'materialCode', width: 80},
-          {label: '瓦楞楞型', prop: 'tileModel', formatter: row => row.layers + row.tileModel, width: 80},
-          {label: '订单数量', prop: 'pieceAmount', width: 80},
+          {label: '合并编号', prop: orderKeys.combineId, width: 160},
+          {label: '订单编号', prop: orderKeys.orderId, width: 220},
+          {label: '生产编号', prop: orderKeys.productionNo, width: 160},
+          {label: '用料代码', prop: orderKeys.materialCode, width: 80},
+          {label: '瓦楞楞型', prop: 'fluteTypeAndLayers', width: 80},
+          {label: '订单数量', prop: orderKeys.orderAmount, width: 80},
           {label: '处理数量', prop: 'processeAmount', width: 80},
           {
-            label: '下料规格(cm)', prop: 'materialSize', width: 120,
+            label: '下料规格(cm)', prop: orderKeys.materialSize, width: 120,
           },
           {
-            label: '产品规格', prop: 'productSize', width: 110
+            label: '产品规格', prop: orderKeys.productSize, width: 110
           },
-          {label: '压线方式', prop: 'staveType', width: 80},
-          {label: '纵压公式', prop: 'vformula', width: 200},
-          {label: '横压公式', prop: 'hformula', width: 160},
-          {label: '订单交期', prop: 'arriveTime', width: 110, formatter: row => {
-              return row.arriveTime.split(' ')[0];
-            }},
-          {label: '客户名称', prop: 'customerName', width: 120},
-          {label: '产品名称', prop: 'grouponProductName', width: 100},
+          {label: '压线方式', prop: orderKeys.linePressingMethod, width: 80},
+          {label: '纵压公式', prop: orderKeys.longitudinalPressure, width: 200},
+          {label: '横压公式', prop: orderKeys.transversePressure, width: 160},
+          {label: '订单交期', prop: orderKeys.deliveryTime, width: 110},
+          {label: '客户名称', prop: orderKeys.customerName, width: 120},
+          {label: '产品名称', prop: orderKeys.productName, width: 100},
           {label: '生成时间', prop: 'createTime', width: 180},
-          {label: '处理人', prop: 'operator', width: 85},
+          {label: '处理人', prop: orderKeys.operator, width: 85},
           {label: '处理时间', prop: 'updateTime', width: 180},
         ],
         pageTotal: 0,
@@ -143,14 +129,14 @@
         dialogLoading: false,
         checkedList: [],
 
-        formData: initFormData,
+        formData: {},
         multiFormOptions: [
           {
             formOptions: [
               {
                 type: 'input',
                 formItem: {
-                  prop: 'combineId',
+                  prop: orderKeys.combineId,
                   label: '合并编号',
                 },
                 attrs: {
@@ -160,7 +146,7 @@
               {
                 type: 'input',
                 formItem: {
-                  prop: 'produceOrderNumber',
+                  prop: orderKeys.productionNo,
                   label: '生产编号',
                 },
                 attrs: {
@@ -198,18 +184,18 @@
           {
             title: '订单信息',
             formOptions: [
-              {formItem: {prop: 'grouponOrderNumber', label: '订单编号：'}},
-              {formItem: {prop: 'pieceAmount', label: '订单数量：'}},
-              {formItem: {prop: 'arriveTime', label: '订单交期：'}},
-              {formItem: {prop: 'grouponProductName', label: '产品名称：'}},
-              {formItem: {prop: 'customerName', label: '客户名称：'}},
-              {formItem: {prop: 'prodGuige', label: '产品规格：'}},
-              {formItem: {prop: 'materialCode', label: '用料代码：'}},
-              {formItem: {prop: 'tileModel', label: '瓦楞楞型：'}},
-              {formItem: {prop: 'xialiaoguige', label: '下料规格：'}},
-              {formItem: {prop: 'staveType', label: '压线方式：'}},
-              {formItem: {prop: 'hformula', label: '横压公式：'}},
-              {formItem: {prop: 'vformula', label: '纵压公式：'}},
+              {formItem: {prop: orderKeys.orderId, label: '订单编号'}},
+              {formItem: {prop: orderKeys.orderAmount, label: '订单数量'}},
+              {formItem: {prop: orderKeys.deliveryTime, label: '订单交期'}},
+              {formItem: {prop: orderKeys.productName, label: '产品名称'}},
+              {formItem: {prop: orderKeys.customerName, label: '客户名称'}},
+              {formItem: {prop: orderKeys.productSize, label: '产品规格'}},
+              {formItem: {prop: orderKeys.materialCode, label: '用料代码'}},
+              {formItem: {prop: 'fluteTypeAndLayers', label: '瓦楞楞型'}},
+              {formItem: {prop: orderKeys.materialSize, label: '下料规格'}},
+              {formItem: {prop: orderKeys.linePressingMethod, label: '压线方式'}},
+              {formItem: {prop: orderKeys.transversePressure, label: '横压公式'}},
+              {formItem: {prop: orderKeys.longitudinalPressure, label: '纵压公式'}},
             ],
             columnNum: '2'
           }
@@ -231,19 +217,16 @@
       },
       close() {
         this.visible = false;
-        this.formData = initFormData;
+        this.formData = {};
       },
       confirm() {
         this.$refs.multiForm.$refs.form[0].validate((valid) => {
           if (valid) {
             this.dialogLoading = true;
-            let {id, processeAmount, divideState} = this.formData;
-            processeAmount = processeAmount.replace(/^[0]*/g, '');
-            this.dj_api_extend(branchTaskService.processe, {
-              id: id,
-              processeAmount: processeAmount,
-              divideState: divideState,
-            }).then(() => {
+            let post = this.$method.cloneData(['id', 'processeAmount', orderKeys.branchStatus], {}, this.formData);
+            // let {id, processeAmount, divideState} = this.formData;
+            post.processeAmount = Number(post.processeAmount);
+            this.dj_api_extend(branchTaskService.processe, post).then(() => {
               this.$message('处理成功', 'success');
               this.close();
               this.$refs.search.search();
@@ -360,11 +343,11 @@
         this.dj_api_extend(branchTaskService.getDivideMsg, {
           id: id
         }).then(res => {
-          res.xialiaoguige = res.materialLength + '*' + res.materialWidth;
-          res.prodGuige = res.productLength + '*' + res.productWidth + '*' + res.productHeight;
-          res.waitHandleNum = res.pieceAmount - res.processeAmount;
+          // res.xialiaoguige = res.materialLength + '*' + res.materialWidth;
+          // res.prodGuige = res.productLength + '*' + res.productWidth + '*' + res.productHeight;
+          res.waitHandleNum = res[orderKeys.orderAmount] - res.processeAmount;
+          res.processeAmount = '';
           this.formData = res;
-          this.formData.processeAmount = '';
         });
       },
     },
@@ -377,28 +360,6 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-  @{deep} .xialiaoguige {
-    display: flex;
-
-    .text {
-      margin: auto 5px;
-    }
-  }
-
-  @{deep} .operation {
-    line-height: 1;
-
-    a {
-      padding: 2px 10px;
-      color: #3654ea;
-      cursor: pointer;
-    }
-
-    .divideState-completed {
-      color: #909399;
-      pointer-events: none;
-    }
-  }
 
   .dialog {
     width: 1100px;
