@@ -289,6 +289,24 @@ export default {
       value: 2,
     }
   }),
+  branchStatus: new MapObject({
+    'wait': {
+      label: '待处理',
+      value: '0',
+    },
+    'handling': {
+      label: '处理中',
+      value: '1',
+    },
+    'already': {
+      label: '已处理',
+      value: '2',
+    },
+    'all': {
+      label: '全部',
+      value: '',
+    }
+  }),
   orderCutNumber: [1, 2, 3, 4, 5, 6, 7],
   fluteTypeLayer,
   fluteType
