@@ -54,21 +54,17 @@
         </card>
       </div>
     </div>
-    <dj-dialog v-if="visible" ref="dialog" @close="close" title="查看详情" width="400px" :has-footer="false">
-      <div class="dialog" style="height: 355px;">
-        <classify-form ref="form" :form-data="formData" :config="[{formOptions}]"
-                 :column-num="1" labelWidth="152px"></classify-form>
-      </div>
-    </dj-dialog>
+    <look-dialog v-if="visible" ref="dialog" @close="close"></look-dialog>
   </div>
 </template>
 
 <script>
   import Card from './Card';
   import record from "../../../../api/service/record";
+  import lookDialog from "./lookDialog";
   export default {
     name: 'ProdLineContent',
-    components: {Card},
+    components: {Card, lookDialog},
     props: {
       ProdLineData: {
         type: Object,
@@ -104,14 +100,6 @@
         records: [],
         loading: false,
         visible: false,
-        formOptions: [
-          {formItem: {prop: 'platformMaterialCode', label: '平台材料名称：'}},
-          {formItem: {prop: 'dassdsa', label: '平台1料名称：'}},
-        ],
-        formData: {
-          platformMaterialCode: 1000,
-          dassdsa: 20000
-        }
       };
     },
     methods: {
@@ -144,15 +132,8 @@
       },
       viewRecordDetail(detail) {
         this.visible = true;
-        const realContent = detail.substring(detail.indexOf('】') + 1, detail.length - 1);
-        const items = realContent.split(';');
-        const formDataItemArray = items.map(v=>v.split(':'));
-        this.formData = this.$method.fromEntries(formDataItemArray);
-        this.formOptions = formDataItemArray.map(v=>{
-          return {formItem: {prop: v[0], label: v[0] + '：'}};
-        });
         this.$nextTick(() => {
-          this.$refs.dialog.open();
+          this.$refs.dialog.open(detail);
         });
       },
       close() {
