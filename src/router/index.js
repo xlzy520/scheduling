@@ -34,7 +34,9 @@ router.afterEach((to) => {
   let route = store.getters.permission[to.path];
   setLocalStorageItem('activeRoute', {
     ...route,
-    ...to
+    meta: to.meta,
+    name: to.name,
+    fullPath: to.fullPath,
   });
   window.subject.trigger('route-change');
 });
