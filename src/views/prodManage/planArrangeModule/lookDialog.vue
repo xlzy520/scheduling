@@ -106,6 +106,65 @@
             ]
           },
           {
+            title: '原生产信息',
+            formOptions: [
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey('paperSize', 'old'),
+                  label: '最优门幅'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.cutNumber, 'old'),
+                  label: '切数'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.cutterNumber, 'old'),
+                  label: '刀数'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey('produceNum', 'old'),
+                  label: '生产数量'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.longitudinalPressure, 'old'),
+                  label: '纵压公式'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.materialWidth, 'old'),
+                  label: '切宽'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.orderMetres, 'old'),
+                  label: '订单米数'
+                }
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.trim, 'old'),
+                  label: '修边(mm)'
+                },
+              },
+              {
+                formItem: {
+                  prop: this.$method.getOriginKey(orderKeys.trimRate, 'old'),
+                  label: '修边率'
+                },
+              },
+            ]
+          },
+          {
             title: '最终生产信息',
             formOptions: [
               {
@@ -166,65 +225,6 @@
                 formItem: {
                   prop: orderKeys.stackUp,
                   label: '叠单标志'
-                },
-              },
-            ]
-          },
-          {
-            title: '原生产信息',
-            formOptions: [
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey('paperSize', 'old'),
-                  label: '最优门幅'
-                },
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.cutNumber, 'old'),
-                  label: '切数'
-                },
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.cutterNumber, 'old'),
-                  label: '刀数'
-                },
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey('produceNum', 'old'),
-                  label: '生产数量'
-                },
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.longitudinalPressure, 'old'),
-                  label: '纵压公式'
-                },
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.materialWidth, 'old'),
-                  label: '切宽'
-                },
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.orderMetres, 'old'),
-                  label: '订单米数'
-                }
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.trim, 'old'),
-                  label: '修边(mm)'
-                },
-              },
-              {
-                formItem: {
-                  prop: this.$method.getOriginKey(orderKeys.trimRate, 'old'),
-                  label: '修边率'
                 },
               },
             ]
