@@ -89,6 +89,15 @@
             },
           },
           {
+            key: orderKeys.fluteType,
+            label: '瓦楞楞型',
+            type: 'custom',
+            attrs: {
+              default: ['all']
+            },
+            component: fluteTypeSelect,
+          },
+          {
             key: orderKeys.orderTip,
             label: '订单标记',
             type: 'select',
@@ -98,22 +107,12 @@
             }
           },
           {
-            key: orderKeys.productStatus,
-            label: '生产状态',
-            type: 'select',
+            key: orderKeys.productionNo,
+            label: '生产编号',
+            type: 'input',
             attrs: {
-              options: this.$enum.productStatus._arr,
-              default: this.$enum.productStatus.waitImport.value
+              placeholder: '请输入生产/订单编号'
             }
-          },
-          {
-            key: orderKeys.fluteType,
-            label: '瓦楞楞型',
-            type: 'custom',
-            attrs: {
-              default: ['all']
-            },
-            component: fluteTypeSelect,
           },
           {
             key: orderKeys.materialName,
@@ -130,11 +129,12 @@
             }
           },
           {
-            key: 'produceOrderNumber',
-            label: '生产编号',
-            type: 'input',
+            key: orderKeys.productStatus,
+            label: '生产状态',
+            type: 'select',
             attrs: {
-              placeholder: '请输入生产/订单编号'
+              options: this.$enum.productStatus._arr,
+              default: this.$enum.productStatus.waitImport.value
             }
           },
           {
