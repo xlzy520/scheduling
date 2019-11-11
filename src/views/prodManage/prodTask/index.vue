@@ -72,12 +72,6 @@
           },
           {label: '生产编号', key: 'produceOrderNumber', type: 'input', attrs: {reg: /^\w*$/}},
           {
-            label: '下料规格', key: 'guige', type: 'custom',
-            component: materialSizeInput
-          },
-          {label: '用料代码', key: 'materialCode', type: 'input'},
-          {label: '客户名称', key: 'customerName', type: 'input'},
-          {
             label: '门幅范围', key: 'paperSize', type: 'custom',
             component: paperSizeRange,
             attrs: {
@@ -85,55 +79,12 @@
               reg: /^\d*$/
             }
           },
+          {label: '客户名称', key: 'customerName', type: 'input'},
+          {label: '用料代码', key: 'materialCode', type: 'input'},
           {
-            key: 'arriveTime',
-            label: '订单交期',
-            type: 'date',
-            attrs: {
-              clearable: false,
-              default: this.$method.getDateRange('daterange', 31, 'day', 1),
-              beforeChange: this.$method.getLimitTime,
-              pickerOptions: {
-                shortcuts: [
-                  {
-                    text: '今日',
-                    onClick(picker) {
-                      picker.$emit('pick', picker.$method.getDateRange('daterange', 1));
-                    }
-                  },
-                  {
-                    text: '明日',
-                    onClick(picker) {
-                      picker.$emit('pick', picker.$method.getDateRange('daterange', 0, 'day', 1));
-                    }
-                  },
-                  {
-                    text: '本周',
-                    onClick(picker) {
-                      let start = dayjs().day(1).format('YYYY-MM-DD');
-                      let end = dayjs().day(6).add(1, 'day').format('YYYY-MM-DD');
-                      picker.$emit('pick', [start, end]);
-                    }
-                  },
-                  {
-                    text: '本月',
-                    onClick(picker) {
-                      let start = dayjs().startOf('month').format('YYYY-MM-DD');
-                      let end = dayjs().endOf('month').format('YYYY-MM-DD');
-                      picker.$emit('pick', [start, end]);
-                    }
-                  },
-                  {
-                    text: '近三月',
-                    onClick(picker) {
-                      picker.$emit('pick', picker.$method.getDateRange('daterange', 3, 'month'));
-                    }
-                  }
-                ]
-              },
-              type: 'daterange'
-            },
-          }
+            label: '下料规格', key: 'guige', type: 'custom',
+            component: materialSizeInput
+          },
         ],
         tableData: [],
         tableColumns: [
@@ -143,8 +94,8 @@
           {label: '产品名称', prop: 'grouponProductName'},
           {label: '用料代码', prop: 'materialCode'},
           {label: '瓦楞楞型', prop: 'tileModel', formatter: row => row.layer + row.tileModel},
-          {label: '生产数量', prop: 'produceAmount'},
           {label: '订单数量', prop: 'pieceAmount'},
+          {label: '生产数量', prop: 'produceAmount'},
           {label: '门幅宽度', prop: 'paperSize'},
           {label: '订单米数', prop: 'orderMeter'},
           {
@@ -154,13 +105,13 @@
           {label: '切数', prop: 'cutCount', width: 120},
           {label: '切宽', prop: 'materialWidth', width: 120},
           {label: '修边', prop: 'trimming'},
-          {label: '压线方式', prop: 'staveType'},
-          {label: '压线公式', prop: 'vformula', width: 120},
-          {label: '叠单', prop: 'stackFlag', formatter: row => row.stackFlag === 0 ? '' : row.stackFlag},
-          {label: '订单交期', prop: 'arriveTime', width: 115,
+          {label: '订单交期', prop: 'arriveTime', sortable: true, width: 115,
             formatter(row, index, cur) {
               return dayjs(cur).format('YYYY-MM-DD');
             }},
+          {label: '压线方式', prop: 'staveType'},
+          {label: '压线公式', prop: 'vformula', width: 120},
+          {label: '叠单', prop: 'stackFlag', formatter: row => row.stackFlag === 0 ? '' : row.stackFlag},
           {
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
