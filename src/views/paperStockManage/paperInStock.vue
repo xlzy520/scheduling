@@ -3,6 +3,7 @@
     <dj-search ref="search" :config="searchConfig" @search="search"></dj-search>
     <page-pane>
       <dj-table ref="table"
+                border
                 v-if="isTableReady"
                 :loading="isTableLoad"
                 :data="tableData"

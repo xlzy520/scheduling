@@ -18,15 +18,16 @@
           <span>折扣总金额：{{discountMoney}}元</span>
         </span>
       </p>
-      <base-table ref="table"
-                  class="input-table"
-                  border
-                  :data="tableData"
-                  max-height="370"
-                  :column-type-props="columnsTypeProps"
-                  :columns="tableColumns"
-                  :column-type="['index']">
-      </base-table>
+      <dj-table ref="table"
+                class="input-table"
+                border
+                :is-need-page="false"
+                :data="tableData"
+                max-height="370"
+                :column-type-props="columnsTypeProps"
+                :columns="tableColumns"
+                :column-type="['index']">
+      </dj-table>
     </div>
   </lock-dialog>
 </template>
@@ -374,6 +375,9 @@
     span {
       margin-right: 24px;
     }
+  }
+  .input-table /deep/ .over-table {
+    display: none;
   }
   .dj-form {
     margin-right: 129px;

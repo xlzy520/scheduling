@@ -16,20 +16,21 @@
             <span>总件数：{{effectiveTableData.length}}件</span>
           </span>
         </p>
-        <base-table class="input-table" ref="table"
-                    v-if="readyTable"
-                    border
-                    :scroll-load="true"
-                    :reserve-num="3"
-                    :column-type-props="{index: {fixed: false,width: 64}}"
-                    :data="tableData"
-                    :lazy-total="tableMaxLength"
-                    :lazy-remote="()=>getEmptyData(10)"
-                    height="370"
-                    :columns="tableColumns"
-                    @row-click="rowClick"
-                    :column-type="['index']">
-        </base-table>
+        <dj-table class="input-table" ref="table"
+                  v-if="readyTable"
+                  border
+                  :is-need-page="false"
+                  :scroll-load="true"
+                  :reserve-num="3"
+                  :column-type-props="{index: {fixed: false,width: 64}}"
+                  :data="tableData"
+                  :lazy-total="tableMaxLength"
+                  :lazy-remote="()=>getEmptyData(10)"
+                  height="370"
+                  :columns="tableColumns"
+                  @row-click="rowClick"
+                  :column-type="['index']">
+        </dj-table>
       </div>
     </lock-dialog>
     <select-use-person ref="selectForkliftDriver" v-if="selectForkliftDriverFlag" title="选择叉车员" @close="selectForkliftDriverFlag = false" @select-person="changeForkliftDriver"></select-use-person>
@@ -1008,6 +1009,9 @@
     span {
       margin-right: 24px;
     }
+  }
+  .input-table /deep/ .over-table {
+    display: none;
   }
   .dj-form {
     position: relative;

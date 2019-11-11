@@ -6,6 +6,7 @@
                 v-if="isTableReady"
                 :loading="isTableLoading"
                 :data="tableData"
+                border
                 height="100%"
                 :total="total"
                 :columns="tableColumns"

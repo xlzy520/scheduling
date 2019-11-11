@@ -17,19 +17,20 @@
           <span>总件数：{{effectiveTableData.length}}件</span>
           </span>
         </p>
-        <base-table ref="table"
-                    class="input-table"
-                    :loading="isTableLoading"
-                    :data="tableData"
-                    max-height="370"
-                    border
-                    :column-type-props="columnsTypeProps"
-                    :lazy-total="tableMaxLength"
-                    :lazy-remote="()=>getEmptyData(10)"
-                    @row-click="rowClick"
-                    :columns="tableColumns"
-                    :column-type="['index']">
-        </base-table>
+        <dj-table ref="table"
+                  class="input-table"
+                  :loading="isTableLoading"
+                  :data="tableData"
+                  max-height="370"
+                  border
+                  :is-need-page="false"
+                  :column-type-props="columnsTypeProps"
+                  :lazy-total="tableMaxLength"
+                  :lazy-remote="()=>getEmptyData(10)"
+                  @row-click="rowClick"
+                  :columns="tableColumns"
+                  :column-type="['index']">
+        </dj-table>
       </div>
     </lock-dialog>
     <select-use-person ref="selectUsePerson" v-if="selectUsePersonFlag" title="选择责任部门/责任人" @close="selectUsePersonFlag = false" @select-person="changeUserPerson"></select-use-person>
@@ -737,6 +738,9 @@
     span {
       margin-right: 24px;
     }
+  }
+  .input-table /deep/ .over-table {
+    display: none;
   }
   .dj-form {
     position: relative;

@@ -13,11 +13,11 @@
 .single-page > .el-tabs {
   margin: 12px 32px 0;
 }
-div:not(.under-table) > .base-table {
-  .el-table th > .cell {
-    padding-right: 10px;
-  }
-}
+//div:not(.under-table) > .base-table {
+//  .el-table th > .cell {
+//    padding-right: 10px;
+//  }
+//}
 .base-table {
   .td-btn-group .dj-common-red-delete {
     font-size: 20px;
@@ -53,35 +53,35 @@ div:not(.under-table) > .base-table {
     }
   }
   // 原纸出入库特有表格样式
-  &.input-table {
-    .el-table__header th {
-      padding: 8px 0;
+}
+.input-table {
+  .el-table__header th {
+    padding: 8px 0;
+  }
+  .el-table__row > td, .el-table__row:hover > td, .el-table__footer td {
+    padding: 0;
+    > div {
+      line-height: 34px;
     }
-    .el-table__row td, .el-table__footer td {
-      padding: 0;
-      > div {
-        line-height: 34px;
+    &.is-change {
+      background-color: rgba(248, 152, 22, 0.1);
+      .el-autocomplete {
+        width: 100%;
       }
-      &.is-change {
-        background-color: rgba(248, 152, 22, 0.1);
-        .el-autocomplete {
-          width: 100%;
-        }
-        .el-input__inner {
-          height: 33px;
-          padding-left: 0;
-          line-height: 33px;
-          background-color: transparent;
-          border: none;
-        }
+      .el-input__inner {
+        height: 33px;
+        padding-left: 0;
+        line-height: 33px;
+        background-color: transparent;
+        border: none;
       }
     }
-    .cell > .is-error, .cell > .is-error .el-input__inner {
-      color: red;
-    }
-    .loading-wrap {
-      display: none;
-    }
+  }
+  .cell > .is-error, .cell > .is-error .el-input__inner {
+    color: red;
+  }
+  .loading-wrap {
+    display: none;
   }
 }
 .el-message.el-message--info {
