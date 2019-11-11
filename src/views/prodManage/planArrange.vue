@@ -82,9 +82,23 @@
         prodLine_arr_map: [],
         searchConfig: [
           {
-            type: 'input',
-            key: orderKeys.productionNo,
-            label: '生产编号',
+            type: 'select',
+            key: orderKeys.orderTip,
+            label: '订单标记',
+            attrs: {
+              default: '',
+              options: this.$enum.orderTip._arr
+            }
+          },
+          {
+            type: 'custom',
+            key: 'paperSizeRange',
+            label: '门幅范围',
+            component: paperSizeRange,
+            attrs: {
+              default: [],
+              reg: /^\d*$/
+            }
           },
           {
             key: orderKeys.fluteType,
@@ -94,6 +108,16 @@
               default: ['all']
             },
             component: fluteTypeSelect
+          },
+          {
+            type: 'input',
+            key: orderKeys.productionNo,
+            label: '生产编号',
+          },
+          {
+            type: 'input',
+            key: orderKeys.customerName,
+            label: '客户名称',
           },
           {
             type: 'input',
@@ -108,30 +132,6 @@
             attrs: {
               default: [],
               reg: this.$reg.getFloatReg(1)
-            }
-          },
-          {
-            type: 'select',
-            key: orderKeys.orderTip,
-            label: '订单标记',
-            attrs: {
-              default: '',
-              options: this.$enum.orderTip._arr
-            }
-          },
-          {
-            type: 'input',
-            key: orderKeys.customerName,
-            label: '客户名称',
-          },
-          {
-            type: 'custom',
-            key: 'paperSizeRange',
-            label: '门幅范围',
-            component: paperSizeRange,
-            attrs: {
-              default: [],
-              reg: /^\d*$/
             }
           },
         ],
@@ -295,6 +295,12 @@
             prop: orderKeys.trim,
             label: '修边',
             width: 50,
+          },
+          {
+            prop: orderKeys.deliveryTime,
+            label: '订单交期',
+            width: 100,
+            sortable: true,
           },
           {
             prop: orderKeys.trimRate,

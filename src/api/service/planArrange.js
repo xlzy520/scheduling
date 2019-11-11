@@ -8,6 +8,7 @@ export default{
       let list = res.list || [];
       list.map(obj=>{
         obj['fluteTypeAndLayers'] = getLayerFluteType(obj);
+        handleTime(obj, orderKeys.deliveryTime, 'YYYY-MM-DD');
       });
       return res;
     });
