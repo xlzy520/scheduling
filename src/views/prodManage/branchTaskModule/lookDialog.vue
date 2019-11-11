@@ -1,6 +1,6 @@
 <template>
   <dj-dialog ref="dialog" @close="close" @confirm="confirm" title="处理" v-loading="dialogLoading">
-    <classify-form ref="multiForm" :config="multiFormOptions" :column-num="2" :form-data="formData"></classify-form>
+    <classify-form ref="multiForm" :config="multiFormOptions" :column-num="2" :form-data="formData" v-loading="dialogLoading"></classify-form>
   </dj-dialog>
 </template>
 <script>
@@ -67,6 +67,7 @@
                 },
                 attrs: {
                   maxlength: 10,
+                  'is-auto-focus': true,
                 },
               },
             ],
@@ -95,6 +96,7 @@
     },
     methods: {
       open(row) {
+        this.dialogLoading = true;
         this.getDivideMsg(row.id);
         this.$refs.dialog.open();
       },
@@ -127,6 +129,8 @@
           res.waitHandleNum = res.pieceAmount - res.processeAmount;
           this.formData = res;
           this.formData.processeAmount = '';
+        }).then(() => {
+          this.dialogLoading = false;
         });
       },
       close() {
