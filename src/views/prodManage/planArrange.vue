@@ -37,7 +37,8 @@
                   <dj-button v-show="isBigBasket" type="primary" @click="stackUp">叠单</dj-button>
                   <el-button v-show="selectList.length" type="primary" @click="handleOperate('importProd', true)">汇入生产</el-button>
                   <el-button v-show="selectList.length" @click="openDialog('changeSortDialog', selectList, true)">调整排序</el-button>
-                  <el-button v-show="isBigBasket && selectList.length" @click="openDialog('editStackDialog', selectList, true)">调整叠单</el-button>
+                  <dj-button v-show="isBigBasket && selectList.length" @click="editStack">调整叠单</dj-button>
+                  <!--<el-button v-show="isBigBasket && selectList.length" @click="openDialog('editStackDialog', selectList, true)">调整叠单</el-button>-->
                   <el-button v-show="selectList.length" @click="handleOperate('remove')">移除订单</el-button>
                   <dj-button @click="exportExcel">导出</dj-button>
                 </div>
@@ -532,6 +533,15 @@
           return;
         }
         this.dj_api_extend(planArrangeService.stackUp, {lineId: this.lineId}).then(()=>{
+          this.$message('叠单成功');
+          this.refresh();
+        }).finally(cb);
+      },
+      editStack(cb) {
+        let post = {
+          order: this.$method.getOrderList(this.selectList)
+        };
+        this.dj_api_extend(planArrangeService.editStack, post).then(() => {
           this.$message('叠单成功');
           this.refresh();
         }).finally(cb);
