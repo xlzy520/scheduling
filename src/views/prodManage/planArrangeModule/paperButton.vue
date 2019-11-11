@@ -16,6 +16,7 @@
               <template slot="title">
                 <a class="operate disabled-button" @click.stop="changeEffect(item)">{{judgeEffect(item) ? '禁用' : '启用'}}</a>
                 <span class="paper-size-text">{{item[paperKeys.paperSize]}}</span>
+                <span class="notice-text" v-if="item['noticeAmount']">({{item['noticeAmount']}})</span>
               </template>
               <base-table :cell-class-name="cellClassName" :data="item.tableData" :columns="tableColumns"></base-table>
             </el-collapse-item>
@@ -111,6 +112,7 @@
                 return arr;
               }
             }, [[], []]);
+            obj['noticeAmount'] = obj['tableData'].filter(obj=>obj.isNotice).length;
             return obj;
           });
           this.$emit('input', this.value.filter(str=>paperSizeList.includes(str)));
@@ -151,6 +153,13 @@
     min-height: 60px;
     margin: 0 20px;
     overflow: auto;
+    .paper-size-text {
+      margin-left: 37px;
+    }
+    .notice-text {
+      margin-left: 8px;
+      color: red;
+    }
   }
   .el-collapse {
     border: none;
@@ -158,11 +167,9 @@
       position: relative;
       /deep/ .el-collapse-item__arrow {
         position: absolute;
+        left: 9px;
       }
     }
-  }
-  .paper-size-text {
-    margin-left: 37px;
   }
   .line {
     position: relative;
