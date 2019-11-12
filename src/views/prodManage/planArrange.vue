@@ -16,6 +16,8 @@
                       :data="tableData"
                       height="100%"
                       scroll-load
+                      is-cache-columns
+                      :cache-columns-name="$store.getters.uids+'-'+ $route.name"
                       :reserve-num="1"
                       :page-size-list="[1000,2000,3000]"
                       :default-page-size="1000"

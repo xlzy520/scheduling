@@ -5,6 +5,8 @@
       <dj-table ref="table"
                 :data="tableData"
                 height="100%"
+                is-cache-columns
+                :cache-columns-name="$store.getters.uids+'-'+ $route.name"
                 :loading="isLoading"
                 :total="total"
                 :columns="tableColumns"

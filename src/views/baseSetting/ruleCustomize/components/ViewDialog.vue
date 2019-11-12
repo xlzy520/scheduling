@@ -14,6 +14,8 @@
       <div class="rule-view-content">
         <dj-table
           border
+          is-cache-columns
+          :cache-columns-name="`${$store.getters.uids}-${$route.name}-${'ViewDialog'}`"
           :data="viewData.detailModels||viewData.packRuleDetails"
           :columns="viewTableColumns"
           :span-method="objectSpanMethod"

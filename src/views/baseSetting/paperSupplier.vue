@@ -5,6 +5,8 @@
       <dj-table
         ref="table"
         :data="tableData"
+        is-cache-columns
+        :cache-columns-name="$store.getters.uids+'-'+ $route.name"
         :loading="loading"
         :columns="tableColumns"
         :column-type="['index']"
