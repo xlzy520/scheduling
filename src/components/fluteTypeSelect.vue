@@ -40,6 +40,8 @@
     &>span{
       width: auto;
     }
-
+  }
+  /deep/ .el-input__inner {
+    height: 32px !important;
   }
 </style>
