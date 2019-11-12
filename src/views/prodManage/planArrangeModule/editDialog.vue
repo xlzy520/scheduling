@@ -74,6 +74,16 @@
                   input: this.getCalcResult
                 }
               },
+              {
+                type: 'select',
+                formItem: {
+                  prop: orderKeys.stackUp,
+                  label: '叠单标记'
+                },
+                attrs: {
+                  options: this.$enum.stackUpTip._arr
+                }
+              },
             ]
           },
           {

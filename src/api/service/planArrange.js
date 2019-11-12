@@ -50,6 +50,7 @@ export default{
       res['fluteTypeAndLayers'] = getLayerFluteType(res);
       res['orderTipLabel'] = getOrderTip(res);
       res[orderKeys.productSize] = getProductSize(res);
+      res[orderKeys.stackUp] = res[orderKeys.stackUp] || '';
       handleTime(res, orderKeys.deliveryTime, 'YYYY-MM-DD');
       return res;
     });
