@@ -1,7 +1,6 @@
 <template>
   <lock-dialog ref="dialog" @close="close" title="调整排序" width="400px" @confirm="confirm">
     <dj-form ref="form" :form-data="formData" :form-options="formOptions"></dj-form>
-    <!--<dj-button slot="footer-confirm" type="primary" @click="confirm">确 认</dj-button>-->
   </lock-dialog>
 </template>
 <script>
@@ -40,8 +39,8 @@
               ]
             },
             attrs: {
-              autofocus: true,
-            }
+              'is-auto-focus': true,
+            },
           }
         ];
       }
