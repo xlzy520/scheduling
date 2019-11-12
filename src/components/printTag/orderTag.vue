@@ -118,9 +118,9 @@
           prop: this.orderKeys.materialSize,
           label: '下料规格',
           formatter: (row) => {
-            let length = row[this.orderKeys.materialLength];
-            let width = row[this.orderKeys.materialWidth];
-            return length && width ? `${length}*${width}` : '';
+            let length = row[this.orderKeys.materialLength] || '';
+            let width = row[this.orderKeys.materialWidth] || '';
+            return `${length}*${width}`;
           }
         },
         {

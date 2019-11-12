@@ -135,6 +135,8 @@
           packageAmount: 'packCount',
           layer: 'layer',
           address: 'addressArea',
+          longitudinalPressure: 'sourceVformula',
+          materialWidth : 'sourceMaterialWidth',
         },
         contentLoading: false,
         timeRange: [],
