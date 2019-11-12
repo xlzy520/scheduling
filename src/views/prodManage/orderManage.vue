@@ -170,7 +170,7 @@
                 edit = [(<span></span>), (<a onClick={()=>this.openAddOrderDialog(row)}>编辑</a>)];
               }
               return (
-                <div class="td-btn-group">
+                <div class="td-btn-group" onClick={this.$method.stopPropagation}>
                   <a onClick={()=>this.openLookDialog(row)}>查看</a>
                   {edit}
                 </div>

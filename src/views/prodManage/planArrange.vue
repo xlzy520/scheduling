@@ -163,7 +163,7 @@
               // }
               // arr.push((<a on-click={()=>{this.openDialog('lookDialog', row);}}>查看</a>));
               return (
-                <div class="td-btn-group">
+                <div class="td-btn-group" onClick={this.$method.stopPropagation}>
                   <a on-click={()=>{this.openDialog('editDialog', row);}}>编辑</a>
                   <span></span>
                   <a on-click={()=>{this.openDialog('lookDialog', row);}}>查看</a>

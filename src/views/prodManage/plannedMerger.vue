@@ -171,7 +171,7 @@
                 arr.push((<a on-click={()=>{this.openDialog('lookDialog', row);}}>查看</a>));
               }
               return (
-                <div class="td-btn-group">
+                <div class="td-btn-group" onClick={this.$method.stopPropagation}>
                   {arr}
                 </div>
               );

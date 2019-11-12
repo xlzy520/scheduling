@@ -65,7 +65,7 @@
             render: (h, {props: {row}}) => {
               let disabled = this.$enum.branchStatus.isInclude(row[orderKeys.branchStatus], 'already');
               return (
-                <div class="td-btn-group">
+                <div class="td-btn-group" onClick={this.$method.stopPropagation}>
                   <a class={disabled ? 'disabled' : ''}
                      onClick={() => !disabled && this.handle(row)}>处理</a>
                 </div>

@@ -117,7 +117,7 @@
             label: '操作', prop: 'operation', fixed: 'right',
             render: (h, {props: {row}}) => {
               return (
-                <div class="td-btn-group">
+                <div class="td-btn-group" onClick={this.$method.stopPropagation}>
                   <a onClick={() => this.view(row)}>查看</a>
                 </div>
               );
