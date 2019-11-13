@@ -172,14 +172,6 @@
             }
           },
           {
-            prop: orderKeys.sortIndex,
-            label: '排序',
-            width: 55,
-            formatter(row, index, cur) {
-              return cur + '' === '0' ? '' : cur;
-            }
-          },
-          {
             prop: orderKeys.orderTip,
             label: '订单标记',
             width: 80,
@@ -190,6 +182,14 @@
               return (
                 <span class={text ? [key, 'tip-txt'] : ''}>{text}</span>
               );
+            }
+          },
+          {
+            prop: orderKeys.sortIndex,
+            label: '排序',
+            width: 55,
+            formatter(row, index, cur) {
+              return cur + '' === '0' ? '' : cur;
             }
           },
           {
@@ -296,6 +296,14 @@
             width: 80,
           },
           {
+            prop: orderKeys.stackUp,
+            label: '叠单',
+            width: 50,
+            formatter(row, index, cur) {
+              return cur + '' === '0' ? '' : cur;
+            }
+          },
+          {
             prop: orderKeys.trim,
             label: '修边',
             width: 50,
@@ -310,14 +318,6 @@
             prop: orderKeys.trimRate,
             label: '修边率',
             width: 70,
-          },
-          {
-            prop: orderKeys.stackUp,
-            label: '叠单',
-            width: 50,
-            formatter(row, index, cur) {
-              return cur + '' === '0' ? '' : cur;
-            }
           },
           {
             prop: orderKeys.orderAmount,
