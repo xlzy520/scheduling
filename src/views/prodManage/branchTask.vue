@@ -23,7 +23,7 @@
       </dj-table>
     </page-pane>
     <look-dialog v-if="visible" ref="dialog" @close="close" @confirm="confirm"></look-dialog>
-    <order-tag ref="printTag" :data="checkedList" :ext-order-keys="extOrderKeys"></order-tag>
+    <order-tag ref="printTag" is-branch :data="checkedList" :ext-order-keys="extOrderKeys"></order-tag>
   </single-page>
 </template>
 

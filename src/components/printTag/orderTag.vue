@@ -42,6 +42,10 @@
   export default {
     name: 'printTag',
     props: {
+      isBranch: {
+        type: Boolean,
+        default: false
+      },
       data: {
         type: Array,
         default: () => []
@@ -160,6 +164,13 @@
             return cur ? dayjs(cur).format('YYYY-MM-DD') : '';
           }
         },
+        {
+          prop: this.orderKeys.prodLine,
+          label: '生产线别',
+          formatter: (row, index, cur) => {
+            return this.isBranch ? '分线机' : cur + '号线'
+          }
+        },
       ];
       this.all_col_right = [
         {
@@ -191,7 +202,14 @@
           formatter(row, index, cur) {
             return cur ? cur + '片/包' : '';
           }
-        }
+        },
+        {
+          prop: this.orderKeys.prodLine,
+          label: '生产线别',
+          formatter: (row, index, cur) => {
+            return this.isBranch ? '分线机' : cur + '号线'
+          }
+        },
       ];
       this.col_left_map = this.getColLeftMap();
       this.col_right_map = this.getColRightMap();
@@ -228,9 +246,9 @@
       getColLeftMap() {
         let arr = this.all_col_left;
         let hiddenType = {
-          group: [this.orderKeys.associatedOrders, this.orderKeys.cartonRemarks, this.orderKeys.materialCode, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
-          carton: [this.orderKeys.productSize, this.orderKeys.fluteType, this.orderKeys.orderId, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
-          merge: [this.orderKeys.orderId, this.orderKeys.cartonRemarks, this.orderKeys.fluteType, this.orderKeys.productAmount, this.orderKeys.deliveryTime],
+          group: [this.orderKeys.associatedOrders, this.orderKeys.cartonRemarks, this.orderKeys.materialCode, this.orderKeys.productAmount, this.orderKeys.deliveryTime, this.orderKeys.prodLine],
+          carton: [this.orderKeys.productSize, this.orderKeys.fluteType, this.orderKeys.orderId, this.orderKeys.productAmount, this.orderKeys.deliveryTime, this.orderKeys.prodLine],
+          merge: [this.orderKeys.orderId, this.orderKeys.cartonRemarks, this.orderKeys.fluteType, this.orderKeys.productAmount, this.orderKeys.deliveryTime, this.orderKeys.prodLine],
           store: [this.orderKeys.associatedOrders, this.orderKeys.orderId, this.orderKeys.fluteType, this.orderKeys.productName, this.orderKeys.productSize, this.orderKeys.linePressingMethod, this.orderKeys.longitudinalPressure, this.orderKeys.transversePressure, this.orderKeys.cartonRemarks],
         };
         return Object.keys(hiddenType).reduce((map, key)=>{

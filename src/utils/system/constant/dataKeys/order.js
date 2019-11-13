@@ -59,4 +59,5 @@ export default {
   operator: 'operator', //操作人
   branchStatus: 'divideState', //分线状态
   combineId: 'combineId', //合并编号
+  prodLine: 'prodLine', //生产线
 };

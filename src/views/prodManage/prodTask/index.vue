@@ -137,6 +137,7 @@
           address: 'addressArea',
           longitudinalPressure: 'sourceVformula',
           materialWidth : 'sourceMaterialWidth',
+          prodLine : 'lineNum',
         },
         contentLoading: false,
         timeRange: [],
