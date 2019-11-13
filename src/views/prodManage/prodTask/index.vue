@@ -135,7 +135,6 @@
           packageAmount: 'packCount',
           layer: 'layer',
           address: 'addressArea',
-          longitudinalPressure: 'sourceVformula',
           materialWidth : 'sourceMaterialWidth',
           prodLine : 'lineNum',
         },
