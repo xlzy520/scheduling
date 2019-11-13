@@ -15,13 +15,15 @@ export default function Scanner() {
   };
   let keyupFn = function (e) {
     let _keycode = e.keyCode || e.which || e.charCode;
+    let key = e.key;
     upTime = new Date().getTime();
     if (downTime && upTime - downTime < 30 && _keycode === keycode) {
       if (_keycode === 13) {
         callback(text);
         text = '';
       } else {
-        text += String.fromCharCode(_keycode);
+        // text += String.fromCharCode(_keycode);
+        text += key;
       }
       e.preventDefault();
       e.stopPropagation();

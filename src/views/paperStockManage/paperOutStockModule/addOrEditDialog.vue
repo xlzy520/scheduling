@@ -511,10 +511,13 @@
         // return Promise.resolve(data);
       },
       scannerAdd(text) {
+        console.log(text);
         if (text) {
           // 兼容老版标签
-          let result = /ztbh:[a-zA-Z0-9]+(?=,)/.exec(text);
-          result && (text = result[0].split(':')[1]);
+          let result = /ztbh[:;][a-zA-Z0-9]+(?=,)/.exec(text);
+          if (result) {
+            text = result[0].replace(';', ':').split(':')[1]
+          }
         }
         if (text && !this.gettingMap[text]) {
           let sameRow = this.tableData.filter(obj=>obj[cylinderKeys.cylinderNo] === text && obj[paperKeys.paperCode])[0];
