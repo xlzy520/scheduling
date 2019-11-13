@@ -109,7 +109,7 @@
           {label: '压线方式', prop: orderKeys.linePressingMethod},
           {label: '压线公式', prop: orderKeys.longitudinalPressure, width: 120},
           {label: '叠单', prop: 'stackFlag', formatter: (row, index, cur) => cur === 0 ? '' : cur},
-          {label: '订单交期', prop: 'arriveTime', width: 115,
+          {label: '订单交期', prop: 'arriveTime', width: 115, sortable: true,
             formatter(row, index, cur) {
               return dayjs(cur).format('YYYY-MM-DD');
             }},
