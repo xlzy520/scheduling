@@ -43,7 +43,9 @@
             lineSpeed: '',
             changeorderMinLength: '',
             firstorderWasteWith: '',
+            stackMinCutLength: '',
             lastorderMinLength: '',
+            tailMinWidthWaste: '',
             linePaperSizeModels: [],
           },
           zqj: {
@@ -139,12 +141,27 @@
                 label: '首单最小修边',
                 rules: [
                   this.$rule.required('请输入首单最小修边'),
-                  this.$rule.number
+                  this.$rule.float1
                 ],
               },
               attrs: {
                 maxlength: 10,
                 suffixIcon: "mm"
+              },
+            },
+            {
+              type: 'input',
+              formItem: {
+                prop: 'stackMinCutLength',
+                label: '单单堆叠最小切长',
+                rules: [
+                  this.$rule.required('请输入单单堆叠最小切长'),
+                  this.$rule.number
+                ],
+              },
+              attrs: {
+                maxlength: 10,
+                suffixIcon: "cm"
               },
             },
             {
@@ -160,6 +177,21 @@
               attrs: {
                 maxlength: 10,
                 suffixIcon: "m"
+              },
+            },
+            {
+              type: 'input',
+              formItem: {
+                prop: 'tailMinWidthWaste',
+                label: '尾单最小修边',
+                rules: [
+                  this.$rule.required('请输入尾单最小修边'),
+                  this.$rule.number
+                ],
+              },
+              attrs: {
+                maxlength: 10,
+                suffixIcon: "mm"
               },
             },
           ],
