@@ -153,9 +153,9 @@
               type: 'input',
               formItem: {
                 prop: 'stackMinCutLength',
-                label: '单单堆叠最小切长',
+                label: '单堆最小切长',
                 rules: [
-                  this.$rule.required('请输入单单堆叠最小切长'),
+                  this.$rule.required('请输入单堆最小切长'),
                   this.$rule.number
                 ],
               },

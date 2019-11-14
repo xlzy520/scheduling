@@ -89,7 +89,7 @@
             {prop: 'commonTilemodel', label: '常用楞型'},
             {prop: 'changeorderMinLength', label: '换纸最小米数(m)'},
             {prop: 'firstorderWasteWith', label: '首单最小修边(mm)'},
-            {prop: 'stackMinCutLength', label: '单单堆叠最小切长 (cm)'},
+            {prop: 'stackMinCutLength', label: '单堆最小切长 (cm)'},
             {prop: 'lastorderMinLength', label: '尾单最小米数(m)'},
             {prop: 'tailMinWidthWaste', label: '尾单最小修边(mm)'},
             {prop: 'linePaperSizeModels', label: '门幅范围(mm)'},

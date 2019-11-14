@@ -114,8 +114,8 @@
         return '';
       },
       rowRule(item) {
-        let map = {commonTilemodel: 0, lineSpeed: 0, changeorderMinLength: 1, firstorderWasteWith: 1,
-          lastorderMinLength: 1, linePaperSizeModels: 2};
+        let map = {commonTilemodel: 0, lineSpeed: 0, changeorderMinLength: 1, firstorderWasteWith: 1, stackMinCutLength: 1,
+          lastorderMinLength: 2, tailMinWidthWaste: 2, linePaperSizeModels: 3};
         return map[item.prop];
       },
       colRule(item) {
