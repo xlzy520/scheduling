@@ -33,20 +33,84 @@
   import materialSizeInput from "../../components/materialSizeInput";
   import lookDialog from "./branchTaskModule/lookDialog";
   import {orderKeys} from "../../utils/system/constant/dataKeys";
+  import dayjs from 'dayjs';
   export default {
     name: 'branchTask',
     data() {
       return {
         searchConfig: [
           {
-            label: '生成时间', key: 'timeRange', type: 'date', attrs: {
-              type: 'daterange',
-              clearable: false,
-              default: this.$method.getDateRange('daterange', 1),
-              // default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
-              beforeChange: this.$method.getLimitTime
-            }
+            label: '',
+            type: 'custom',
+            key: 'arrTime',
+            size: 'long',
+            attrs: {
+              default: {
+                timeType: '',
+                time: this.$method.getDateRange('daterange', 1),
+              }
+            },
+            component: {
+              props: {
+                value: {
+                  type: Object,
+                  default: () => ({})
+                }
+              },
+              data() {
+                return {
+                  timeType: this.value.timeType,
+                  time: this.value.time
+                };
+              },
+              render() {
+                const timeChange = (val) => {
+                  let _val = [...val];
+                  if (val[0] && val[1]) {
+                    let towMonth = dayjs(val[0]).add(91, 'day');
+                    if (towMonth.isBefore(dayjs(val[1]))) {
+                      this.$message('时间不能超过92天', 'error');
+                      _val = [val[0], towMonth.toDate()];
+                    }
+                    _val[0] = dayjs(_val[0]).format('YYYY-MM-DD 00:00:00');
+                    _val[1] = dayjs(_val[1]).format('YYYY-MM-DD HH:mm:ss');
+                  }
+                  this.time = _val;
+                };
+                const paramInputChange = (val, name) => {
+                  this[name] = val;
+                  if (name === "date") {
+                    timeChange(val);
+                  }
+                  this.$emit('input', {
+                    time: this.time,
+                    timeType: this.timeType
+                  });
+                };
+                const options = [
+                  { label: '生成时间', value: '' },
+                  { label: '订单交期', value: '1' }
+                ];
+                return (
+                  <div class='search_item_selectableLabel'>
+                    <dj-select value={this.timeType} options={options}
+                               on-change={(val) => paramInputChange(val, 'timeType')} class='selectableLabel' />
+                    <dj-time-picker type='daterange' value={this.time}
+                                    on-input={(val) => paramInputChange(val, 'date')} class='inputElement' />
+                  </div>
+                );
+              }
+            },
           },
+          // {
+          //   label: '生成时间', key: 'timeRange', type: 'date', attrs: {
+          //     type: 'daterange',
+          //     clearable: false,
+          //     default: this.$method.getDateRange('daterange', 1),
+          //     // default: [dayjs().format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
+          //     beforeChange: this.$method.getLimitTime
+          //   }
+          // },
           {label: '分线状态', key: orderKeys.branchStatus, type: 'select', attrs: {options: this.$enum.branchStatus._arr, default: ''}},
           {label: '用料代码', key: orderKeys.materialCode, type: 'input'},
           {label: '订单编号', key: 'produceOrderNumber', type: 'input'},
@@ -203,11 +267,17 @@
         this.checkedList = checkedList;
       },
       search(query) {
-        let {timeRange, guige, ...restQuery} = query;
+        let {arrTime, guige, ...restQuery} = query;
+        const { timeType, time } = arrTime;
+        let searchTime = {};
+        if (timeType) {
+          searchTime = {startArrTime: time[0], endArrTime: time[1]};
+        } else {
+          searchTime = {startTime: time[0], endTime: time[1]};
+        }
         let params = {
           ...restQuery,
-          startTime: timeRange[0],
-          endTime: timeRange[1],
+          ...searchTime
         };
         guige = guige.map(v => {
           if (v) {
@@ -249,7 +319,14 @@
 
 <style lang="less" scoped>
   @deep: ~'>>>';
-
+  @{deep} .search_item_selectableLabel {
+    width: calc(100% + 120px);
+    overflow: hidden;
+    .selectableLabel {
+      float: left;
+      width: 120px;
+    }
+  }
   .dialog {
     width: 1100px;
 
@@ -291,19 +368,6 @@
     &-item {
       margin-right: 16px;
       margin-bottom: 8px;
-    }
-  }
-</style>
-<style lang="less">
-  .branch-task {
-    width: 442px;
-
-    &.el-message-box {
-      .el-message-box__content {
-        .el-message-box__status {
-          top: 20px;
-        }
-      }
     }
   }
 </style>
